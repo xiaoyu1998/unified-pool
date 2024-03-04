@@ -5,6 +5,14 @@ pragma solidity ^0.8.24;
 // @title Keys
 // @dev Keys for values in the DataStore
 library Keys {
+
+    // @dev for a global pool list
+    bytes32 public constant POOL_LIST = keccak256(abi.encode("POOL_LIST"));
+
+    // @dev for a global pool salt
+    bytes32 public constant POOL_SALT = keccak256(abi.encode("POOL_SALT"));
+
+
     // @dev for a global reentrancy guard
     bytes32 public constant REENTRANCY_GUARD_STATUS = keccak256(abi.encode("REENTRANCY_GUARD_STATUS"));
 

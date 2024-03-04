@@ -3,6 +3,15 @@
 pragma solidity ^0.8.24;
 
 library Errors {
+
+
+    // PoolFactory errors
+    error PoolAlreadyExists(bytes32 salt, address existingPoolAddress);
+
+    // PoolStoreUtils errors
+    error PoolNotFound(address key);
+
+
     // AdlHandler errors
     error AdlNotRequired(int256 pnlToPoolFactor, uint256 maxPnlFactorForAdl);
     error InvalidAdl(int256 nextPnlToPoolFactor, int256 pnlToPoolFactor);
