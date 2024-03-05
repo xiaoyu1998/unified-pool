@@ -42,6 +42,11 @@ contract PoolToken is ScaledToken, Bank {
 	}
 
 
+	function totalUnderlyingTokenBalanceDeductCollateral() public view returns (uint256) {
+		return IERC20(_underlyingTokenAddress).balanceOf(address(this)) - totalCollateral();;
+	}
+
+
     // @dev mint pool tokens to an account
     // @param account the account to mint to
     // @param amount the amount of tokens to mint
@@ -58,10 +63,9 @@ contract PoolToken is ScaledToken, Bank {
 		_burnScaled(pool, from, receiverOfUnderlying, amount, index);
 		if (receiverOfUnderlying != address(this)) {
 
-         //todo move to validation module
-         uint256 availableBalance = IERC20(token).balanceOf(address(this)) - totalCollateral();
-		 if(amount > availableBalance){
-		 	revert InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
+         //TODO move to validation module
+		 if(amount > totalUnderlyingTokenBalanceDeductCollateral()){
+		 	revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
 		 }
 
 		 IERC20(_underlyingTokenAddress).safeTransfer(receiverOfUnderlying, amount);

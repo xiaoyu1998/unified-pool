@@ -22,10 +22,10 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
     // @param depositParams DepositUtils.DepositParams
     function executeDeposit(
         address account,
-        ExecuteDepositUtils.DepositParams calldata depositParams
+        DepositUtils.DepositParams calldata depositParams
     ) external nonReentrant returns (bytes32){
 
-        ExecuteDepositUtils.ExecuteDepositParams memory params = ExecuteDepositUtils.ExecuteDepositParams{
+        DepositUtils.ExecuteDepositParams memory params = DepositUtils.ExecuteDepositParams{
            dataStore,
            depositParams.poolTokenAddress;        
            depositParams.asset,
@@ -33,7 +33,7 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
            depositParams.receiver
         };
 
-        return ExecuteDepositUtils.executeDeposit(account, params);
+        return DepositUtils.executeDeposit(account, params);
     }
 
 }

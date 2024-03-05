@@ -116,7 +116,7 @@ library PoolUtils {
 
     }
 
-    function updateState(
+    function updateIndexesAndIncrementFeeAmount(
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {
@@ -125,6 +125,7 @@ library PoolUtils {
            return;
         }
         pool.updateIndexes(poolCache);
+        FeeUtils.incrementFeeAmount(pool, poolCache);
         pool.lastUpdateTimestamp = blockTimeStamp;
         //PoolStoreUtils.set(dataStore, poolKey, salt, pool);
     }

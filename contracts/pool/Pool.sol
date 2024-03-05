@@ -38,7 +38,7 @@ library Pool {
         uint40  lastUpdateTimestamp;
         address poolTokenAddress;
         address debtTokenAddress;
-        //uint128 unclaimPoolFee;
+        uint128 unclaimPoolFee;
         //uint256 poolFeeFactor;
     }
 
