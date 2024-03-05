@@ -117,9 +117,6 @@ library PoolUtils {
     }
 
     function updateState(
-      DataStore dataStore,
-      address poolKey,
-      bytes32 salt,
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {
@@ -129,7 +126,7 @@ library PoolUtils {
         }
         pool.updateIndexes(poolCache);
         pool.lastUpdateTimestamp = blockTimeStamp;
-        PoolStoreUtils.set(dataStore, poolKey, salt, pool);
+        //PoolStoreUtils.set(dataStore, poolKey, salt, pool);
     }
 
     function getPoolNormalizedIncome(
@@ -167,6 +164,16 @@ library PoolUtils {
                    );
         }
     }
+
+    function getPoolSalt(address underlineTokenAddress) internal view returns (bytes32) {
+        bytes32 poolSalt = keccak256(abi.encode(
+            "UF_POOL",
+            underlineTokenAddress
+        )); 
+        return  poolSalt;      
+    }
+
+
 
 
 }

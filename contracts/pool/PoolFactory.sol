@@ -6,22 +6,13 @@ import "./DebtToken.sol";
 import "./PoolToken.sol";
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
+import "./PoolUtils.sol";
 import "./chain/chain.sol";
-// import "../event/EventEmitter.sol";
-// import "../utils/Cast.sol";
-
 // @title PoolFactory
 // @dev Contract to create pools
 contract PoolFactory is RoleModule {
     using Pool for Pool.Props;
 
-    // using EventUtils for EventUtils.AddressItems;
-    // using EventUtils for EventUtils.UintItems;
-    // using EventUtils for EventUtils.IntItems;
-    // using EventUtils for EventUtils.BoolItems;
-    // using EventUtils for EventUtils.Bytes32Items;
-    // using EventUtils for EventUtils.BytesItems;
-    // using EventUtils for EventUtils.StringItems;
 
     DataStore public immutable dataStore;
     // EventEmitter public immutable eventEmitter;
@@ -40,10 +31,7 @@ contract PoolFactory is RoleModule {
         address underlineTokenAddress,
         uint256 configration,
     ) external onlyPoolKeeper returns (Pool.Props memory) {
-        bytes32 salt = keccak256(abi.encode(
-            "UF_POOL",
-            underlineTokenAddress
-        ));
+        bytes32 salt = PoolUtils.getPoolSalt(underlineTokenAddress);
 
         address existingPoolAddress = dataStore.getAddress(PoolStoreUtils.getPoolSaltHash(salt));
         if (existingPoolAddress != address(0)) {
@@ -68,28 +56,4 @@ contract PoolFactory is RoleModule {
         return pool;
     }
 
-    // function emitPoolCreated(
-    //     address poolToken,
-    //     bytes32 salt,
-    //     address indexToken,
-    //     address longToken,
-    //     address shortToken
-    // ) internal {
-    //     EventUtils.EventLogData memory eventData;
-
-    //     eventData.addressItems.initItems(4);
-    //     eventData.addressItems.setItem(0, "poolToken", poolToken);
-    //     eventData.addressItems.setItem(1, "indexToken", indexToken);
-    //     eventData.addressItems.setItem(2, "longToken", longToken);
-    //     eventData.addressItems.setItem(3, "shortToken", shortToken);
-
-    //     eventData.bytes32Items.initItems(1);
-    //     eventData.bytes32Items.setItem(0, "salt", salt);
-
-    //     eventEmitter.emitEventLog1(
-    //         "PoolCreated",
-    //         Cast.toBytes32(poolToken),
-    //         eventData
-    //     );
-    // }
 }

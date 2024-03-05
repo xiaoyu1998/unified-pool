@@ -19,7 +19,7 @@ contract DebToken is ScaledToken {
 		address underlyingTokenAddress
 	) external override onlyController {
 		_poolKey                = poolKey;		
-		_underlyingTokenAddress = underlyingAsset;
+		_underlyingTokenAddress = underlyingTokenAddress;
 	}
 
 	/// @inheritdoc IERC20

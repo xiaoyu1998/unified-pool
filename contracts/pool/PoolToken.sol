@@ -57,6 +57,13 @@ contract PoolToken is ScaledToken, Bank {
     ) external virtual override onlyController return (bool) {
 		_burnScaled(pool, from, receiverOfUnderlying, amount, index);
 		if (receiverOfUnderlying != address(this)) {
+
+         //todo move to validation module
+         uint256 availableBalance = IERC20(token).balanceOf(address(this)) - totalCollateral();
+		 if(amount > availableBalance){
+		 	revert InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
+		 }
+
 		 IERC20(_underlyingTokenAddress).safeTransfer(receiverOfUnderlying, amount);
 		}       
     }

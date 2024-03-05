@@ -69,7 +69,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * @param params The deposit parameters, as specified in the `DepositUtils.ExecuteDepositParams` struct
      */
     function executeDeposit(
-        DepositUtils.ExecuteDepositParams calldata params
+        ExecuteDepositUtils.DepositParams calldata params
     ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
@@ -88,7 +88,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * @param params The withdrawal parameters, as specified in the `WithdrawalUtils.ExecuteWithdrawalParams` struct
      */
     function executeWithdrawal(
-        WithdrawalUtils.ExecuteWithdrawalParams calldata params
+        ExecuteWithdrawalUtils.WithdrawalParams calldata params
     ) external override payable nonReentrant {
         address account = msg.sender;
 
