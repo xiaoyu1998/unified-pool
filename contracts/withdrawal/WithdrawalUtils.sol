@@ -10,7 +10,7 @@ library WithdrawalUtils {
 
     struct WithdrawalParams {
         address poolTokenAddress;
-        address asset;
+        // address asset;
         uint256 amount;
         address receiver;
     }
@@ -18,10 +18,9 @@ library WithdrawalUtils {
     struct ExecuteWithdrawalParams {
         DataStore dataStore;
         address poolTokenAddress;
-        address asset;
+        // address asset;
         uint256 amount;
         address receiver;
-
     }
 
     // @dev executes a deposit
@@ -33,19 +32,20 @@ library WithdrawalUtils {
 
         PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
 
-        uint256 userBalance = IPoolToken(poolCache.poolTokenAddress).scaledBalanceOf(account).rayMul(
-            poolCache.nextLiquidityIndex
-        );
+        IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
+        address underlyingTokenAddress = poolToken.underlyingTokenAddress();
+        
+        uint256 userBalance = poolToken.scaledBalanceOf(account).rayMul(poolCache.nextLiquidityIndex);
         uint256 amountToWithdrawal = params.amount;
         if (params.amount == type(uint256).max) {
             amountToWithdraw = userBalance;
         }
 
         ExecuteWithdrawalUtils.validateWithdrawal(poolCache, amountToWithdrawal, userBalance)
-        PoolUtils.updateInterestRates(pool, poolCache, params.asset, 0, amountToWithdrawal);
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(params.asset), pool);
+        PoolUtils.updateInterestRates(pool, poolCache, underlyingTokenAddress, 0, amountToWithdrawal);
+        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingTokenAddress));
 
-        IPoolToken(poolCache.poolTokenAddress).burn(params.receiver, amountToWithdrawal, poolCache.nextLiquidityIndex)
+        poolToken.burn(params.receiver, amountToWithdrawal, poolCache.nextLiquidityIndex)
     }
 
 

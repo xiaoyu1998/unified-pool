@@ -28,7 +28,7 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
         DepositUtils.ExecuteDepositParams memory params = DepositUtils.ExecuteDepositParams{
            dataStore,
            depositParams.poolTokenAddress;        
-           depositParams.asset,
+           // depositParams.asset,
            //depositParams.amount,
            depositParams.receiver
         };

@@ -15,7 +15,7 @@ library DepositUtils {
 
     struct DepositParams {
         address poolTokenAddress;
-        address asset;
+        //address asset;
         //uint256 amount;
         address receiver;
     }
@@ -24,7 +24,7 @@ library DepositUtils {
         DataStore dataStore;
         // EventEmitter eventEmitter;
         address poolTokenAddress;
-        address asset;
+       // address asset;
         //uint256 amount;
         address receiver;
 
@@ -37,28 +37,30 @@ library DepositUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
 
+        IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
+        address underlyingTokenAddress = poolToken.underlyingTokenAddress();
+
         //multicall 
-        uint256 depositAmount = IPoolToken(poolCache.poolTokenAddress).recordTransferIn(params.asset);
+        uint256 depositAmount = poolToken.recordTransferIn(underlyingTokenAddress);
         if(depositAmount > POOL_MINI_DEPOSIT_AMOUNT) {
-            revert Errors.DidNotReachMinDepositAmount(depositAmount, POOL_MINI_DEPOSIT_AMOUNT);
+            revert Errors.DidNotReachMiniDepositAmount(depositAmount, POOL_MINI_DEPOSIT_AMOUNT);
         }
 
         PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
 
         ExecuteDepositUtils.validateDeposit(pool, poolCache, depositAmountt)
-        PoolUtils.updateInterestRates(pool, poolCache, params.asset, depositAmount, 0);
+        PoolUtils.updateInterestRates(pool, poolCache, underlyingTokenAddress, depositAmount, 0);
 
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(params.asset), pool);
+        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingTokenAddress), pool);
 
-        //IERC20(params.asset).safeTransferFrom(msg.sender, poolCache.poolTokenAddress, params.amount);
+        //IERC20(underlyingTokenAddress).safeTransferFrom(msg.sender, poolCache.poolTokenAddress, params.amount);
         IPoolToken(poolCache.poolTokenAddress).mint(params.receiver, depositAmount, poolCache.nextLiquidityIndex)
     }
 
     
-    // @dev Validates a deposit action.
+    // @dev validates a deposit action.
     // @param pool The cached data of the pool
     // @param amount The amount to be supply
-    
     function validateDeposit(
         PoolCache.Props memory poolCache,
         uint256 amount

@@ -3,8 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "../exchange/IDepositHandler.sol";
-// import "../exchange/IWithdrawalHandler.sol";
-// import "../exchange/IBorrowHandler.sol";
+import "../exchange/IWithdrawalHandler.sol";
+import "../exchange/IBorrowHandler.sol";
+
+import "../deposit/IWithdrawalHandler.sol";
+import "../exchange/IBorrowHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -26,7 +29,7 @@ import "./IExchangeRouter.sol";
  *
  */
 contract ExchangeRouter is IExchangeRouter, BaseRouter {
-    using Deposit for Deposit.Props;
+    //using Deposit for Deposit.Props;
     // using Withdrawal for Withdrawal.Props;
     // using Borrow for Borrow.Props;
     // using Repay for Repay.Props;
@@ -34,8 +37,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     // using Swap for Swap.Props;
 
     IDepositHandler public immutable depositHandler;
-    // IWithdrawalHandler public immutable withdrawalHandler;
-    // IBorrowHandler public immutable borrowHandler;
+    IWithdrawalHandler public immutable withdrawalHandler;
+    IBorrowHandler public immutable borrowHandler;
     // IRepayHandler public immutable repayHandler;
     // ILiquidationHandler public immutable liquidationHandler;
     // ISwapHandler public immutable swapHandler;
@@ -47,15 +50,15 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         RoleStore _roleStore,
         DataStore _dataStore,
         IDepositHandler _depositHandler,
-        // IWithdrawalHandler _withdrawalHandler,
-        // IBorrowHandler _borrowHandler,
+        IWithdrawalHandler _withdrawalHandler,
+        IBorrowHandler _borrowHandler,
         // IRepayHandler _repayHandler,
         // ILiquidationHandler _liquidationHandler,
         // ISwapHandler _swapHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
         depositHandler     = _depositHandler;
-        // withdrawalHandler  = _withdrawalHandler;
-        // borrowHandler      = _borrowHandler;
+        withdrawalHandler  = _withdrawalHandler;
+        borrowHandler      = _borrowHandler;
         // repayHandler       = _repayHandler;
         // liquidationHandler = _liquidationHandler;
         // swapHandler        = _swapHandler;
@@ -69,7 +72,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * @param params The deposit parameters, as specified in the `DepositUtils.ExecuteDepositParams` struct
      */
     function executeDeposit(
-        ExecuteDepositUtils.DepositParams calldata params
+        DepositUtils.DepositParams calldata params
     ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
@@ -88,7 +91,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * @param params The withdrawal parameters, as specified in the `WithdrawalUtils.ExecuteWithdrawalParams` struct
      */
     function executeWithdrawal(
-        ExecuteWithdrawalUtils.WithdrawalParams calldata params
+        WithdrawalUtils.WithdrawalParams calldata params
     ) external override payable nonReentrant {
         address account = msg.sender;
 
@@ -103,7 +106,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * execute by calling the `executeBorrow()` function on the Borrow handler contract. 
      */
     function executeBorrow(
-        IBorrowUtils.ExecuteBorrowParams calldata params
+        BorrowUtils.ExecuteBorrowParams calldata params
     ) external override payable nonReentrant  {
         address account = msg.sender;
 

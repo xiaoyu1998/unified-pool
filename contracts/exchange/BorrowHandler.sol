@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IWithdrawalHandler.sol";
-import "../withdrawal/WithdrawalUtils.sol";
+import "./IBorrowHandler.sol";
+import "../withdrawal/BorrowUtils.sol";
 
-// @title WithdrawalHandler
+// @title BorrowHandler
 // @dev Contract to handle execution of withdrawal
-contract WithdrawalHandler is IWithdrawalHandler, GlobalReentrancyGuard, RoleModule {
+contract BorrowHandler is IBorrowHandler, GlobalReentrancyGuard, RoleModule {
 
     constructor(
         RoleStore _roleStore,
@@ -19,21 +19,21 @@ contract WithdrawalHandler is IWithdrawalHandler, GlobalReentrancyGuard, RoleMod
     }
 
     // @dev executes a withdrawal
-    // @param withdrawalParams WithdrawalUtils.WithdrawalParams
-    function executeWithdrawal(
+    // @param withdrawalParams BorrowUtils.BorrowParams
+    function executeBorrow(
         address account,
-        WithdrawalUtils.WithdrawalParams calldata withdrawalParams
+        BorrowUtils.BorrowParams calldata withdrawalParams
     ) external nonReentrant returns (bytes32){
 
-        WithdrawalUtils.ExecuteWithdrawalParams memory params = WithdrawalUtils.ExecuteWithdrawalParams{
+        BorrowUtils.ExecuteBorrowParams memory params = BorrowUtils.ExecuteBorrowParams{
            dataStore,
            withdrawalParams.poolTokenAddress;        
-           //withdrawalParams.asset,
+           // withdrawalParams.asset,
            withdrawalParams.amount,
            withdrawalParams.receiver
         };
 
-        return WithdrawalUtils.executeWithdrawal(account, params);
+        return BorrowUtils.executeBorrow(account, params);
     }
 
 }

@@ -41,9 +41,12 @@ contract PoolToken is ScaledToken, Bank {
 		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedIncome(dataStore, _poolKey));
 	}
 
+	function underlyingTokenAddress() public view returns (address) {
+		return _underlyingTokenAddress;
+	}
 
 	function totalUnderlyingTokenBalanceDeductCollateral() public view returns (uint256) {
-		return IERC20(_underlyingTokenAddress).balanceOf(address(this)) - totalCollateral();;
+		return IERC20(_underlyingTokenAddress).balanceOf(address(this)) - totalCollateral();
 	}
 
 
