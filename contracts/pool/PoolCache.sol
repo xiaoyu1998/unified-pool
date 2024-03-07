@@ -23,7 +23,7 @@ library PoolCache {
         address poolTokenAddress;
         address poolDebtTokenAddress;
 
-        uint40  lastUpdateTimestamp;
+        uint256  lastUpdateTimestamp;
         uint256 poolConfigration;
         uint256 poolFeeFactor;
     }

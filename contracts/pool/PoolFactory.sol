@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import "./DebtToken.sol";
 import "./PoolToken.sol";
@@ -15,6 +15,7 @@ contract PoolFactory is RoleModule {
 
 
     DataStore public immutable dataStore;
+    //IPoolInterestRateStrate public immutable poolInterestRateStrate
     // EventEmitter public immutable eventEmitter;
 
     constructor(
@@ -28,29 +29,34 @@ contract PoolFactory is RoleModule {
 
     // @dev creates a pool
     function createPool(
-        address underlineTokenAddress,
+        address underlineToken,
+        address interestRateStrategy,
         uint256 configration,
     ) external onlyPoolKeeper returns (Pool.Props memory) {
-        bytes32 salt = PoolUtils.getPoolSalt(underlineTokenAddress);
+        bytes32 salt = PoolUtils.getPoolSalt(underlineToken);
 
-        address existingPoolAddress = dataStore.getAddress(PoolStoreUtils.getPoolSaltHash(salt));
-        if (existingPoolAddress != address(0)) {
-            revert Errors.PoolAlreadyExists(salt, existingPoolAddress);
+        address existingPool = PoolStoreUtils.getBySalt(dataStore, PoolStoreUtils.getPoolSaltHash(salt));
+        if (existingPool != address(0)) {
+            revert Errors.PoolAlreadyExists(salt, existingPool);
         }
 
         PoolToken poolToken = new PoolToken{salt: salt}(roleStore, dataStore);
         DebtToken debtToken = new DebtToken{salt: salt}(roleStore, dataStore);
 
+        bytes32 poolKey = PoolUtils.getPoolKey(address(poolToken), address(debtToken));
+
         Pool.Props memory pool = Pool.Props(
-        	underlineTokenAddress,
+            PoolStoreUtils.setPoolKeyAsId(poolKey)
         	configration,
         	1,0,1,0,
             currentTimestamp(),
+            underlineToken,
+            interestRateStrategy,
             address(poolToken),
-            address(debtToken)
+            address(debtToken),
         );
 
-        PoolStoreUtils.set(dataStore, address(poolToken), salt, pool);
+        PoolStoreUtils.set(dataStore, poolKey, salt, pool);
         //emitPoolCreated(address(poolToken), salt, indexToken, longToken, shortToken);
 
         return pool;

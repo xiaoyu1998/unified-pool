@@ -5,10 +5,10 @@ pragma solidity ^0.8.0;
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
 import "./IDepositHandler.sol";
-import "../deposit/ExecuteDepositUtils.sol";
+import "../deposit/DepositUtils.sol";
 
 // @title DepositHandler
-// @dev Contract to handle execution of deposits
+// @dev Contract to handle execution of deposit
 contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
 
     constructor(
@@ -30,7 +30,6 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
            depositParams.poolTokenAddress;        
            // depositParams.asset,
            //depositParams.amount,
-           depositParams.receiver
         };
 
         return DepositUtils.executeDeposit(account, params);

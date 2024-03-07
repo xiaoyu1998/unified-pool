@@ -6,14 +6,14 @@ import {Errors} from '../../libraries/helpers/Errors.sol';
 import {WadRayMath} from '../../libraries/math/WadRayMath.sol';
 import {IPool} from '../../../interfaces/IPool.sol';
 import {IScaledBalanceToken} from '../../../interfaces/IScaledBalanceToken.sol';
-import {MintableIncentivizedERC20} from './MintableIncentivizedERC20.sol';
+import {MintableToken} from './MintableToken.sol';
 
 /**
  * @title ScaledToken
  * @author Aave
  * @notice Basic ERC20 implementation of scaled balance token
  */
-abstract contract ScaledToken is MintableIncentivizedERC20, IScaledBalanceToken {
+abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
   using WadRayMath for uint256;
   using SafeCast for uint256;
 
@@ -28,7 +28,7 @@ abstract contract ScaledToken is MintableIncentivizedERC20, IScaledBalanceToken 
     string memory name,
     string memory symbol,
     uint8 decimals
-  ) MintableIncentivizedERC20(pool, name, symbol, decimals) {
+  ) MintableToken(pool, name, symbol, decimals) {
     // Intentionally left blank
   }
 
@@ -51,36 +51,36 @@ abstract contract ScaledToken is MintableIncentivizedERC20, IScaledBalanceToken 
 
   /// @inheritdoc IScaledBalanceToken
   function getPreviousIndex(address user) external view virtual override returns (uint256) {
-    return _userState[user].additionalData;
+    return _userIndex[user];
   }
 
   /**
    * @notice Implements the basic logic to mint a scaled balance token.
    * @param caller The address performing the mint
-   * @param onBehalfOf The address of the user that will receive the scaled tokens
+   * @param receiver The address of the user that will receive the scaled tokens
    * @param amount The amount of tokens getting minted
    * @param index The next liquidity index of the reserve
    * @return `true` if the the previous balance of the user was 0
    */
   function _mintScaled(
-    address onBehalfOf,
+    address receiver,
     uint256 amount,
     uint256 index
   ) internal returns (bool) {
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.INVALID_MINT_AMOUNT);
 
-    uint256 scaledBalance = super.balanceOf(onBehalfOf);
+    uint256 scaledBalance = super.balanceOf(receiver);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userState[onBehalfOf].additionalData);
+      scaledBalance.rayMul(_userState[receiver].additionalData);
 
-    _userState[onBehalfOf].additionalData = index.toUint128();
+    _userState[receiver].additionalData = index.toUint128();
 
-    _mint(onBehalfOf, amountScaled.toUint128());
+    _mint(receiver, amountScaled.toUint128());
 
     uint256 amountToMint = amount + balanceIncrease;
-    emit Transfer(address(0), onBehalfOf, amountToMint);
-    emit Mint(caller, onBehalfOf, amountToMint, balanceIncrease, index);
+    emit Transfer(address(0), receiver, amountToMint);
+    emit Mint(caller, receiver, amountToMint, balanceIncrease, index);
 
     return (scaledBalance == 0);
   }
@@ -100,9 +100,9 @@ abstract contract ScaledToken is MintableIncentivizedERC20, IScaledBalanceToken 
 
     uint256 scaledBalance = super.balanceOf(user);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userState[user].additionalData);
+      scaledBalance.rayMul(_userIndex[user]);
 
-    _userState[user].additionalData = index.toUint128();
+    _userIndex[user] = index.toUint128();
 
     _burn(user, amountScaled.toUint128());
 

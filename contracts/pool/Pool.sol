@@ -28,18 +28,116 @@ library Pool {
   //   uint256 data;
   // }
     struct Props {
-        address underlyingTokenAddress;
-        address interestRateStrategyAddress;
-        uint256 Configration;
-        uint128 liquidityIndex;
-        uint128 LiquidityRate;
-        uint128 borrowIndex;
-        uint128 borrowRate;
-        uint40  lastUpdateTimestamp;
-        address poolTokenAddress;
-        address debtTokenAddress;
-        uint128 unclaimPoolFee;
+        uint256 poolKeyId;
+        uint256 configration;
+        uint256 liquidityIndex;
+        uint256 liquidityRate;
+        uint256 borrowIndex;
+        uint256 borrowRate;
+        uint256 lastUpdateTimestamp;
+        uint256 unclaimPoolFee;
+        address underlyingToken;
+        address interestRateStrategy;
+        address poolToken;
+        address debtToken;
         //uint256 poolFeeFactor;
+    }
+
+    function poolKeyId(Props memory props) internal pure returns (uint256) {
+        return props.poolKeyId;
+    }
+
+    function setPoolKeyId(Props memory props, uint256 value) internal pure {
+        props.poolKeyId = value;
+    }
+
+    function configration(Props memory props) internal pure returns (uint256) {
+        return props.configration;
+    }
+
+    function setConfigration(Props memory props, uint256 value) internal pure {
+        props.configration = value;
+    }
+
+
+    function liquidityIndex(Props memory props) internal pure returns (uint256) {
+        return props.liquidityIndex;
+    }
+
+    function setLiquidityIndex(Props memory props, uint256 value) internal pure {
+        props.liquidityIndex = value;
+    }
+
+    function liquidityRate(Props memory props) internal pure returns (uint256) {
+        return props.liquidityRate;
+    }
+
+    function setLiquidityRate(Props memory props, uint256 value) internal pure {
+        props.liquidityRate = value;
+    }
+
+    function borrowIndex(Props memory props) internal pure returns (uint256) {
+        return props.borrowIndex;
+    }
+
+    function setBorrowIndex(Props memory props, uint256 value) internal pure {
+        props.borrowIndex = value;
+    }
+
+    function borrowRate(Props memory props) internal pure returns (uint256) {
+        return props.borrowRate;
+    }
+
+    function setBorrowRate(Props memory props, uint256 value) internal pure {
+        props.borrowRate = value;
+    }
+
+    function lastUpdateTimestamp(Props memory props) internal pure returns (uint256) {
+        return props.lastUpdateTimestamp;
+    }
+
+    function setLastUpdateTimestamp(Props memory props, uint256 value) internal pure {
+        props.lastUpdateTimestamp = value;
+    }
+
+    function unclaimPoolFee(Props memory props) internal pure returns (uint256) {
+        return props.unclaimPoolFee;
+    }
+
+    function setUnclaimPoolFee(Props memory props, uint256 value) internal pure {
+        props.unclaimPoolFee = value;
+    }
+
+    function underlyingToken(Props memory props) internal pure returns (address) {
+        return props.underlyingToken;
+    }
+
+    function setUnderlyingToken(Props memory props, address value) internal pure {
+        props.underlyingToken = value;
+    }
+
+    function interestRateStrategy(Props memory props) internal pure returns (address) {
+        return props.interestRateStrategy;
+    }
+
+    function setInterestRateStrategy(Props memory props, address value) internal pure {
+        props.interestRateStrategy = value;
+    }
+
+    function poolToken(Props memory props) internal pure returns (address) {
+        return props.poolToken;
+    }
+
+    function setPoolToken(Props memory props, address value) internal pure {
+        props.poolToken = value;
+    }
+
+    function debtTokeny(Props memory props) internal pure returns (address) {
+        return props.debtToken;
+    }
+
+    function setDebtTokeny(Props memory props, address value) internal pure {
+        props.debtTokeny = value;
     }
 
 }

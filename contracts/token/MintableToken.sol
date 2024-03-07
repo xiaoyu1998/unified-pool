@@ -1,19 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.10;
 
-import {SafeCast} from '../../../dependencies/openzeppelin/contracts/SafeCast.sol';
-import {Errors} from '../../libraries/helpers/Errors.sol';
-import {WadRayMath} from '../../libraries/math/WadRayMath.sol';
-import {IPool} from '../../../interfaces/IPool.sol';
-import {IScaledBalanceToken} from '../../../interfaces/IScaledBalanceToken.sol';
-import {MintableIncentivizedERC20} from './MintableIncentivizedERC20.sol';
+import {MintableToken} from './MintableERC20.sol';
 
 /**
  * @title ScaledToken
  * @author Aave
  * @notice Basic ERC20 implementation of scaled balance token
  */
-abstract contract ScaledToken is MintableERC20, IScaledToken {
+abstract contract MintableToken is MintableERC20 {
   using WadRayMath for uint256;
   using SafeCast for uint256;
 

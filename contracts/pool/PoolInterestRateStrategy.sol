@@ -7,7 +7,7 @@ import "./PoolUtils.sol";
 import "../utils/PercentageMath.sol";
 
 
-contract PoolInterestRateStrate is IPoolInterestRateStrate {
+contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
 
 
 
@@ -33,7 +33,7 @@ contract PoolInterestRateStrate is IPoolInterestRateStrate {
     vars.currentBorrowRate = _baseVariableBorrowRate;
   	if(vars.totalDebt != 0){
 	  vars.availableLiquidity =
-		IERC20(params.underlineTokenAddress).balanceOf(params.poolToken) -
+		IERC20(params.underlineToken).balanceOf(params.poolToken) -
 		IPoolToken(params.poolToken).totalCollateral() +
 		params.liquidityIn -
 		params.liquidityOut;
