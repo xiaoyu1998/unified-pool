@@ -3,7 +3,7 @@
 pragma solidity ^0.8.24;
 
 library Errors {
-
+    error ErrorToReplace();
 
     // PoolFactory errors
     error PoolAlreadyExists(bytes32 salt, address existingPoolAddress);

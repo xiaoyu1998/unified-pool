@@ -167,8 +167,8 @@ library PoolUtils {
         return  poolSalt;      
     }
 
-    function getPoolKey(address poolToken, address debtToken) internal pure returns (bytes32) {
-        bytes32 key = keccak256(abi.encode(poolToken, debtToken));
+    function getPoolKey(address poolToken) internal pure returns (bytes32) {
+        bytes32 key = keccak256(abi.encode(poolToken));
         return key;
     }
 

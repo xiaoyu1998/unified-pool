@@ -24,54 +24,122 @@ library BorrowUtils {
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
 
-        if(params.amount <= 0){revert Errors}
+        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
+        PositionUtils.validateEnabledPosition(position);
 
-        Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        if(position == null){ revert Errors }
+        Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
+        PoolUtils.validateEnabledPool(pool);
+        Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
 
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
-        Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
+        pool.updateIndexesAndIncrementFeeAmount(poolCache);
+        validateBorrow( account, params.dataStore, position, poolCache, amount)
 
-        PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
-
-        ExecuteBorrowUtils.validateBorrow(poolCache, position, params.amount)
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
-        poolToken.addCollateral(account, params.amount);//will change borrowIndex
+        poolToken.addCollateral(account, params.amount);//this will change Rate
 
-        position.setAsCollateral(pool.poolKeyId. true)
-        position.setAsDebt(pool.poolKeyId. true)
-        // PositionUtils.setCollateral(position, pool.poolKeyId)
-        // PositionUtils.setDebt(position, pool.poolKeyId)
+        position.setPoolAsCollateral(pool.poolKeyId(), true)
+        position.setPoolAsBorrowing(pool.poolKeyId(), true)
         PositionStoreUtils.set(params.dataStore, account, position);
 
         poolCache.nextScaledDebt = IDebtToken(poolCache.debtTokenAddress)
         .mint(account, params.amount, poolCache.nextBorrowIndex);
         
-        PoolUtils.updateInterestRates(pool, poolCache, params.asset, 0, amount);
+        pool.updateInterestRates(poolCache, params.asset, 0, amount);
         PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(params.asset), pool);
 
     }
 
 
-      // /**
-      //  * @notice Validates a withdraw action.
-      //  * @param poolCache The cached data of the pool
-      //  * @param amount The amount to be withdrawn
-      //  * @param userBalance The balance of the user
-      //  */
-      // function validateBorrow(
-      //     Position.Props memory position,
-      //     PoolCache.Props memory poolCache,
-      //     uint256 amount
-      // ) internal pure {
-       
-      //  (
-      //   vars.userCollateralInBaseCurrency,
-      //   vars.userDebtInBaseCurrency,
-      //   var.healthFactor,
-      //  ) = calculateUser()
+    struct ValidateBorrowLocalVars {
 
+        uint256 totalDebt;
+        uint256 poolDecimals;
+        uint256 borrowCapacity;
+        uint256 userTotalCollateralInUsd;
+        uint256 userTotalDebtInUsd;
+        uint256 amountToBorrowInUsd;
+        uint256 healthFactor;
+
+        bool isActive;
+        bool isFrozen;
+        bool isPaused;
+        bool borrowingEnabled;
+    }
+
+    // /**
+    //  * @notice Validates a withdraw action.
+    //  * @param poolCache The cached data of the pool
+    //  * @param amount The amount to be Borrow
+    //  */
+    function validateBorrow(
+       address account,
+       DataStore dataStore,
+       Position.Props memory position,
+       PoolCache.Props memory poolCache,
+       uint256 amountToBorrow
+    ) internal pure {
+        if (amount == 0) { revert Errors.EmptyBorrowAmount() }
+
+        ValidateBorrowLocalVars memory vars;
+        //validate pool configuration
+        (
+            vars.isActive,
+            vars.isFrozen,
+            vars.borrowingEnabled,
+            vars.isPaused
+        ) = PoolConfigurationUtils.getFlags(poolCache.poolConfiguration);  
+        if (!vars.isActive)         { revert Errors.PoolIsInactive(); }  
+        if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
+        if (vars.isFrozen)          { revert Errors.PoolIsFrozen();   }   
+        if (!vars.borrowingEnabled) { revert Errors.PoolIsNotEnabled();   } 
    
-      // }
+
+        //validate pool borrow capacity
+        vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.poolConfiguration);
+        vars.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.poolConfiguration) 
+                              * (10 ** vars.poolDecimals);
+        if (vars.borrowCapacity != 0) {
+            vars.totalDebt =
+                poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
+                amount;
+
+            unchecked {
+                if (vars.totalDebt <= vars.borrowCapacity) {
+                    revert Errors.Borrow_Capicaty_Exceeded();
+                }
+            }
+        }
+
+        //validate account health
+        (
+            vars.userTotalCollateralInUsd,
+            vars.userTotalDebtInUsd
+        ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
+
+        if (vars.userCollateralInUsd == 0) { revert Errors.Collateral_Balance_Is_Zero;}
+
+        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(pool.underlyingToken())
+                                   * amountToBorrow;
+
+        vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToBorrowInUsd);
+        // if (vars.healthFactor < HEALTH_FACTOR_LIQUIDATION_THRESHOLD) {
+        //     revert Errors.HealthFactorLiquidationThreshold(
+        //         userTotalCollateralInUsd, 
+        //         userTotalDebtInUsd, 
+        //         amountToBorrowInUsd
+        //     )
+        // }
+
+        if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
+            revert Errors.CollateralCanNotCoverNewBorrow(
+                userTotalCollateralInUsd, 
+                userTotalDebtInUsd, 
+                amountToBorrowInUsd
+            )
+        }
+
+
+
+    }
     
 }

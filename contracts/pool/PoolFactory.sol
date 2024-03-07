@@ -43,7 +43,7 @@ contract PoolFactory is RoleModule {
         PoolToken poolToken = new PoolToken{salt: salt}(roleStore, dataStore);
         DebtToken debtToken = new DebtToken{salt: salt}(roleStore, dataStore);
 
-        bytes32 poolKey = PoolUtils.getPoolKey(address(poolToken), address(debtToken));
+        bytes32 poolKey = PoolUtils.getPoolKey(address(poolToken));
 
         Pool.Props memory pool = Pool.Props(
             PoolStoreUtils.setPoolKeyAsId(poolKey)

@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 
 import "../pool/pool.sol";
 import "../pool/PoolConfigurationUtils.sol";
+import "../pool/PoolUtils.sol";
 
 
 // @title SupplyUtils
@@ -14,7 +15,7 @@ library SupplyUtils {
     using PoolCache for PoolCache.Props;
 
     struct SupplyParams {
-        address poolTokenAddress;
+        address poolToken;
         //address asset;
         //uint256 amount;
         address receiver;
@@ -23,7 +24,7 @@ library SupplyUtils {
     struct ExecuteSupplyParams {
         DataStore dataStore;
         // EventEmitter eventEmitter;
-        address poolTokenAddress;
+        address poolToken;
        // address asset;
         //uint256 amount;
         address receiver;
@@ -34,27 +35,28 @@ library SupplyUtils {
     // @param account the supplying account
     // @param params ExecuteSupplyParams
     function executeSupply(address account, ExecuteSupplyParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getPoolKey(params.poolToken));
+        PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
 
-        IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
-        address underlyingTokenAddress = poolToken.underlyingTokenAddress();
+        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
+        address underlyingToken = poolToken.underlyingToken();
 
         //multicall 
-        uint256 supplyAmount = poolToken.recordTransferIn(underlyingTokenAddress);
+        uint256 supplyAmount = poolToken.recordTransferIn(underlyingToken);
         if(supplyAmount > POOL_MINI_DEPOSIT_AMOUNT) {
             revert Errors.DidNotReachMiniSupplyAmount(supplyAmount, POOL_MINI_DEPOSIT_AMOUNT);
         }
 
-        PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
+        pool.updateIndexesAndIncrementFeeAmount(poolpoolCache);
 
         ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
-        PoolUtils.updateInterestRates(pool, poolCache, underlyingTokenAddress, supplyAmount, 0);
+        pool.updateInterestRates(poolCache, underlyingToken, supplyAmount, 0);
 
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingTokenAddress), pool);
+        PoolStoreUtils.set(params.dataStore, params.poolToken, PoolUtils.getPoolSalt(underlyingToken), pool);
 
-        //IERC20(underlyingTokenAddress).safeTransferFrom(msg.sender, poolCache.poolTokenAddress, params.amount);
-        IPoolToken(poolCache.poolTokenAddress).mint(params.receiver, supplyAmount, poolCache.nextLiquidityIndex)
+        //IERC20(underlyingToken).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
+        IPoolToken(poolCache.poolToken).mint(params.receiver, supplyAmount, poolCache.nextLiquidityIndex)
     }
 
     
@@ -67,16 +69,21 @@ library SupplyUtils {
     ) internal view {
         require(amount != 0, Errors.INVALID_AMOUNT);
 
-        (bool isActive, bool isFrozen, , bool isPaused) = poolCache.poolConfiguration.getFlags();
-        require(isActive, Errors.RESERVE_INACTIVE);
-        require(!isPaused, Errors.RESERVE_PAUSED);
-        require(!isFrozen, Errors.RESERVE_FROZEN);
+        (
+             bool isActive,
+             bool isFrozen, 
+             bool isPaused,
+             , 
+         ) = PoolConfigurationUtils.getFlags(poolCache.poolConfiguration);
+        // require(isActive, Errors.RESERVE_INACTIVE);
+        // require(!isPaused, Errors.RESERVE_PAUSED);
+        // require(!isFrozen, Errors.RESERVE_FROZEN);
 
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
         uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.poolConfiguration);
         require(
           supplyCapacity == 0 ||
-            ((IPoolTaken(poolCache.poolTokenAddress).scaledTotalSupply() +
+            ((IPoolTaken(poolCache.poolToken).scaledTotalSupply() +
               unClaimedFee.rayMul(poolCache.nextLiquidityIndex) + amount) <=
             supplyCapacity * (10 ** poolCache.poolConfiguration.getDecimals()),
           Errors.SUPPLY_CAPACITY_EXCEEDED

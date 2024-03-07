@@ -29,6 +29,8 @@ library PoolConfigurationUtils {
     uint256 internal constant MAX_VALID_FEE_FACTOR = 65535;
 
 
+    uint256 public constant DEBT_CEILING_DECIMALS = 2;
+    uint16 public constant MAX_POOLS_COUNT = 128;
       /**
        * @notice Gets the configuration flags of the reserve
        * @param self The reserve configuration
@@ -38,14 +40,14 @@ library PoolConfigurationUtils {
        * @return The state flag representing paused
        */
       function getFlags(
-        uint256 poolConfigration
+         uint256 poolConfigration
       ) internal pure returns (bool, bool, bool, bool) {
-        return (
-          (poolConfigration & ~ACTIVE_MASK) != 0,
-          (poolConfigration & ~FROZEN_MASK) != 0,
-          (poolConfigration & ~BORROWING_MASK) != 0,
-          (poolConfigration & ~PAUSED_MASK) != 0
-        );
+          return (
+              (poolConfigration & ~ACTIVE_MASK) != 0,
+              (poolConfigration & ~FROZEN_MASK) != 0,
+              (poolConfigration & ~BORROWING_MASK) != 0,
+              (poolConfigration & ~PAUSED_MASK) != 0
+          );
       }
 
     /**
@@ -54,11 +56,11 @@ library PoolConfigurationUtils {
        * @param active The active state
        */
       function setActive(uint256 poolConfigration, bool active) internal pure {
-        poolConfigration =
-          (poolConfigration & ACTIVE_MASK) |
-          (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
+          poolConfigration =
+              (poolConfigration & ACTIVE_MASK) |
+              (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
 
-        return poolConfigration;
+          return poolConfigration;
       }
 
       /**
@@ -67,7 +69,7 @@ library PoolConfigurationUtils {
        * @return The active state
        */
       function getActive(uint256 poolConfigration) internal pure returns (bool) {
-        return (poolConfigration & ~ACTIVE_MASK) != 0;
+          return (poolConfigration & ~ACTIVE_MASK) != 0;
       }
 
       /**
@@ -76,11 +78,11 @@ library PoolConfigurationUtils {
        * @param frozen The frozen state
        */
       function setFrozen(uint256 poolConfigration, bool frozen) internal pure {
-        poolConfigration =
-          (poolConfigration & FROZEN_MASK) |
-          (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
+          poolConfigration =
+              (poolConfigration & FROZEN_MASK) |
+              (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
 
-        return poolConfigration;
+          return poolConfigration;
       }
 
       /**
@@ -89,7 +91,7 @@ library PoolConfigurationUtils {
        * @return The frozen state
        */
       function getFrozen(uint256 poolConfigration) internal pure returns (bool) {
-        return (poolConfigration & ~FROZEN_MASK) != 0;
+          return (poolConfigration & ~FROZEN_MASK) != 0;
       }
 
       /**
@@ -97,12 +99,15 @@ library PoolConfigurationUtils {
        * @param self The reserve configuration
        * @param paused The paused state
        */
-      function setPaused(uint256 poolConfigration, bool paused) internal pure {
-        poolConfigration =
-          (poolConfigration & PAUSED_MASK) |
-          (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
+      function setPaused(
+          uint256 poolConfigration, 
+          bool paused
+      ) internal pure {
+          poolConfigration =
+              (poolConfigration & PAUSED_MASK) |
+              (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
 
-        return poolConfigration;
+          return poolConfigration;
       }
 
       /**
@@ -110,8 +115,10 @@ library PoolConfigurationUtils {
        * @param self The reserve configuration
        * @return The paused state
        */
-      function getPaused(uint256 poolConfigration) internal pure returns (bool) {
-        return (poolConfigration & ~PAUSED_MASK) != 0;
+      function getPaused(
+          uint256 poolConfigration
+      ) internal pure returns (bool) {
+          return (poolConfigration & ~PAUSED_MASK) != 0;
       }
 
 
@@ -178,13 +185,13 @@ library PoolConfigurationUtils {
      * @param borrowCapacity The borrow cap
      */
     function setBorrowCapacity(
-      uint256 poolConfigration,
-      uint256 borrowCapacity
+        uint256 poolConfigration,
+        uint256 borrowCapacity
     ) internal pure {
-      require(borrowCapacity <= MAX_VALID_BORROW_CAP, Errors.INVALID_BORROW_CAP);
+        require(borrowCapacity <= MAX_VALID_BORROW_CAP, Errors.INVALID_BORROW_CAP);
 
-      poolConfigration= (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
-      return poolConfigration;
+        poolConfigration= (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
+        return poolConfigration;
     }
 
     /**
@@ -193,9 +200,9 @@ library PoolConfigurationUtils {
      * @return The borrow cap
      */
     function getBorrowCapacity(
-      uint256 poolConfigration
+        uint256 poolConfigration
     ) internal pure returns (uint256) {
-      return (self.data & ~BORROW_CAP_MASK) >> BORROW_CAP_START_BIT_POSITION;
+        return (self.data & ~BORROW_CAP_MASK) >> BORROW_CAP_START_BIT_POSITION;
     }
 
     /**
@@ -204,13 +211,13 @@ library PoolConfigurationUtils {
      * @param supplyCapacity The supply cap
      */
     function setSupplyCapacity(
-      uint256 poolConfigration,
-      uint256 supplyCapacity
+        uint256 poolConfigration,
+        uint256 supplyCapacity
     ) internal pure {
-      require(supplyCapacity <= MAX_VALID_SUPPLY_CAP, Errors.INVALID_SUPPLY_CAP);
+        require(supplyCapacity <= MAX_VALID_SUPPLY_CAP, Errors.INVALID_SUPPLY_CAP);
 
-      poolConfigration = (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
-      return poolConfigration;
+        poolConfigration = (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
+        return poolConfigration;
     }
 
     /**
@@ -219,9 +226,9 @@ library PoolConfigurationUtils {
      * @return The supply cap
      */
     function getSupplyCapacity(
-      uint256 poolConfigration
+        uint256 poolConfigration
     ) internal pure returns (uint256) {
-      return (poolConfigration & ~SUPPLY_CAP_MASK) >> SUPPLY_CAP_START_BIT_POSITION;
+        return (poolConfigration & ~SUPPLY_CAP_MASK) >> SUPPLY_CAP_START_BIT_POSITION;
     }
 
 }

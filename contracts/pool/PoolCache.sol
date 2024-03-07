@@ -20,10 +20,10 @@ library PoolCache {
         uint256 nextBorrowIndex;
         uint256 currBorrowRate;
 
-        address poolTokenAddress;
-        address poolDebtTokenAddress;
+        address poolToken;
+        address debtToken;
 
-        uint256  lastUpdateTimestamp;
+        uint256 lastUpdateTimestamp;
         uint256 poolConfigration;
         uint256 poolFeeFactor;
     }
