@@ -113,7 +113,7 @@ library PoolUtils {
         }
     }
 
-    function updateIndexesAndIncrementFeeAmount(
+    function updateStateIntervalTwoTransactions(
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {
@@ -126,7 +126,7 @@ library PoolUtils {
         pool.setLastUpdateTimestamp(blockTimeStamp);
     }
 
-    function getPoolNormalizedIncome(
+    function getPoolNormalizedLiquidityIndex(
       DataStore dataStore,
       address poolKey,
     ) internal return (uint256) {
@@ -144,7 +144,7 @@ library PoolUtils {
         }
     }
 
-    function getPoolNormalizedDebt(
+    function getPoolNormalizedBorrowingIndex(
       DataStore dataStore,
       address poolKey,
     ) internal return (uint256) {

@@ -60,7 +60,7 @@ library WithdrawUtils {
           uint256 amount,
           uint256 userBalance
       ) internal pure {
-          require(amount != 0, Errors.INVALID_AMOUNT);
+          if (amount == 0) { revert Errors.EmptyWithdrawAmount() }
           require(amount <= userBalance, Errors.NOT_ENOUGH_AVAILABLE_USER_BALANCE);
 
           (bool isActive, , , bool isPaused) = poolCache.poolConfiguration.getFlags();

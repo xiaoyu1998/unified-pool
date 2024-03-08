@@ -38,21 +38,14 @@ library SupplyUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getPoolKey(params.poolToken));
         PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
+        pool.updateStateIntervalTwoTransactions(poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         address underlyingToken = poolToken.underlyingToken();
-
-        //multicall 
         uint256 supplyAmount = poolToken.recordTransferIn(underlyingToken);
-        if(supplyAmount > POOL_MINI_DEPOSIT_AMOUNT) {
-            revert Errors.DidNotReachMiniSupplyAmount(supplyAmount, POOL_MINI_DEPOSIT_AMOUNT);
-        }
-
-        pool.updateIndexesAndIncrementFeeAmount(poolpoolCache);
-
         ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
-        pool.updateInterestRates(poolCache, underlyingToken, supplyAmount, 0);
 
+        pool.updateInterestRates(poolCache, underlyingToken, supplyAmount, 0);
         PoolStoreUtils.set(params.dataStore, params.poolToken, PoolUtils.getPoolSalt(underlyingToken), pool);
 
         //IERC20(underlyingToken).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
@@ -67,7 +60,7 @@ library SupplyUtils {
         PoolCache.Props memory poolCache,
         uint256 amount
     ) internal view {
-        require(amount != 0, Errors.INVALID_AMOUNT);
+        if (amount == 0) { revert Errors.EmptySupplyAmount() }
 
         (
              bool isActive,
