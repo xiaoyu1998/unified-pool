@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.23;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {MintableToken} from './MintableToken.sol';
 
 /**
- * @title MintableIncentivizedERC20
+ * @title MintableERC20
  * @author Aave
- * @notice Implements mint and burn functions for IncentivizedERC20
+ * @notice Implements mint and burn functions for IndexERC20
  */
-abstract contract MintableERC20 is ERC20 {
+abstract contract MintableERC20 is IndexERC20 {
   /**
    * @dev Constructor.
    * @param pool The reference to the main Pool contract

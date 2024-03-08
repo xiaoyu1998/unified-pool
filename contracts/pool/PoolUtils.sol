@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 import "./Pool.sol";
 import "./PoolCache.sol";
@@ -77,11 +77,11 @@ library PoolUtils {
         ).scaledTotalSupply();
 
         poolCache.poolToken     = pool.poolToken;
-        poolCache.poolDebtToken = pool.poolDebtToken;
+        poolCache.DebtToken     = pool.DebtToken;
         poolCache.lastUpdateTimestamp  = pool.lastUpdateTimestamp;
 
         poolCache.poolConfiguration    = pool.configuration;
-        poolCache.feeFactor            = PoolConfigurationUtils.getReserveFactor(poolCache.poolConfigration);
+        //poolCache.feeFactor            = PoolConfigurationUtils.getReserveFactor(poolCache.poolConfigration);
 
         return poolCache;
     }	
@@ -91,23 +91,23 @@ library PoolUtils {
         PoolCache.Props memory poolCache
     ) internal {
         if (poolCache.currLiquidityRate != 0) {
-            uint256 cumulatedLiquidityInterest = MathUtils.calculateLinearInterest(
-              poolCache.currLiquidityRate,
-              poolCache.lastUpdateTimestamp
+            uint256 cumulatedLiquidityInterest = MathUtils.calculateInterest(
+                poolCache.currLiquidityRate,
+                poolCache.lastUpdateTimestamp
             );
             poolCache.nextLiquidityIndex = cumulatedLiquidityInterest.rayMul(
-              poolCache.currLiquidityIndex
+                poolCache.currLiquidityIndex
             );
             pool.setLiquidityIndex(poolCache.nextLiquidityIndex);
         }
 
         if (poolCache.currTotalScaledDebt != 0) {
-            uint256 cumulatedVariableBorrowInterest = MathUtils.calculateLinearInterest(
-              poolCache.currBorrowRate,
-              poolCache.lastUpdateTimestamp
+            uint256 cumulatedVariableBorrowInterest = MathUtils.calculateInterest(
+                poolCache.currBorrowRate,
+                poolCache.lastUpdateTimestamp
             );
             poolCache.nextBorrowIndex = cumulatedVariableBorrowInterest.rayMul(
-              poolCache.currBorrowIndex
+                poolCache.currBorrowIndex
             );
             pool.setBorrowIndex(poolCache.nextBorrowIndex;
         }
@@ -118,11 +118,11 @@ library PoolUtils {
       PoolCache.Props memory poolCache
     ) internal {
         uint256 blockTimeStamp = Chain.currentTimestamp();
-        if (reserve.lastUpdateTimestamp == blockTimeStamp) {
+        if (poolCache.lastUpdateTimestamp == blockTimeStamp) {
            return;
         }
         pool.updateIndexes(poolCache);
-        FeeUtils.incrementFeeAmount(pool, poolCache);
+        pool.incrementClaimableFeeAmount(poolCache);
         pool.setLastUpdateTimestamp(blockTimeStamp);
     }
 
@@ -130,17 +130,17 @@ library PoolUtils {
       DataStore dataStore,
       address poolKey,
     ) internal return (uint256) {
-
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey)
         validateEnabledPool(pool)
 
-        //solium-disable-next-line
         if (pool.lastUpdateTimestamp() == block.timestamp) {
-            //if the index was updated in the same block, no need to perform any calculation
             return pool.liquidityIndex();
         } else {
-            return MathUtils.calculateLinearInterest(pool.LiquidityRate(), pool.lastUpdateTimestamp())
-                            .rayMul(pool.liquidityIndex() );
+            uint256 periodicAnnualizedIncomeInterest = MathUtils.calculateInterest(
+                pool.LiquidityRate(), 
+                pool.lastUpdateTimestamp()
+            )
+            return periodicAnnualizedIncomeInterest.rayMul(pool.liquidityIndex());
         }
     }
 
@@ -148,17 +148,17 @@ library PoolUtils {
       DataStore dataStore,
       address poolKey,
     ) internal return (uint256) {
-
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey)
         validateEnabledPool(pool)
 
-        //solium-disable-next-line
         if (pool.lastUpdateTimestamp() == block.timestamp) {
-            //if the index was updated in the same block, no need to perform any calculation
             return pool.borrowIndex();
         } else {
-            return MathUtils.calculateLinearInterest(pool.borrowRate(), pool.lastUpdateTimestamp())
-                            .rayMul(pool.borrowIndex());
+            uint256 periodicAnnualizedBorrowInterest = MathUtils.calculateInterest(
+                pool.borrowRate(), 
+                pool.lastUpdateTimestamp()
+            )
+            return periodicAnnualizedBorrowInterest.rayMul(pool.borrowIndex());
         }
     }
 

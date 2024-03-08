@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 
 library PoolCache {
 
     struct Props {
-        uint256 currTotalReserve;
-        uint256 nextTotalReserve;
-        uint256 currTotalCollateral;
-        uint256 nextTotalCollateral;
+        // uint256 TotalReserve;
+        // uint256 TotalCollateral;
+
         uint256 currTotalScaledDebt;
         uint256 nextTotalScaledDebt;
 
@@ -25,7 +24,7 @@ library PoolCache {
 
         uint256 lastUpdateTimestamp;
         uint256 poolConfigration;
-        uint256 poolFeeFactor;
+        //uint256 poolFeeFactor;
     }
 
 }

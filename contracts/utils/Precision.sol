@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 // there is a known issue with prb-math v3.x releases
 // https://github.com/PaulRBerg/prb-math/issues/178

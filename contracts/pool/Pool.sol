@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 
 library Pool {
@@ -35,12 +35,12 @@ library Pool {
         uint256 borrowIndex;
         uint256 borrowRate;
         uint256 lastUpdateTimestamp;
-        uint256 unclaimPoolFee;
+        uint256 totalPoolFee;
         address underlyingToken;
         address interestRateStrategy;
         address poolToken;
         address debtToken;
-        //uint256 poolFeeFactor;
+        uint256 feeFactor;
     }
 
     function poolKeyId(Props memory props) internal pure returns (uint256) {
@@ -106,6 +106,10 @@ library Pool {
 
     function setUnclaimPoolFee(Props memory props, uint256 value) internal pure {
         props.unclaimPoolFee = value;
+    }
+
+    function incrementClaimableFeeAmount(Props memory props, uint256 value) internal pure returns (uint256) {
+        props.unclaimPoolFee += value;
     }
 
     function underlyingToken(Props memory props) internal pure returns (address) {

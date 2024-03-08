@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 // @title Keys
 // @dev Keys for values in the DataStore
@@ -30,8 +30,8 @@ library Keys {
     // @dev key for the claimable fee amount
     // @param market the market for the fee
     // @param token the token for the fee
-    function claimableFeeAmountKey(address market, address token) internal pure returns (bytes32) {
-        return keccak256(abi.encode(CLAIMABLE_FEE_AMOUNT, market, token));
+    function claimableFeeAmountKey(address pool, address token) internal pure returns (bytes32) {
+        return keccak256(abi.encode(CLAIMABLE_FEE_AMOUNT, pool, token));
     }
 
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 // @title ArbSys
 // @dev Globally available variables for Arbitrum may have both an L1 and an L2

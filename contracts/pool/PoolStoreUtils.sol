@@ -12,17 +12,17 @@ import "./Pool.sol";
 library PoolStoreUtils {
 	using Pool for Pool.Props;
 
-    bytes32 public constant POOL_KEY_ID = keccak256(abi.encode("POOL_KEY_ID"));
-    bytes32 public constant POOL_CONFIGRATION = keccak256(abi.encode("POOL_CONFIGRATION"));
-    bytes32 public constant POOL_LIQUIDITY_INDEX = keccak256(abi.encode("POOL_LIQUIDITY_INDEX"));
-    bytes32 public constant POOL_LIQUIDITY_RATE = keccak256(abi.encode("POOL_LIQUIDITY_RATE"));
-    bytes32 public constant POOL_BORROW_INDEX = keccak256(abi.encode("POOL_BORROW_INDEX"));
-    bytes32 public constant POOL_BORROW_RATE = keccak256(abi.encode("POOL_BORROW_RATE"));
+    bytes32 public constant POOL_KEY_ID                 = keccak256(abi.encode("POOL_KEY_ID"));
+    bytes32 public constant POOL_CONFIGRATION           = keccak256(abi.encode("POOL_CONFIGRATION"));
+    bytes32 public constant POOL_LIQUIDITY_INDEX        = keccak256(abi.encode("POOL_LIQUIDITY_INDEX"));
+    bytes32 public constant POOL_LIQUIDITY_RATE         = keccak256(abi.encode("POOL_LIQUIDITY_RATE"));
+    bytes32 public constant POOL_BORROW_INDEX           = keccak256(abi.encode("POOL_BORROW_INDEX"));
+    bytes32 public constant POOL_BORROW_RATE            = keccak256(abi.encode("POOL_BORROW_RATE"));
     bytes32 public constant POOL_LAST_UPDATE_TIME_STAMP = keccak256(abi.encode("POOL_LAST_UPDATE_TIME_STAMP"));
-    bytes32 public constant POOL_UNCLAIM_POOL_FEE = keccak256(abi.encode("POOL_UNCLAIM_POOL_FEE"));
-    bytes32 public constant POOL_UNDERLYING_TOKEN = keccak256(abi.encode("POOL_UNDERLYING_TOKEN"));
+    bytes32 public constant POOL_UNCLAIM_POOL_FEE       = keccak256(abi.encode("POOL_UNCLAIM_POOL_FEE"));
+    bytes32 public constant POOL_UNDERLYING_TOKEN       = keccak256(abi.encode("POOL_UNDERLYING_TOKEN"));
     bytes32 public constant POOL_INTEREST_RATE_STRATEGY = keccak256(abi.encode("POOL_INTEREST_RATE_STRATEGY"));
-    bytes32 public constant POOL_TOKEN = keccak256(abi.encode("POOL_TOKEN"));
+    bytes32 public constant POOL_TOKEN      = keccak256(abi.encode("POOL_TOKEN"));
     bytes32 public constant POOL_DEBT_TOKEN = keccak256(abi.encode("POOL_DEBT_TOKEN"));
 
 
@@ -42,7 +42,6 @@ library PoolStoreUtils {
         if (!dataStore.containsBytes32(Keys.POOL_LIST, key)) {
             return pool;
         }
-
 
         pool.setPoolKeyId(dataStore.getAddress(
             keccak256(abi.encode(key, POOL_KEY_ID))

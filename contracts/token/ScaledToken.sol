@@ -6,14 +6,14 @@ import {Errors} from '../../libraries/helpers/Errors.sol';
 import {WadRayMath} from '../../libraries/math/WadRayMath.sol';
 import {IPool} from '../../../interfaces/IPool.sol';
 import {IScaledBalanceToken} from '../../../interfaces/IScaledBalanceToken.sol';
-import {MintableToken} from './MintableToken.sol';
+import {MintableERC20} from './MintableERC20.sol';
 
 /**
  * @title ScaledToken
  * @author Aave
  * @notice Basic ERC20 implementation of scaled balance token
  */
-abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
+abstract contract ScaledToken is MintableERC20, IScaledToken {
   using WadRayMath for uint256;
   using SafeCast for uint256;
 
@@ -28,7 +28,7 @@ abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
     string memory name,
     string memory symbol,
     uint8 decimals
-  ) MintableToken(pool, name, symbol, decimals) {
+  ) MintableERC20(name, symbol, decimals) {
     // Intentionally left blank
   }
 
@@ -51,7 +51,7 @@ abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
 
   /// @inheritdoc IScaledBalanceToken
   function getPreviousIndex(address user) external view virtual override returns (uint256) {
-    return _userIndex[user];
+    return _userState[user].index;
   }
 
   /**
@@ -72,9 +72,9 @@ abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
 
     uint256 scaledBalance = super.balanceOf(receiver);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userState[receiver].additionalData);
+      scaledBalance.rayMul(_userState[receiver].index);
 
-    _userState[receiver].additionalData = index.toUint128();
+    _userState[receiver].index = index.toUint128();
 
     _mint(receiver, amountScaled.toUint128());
 
@@ -94,15 +94,20 @@ abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
    * @param amount The amount getting burned
    * @param index The variable debt index of the reserve
    */
-  function _burnScaled(address user, address target, uint256 amount, uint256 index) internal {
+  function _burnScaled(
+    address user, 
+    address target, 
+    uint256 amount, 
+    uint256 index
+  ) internal {
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
 
     uint256 scaledBalance = super.balanceOf(user);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userIndex[user]);
+      scaledBalance.rayMul(_userState[user].index);
 
-    _userIndex[user] = index.toUint128();
+    _userState[user].index = index.toUint128();
 
     _burn(user, amountScaled.toUint128());
 
@@ -125,17 +130,22 @@ abstract contract ScaledToken is MintableToken, IScaledBalanceToken {
    * @param amount The amount getting transferred
    * @param index The next liquidity index of the reserve
    */
-  function _transfer(address sender, address recipient, uint256 amount, uint256 index) internal {
+  function _transfer(
+    address sender, 
+    address recipient, 
+    uint256 amount, 
+    uint256 index
+  ) internal {
     uint256 senderScaledBalance = super.balanceOf(sender);
     uint256 senderBalanceIncrease = senderScaledBalance.rayMul(index) -
-      senderScaledBalance.rayMul(_userState[sender].additionalData);
+      senderScaledBalance.rayMul(_userState[sender].index);
 
     uint256 recipientScaledBalance = super.balanceOf(recipient);
     uint256 recipientBalanceIncrease = recipientScaledBalance.rayMul(index) -
-      recipientScaledBalance.rayMul(_userState[recipient].additionalData);
+      recipientScaledBalance.rayMul(_userState[recipient].index);
 
-    _userState[sender].additionalData = index.toUint128();
-    _userState[recipient].additionalData = index.toUint128();
+    _userState[sender].index = index.toUint128();
+    _userState[recipient].index = index.toUint128();
 
     super._transfer(sender, recipient, amount.rayDiv(index).toUint128());
 

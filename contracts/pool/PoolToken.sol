@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../bank/Bank.sol";
@@ -9,7 +9,7 @@ import "../bank/Bank.sol";
 // @dev The pool token for a pool, stores funds for the pool and keeps track
 // of the liquidity owners
 contract PoolToken is ScaledToken, Bank {
-	address internal _underlyingTokenAddress;
+	address internal _underlyingToken;
 	address internal _poolKey;
 
     mapping(address => uint256) private _Collaterals;
@@ -24,7 +24,7 @@ contract PoolToken is ScaledToken, Bank {
 		address underlyingTokenAddress
 	) external override onlyController {
 		_poolKey                = poolKey;		
-		_underlyingTokenAddress = underlyingAsset;
+		_underlyingToken = underlyingAsset;
 	}
 
 	/// @inheritdoc IERC20
@@ -41,19 +41,13 @@ contract PoolToken is ScaledToken, Bank {
 		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedIncome(dataStore, _poolKey));
 	}
 
-	function underlyingTokenAddress() public view returns (address) {
-		return _underlyingTokenAddress;
-	}
-
-	function totalUnderlyingTokenBalanceDeductCollateral() public view returns (uint256) {
-		return IERC20(_underlyingTokenAddress).balanceOf(address(this)) - totalCollateral();
-	}
-
-
     // @dev mint pool tokens to an account
     // @param account the account to mint to
     // @param amount the amount of tokens to mint
-    function mint(address receiver, uint256 amount, uint256 index
+    function mint(
+    	address receiver, 
+    	uint256 amount, 
+    	uint256 index
     ) external virtual override  onlyController returns (bool) {
       	return _mintScaled(pool, receiver, amount, index);
     }
@@ -61,7 +55,11 @@ contract PoolToken is ScaledToken, Bank {
     // @dev burn pool tokens from an account
     // @param account the account to burn tokens for
     // @param amount the amount of tokens to burn
-    function burn(address from, address receiverOfUnderlying, uint256 amount, uint256 index
+    function burn(
+    	address from, 
+    	address receiverOfUnderlying, 
+    	uint256 amount, 
+    	uint256 index
     ) external virtual override onlyController return (bool) {
 		_burnScaled(pool, from, receiverOfUnderlying, amount, index);
 		if (receiverOfUnderlying != address(this)) {
@@ -71,12 +69,37 @@ contract PoolToken is ScaledToken, Bank {
 		 	revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
 		 }
 
-		 IERC20(_underlyingTokenAddress).safeTransfer(receiverOfUnderlying, amount);
+		 IERC20(_underlyingToken).safeTransfer(receiverOfUnderlying, amount);
 		}       
     }
 
-	function _transfer(address from, address to, uint256 amount, bool validate) internal virtual {
-		address underlyingAsset = _underlyingTokenAddress;
+	/// @inheritdoc IPoolToken
+	function transferOnLiquidation(
+		address from,
+		address to,
+		uint256 value
+	) external virtual override onlyController {
+		// Being a normal transfer, the Transfer() and BalanceTransfer() are emitted
+		// so no need to emit a specific event here
+		_transfer(from, to, value, false);
+	}
+
+	function _transfer(
+		address from, 
+		address to, 
+		uint128 amount
+	) internal virtual override {
+		_transfer(from, to, amount, true);
+	}
+
+
+	function _transfer(
+		address from, 
+		address to, 
+		uint256 amount, 
+		bool validate
+	) internal virtual override{
+		address underlyingAsset = _underlyingToken;
 
 		//Pool.Props memory pool = PoolStoreUtils.get(dataStore, _poolKey)
 		// if(pool == null){
@@ -95,23 +118,29 @@ contract PoolToken is ScaledToken, Bank {
 		//emit BalanceTransfer(from, to, amount.rayDiv(index), index);
 	}
 
-	function _transfer(address from, address to, uint128 amount) internal virtual override {
-		_transfer(from, to, amount, true);
+	function underlyingToken() public view returns (address) {
+		return _underlyingToken;
 	}
 
-
-
-	function addCollateral(address user, uint256 amount) public onlyController {
+	function addCollateral(
+		address user, 
+		uint256 amount
+	) public onlyController {
         _Collaterals[user] = _Collaterals[user] + amount;
-        _totalCollateral = _totalCollateral + amount;
+        _totalCollateral   = _totalCollateral + amount;
 	}
 
-	function removeCollateral(address user, uint256 amount) public onlyController {
+	function removeCollateral(
+		address user, 
+		uint256 amount
+	) public onlyController {
         _Collaterals[user] = _Collaterals[user] - amount;
-        _totalCollateral = _totalCollateral - amount;
+        _totalCollateral   = _totalCollateral - amount;
 	}
 
-	function balanceOfCollateral(address user) public view  returns (uint256)   {
+	function balanceOfCollateral(
+		address user
+	) public view  returns (uint256)   {
 		return _Collaterals[user];
 	}
 
@@ -119,10 +148,8 @@ contract PoolToken is ScaledToken, Bank {
 		return _totalCollateral;
 	}
 
-
-	/// @inheritdoc IPoolToken
-	function UNDERLYING_TOKEN_ADDRESS() external view override returns (address) {
-		return _underlyingTokenAddress;
+	function totalUnderlyingTokenBalanceDeductTotalCollateral() public view returns (uint256) {
+		return IERC20(_underlyingToken).balanceOf(address(this)) - totalCollateral();
 	}
 
 

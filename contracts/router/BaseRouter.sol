@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -11,7 +11,7 @@ import "../utils/AccountUtils.sol";
 
 import "../data/DataStore.sol";
 //import "../event/EventEmitter.sol";
-//import "../token/TokenUtils.sol";
+import "../token/TokenUtils.sol";
 
 import "./Router.sol";
 
@@ -34,20 +34,20 @@ contract BaseRouter is ReentrancyGuard, PayableMulticall, RoleModule {
     }
 
     // // @dev Wraps the specified amount of native tokens into WNT then sends the WNT to the specified address
-    // function sendWnt(address receiver, uint256 amount) external payable nonReentrant {
-    //     AccountUtils.validateReceiver(receiver);
-    //     TokenUtils.depositAndSendWrappedNativeToken(dataStore, receiver, amount);
-    // }
+    function sendWnt(address receiver, uint256 amount) external payable nonReentrant {
+        AccountUtils.validateReceiver(receiver);
+        TokenUtils.depositAndSendWrappedNativeToken(dataStore, receiver, amount);
+    }
 
-    // // @dev Sends the given amount of tokens to the given address
-    // function sendTokens(address token, address receiver, uint256 amount) external payable nonReentrant {
-    //     AccountUtils.validateReceiver(receiver);
-    //     address account = msg.sender;
-    //     router.pluginTransfer(token, account, receiver, amount);
-    // }
+    // @dev Sends the given amount of tokens to the given address
+    function sendTokens(address token, address receiver, uint256 amount) external payable nonReentrant {
+        AccountUtils.validateReceiver(receiver);
+        address account = msg.sender;
+        router.pluginTransfer(token, account, receiver, amount);
+    }
 
-    // function sendNativeToken(address receiver, uint256 amount) external payable nonReentrant {
-    //     AccountUtils.validateReceiver(receiver);
-    //     TokenUtils.sendNativeToken(dataStore, receiver, amount);
-    // }
+    function sendNativeToken(address receiver, uint256 amount) external payable nonReentrant {
+        AccountUtils.validateReceiver(receiver);
+        TokenUtils.sendNativeToken(dataStore, receiver, amount);
+    }
 }
