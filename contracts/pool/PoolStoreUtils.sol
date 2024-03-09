@@ -26,13 +26,13 @@ library PoolStoreUtils {
     bytes32 public constant POOL_DEBT_TOKEN = keccak256(abi.encode("POOL_DEBT_TOKEN"));
 
 
-    function setPoolKeyAsId(DataStore dataStore, Address key)  public view returns (uint256) {
+    function setKeyAsId(DataStore dataStore, Address key)  public view returns (uint256) {
         uint256 id = dataStore.incrementInt(POOL_KEY_ID, 1);
         dataStore.setBytes32(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;
     }
 
-    function getPoolKeyFromId(DataStore dataStore, uint256 id)  public view returns (Address) {
+    function getKeyFromId(DataStore dataStore, uint256 id)  public view returns (Address) {
         return dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
     }
 
@@ -87,31 +87,23 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_TOKEN))
         ));
 
-        pool.setDebtTokeny(dataStore.getAddress(
+        pool.setDebtToken(dataStore.getAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         ));
 
         return pool;
     }
 
-    function getBySalt(DataStore dataStore, bytes32 salt) external view returns (Pool.Props memory) {
-        address key = dataStore.getBytes32(getPoolSaltHash(salt));
-        return get(dataStore, key);
+    function getPoolById(DataStore dataStore, uint256 id)  public view returns (Address) {
+        address key = dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
+        return get(dataStore, key)
     }
 
 
-    //function set(DataStore dataStore, address key, bytes32 salt, Pool.Props memory pool) external {
-    function set(DataStore dataStore, Address key, bytes32 salt, Pool.Props memory pool) external {
+    //function set(DataStore dataStore, address key, Pool.Props memory pool) external {
+    function set(DataStore dataStore, Address key,  Pool.Props memory pool) external {
         dataStore.addAddress(
             Keys.POOL_LIST,
-            key
-        );
-
-        // the salt is based on the pool props while the key gives the pool's address
-        // use the salt to store a reference to the key to allow the key to be retrieved
-        // using just the salt value
-        dataStore.setBytes32(
-            getPoolSaltHash(salt),
             key
         );
 
@@ -157,7 +149,7 @@ library PoolStoreUtils {
 
         dataStore.setAddress(
             keccak256(abi.encode(key, POOL_UNDERLYING_TOKEN)),
-            pool.underlyingToken()
+            pool.underlyingAsset()
         );
 
         dataStore.setAddress(
@@ -235,9 +227,9 @@ library PoolStoreUtils {
         );
     }
 
-    function getPoolSaltHash(bytes32 salt) internal pure returns (bytes32) {
-        return keccak256(abi.encode(POOL_SALT, salt));
-    }
+    // function getPoolSaltHash(bytes32 salt) internal pure returns (bytes32) {
+    //     return keccak256(abi.encode(POOL_SALT, salt));
+    // }
 
     function getPoolCount(DataStore dataStore) internal view returns (uint256) {
         return dataStore.getAddressCount(Keys.POOL_LIST);

@@ -116,7 +116,7 @@ library BorrowUtils {
 
         if (vars.userCollateralInUsd == 0) { revert Errors.Collateral_Balance_Is_Zero;}
 
-        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(pool.underlyingToken())
+        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(pool.underlyingAsset())
                                    * amountToBorrow;
 
         vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToBorrowInUsd);

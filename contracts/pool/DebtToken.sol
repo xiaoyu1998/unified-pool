@@ -7,24 +7,24 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 // @title DebtToken
 // @dev The Debt token for a pool,  keeps track of the debt owners
 contract DebToken is ScaledToken {
-	address internal _underlyingToken;
+	address internal _underlyingAsset;
 	// address internal _poolKey;
 
     constructor(
     	RoleStore _roleStore, 
     	DataStore _dataStore, 
-    	address underlyingToken
+    	address underlyingAsset
     ) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN")  {
-    	_underlyingToken = underlyingToken;
+    	_underlyingAsset = underlyingAsset;
     }
 
 	// /// @inheritdoc IInitializableDebtToken
 	// function initialize(
 	// 	address poolKey,
-	// 	address underlyingTokenAddress
+	// 	address underlyingAssetAddress
 	// ) external override onlyController {
 	// 	_poolKey                = poolKey;		
-	// 	_underlyingTokenAddress = underlyingTokenAddress;
+	// 	_underlyingAssetAddress = underlyingAssetAddress;
 	// }
 
 	/// @inheritdoc IERC20
@@ -34,14 +34,14 @@ contract DebToken is ScaledToken {
 
 		uint256 currentSupplyScaled = super.balanceOf(user);
 	    if (currentSupplyScaled == 0) { return 0; }
-	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingToken));
+	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20
 	function totalSupply() public view virtual overridereturns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
-		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingToken));
+		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingAsset));
 	}
 
 
@@ -89,7 +89,7 @@ contract DebToken is ScaledToken {
 
 	/// @inheritdoc IDebtToken
 	function UNDERLYING_TOKEN_ADDRESS() external view override returns (address) {
-		return _underlyingTokenAddress;
+		return _underlyingAssetAddress;
 	}
 
 

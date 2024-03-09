@@ -15,18 +15,14 @@ library SupplyUtils {
     using PoolCache for PoolCache.Props;
 
     struct SupplyParams {
-        address poolToken;
-        //address asset;
-        //uint256 amount;
+        address underlyingAsset;
         address receiver;
     }
 
     struct ExecuteSupplyParams {
         DataStore dataStore;
         // EventEmitter eventEmitter;
-        address poolToken;
-       // address asset;
-        //uint256 amount;
+        address underlyingAsset;
         address receiver;
 
     }
@@ -38,27 +34,26 @@ library SupplyUtils {
         address account, 
         ExecuteSupplyParams calldata params
     ) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getPoolKey(params.poolToken));
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
         pool.updateStateIntervalTwoTransactions(poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        address underlyingToken = poolToken.underlyingToken();
-        uint256 supplyAmount = poolToken.recordTransferIn(underlyingToken);
+        uint256 supplyAmount = poolToken.recordTransferIn(poolToken.underlyingAsset());
 
         ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
 
-        pool.updateInterestRates(poolCache, underlyingToken, supplyAmount, 0);
+        pool.updateInterestRates(poolCache, params.underlyingAsset, supplyAmount, 0);
         PoolStoreUtils.set(
             params.dataStore, 
-            params.poolToken, 
-            PoolUtils.getPoolSalt(underlyingToken), 
+            params.underlyingAsset, 
+            PoolUtils.getPoolSalt(underlyingAsset), 
             pool
         );
 
-        //IERC20(underlyingToken).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
-        IPoolToken(poolCache.poolToken).mint(
+        //IERC20(underlyingAsset).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
+        poolToken.mint(
             params.receiver, 
             supplyAmount, 
             poolCache.nextLiquidityIndex

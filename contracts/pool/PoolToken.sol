@@ -9,7 +9,7 @@ import "../bank/Bank.sol";
 // @dev The pool token for a pool, stores funds for the pool and keeps track
 // of the liquidity owners
 contract PoolToken is ScaledToken, Bank {
-	address internal _underlyingToken;
+	address internal _underlyingAsset;
 	// address internal _poolKey;
 
     mapping(address => uint256) private _Collaterals;
@@ -18,32 +18,32 @@ contract PoolToken is ScaledToken, Bank {
     constructor(
     	RoleStore _roleStore, 
     	DataStore _dataStore,
-    	address underlyingToken
+    	address underlyingAsset
     ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN") Bank(_roleStore, _dataStore) {
-    	_underlyingToken = underlyingToken;
+    	_underlyingAsset = underlyingAsset;
     }
 
 	// /// @inheritdoc IInitializableDebtToken
 	// function initialize(
 	// 	address poolKey,
-	// 	address underlyingToken
+	// 	address underlyingAsset
 	// ) external override onlyController {
 	// 	_poolKey         = poolKey;		
-	// 	_underlyingToken = underlyingAsset;
+	// 	_underlyingAsset = underlyingAsset;
 	// }
 
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address user
 	) public view virtual override(IncentivizedERC20, IERC20) returns (uint256) {
-	    return super.balanceOf(user).rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingToken));
+	    return super.balanceOf(user).rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20
 	function totalSupply() public view virtual override(IERC20) returns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
-		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingToken));
+		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
 	}
 
     // @dev mint pool tokens to an account
@@ -74,7 +74,7 @@ contract PoolToken is ScaledToken, Bank {
 		 	revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
 		 }
 
-		 IERC20(_underlyingToken).safeTransfer(receiverOfUnderlying, amount);
+		 IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
 		}       
     }
 
@@ -104,7 +104,7 @@ contract PoolToken is ScaledToken, Bank {
 		uint256 amount, 
 		bool validate
 	) internal virtual override{
-		address underlyingAsset = _underlyingToken;
+		address underlyingAsset = _underlyingAsset;
 
 		//Pool.Props memory pool = PoolStoreUtils.get(dataStore, _poolKey)
 		// if(pool == null){
@@ -123,8 +123,8 @@ contract PoolToken is ScaledToken, Bank {
 		//emit BalanceTransfer(from, to, amount.rayDiv(index), index);
 	}
 
-	function underlyingToken() public view returns (address) {
-		return _underlyingToken;
+	function underlyingAsset() public view returns (address) {
+		return _underlyingAsset;
 	}
 
 	function addCollateral(
@@ -154,7 +154,7 @@ contract PoolToken is ScaledToken, Bank {
 	}
 
 	function totalUnderlyingTokenBalanceDeductTotalCollateral() public view returns (uint256) {
-		return IERC20(_underlyingToken).balanceOf(address(this)) - totalCollateral();
+		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
 	}
 
 

@@ -27,9 +27,7 @@ contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
 
         SupplyUtils.ExecuteSupplyParams memory params = SupplyUtils.ExecuteSupplyParams{
            dataStore,
-           supplyParams.poolTokenAddress;        
-           // supplyParams.asset,
-           //supplyParams.amount,
+           supplyParams.underlyingAsset,      
            supplyParams.receiver
         };
 

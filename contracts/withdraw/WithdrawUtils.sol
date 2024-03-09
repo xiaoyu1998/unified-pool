@@ -33,7 +33,7 @@ library WithdrawUtils {
         PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
-        address underlyingTokenAddress = poolToken.underlyingTokenAddress();
+        address underlyingAssetAddress = poolToken.underlyingAssetAddress();
         
         uint256 userBalance = poolToken.scaledBalanceOf(account).rayMul(poolCache.nextLiquidityIndex);
         uint256 amountToWithdraw = params.amount;
@@ -42,8 +42,8 @@ library WithdrawUtils {
         }
 
         ExecuteWithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance)
-        PoolUtils.updateInterestRates(pool, poolCache, underlyingTokenAddress, 0, amountToWithdraw);
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingTokenAddress));
+        PoolUtils.updateInterestRates(pool, poolCache, underlyingAssetAddress, 0, amountToWithdraw);
+        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingAssetAddress));
 
         poolToken.burn(params.receiver, amountToWithdraw, poolCache.nextLiquidityIndex)
     }

@@ -36,8 +36,8 @@ library DepositUtils {
             positon.setAccount(account);
         }
 
-        address underlyingToken = poolToken.underlyingToken();
-        uint256 amount = poolToken.recordTransferIn(underlyingToken);
+        address underlyingAsset = poolToken.underlyingAsset();
+        uint256 amount = poolToken.recordTransferIn(underlyingAsset);
         if(amount <= 0)} {revert Errors}
         poolToken.addCollateral(account, amount);
 

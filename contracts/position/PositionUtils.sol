@@ -47,7 +47,7 @@ library PositionUtils {
             bytes32 poolKey = PoolStoreUtils.getPoolKeyFromId(dataStore, vars.i);
             Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
 
-            vars.assetPrice = IPriceOracleGetter(oracle).getPrice(pool.underlyingToken());
+            vars.assetPrice = IPriceOracleGetter(oracle).getPrice(pool.underlyingAsset());
 
             if (position.isUsingAsCollateral(var.i)){
                  vars.userTotalCollateralInUsd +=

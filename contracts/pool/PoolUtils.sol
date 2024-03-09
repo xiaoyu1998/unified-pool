@@ -24,7 +24,7 @@ library PoolUtils {
         uint256 liquidityOut;
         uint256 totalDebt;
         uint256 feeFactor;
-        address underlyingToken;
+        address underlyingAsset;
         address poolToken;
     }
 
@@ -127,9 +127,9 @@ library PoolUtils {
 
     function getPoolNormalizedLiquidityIndex(
       DataStore dataStore,
-      address poolKey,
+      address key,
     ) internal return (uint256) {
-        Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey)
+        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key)
         validateEnabledPool(pool)
 
         if (pool.lastUpdateTimestamp() == block.timestamp) {
@@ -145,9 +145,9 @@ library PoolUtils {
 
     function getPoolNormalizedBorrowingIndex(
       DataStore dataStore,
-      address poolKey,
+      address key,
     ) internal return (uint256) {
-        Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey)
+        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key)
         validateEnabledPool(pool)
 
         if (pool.lastUpdateTimestamp() == block.timestamp) {
@@ -162,18 +162,18 @@ library PoolUtils {
     }
 
     function getPoolSalt(
-        address underlineTokenAddress
-    ) internal view returns (bytes32) {
-        bytes32 poolSalt = keccak256(abi.encode("UF_POOL", underlineTokenAddress)); 
-        return  poolSalt;      
-    }
+    //     address poolKey
+    // ) internal view returns (bytes32) {
+    //     bytes32 poolSalt = keccak256(abi.encode("UF_POOL", poolKey)); 
+    //     return  poolSalt;      
+    // }
 
-    function getPoolKey(
-        address underlyingToken
+    function getKey(
+        address underlyingAsset
     ) internal pure returns (bytes32) {
-        // bytes32 key = keccak256(abi.encode(underlyingToken));
+        // bytes32 key = keccak256(abi.encode(underlyingAsset));
         // return key;
-        return underlyingToken;
+        return underlyingAsset;
     }
 
     function validateEnabledPool(

@@ -28,7 +28,7 @@ library Pool {
   //   uint256 data;
   // }
     struct Props {
-        uint256 poolKeyId;
+        uint256 keyId;
         uint256 configration;
         uint256 liquidityIndex;
         uint256 liquidityRate;
@@ -36,19 +36,19 @@ library Pool {
         uint256 borrowRate;
         uint256 lastUpdateTimestamp;
         uint256 totalPoolFee;
-        address underlyingToken;
+        address underlyingAsset;
         address interestRateStrategy;
         address poolToken;
         address debtToken;
         uint256 feeFactor;
     }
 
-    function poolKeyId(Props memory props) internal pure returns (uint256) {
-        return props.poolKeyId;
+    function keyId(Props memory props) internal pure returns (uint256) {
+        return props.keyId;
     }
 
-    function setPoolKeyId(Props memory props, uint256 value) internal pure {
-        props.poolKeyId = value;
+    function setKeyId(Props memory props, uint256 value) internal pure {
+        props.keyId = value;
     }
 
     function configration(Props memory props) internal pure returns (uint256) {
@@ -112,12 +112,12 @@ library Pool {
         props.unclaimPoolFee += value;
     }
 
-    function underlyingToken(Props memory props) internal pure returns (address) {
-        return props.underlyingToken;
+    function underlyingAsset(Props memory props) internal pure returns (address) {
+        return props.underlyingAsset;
     }
 
     function setUnderlyingToken(Props memory props, address value) internal pure {
-        props.underlyingToken = value;
+        props.underlyingAsset = value;
     }
 
     function interestRateStrategy(Props memory props) internal pure returns (address) {

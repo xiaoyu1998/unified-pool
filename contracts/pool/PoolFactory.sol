@@ -13,7 +13,6 @@ import "./chain/chain.sol";
 contract PoolFactory is RoleModule {
     using Pool for Pool.Props;
 
-
     DataStore public immutable dataStore;
     //IPoolInterestRateStrate public immutable poolInterestRateStrate
     // EventEmitter public immutable eventEmitter;
@@ -29,33 +28,32 @@ contract PoolFactory is RoleModule {
 
     // @dev creates a pool
     function createPool(
-        address underlineToken,
+        address underlyingAsset,
         address interestRateStrategy,
         uint256 configration,
     ) external onlyPoolKeeper returns (Pool.Props memory) {
-        bytes32 poolKey = PoolUtils.getPoolKey(address(poolToken));
-        bytes32 salt = PoolUtils.getPoolSalt(poolKey);
+        bytes32 key = PoolUtils.getPoolKey(underlyingAsset);
 
-        address existingPool = PoolStoreUtils.getBySalt(dataStore, PoolStoreUtils.getPoolSaltHash(salt));
+        address existingPool = PoolStoreUtils.get(dataStore, key);
         if (existingPool != address(0)) {
-            revert Errors.PoolAlreadyExists(salt, existingPool);
+            revert Errors.PoolAlreadyExists(underlyingAsset, existingPool);
         }
 
-        PoolToken poolToken = new PoolToken(roleStore, dataStore, underlineToken);
-        DebtToken debtToken = new DebtToken(roleStore, dataStore, underlineToken);
+        PoolToken poolToken = new PoolToken(roleStore, dataStore, underlyingAsset);
+        DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setPoolKeyAsId(poolKey)
+            PoolStoreUtils.setPoolKeyAsId(key)
         	configration,
         	1,0,1,0,
             currentTimestamp(),
-            poolKey,
+            key,
             interestRateStrategy,
             address(poolToken),
             address(debtToken),
         );
 
-        PoolStoreUtils.set(dataStore, poolKey, salt, pool);
+        PoolStoreUtils.set(dataStore, key, pool);
         //emitPoolCreated(address(poolToken), salt, indexToken, longToken, shortToken);
 
         return pool;
