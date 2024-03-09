@@ -34,7 +34,10 @@ library SupplyUtils {
     // @dev executes a supply
     // @param account the supplying account
     // @param params ExecuteSupplyParams
-    function executeSupply(address account, ExecuteSupplyParams calldata params) external {
+    function executeSupply(
+        address account, 
+        ExecuteSupplyParams calldata params
+    ) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getPoolKey(params.poolToken));
         PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
@@ -43,13 +46,23 @@ library SupplyUtils {
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         address underlyingToken = poolToken.underlyingToken();
         uint256 supplyAmount = poolToken.recordTransferIn(underlyingToken);
+
         ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
 
         pool.updateInterestRates(poolCache, underlyingToken, supplyAmount, 0);
-        PoolStoreUtils.set(params.dataStore, params.poolToken, PoolUtils.getPoolSalt(underlyingToken), pool);
+        PoolStoreUtils.set(
+            params.dataStore, 
+            params.poolToken, 
+            PoolUtils.getPoolSalt(underlyingToken), 
+            pool
+        );
 
         //IERC20(underlyingToken).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
-        IPoolToken(poolCache.poolToken).mint(params.receiver, supplyAmount, poolCache.nextLiquidityIndex)
+        IPoolToken(poolCache.poolToken).mint(
+            params.receiver, 
+            supplyAmount, 
+            poolCache.nextLiquidityIndex
+        )
     }
 
     
@@ -63,9 +76,9 @@ library SupplyUtils {
         if (amount == 0) { revert Errors.EmptySupplyAmount() }
 
         (
-             bool isActive,
-             bool isFrozen, 
-             bool isPaused,
+            bool isActive,
+            bool isFrozen, 
+            bool isPaused,
              , 
          ) = PoolConfigurationUtils.getFlags(poolCache.poolConfiguration);
         // require(isActive, Errors.RESERVE_INACTIVE);
@@ -75,11 +88,12 @@ library SupplyUtils {
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
         uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.poolConfiguration);
         require(
-          supplyCapacity == 0 ||
-            ((IPoolTaken(poolCache.poolToken).scaledTotalSupply() +
-              unClaimedFee.rayMul(poolCache.nextLiquidityIndex) + amount) <=
-            supplyCapacity * (10 ** poolCache.poolConfiguration.getDecimals()),
-          Errors.SUPPLY_CAPACITY_EXCEEDED
+            supplyCapacity == 0 || ((
+                IPoolTaken(poolCache.poolToken).scaledTotalSupply() 
+                + poolCache.unClaimedFee.rayMul(poolCache.nextLiquidityIndex) 
+                + amount)  <= supplyCapacity 
+                * (10 ** poolCache.poolConfiguration.getDecimals()),
+            Errors.SUPPLY_CAPACITY_EXCEEDED
         );
     }    
     

@@ -19,13 +19,12 @@ library PoolUtils {
         uint256 totalDebt;
     }
 
-
     struct CalculateInterestRatesParams {
         uint256 liquidityIn;
         uint256 liquidityOut;
         uint256 totalDebt;
         uint256 feeFactor;
-        address underlineToken;
+        address underlyingToken;
         address poolToken;
     }
 
@@ -52,7 +51,7 @@ library PoolUtils {
                 totalDebt: vars.totalDebt,
                 feeFactor: poolCache.feeFactor,
                 underlineToken: underlineToken,
-                poolToken: reserveCache.poolToken
+                poolToken: poolCache.poolToken
             })
         );
 
@@ -113,7 +112,7 @@ library PoolUtils {
         }
     }
 
-    function updateStateIntervalTwoTransactions(
+    function updateStateIntervalTransactions(
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {
@@ -162,17 +161,24 @@ library PoolUtils {
         }
     }
 
-    function getPoolSalt(address underlineTokenAddress) internal view returns (bytes32) {
+    function getPoolSalt(
+        address underlineTokenAddress
+    ) internal view returns (bytes32) {
         bytes32 poolSalt = keccak256(abi.encode("UF_POOL", underlineTokenAddress)); 
         return  poolSalt;      
     }
 
-    function getPoolKey(address poolToken) internal pure returns (bytes32) {
-        bytes32 key = keccak256(abi.encode(poolToken));
-        return key;
+    function getPoolKey(
+        address underlyingToken
+    ) internal pure returns (bytes32) {
+        // bytes32 key = keccak256(abi.encode(underlyingToken));
+        // return key;
+        return underlyingToken;
     }
 
-    function validateEnabledPool(Pool.Props memory pool) internal view {
+    function validateEnabledPool(
+        Pool.Props memory pool
+    ) internal view {
         if (pool.poolTokenAddress() == address(0)) {
             revert Errors.EmptyPool();
         }

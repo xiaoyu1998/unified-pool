@@ -2,11 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import "../exchange/IDepositHandler.sol";
+import "../exchange/ISupplyHandler.sol";
 import "../exchange/IWithdrawalHandler.sol";
-import "../exchange/IBorrowHandler.sol";
-
-import "../deposit/IWithdrawalHandler.sol";
+import "../exchange/IDepositHandler.sol";
 import "../exchange/IBorrowHandler.sol";
 
 import "./BaseRouter.sol";
@@ -35,9 +33,10 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     // using Repay for Repay.Props;
     // using Liquidation for Liquidation.Props;
     // using Swap for Swap.Props;
-
-    IDepositHandler public immutable depositHandler;
+    ISupplyHandler public immutable supplyHandler;
     IWithdrawalHandler public immutable withdrawalHandler;
+    IDepositHandler public immutable depositHandler;
+    // IRedeemHandler public immutable redeemHandler;
     IBorrowHandler public immutable borrowHandler;
     // IRepayHandler public immutable repayHandler;
     // ILiquidationHandler public immutable liquidationHandler;
@@ -56,27 +55,29 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         // ILiquidationHandler _liquidationHandler,
         // ISwapHandler _swapHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
-        depositHandler     = _depositHandler;
+        supplyHandler      = _supplyHandler;
         withdrawalHandler  = _withdrawalHandler;
+        depositHandler     = _depositHandler;
         borrowHandler      = _borrowHandler;
         // repayHandler       = _repayHandler;
+        // redeemHandler      = _redeemHandler;
         // liquidationHandler = _liquidationHandler;
         // swapHandler        = _swapHandler;
     }
 
     /**
-     * @dev The deposit is executed by transferring the specified amounts of tokens from the caller's 
-     * account to the pool, and then calling the executeDeposit()` function on the deposit 
+     * @dev The Supply is executed by transferring the specified amounts of tokens from the caller's 
+     * account to the pool, and then calling the executeSupply()` function on the Supply 
      * handler contract.
      *
-     * @param params The deposit parameters, as specified in the `DepositUtils.ExecuteDepositParams` struct
+     * @param params The Supply parameters, as specified in the `SupplyUtils.ExecuteSupplyParams` struct
      */
-    function executeDeposit(
-        DepositUtils.DepositParams calldata params
+    function executeSupply(
+        SupplyUtils.SupplyParams calldata params
     ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
-        return depositHandler.executeDeposit(
+        return supplyHandler.executeSupply(
             account,
             params
         );
@@ -96,6 +97,25 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         address account = msg.sender;
 
         return withdrawalHandler.executeWithdrawal(
+            account,
+            params
+        );
+    }
+
+
+    /**
+     * @dev The deposit is executed by transferring the specified amounts of tokens from the caller's 
+     * account to the pool, and then calling the executeDeposit()` function on the deposit 
+     * handler contract.
+     *
+     * @param params The deposit parameters, as specified in the `DepositUtils.ExecuteDepositParams` struct
+     */
+    function executeDeposit(
+        DepositUtils.DepositParams calldata params
+    ) external override payable nonReentrant returns (bytes32) {
+        address account = msg.sender;
+
+        return depositHandler.executeDeposit(
             account,
             params
         );

@@ -12,6 +12,14 @@ library Errors {
     error PoolNotFound(address key);
 
 
+    // RoleModule errors
+    error Unauthorized(address msgSender, string role);
+
+    // RoleStore errors
+    error ThereMustBeAtLeastOneRoleAdmin();
+    error ThereMustBeAtLeastOneTimelockMultiSig();
+
+
     // AdlHandler errors
     error AdlNotRequired(int256 pnlToPoolFactor, uint256 maxPnlFactorForAdl);
     error InvalidAdl(int256 nextPnlToPoolFactor, int256 pnlToPoolFactor);
@@ -260,13 +268,6 @@ library Errors {
 
     // SwapPricingUtils errors
     error UsdDeltaExceedsPoolValue(int256 usdDelta, uint256 poolUsd);
-
-    // RoleModule errors
-    error Unauthorized(address msgSender, string role);
-
-    // RoleStore errors
-    error ThereMustBeAtLeastOneRoleAdmin();
-    error ThereMustBeAtLeastOneTimelockMultiSig();
 
     // ExchangeRouter errors
     error InvalidClaimFundingFeesInput(uint256 marketsLength, uint256 tokensLength);

@@ -7,20 +7,25 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 // @title DebtToken
 // @dev The Debt token for a pool,  keeps track of the debt owners
 contract DebToken is ScaledToken {
-	address internal _underlyingTokenAddress;
-	address internal _poolKey;
+	address internal _underlyingToken;
+	// address internal _poolKey;
 
-    constructor(RoleStore _roleStore, DataStore _dataStore) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN")  {
+    constructor(
+    	RoleStore _roleStore, 
+    	DataStore _dataStore, 
+    	address underlyingToken
+    ) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN")  {
+    	_underlyingToken = underlyingToken;
     }
 
-	/// @inheritdoc IInitializableDebtToken
-	function initialize(
-		address poolKey,
-		address underlyingTokenAddress
-	) external override onlyController {
-		_poolKey                = poolKey;		
-		_underlyingTokenAddress = underlyingTokenAddress;
-	}
+	// /// @inheritdoc IInitializableDebtToken
+	// function initialize(
+	// 	address poolKey,
+	// 	address underlyingTokenAddress
+	// ) external override onlyController {
+	// 	_poolKey                = poolKey;		
+	// 	_underlyingTokenAddress = underlyingTokenAddress;
+	// }
 
 	/// @inheritdoc IERC20
 	function balanceOf(
@@ -29,14 +34,14 @@ contract DebToken is ScaledToken {
 
 		uint256 currentSupplyScaled = super.balanceOf(user);
 	    if (currentSupplyScaled == 0) { return 0; }
-	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedDebt(dataStore, _poolKey));
+	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingToken));
 	}
 
 	/// @inheritdoc IERC20
 	function totalSupply() public view virtual overridereturns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
-		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedDebt(dataStore, _poolKey));
+		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingToken));
 	}
 
 

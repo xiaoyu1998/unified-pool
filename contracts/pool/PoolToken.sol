@@ -10,35 +10,40 @@ import "../bank/Bank.sol";
 // of the liquidity owners
 contract PoolToken is ScaledToken, Bank {
 	address internal _underlyingToken;
-	address internal _poolKey;
+	// address internal _poolKey;
 
     mapping(address => uint256) private _Collaterals;
 	uint256 private _totalCollateral;
 
-    constructor(RoleStore _roleStore, DataStore _dataStore) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN") Bank(_roleStore, _dataStore) {
+    constructor(
+    	RoleStore _roleStore, 
+    	DataStore _dataStore,
+    	address underlyingToken
+    ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN") Bank(_roleStore, _dataStore) {
+    	_underlyingToken = underlyingToken;
     }
 
-	/// @inheritdoc IInitializableDebtToken
-	function initialize(
-		address poolKey,
-		address underlyingTokenAddress
-	) external override onlyController {
-		_poolKey                = poolKey;		
-		_underlyingToken = underlyingAsset;
-	}
+	// /// @inheritdoc IInitializableDebtToken
+	// function initialize(
+	// 	address poolKey,
+	// 	address underlyingToken
+	// ) external override onlyController {
+	// 	_poolKey         = poolKey;		
+	// 	_underlyingToken = underlyingAsset;
+	// }
 
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address user
 	) public view virtual override(IncentivizedERC20, IERC20) returns (uint256) {
-	    return super.balanceOf(user).rayMul(PoolUtils.getPoolNormalizedIncome(dataStore, _poolKey));
+	    return super.balanceOf(user).rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingToken));
 	}
 
 	/// @inheritdoc IERC20
 	function totalSupply() public view virtual override(IERC20) returns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
-		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedIncome(dataStore, _poolKey));
+		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingToken));
 	}
 
     // @dev mint pool tokens to an account
@@ -105,7 +110,7 @@ contract PoolToken is ScaledToken, Bank {
 		// if(pool == null){
 		// 	revert erros.PoolNotFound(_poolKey);
 		// }
-		uint256 index = PoolUtils.getPoolNormalizedIncome(dataStore, _poolKey);
+		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _poolKey);
 
 		uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
 		uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);

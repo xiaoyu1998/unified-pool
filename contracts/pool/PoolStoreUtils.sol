@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
 import "../data/DataStore.sol";
@@ -26,20 +26,20 @@ library PoolStoreUtils {
     bytes32 public constant POOL_DEBT_TOKEN = keccak256(abi.encode("POOL_DEBT_TOKEN"));
 
 
-    function setPoolKeyAsId(DataStore dataStore, bytes32 key)  public view returns (uint256) {
+    function setPoolKeyAsId(DataStore dataStore, Address key)  public view returns (uint256) {
         uint256 id = dataStore.incrementInt(POOL_KEY_ID, 1);
         dataStore.setBytes32(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;
     }
 
-    function getPoolKeyFromId(DataStore dataStore, uint256 id)  public view returns (bytes32) {
+    function getPoolKeyFromId(DataStore dataStore, uint256 id)  public view returns (Address) {
         return dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
     }
 
 
-    function get(DataStore dataStore, bytes32 key) public view returns (Pool.Props memory) {
+    function get(DataStore dataStore, Address key) public view returns (Pool.Props memory) {
         Pool.Props memory pool;
-        if (!dataStore.containsBytes32(Keys.POOL_LIST, key)) {
+        if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             return pool;
         }
 
@@ -101,8 +101,8 @@ library PoolStoreUtils {
 
 
     //function set(DataStore dataStore, address key, bytes32 salt, Pool.Props memory pool) external {
-    function set(DataStore dataStore, bytes32 key, bytes32 salt, Pool.Props memory pool) external {
-        dataStore.addBytes32(
+    function set(DataStore dataStore, Address key, bytes32 salt, Pool.Props memory pool) external {
+        dataStore.addAddress(
             Keys.POOL_LIST,
             key
         );
@@ -176,12 +176,12 @@ library PoolStoreUtils {
         );
     }
 
-    function remove(DataStore dataStore, bytes32 key) external {
-        if (!dataStore.containsBytes32(Keys.POOL_LIST, key)) {
+    function remove(DataStore dataStore, address key) external {
+        if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             revert Errors.PoolNotFound(key);
         }
 
-        dataStore.removeBytes32(
+        dataStore.removeAddress(
             Keys.POOL_LIST,
             key
         );
@@ -243,7 +243,7 @@ library PoolStoreUtils {
         return dataStore.getAddressCount(Keys.POOL_LIST);
     }
 
-    function getPoolKeys(DataStore dataStore, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
+    function getPoolKeys(DataStore dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
         return dataStore.getAddressValuesAt(Keys.POOL_LIST, start, end);
     }
 

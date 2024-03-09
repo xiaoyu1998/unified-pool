@@ -9,13 +9,13 @@ pragma solidity ^0.8.20;
 library BorrowUtils {
 
     struct BorrowParams {
-        address poolTokenAddress;
+        address poolToken;
         uint256 amount;
     }
 
     struct ExecuteBorrowParams {
         DataStore dataStore;
-        address poolTokenAddress;
+        address poolToken;
         uint256 amount;
     }
 
@@ -23,7 +23,6 @@ library BorrowUtils {
     // @param account the withdrawing account
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
-
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
         PositionUtils.validateEnabledPosition(position);
 
@@ -31,8 +30,8 @@ library BorrowUtils {
         PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
 
-        pool.updateIndexesAndIncrementFeeAmount(poolCache);
-        validateBorrow( account, params.dataStore, position, poolCache, amount)
+        pool.updateStateIntervalTransactions(poolCache);
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount)
 
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
         poolToken.addCollateral(account, params.amount);//this will change Rate
@@ -41,12 +40,11 @@ library BorrowUtils {
         position.setPoolAsBorrowing(pool.poolKeyId(), true)
         PositionStoreUtils.set(params.dataStore, account, position);
 
-        poolCache.nextScaledDebt = IDebtToken(poolCache.debtTokenAddress)
-        .mint(account, params.amount, poolCache.nextBorrowIndex);
+        poolCache.nextScaledDebt = 
+            IDebtToken(poolCache.debtTokenAddress).mint(account, params.amount, poolCache.nextBorrowIndex);
         
         pool.updateInterestRates(poolCache, params.asset, 0, amount);
         PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(params.asset), pool);
-
     }
 
 
