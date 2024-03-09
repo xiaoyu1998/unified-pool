@@ -6,18 +6,14 @@ import "./Pool.sol";
 import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
 
+import "./chain/Chain.sol";
+
 
 // @title PoolUtils
 // @dev Library for Pool functions
 library PoolUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
-
-    struct UpdateInterestRatesLocalVars {
-        uint256 nextLiquidityRate;
-        uint256 nextBorrowRate;
-        uint256 totalDebt;
-    }
 
     struct CalculateInterestRatesParams {
         uint256 liquidityIn;
@@ -28,35 +24,40 @@ library PoolUtils {
         address poolToken;
     }
 
+    struct UpdateInterestRatesLocalVars {
+        uint256 nextLiquidityRate;
+        uint256 nextBorrowRate;
+        uint256 totalDebt;
+    }
+    
     function updateInterestRates(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
-        address underlineToken,
+        address underlyingAsset,
         uint256 liquidityIn,
         uint256 liquidityOut
     ) internal {
         UpdateInterestRatesLocalVars memory vars;
 
         vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
-           poolCache.nextBorrowIndex
+            poolCache.nextBorrowIndex
         );
 
-        (
-            vars.nextLiquidityRate,
+        (   vars.nextLiquidityRate,
             vars.nextBorrowRate
-        ) = IPoolInterestRateStrategy(pool.interestRateStrategyAddress).calculateInterestRates(
+        ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
             CalculateInterestRatesParams({
-                liquidityIn: liquidityIn,
-                liquidityOut: liquidityOut,
-                totalDebt: vars.totalDebt,
-                feeFactor: poolCache.feeFactor,
-                underlineToken: underlineToken,
-                poolToken: poolCache.poolToken
+                liquidityIn,
+                liquidityOut,
+                vars.totalDebt,
+                poolCache.feeFactor,
+                underlyingAsset,
+                poolCache.poolToken
             })
         );
 
-        pool.LiquidityRate = vars.nextLiquidityRate.toUint128();
-        pool.borrowRate = vars.nextBorrowRate.toUint128();
+        pool.LiquidityRate = vars.nextLiquidityRate;
+        pool.borrowRate    = vars.nextBorrowRate;
 
     }
 
@@ -66,21 +67,21 @@ library PoolUtils {
     ) internal view returns (PoolCache.Props memory) {
         PoolCache.Props memory poolCache;
 
-        poolCache.currLiquidityIndex = poolCache.nextLiquidityIndex = pool.liquidityIndex;
-        poolCache.currLiquidityRate  = pool.LiquidityRate;
-        poolCache.currBorrowIndex    = poolCache.nextBorrowIndex    = pool.borrowIndex;
-        poolCache.currBorrowRate     = pool.borrowRate;
+        poolCache.currLiquidityIndex = poolCache.nextLiquidityIndex = pool.liquidityIndex();
+        poolCache.currLiquidityRate  = pool.liquidityRate();
+        poolCache.currBorrowIndex    = poolCache.nextBorrowIndex    = pool.borrowIndex();
+        poolCache.currBorrowRate     = pool.borrowRate();
 
         poolCache.currTotalScaledDebt = poolCache.nextTotalScaledDebt = IDebtToken(
-            poolCache.poolDebtTokenAddress
+            poolCache.debtToken()
         ).scaledTotalSupply();
 
-        poolCache.poolToken     = pool.poolToken;
-        poolCache.DebtToken     = pool.DebtToken;
-        poolCache.lastUpdateTimestamp  = pool.lastUpdateTimestamp;
+        poolCache.poolToken     = pool.poolToken();
+        poolCache.DebtToken     = pool.DebtToken();
 
-        poolCache.poolConfiguration    = pool.configuration;
-        //poolCache.feeFactor            = PoolConfigurationUtils.getReserveFactor(poolCache.poolConfigration);
+        poolCache.poolConfiguration   = pool.configuration;
+        poolCache.feeFactor           = PoolConfigurationUtils.getReserveFactor(poolCache.poolConfigration);
+        poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp();
 
         return poolCache;
     }	
@@ -101,24 +102,24 @@ library PoolUtils {
         }
 
         if (poolCache.currTotalScaledDebt != 0) {
-            uint256 cumulatedVariableBorrowInterest = MathUtils.calculateInterest(
+            uint256 cumulatedBorrowInterest = MathUtils.calculateInterest(
                 poolCache.currBorrowRate,
                 poolCache.lastUpdateTimestamp
             );
-            poolCache.nextBorrowIndex = cumulatedVariableBorrowInterest.rayMul(
+            poolCache.nextBorrowIndex = cumulatedBorrowInterest.rayMul(
                 poolCache.currBorrowIndex
             );
-            pool.setBorrowIndex(poolCache.nextBorrowIndex;
+            pool.setBorrowIndex(poolCache.nextBorrowIndex);
         }
     }
 
-    function updateStateIntervalTransactions(
+    function updateStateByIntervalBetweenTransactions(
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {
         uint256 blockTimeStamp = Chain.currentTimestamp();
         if (poolCache.lastUpdateTimestamp == blockTimeStamp) {
-           return;
+            return;
         }
         pool.updateIndexes(poolCache);
         pool.incrementClaimableFeeAmount(poolCache);
@@ -161,7 +162,7 @@ library PoolUtils {
         }
     }
 
-    function getPoolSalt(
+    //function getPoolSalt(
     //     address poolKey
     // ) internal view returns (bytes32) {
     //     bytes32 poolSalt = keccak256(abi.encode("UF_POOL", poolKey)); 

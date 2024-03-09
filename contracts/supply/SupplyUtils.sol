@@ -36,8 +36,8 @@ library SupplyUtils {
     ) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool);
-        Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
-        pool.updateStateIntervalTwoTransactions(poolCache);
+        Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
+        pool.updateStateByIntervalBetweenTransactions(poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(poolToken.underlyingAsset());
@@ -48,7 +48,6 @@ library SupplyUtils {
         PoolStoreUtils.set(
             params.dataStore, 
             params.underlyingAsset, 
-            PoolUtils.getPoolSalt(underlyingAsset), 
             pool
         );
 

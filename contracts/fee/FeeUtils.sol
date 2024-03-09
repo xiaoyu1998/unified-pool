@@ -33,7 +33,7 @@ library FeeUtils {
     //     uint256 amountToMint;
     // }
 
-    function incrementClaimableFeeAmount(
+    function incrementTotalFeeAmount(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
     ) external {
@@ -45,7 +45,7 @@ library FeeUtils {
         uint256 currTotalDebt      = poolCache.currScaledDebt.rayMul(poolCache.nextBorrowIndex);
         uint256 IncreaseTotalDebt  = currTotalDebt - prevTotalDebt;
         uint256 feeAmount          = IncreaseTotalDebt.percentMul(poolCache.feeFactor);
-        pool.incrementClaimableFeeAmount(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
+        pool.incrementTatalFeeAmount(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
 
     }
 

@@ -8,10 +8,6 @@ library PoolCache {
     struct Props {
         // uint256 TotalReserve;
         // uint256 TotalCollateral;
-
-        uint256 currTotalScaledDebt;
-        uint256 nextTotalScaledDebt;
-
         uint256 currLiquidityIndex;
         uint256 nextLiquidityIndex;
         uint256 currLiquidityRate;
@@ -19,12 +15,15 @@ library PoolCache {
         uint256 nextBorrowIndex;
         uint256 currBorrowRate;
 
+        uint256 currTotalScaledDebt;
+        uint256 nextTotalScaledDebt;
+
         address poolToken;
         address debtToken;
 
+        uint256 configration;
+        uint256 feeFactor;
         uint256 lastUpdateTimestamp;
-        uint256 poolConfigration;
-        //uint256 poolFeeFactor;
     }
 
 }
