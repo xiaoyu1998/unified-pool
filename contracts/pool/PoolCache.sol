@@ -23,6 +23,7 @@ library PoolCache {
 
         uint256 configration;
         uint256 feeFactor;
+        uint256 totalPoolFee;
         uint256 lastUpdateTimestamp;
     }
 

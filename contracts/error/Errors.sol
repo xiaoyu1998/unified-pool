@@ -11,6 +11,10 @@ library Errors {
     // PoolStoreUtils errors
     error PoolNotFound(address key);
 
+    // SupplyUtils errors
+    error EmptySupplyAmounts();
+
+
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

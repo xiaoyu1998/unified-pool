@@ -23,12 +23,6 @@ library PoolUtils {
         address underlyingAsset;
         address poolToken;
     }
-
-    struct UpdateInterestRatesLocalVars {
-        uint256 nextLiquidityRate;
-        uint256 nextBorrowRate;
-        uint256 totalDebt;
-    }
     
     function updateInterestRates(
         Pool.Props memory pool,
@@ -37,30 +31,26 @@ library PoolUtils {
         uint256 liquidityIn,
         uint256 liquidityOut
     ) internal {
-        UpdateInterestRatesLocalVars memory vars;
-
-        vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
+        totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
 
-        (   vars.nextLiquidityRate,
-            vars.nextBorrowRate
+        (   nextLiquidityRate,
+            nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
             CalculateInterestRatesParams({
                 liquidityIn,
                 liquidityOut,
-                vars.totalDebt,
+                totalDebt,
                 poolCache.feeFactor,
                 underlyingAsset,
                 poolCache.poolToken
             })
         );
 
-        pool.LiquidityRate = vars.nextLiquidityRate;
-        pool.borrowRate    = vars.nextBorrowRate;
-
+        pool.LiquidityRate = nextLiquidityRate;
+        pool.borrowRate    = nextBorrowRate;
     }
-
 
     function cache(
       Pool.Props memory pool
@@ -79,8 +69,9 @@ library PoolUtils {
         poolCache.poolToken     = pool.poolToken();
         poolCache.DebtToken     = pool.DebtToken();
 
-        poolCache.poolConfiguration   = pool.configuration;
-        poolCache.feeFactor           = PoolConfigurationUtils.getReserveFactor(poolCache.poolConfigration);
+        poolCache.poolConfiguration   = pool.configuration();
+        poolCache.feeFactor           = PoolConfigurationUtils.getReserveFactor(poolCache.configration);
+        poolCache.totalPoolFee        = pool.totalPoolFee();
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp();
 
         return poolCache;
@@ -161,13 +152,6 @@ library PoolUtils {
             return periodicAnnualizedBorrowInterest.rayMul(pool.borrowIndex());
         }
     }
-
-    //function getPoolSalt(
-    //     address poolKey
-    // ) internal view returns (bytes32) {
-    //     bytes32 poolSalt = keccak256(abi.encode("UF_POOL", poolKey)); 
-    //     return  poolSalt;      
-    // }
 
     function getKey(
         address underlyingAsset

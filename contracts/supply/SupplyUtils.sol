@@ -44,7 +44,13 @@ library SupplyUtils {
 
         ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
 
-        pool.updateInterestRates(poolCache, params.underlyingAsset, supplyAmount, 0);
+        pool.updateInterestRates(
+            poolCache, 
+            params.underlyingAsset, 
+            supplyAmount, 
+            0
+        );
+
         PoolStoreUtils.set(
             params.dataStore, 
             params.underlyingAsset, 
@@ -67,26 +73,26 @@ library SupplyUtils {
         PoolCache.Props memory poolCache,
         uint256 amount
     ) internal view {
-        if (amount == 0) { revert Errors.EmptySupplyAmount() }
+        if (amount == 0) { revert Errors.EmptySupplyAmounts() }
 
         (
             bool isActive,
             bool isFrozen, 
             bool isPaused,
              , 
-         ) = PoolConfigurationUtils.getFlags(poolCache.poolConfiguration);
+         ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
         // require(isActive, Errors.RESERVE_INACTIVE);
         // require(!isPaused, Errors.RESERVE_PAUSED);
         // require(!isFrozen, Errors.RESERVE_FROZEN);
 
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
-        uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.poolConfiguration);
+        uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration);
         require(
             supplyCapacity == 0 || ((
                 IPoolTaken(poolCache.poolToken).scaledTotalSupply() 
-                + poolCache.unClaimedFee.rayMul(poolCache.nextLiquidityIndex) 
+                + poolCache.totalPoolFee.rayMul(poolCache.nextLiquidityIndex) 
                 + amount)  <= supplyCapacity 
-                * (10 ** poolCache.poolConfiguration.getDecimals()),
+                * (10 ** poolCache.configuration.getDecimals()),
             Errors.SUPPLY_CAPACITY_EXCEEDED
         );
     }    

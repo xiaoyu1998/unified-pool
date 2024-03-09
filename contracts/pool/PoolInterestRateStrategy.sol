@@ -29,12 +29,12 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     }
 
      /// @inheritdoc IDefaultInterestRateStrategy
-    function getRateSlope1() external view returns (uint256) {
+    function getRateSlope1() public view returns (uint256) {
         return _rateSlope1;
     }
 
     /// @inheritdoc IDefaultInterestRateStrategy
-    function getRateSlope2() external view returns (uint256) {
+    function getRateSlope2() public view returns (uint256) {
         return _rateSlope2;
     }   
 
