@@ -127,11 +127,11 @@ library PoolUtils {
         if (pool.lastUpdateTimestamp() == block.timestamp) {
             return pool.liquidityIndex();
         } else {
-            uint256 periodicAnnualizedIncomeInterest = MathUtils.calculateInterest(
+            uint256 periodicIncomeInterest = MathUtils.calculateInterest(
                 pool.LiquidityRate(), 
                 pool.lastUpdateTimestamp()
             )
-            return periodicAnnualizedIncomeInterest.rayMul(pool.liquidityIndex());
+            return periodicIncomeInterest.rayMul(pool.liquidityIndex());
         }
     }
 
@@ -145,17 +145,17 @@ library PoolUtils {
         if (pool.lastUpdateTimestamp() == block.timestamp) {
             return pool.borrowIndex();
         } else {
-            uint256 periodicAnnualizedBorrowInterest = MathUtils.calculateInterest(
+            uint256 periodicBorrowInterest = MathUtils.calculateInterest(
                 pool.borrowRate(), 
                 pool.lastUpdateTimestamp()
             )
-            return periodicAnnualizedBorrowInterest.rayMul(pool.borrowIndex());
+            return periodicBorrowInterest.rayMul(pool.borrowIndex());
         }
     }
 
     function getKey(
         address underlyingAsset
-    ) internal pure returns (bytes32) {
+    ) internal pure returns (address) {
         // bytes32 key = keccak256(abi.encode(underlyingAsset));
         // return key;
         return underlyingAsset;

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.20;
 import {MintableToken} from './MintableToken.sol';
 
 /**
@@ -19,7 +19,7 @@ abstract contract MintableERC20 is IndexERC20 {
     string memory name,
     string memory symbol,
     uint8 decimals
-  ) ERC20(name, symbol, decimals) {
+  ) IndexERC20(name, symbol, decimals) {
     // Intentionally left blank
   }
 
@@ -28,13 +28,13 @@ abstract contract MintableERC20 is IndexERC20 {
    * @param account The address receiving tokens
    * @param amount The amount of tokens to mint
    */
-  function _mint(address account, uint128 amount) internal virtual {
-    uint256 oldTotalSupply = _totalSupply;
-    _totalSupply = oldTotalSupply + amount;
-
-    uint128 oldAccountBalance = _userState[account].balance;
-    _userState[account].balance = oldAccountBalance + amount;
-
+  function _mint(address account, uint256 amount) internal virtual {
+      require(account != address(0), "MintableERC20: mint to the zero address");
+      _totalSupply += amount;
+      unchecked {
+          // Overflow not possible: balance + amount is at most totalSupply + amount, which is checked above.
+          _balances[account] += amount;
+      }
   }
 
   /**
@@ -42,11 +42,15 @@ abstract contract MintableERC20 is IndexERC20 {
    * @param account The account whose tokens are burnt
    * @param amount The amount of tokens to burn
    */
-  function _burn(address account, uint128 amount) internal virtual {
-    uint256 oldTotalSupply = _totalSupply;
-    _totalSupply = oldTotalSupply - amount;
+  function _burn(address account, uint256 amount) internal virtual {
+      require(account != address(0), "MintableERC20: burn from the zero address");
 
-    uint128 oldAccountBalance = _userState[account].balance;
-    _userState[account].balance = oldAccountBalance - amount;
+      uint256 accountBalance = _balances[account];
+      require(accountBalance >= amount, "MintableERC20: burn amount exceeds balance");
+      unchecked {
+          _balances[account] = accountBalance - amount;
+          // Overflow not possible: amount <= accountBalance <= totalSupply.
+          _totalSupply -= amount;
+      }
   }
 }

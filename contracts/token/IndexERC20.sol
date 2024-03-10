@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /**
@@ -9,20 +9,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  */
 abstract contract IndexRC20 is IERC20Detailed {
 
-    struct UserState {
-      uint128 balance;
-      uint128 index;
-    }
     // Map of users address and their state data (userAddress => userStateData)
-    mapping(address => UserState) internal _userState;
+    mapping(address => uint256) internal _balance;
+    mapping(address => uint256) internal _index;
 
     // Map of allowances (delegator => delegatee => allowanceAmount)
     mapping(address => mapping(address => uint256)) private _allowances;
 
-    uint256 internal _totalSupply;
     string private _name;
     string private _symbol;
     uint8 private _decimals;
+    uint256 internal _totalSupply;
 
     /**
      * @dev Constructor.
@@ -58,13 +55,13 @@ abstract contract IndexRC20 is IERC20Detailed {
 
     /// @inheritdoc IERC20
     function balanceOf(address account) public view virtual override returns (uint256) {
-        return _userState[account].balance;
+        return __balance[account];
     }
 
     /// @inheritdoc IERC20
-    function transfer(address recipient, uint256 amount) external virtual override returns (bool) {
-        uint128 castAmount = amount.toUint128();
-        _transfer(_msgSender(), recipient, castAmount);
+    function transfer(address to, uint256 amount) external virtual override returns (bool) {
+        //uint128 castAmount = amount.toUint128();
+        _transfer(_msgSender(), to, amount);
         return true;
     }
 
@@ -84,13 +81,13 @@ abstract contract IndexRC20 is IERC20Detailed {
 
     /// @inheritdoc IERC20
     function transferFrom(
-        address sender,
-        address recipient,
+        address from,
+        address to,
         uint256 amount
     ) external virtual override returns (bool) {
-        uint128 castAmount = amount.toUint128();
-        _approve(sender, _msgSender(), _allowances[sender][_msgSender()] - castAmount);
-        _transfer(sender, recipient, castAmount);
+        //uint128 castAmount = amount.toUint128();
+        _approve(from, _msgSender(), _allowances[from][_msgSender()] - amount);
+        _transfer(from, to, amount);
         return true;
     }
 
@@ -121,15 +118,24 @@ abstract contract IndexRC20 is IERC20Detailed {
 
     /**
      * @notice Transfers tokens between two users and apply incentives if defined.
-     * @param sender The source address
-     * @param recipient The destination address
+     * @param from The source address
+     * @param to The destination address
      * @param amount The amount getting transferred
      */
-    function _transfer(address sender, address recipient, uint128 amount) internal virtual {
-        uint128 oldSenderBalance = _userState[sender].balance;
-        _userState[sender].balance = oldSenderBalance - amount;
-        uint128 oldRecipientBalance = _userState[recipient].balance;
-        _userState[recipient].balance = oldRecipientBalance + amount;
+    function _transfer(address from, address to, uint256 amount) internal virtual {
+        require(from != address(0), "IndexERC20: transfer from the zero address");
+        require(to != address(0), "IndexERC20: transfer to the zero address");
+
+        uint256 fromBalance = _balances[from];
+        require(fromBalance >= amount, "IndexERC20: transfer amount exceeds balance");
+        unchecked {
+            _balances[from] = fromBalance - amount;
+            // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
+            // decrementing then incrementing.
+            _balances[to] += amount;
+        }
+
+        //emit Transfer(from, to, amount);
     }
 
     /**
@@ -143,29 +149,29 @@ abstract contract IndexRC20 is IERC20Detailed {
         emit Approval(owner, spender, amount);
     }
 
-    /**
-     * @notice Update the name of the token
-     * @param newName The new name for the token
-     */
-    function _setName(string memory newName) internal {
-       _name = newName;
-    }
+    // /**
+    //  * @notice Update the name of the token
+    //  * @param newName The new name for the token
+    //  */
+    // function _setName(string memory newName) internal {
+    //    _name = newName;
+    // }
 
-    /**
-     * @notice Update the symbol for the token
-     * @param newSymbol The new symbol for the token
-     */
-    function _setSymbol(string memory newSymbol) internal {
-        _symbol = newSymbol;
-    }
+    // /**
+    //  * @notice Update the symbol for the token
+    //  * @param newSymbol The new symbol for the token
+    //  */
+    // function _setSymbol(string memory newSymbol) internal {
+    //     _symbol = newSymbol;
+    // }
 
-    /**
-     * @notice Update the number of decimals for the token
-     * @param newDecimals The new number of decimals for the token
-     */
-    function _setDecimals(uint8 newDecimals) internal {
-        _decimals = newDecimals;
-    }
+    // /**
+    //  * @notice Update the number of decimals for the token
+    //  * @param newDecimals The new number of decimals for the token
+    //  */
+    // function _setDecimals(uint8 newDecimals) internal {
+    //     _decimals = newDecimals;
+    // }
 
 
 }

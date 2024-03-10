@@ -33,15 +33,15 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
   }
 
   /// @inheritdoc IScaledBalanceToken
-  function scaledBalanceOf(address user) external view override returns (uint256) {
-    return super.balanceOf(user);
+  function scaledBalanceOf(address account) external view override returns (uint256) {
+    return super.balanceOf(account);
   }
 
   /// @inheritdoc IScaledBalanceToken
   function getScaledUserBalanceAndSupply(
-    address user
+    address account
   ) external view override returns (uint256, uint256) {
-    return (super.balanceOf(user), super.totalSupply());
+    return (super.balanceOf(account), super.totalSupply());
   }
 
   /// @inheritdoc IScaledBalanceToken
@@ -50,37 +50,37 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
   }
 
   /// @inheritdoc IScaledBalanceToken
-  function getPreviousIndex(address user) external view virtual override returns (uint256) {
-    return _userState[user].index;
+  function getPreviousIndex(address account) external view virtual override returns (uint256) {
+    return _index[account];
   }
 
   /**
    * @notice Implements the basic logic to mint a scaled balance token.
    * @param caller The address performing the mint
-   * @param receiver The address of the user that will receive the scaled tokens
+   * @param to The address of the user that will receive the scaled tokens
    * @param amount The amount of tokens getting minted
    * @param index The next liquidity index of the reserve
    * @return `true` if the the previous balance of the user was 0
    */
   function _mintScaled(
-    address receiver,
+    address to,
     uint256 amount,
     uint256 index
   ) internal returns (bool) {
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.INVALID_MINT_AMOUNT);
 
-    uint256 scaledBalance = super.balanceOf(receiver);
+    uint256 scaledBalance = super.balanceOf(to);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userState[receiver].index);
+      scaledBalance.rayMul(_index[to]);
 
-    _userState[receiver].index = index.toUint128();
+    _index[to] = index;
 
-    _mint(receiver, amountScaled.toUint128());
+    _mint(to, amountScaled);
 
     uint256 amountToMint = amount + balanceIncrease;
-    emit Transfer(address(0), receiver, amountToMint);
-    emit Mint(caller, receiver, amountToMint, balanceIncrease, index);
+    emit Transfer(address(0), to, amountToMint);
+    emit Mint(caller, to, amountToMint, balanceIncrease, index);
 
     return (scaledBalance == 0);
   }
@@ -90,35 +90,35 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
    * @dev In some instances, a burn transaction will emit a mint event
    * if the amount to burn is less than the interest that the user accrued
    * @param user The user which debt is burnt
-   * @param target The address that will receive the underlying, if any
+   * @param receiver The address that will receive the underlying, if any
    * @param amount The amount getting burned
    * @param index The variable debt index of the reserve
    */
   function _burnScaled(
-    address user, 
-    address target, 
+    address account, 
+    address receiver, 
     uint256 amount, 
     uint256 index
   ) internal {
     uint256 amountScaled = amount.rayDiv(index);
     require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
 
-    uint256 scaledBalance = super.balanceOf(user);
+    uint256 scaledBalance = super.balanceOf(account);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
-      scaledBalance.rayMul(_userState[user].index);
+        scaledBalance.rayMul(_index[account]);
 
-    _userState[user].index = index.toUint128();
+    _index[account] = index;
 
-    _burn(user, amountScaled.toUint128());
+    _burn(account, amountScaled);
 
     if (balanceIncrease > amount) {
-      uint256 amountToMint = balanceIncrease - amount;
-      emit Transfer(address(0), user, amountToMint);
-      emit Mint(user, user, amountToMint, balanceIncrease, index);
+        uint256 amountToMint = balanceIncrease - amount;
+        emit Transfer(address(0), account, amountToMint);
+        emit Mint(account, account, amountToMint, balanceIncrease, index);
     } else {
-      uint256 amountToBurn = amount - balanceIncrease;
-      emit Transfer(user, address(0), amountToBurn);
-      emit Burn(user, target, amountToBurn, balanceIncrease, index);
+        uint256 amountToBurn = amount - balanceIncrease;
+        emit Transfer(account, address(0), amountToBurn);
+        emit Burn(account, receiver, amountToBurn, balanceIncrease, index);
     }
   }
 
@@ -131,34 +131,33 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
    * @param index The next liquidity index of the reserve
    */
   function _transfer(
-    address sender, 
-    address recipient, 
+    address from, 
+    address to, 
     uint256 amount, 
     uint256 index
   ) internal {
-    uint256 senderScaledBalance = super.balanceOf(sender);
-    uint256 senderBalanceIncrease = senderScaledBalance.rayMul(index) -
-      senderScaledBalance.rayMul(_userState[sender].index);
+    uint256 fromScaledBalance = super.balanceOf(from);
+    uint256 fromBalanceIncrease = fromScaledBalance.rayMul(index) -
+        fromScaledBalance.rayMul(_index[from]);
 
-    uint256 recipientScaledBalance = super.balanceOf(recipient);
-    uint256 recipientBalanceIncrease = recipientScaledBalance.rayMul(index) -
-      recipientScaledBalance.rayMul(_userState[recipient].index);
+    uint256 toScaledBalance = super.balanceOf(to);
+    uint256 toBalanceIncrease = toScaledBalance.rayMul(index) -
+        toScaledBalance.rayMul(_index[to]);
 
-    _userState[sender].index = index.toUint128();
-    _userState[recipient].index = index.toUint128();
+    _index[from] = index;
+    _index[to] = index;
 
-    super._transfer(sender, recipient, amount.rayDiv(index).toUint128());
+    super._transfer(from, to, amount.rayDiv(index));
 
-    if (senderBalanceIncrease > 0) {
-      emit Transfer(address(0), sender, senderBalanceIncrease);
-      emit Mint(_msgSender(), sender, senderBalanceIncrease, senderBalanceIncrease, index);
+    if (fromBalanceIncrease > 0) {
+        emit Transfer(address(0), from, fromBalanceIncrease);
+        emit Mint(_msgSender(), from, fromBalanceIncrease, fromBalanceIncrease, index);
+    }
+    if (from != to && toBalanceIncrease > 0) {
+        emit Transfer(address(0), to, toBalanceIncrease);
+        emit Mint(_msgSender(), to, toBalanceIncrease, toBalanceIncrease, index);
     }
 
-    if (sender != recipient && recipientBalanceIncrease > 0) {
-      emit Transfer(address(0), recipient, recipientBalanceIncrease);
-      emit Mint(_msgSender(), recipient, recipientBalanceIncrease, recipientBalanceIncrease, index);
-    }
-
-    emit Transfer(sender, recipient, amount);
+    emit Transfer(from, to, amount);
   }
 }

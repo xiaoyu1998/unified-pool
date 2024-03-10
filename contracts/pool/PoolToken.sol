@@ -23,27 +23,20 @@ contract PoolToken is ScaledToken, Bank {
     	_underlyingAsset = underlyingAsset;
     }
 
-	// /// @inheritdoc IInitializableDebtToken
-	// function initialize(
-	// 	address poolKey,
-	// 	address underlyingAsset
-	// ) external override onlyController {
-	// 	_poolKey         = poolKey;		
-	// 	_underlyingAsset = underlyingAsset;
-	// }
-
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address user
-	) public view virtual override(IncentivizedERC20, IERC20) returns (uint256) {
-	    return super.balanceOf(user).rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
+	) public view virtual override(IndexRC20) returns (uint256) {
+	    return super.balanceOf(user)
+	    	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20
-	function totalSupply() public view virtual override(IERC20) returns (uint256) {
+	function totalSupply() public view virtual override(IndexRC20) returns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
-		return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
+		return currentSupplyScaled
+			.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
 	}
 
     // @dev mint pool tokens to an account
@@ -68,13 +61,13 @@ contract PoolToken is ScaledToken, Bank {
     ) external virtual override onlyController return (bool) {
 		_burnScaled(pool, from, receiverOfUnderlying, amount, index);
 		if (receiverOfUnderlying != address(this)) {
+	         //TODO move to validation module
+	         uint256 availableBalance = totalUnderlyingAssetBalanceDeductTotalCollateral()
+			 if (amount > availableBalance){
+			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
+			 }
 
-         //TODO move to validation module
-		 if(amount > totalUnderlyingTokenBalanceDeductCollateral()){
-		 	revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
-		 }
-
-		 IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
+			 IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
 		}       
     }
 
@@ -82,11 +75,11 @@ contract PoolToken is ScaledToken, Bank {
 	function transferOnLiquidation(
 		address from,
 		address to,
-		uint256 value
+		uint256 amount
 	) external virtual override onlyController {
 		// Being a normal transfer, the Transfer() and BalanceTransfer() are emitted
 		// so no need to emit a specific event here
-		_transfer(from, to, value, false);
+		_transfer(from, to, amount, false);
 	}
 
 	function _transfer(
@@ -112,15 +105,15 @@ contract PoolToken is ScaledToken, Bank {
 		// }
 		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _poolKey);
 
-		uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
-		uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
+		// uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
+		// uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
 
 		super._transfer(from, to, amount, index);
 
 		// if (validate) {
 		//   POOL.finalizeTransfer(underlyingAsset, from, to, amount, fromBalanceBefore, toBalanceBefore);
 		// }
-		//emit BalanceTransfer(from, to, amount.rayDiv(index), index);
+		emit BalanceTransfer(from, to, amount.rayDiv(index), index);
 	}
 
 	function underlyingAsset() public view returns (address) {
@@ -153,7 +146,7 @@ contract PoolToken is ScaledToken, Bank {
 		return _totalCollateral;
 	}
 
-	function totalUnderlyingTokenBalanceDeductTotalCollateral() public view returns (uint256) {
+	function totalUnderlyingAssetBalanceDeductTotalCollateral() public view returns (uint256) {
 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
 	}
 
