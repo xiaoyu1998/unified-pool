@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../token/ScaledToken.sol";
 
 // @title DebtToken
 // @dev The Debt token for a pool,  keeps track of the debt owners
@@ -17,15 +17,6 @@ contract DebToken is ScaledToken {
     ) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN")  {
     	_underlyingAsset = underlyingAsset;
     }
-
-	// /// @inheritdoc IInitializableDebtToken
-	// function initialize(
-	// 	address poolKey,
-	// 	address underlyingAssetAddress
-	// ) external override onlyController {
-	// 	_poolKey                = poolKey;		
-	// 	_underlyingAssetAddress = underlyingAssetAddress;
-	// }
 
 	/// @inheritdoc IERC20
 	function balanceOf(
@@ -48,9 +39,9 @@ contract DebToken is ScaledToken {
     // @dev mint market tokens to an account
     // @param account the account to mint to
     // @param amount the amount of tokens to mint
-    function mint(address receiver, uint256 amount, uint256 index
+    function mint(address to, uint256 amount, uint256 index
     ) external virtual override  onlyController returns (bool) {
-      	return (_mintScaled(receiver, amount, index), scaledTotalSupply());
+      	return (_mintScaled(to, amount, index), scaledTotalSupply());
     }
 
     // @dev burn market tokens from an account
