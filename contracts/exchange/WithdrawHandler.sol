@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
@@ -27,10 +27,10 @@ contract WithdrawHandler is IWithdrawHandler, GlobalReentrancyGuard, RoleModule 
 
         WithdrawUtils.ExecuteWithdrawParams memory params = WithdrawUtils.ExecuteWithdrawParams{
            dataStore,
-           withdrawParams.poolTokenAddress;        
+           withdrawParams.underlyingAsset;        
            //withdrawParams.asset,
            withdrawParams.amount,
-           withdrawParams.receiver
+           withdrawParams.to
         };
 
         return WithdrawUtils.executeWithdraw(account, params);

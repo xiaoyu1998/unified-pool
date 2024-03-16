@@ -9,43 +9,50 @@ pragma solidity ^0.8.0;
 library WithdrawUtils {
 
     struct WithdrawParams {
-        address poolTokenAddress;
-        // address asset;
+        address underlyingAsset;
         uint256 amount;
-        address receiver;
+        address to;
     }
 
     struct ExecuteWithdrawParams {
         DataStore dataStore;
-        address poolTokenAddress;
-        // address asset;
+        address underlyingAsset;
         uint256 amount;
-        address receiver;
+        address to;
     }
 
-    // @dev executes a deposit
+    // @dev executes a widthdraw
     // @param account the withdrawing account
     // @param params ExecuteWithdrawParams
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
+        PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
+        pool.updateStateByIntervalBetweenTransactions(pool, poolCache);
 
-        PoolUtils.updateIndexesAndIncrementFeeAmount(pool, poolCache);
-
-        IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
-        address underlyingAssetAddress = poolToken.underlyingAssetAddress();
-        
+        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 userBalance = poolToken.scaledBalanceOf(account).rayMul(poolCache.nextLiquidityIndex);
         uint256 amountToWithdraw = params.amount;
-        if (params.amount == type(uint256).max) {
+        if (params.amount == (uint256).max) { //withdraw user balance
             amountToWithdraw = userBalance;
         }
 
         ExecuteWithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance)
-        PoolUtils.updateInterestRates(pool, poolCache, underlyingAssetAddress, 0, amountToWithdraw);
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(underlyingAssetAddress));
 
-        poolToken.burn(params.receiver, amountToWithdraw, poolCache.nextLiquidityIndex)
+        pool.updateInterestRates(
+            poolCache, 
+            params.underlyingAsset, 
+            supplyAmount, 
+            0
+        );
+
+        PoolStoreUtils.set(
+            params.dataStore, 
+            params.underlyingAsset, 
+            pool
+        );
+
+        poolToken.burn(params.to, amountToWithdraw, poolCache.nextLiquidityIndex)
     }
 
 
