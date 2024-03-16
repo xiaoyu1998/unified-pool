@@ -13,13 +13,13 @@ library RepayUtils {
 
     struct RepayParams {
         address underlyingAsset;
-        //uint256 amount;
+        uint256 amount;
     }
 
     struct ExecuteRepayParams {
         DataStore dataStore;
         address underlyingAsset;
-        //uint256 amount;
+        uint256 amount;
     }
 
     // @dev executes a repay
@@ -31,23 +31,36 @@ library RepayUtils {
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
+        uint256 repayAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        uint256 repayAmount = poolToken.recordTransferIn(params.underlyingAsset));
+        if(params.amount > 0) {
+            repayAmount = amount;
+        } else {
+            repayAmount = poolToken.recordTransferIn(params.underlyingAsset));
+        }
+
+        uint256 extraAmount;
+        IDebtToken debtToken = IDebtToken(poolCache.debtToken);
+        uint256 debtAmount = debtToken.balanceOf(account);
+        if(repayAmount > debtAmount) {
+            extraAmountToRefund = repayAmount - debtAmount;
+            repayAmount         = debtAmount;      
+        }
+        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, poolToken, params.amount )
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        RepayUtils.validateRepay(pool, poolCache, position, repayAmount)
-
-        IDebtToken debtToken = IDebtToken(poolCache.debtToken);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
         if(debtToken.scaledBalanceOf(account) == 0) {
             position.setPoolAsBorrowing(pool.poolKeyId(), false)
-        }
-        poolToken.removeCollateral(account, repayAmount);
-        if(poolToken.balanceOfCollateral(account) == 0)) {
-            position.setPoolAsCollateral(pool.poolKeyId(), false)
-        }
-        if(debtToken.scaledBalanceOf(account) == 0 | poolToken.balanceOfCollateral(account) == 0))  {
             PositionStoreUtils.set(params.dataStore, account, position);
+        }
+
+        if(params.amount > 0) {
+            poolToken.removeCollateral(account, repayAmount);
+            if(poolToken.balanceOfCollateral(account) == 0)) {
+                position.setPoolAsCollateral(pool.poolKeyId(), false);
+                PositionStoreUtils.set(params.dataStore, account, position);
+            }
         }
 
         pool.updateInterestRates(
@@ -63,24 +76,43 @@ library RepayUtils {
             pool
         );
 
+        if(extraAmountToRefund > 0) {
+            IERC20(params.underlyingAsset).safeTransfer(account, extraAmountToRefund);
+        }
+
     }
 
 
-      // /**
-      //  * @notice Validates a repay action.
-      //  * @param poolCache The cached data of the pool
-      //  * @param amount The amount to be repay
-      //  * @param userBalance The balance of the user
-      //  */
-      // function validateRepay(
-      //     Position.Props memory position,
-      //     PoolCache.Props memory poolCache,
-      //     Position.Props memory position
-      //     uint256 amount
-      // ) internal pure {
-       
-      //  (
-      //  PositionUtils.validateEnabledPosition(position);
-      // }
+    /**
+    * @notice Validates a repay action.
+    * @param poolCache The cached data of the pool
+    * @param amount The amount to be repay
+    * @param userBalance The balance of the user
+    */
+    function validateRepay(
+        Pool.Props memory pool,
+        PoolCache.Props memory poolCache,
+        uint256 repayAmount,
+        uint256 debtAmount,
+        IPoolToken poolToken,
+        uint256 amount
+    ) internal pure {
+        PositionUtils.validateEnabledPosition(position);
+
+        if(debtAmount == 0) {
+            revert Errors.UserDoNotHaveDebtInPool(pool.underlyingAsset())
+        }
+
+        if(repayAmount == 0) {
+            revert Errors.EmptyRepayAmount()
+        }
+
+        if(amount > 0){
+            uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+            if(collateralAmount< repayAmount){
+                revert Errors.InsufficientCollateralAmount(amount, collateralAmount);
+            }
+        }
+    }
     
 }

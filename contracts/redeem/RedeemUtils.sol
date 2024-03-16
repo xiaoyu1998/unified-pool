@@ -35,7 +35,7 @@ library RedeemUtils {
         PoolUtils.validateEnabledPool(pool);
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        RedeemUtils.validateRedeem(pool, poolCache, position, params.amount)
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount)
 
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, amount);
@@ -67,6 +67,8 @@ library RedeemUtils {
     * @param userBalance The balance of the user
     */
     function validateRedeem(
+        address account,
+        DataStore dataStore,
         Position.Props memory position,
         PoolCache.Props memory poolCache,
         uint256 amountToRedeem

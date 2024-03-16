@@ -70,11 +70,11 @@ library BorrowUtils {
     //  * @param amount The amount to be Borrow
     //  */
     function validateBorrow(
-       address account,
-       DataStore dataStore,
-       Position.Props memory position,
-       PoolCache.Props memory poolCache,
-       uint256 amountToBorrow
+        address account,
+        DataStore dataStore,
+        Position.Props memory position,
+        PoolCache.Props memory poolCache,
+        uint256 amountToBorrow
     ) internal pure {
         if (amount == 0) { revert Errors.EmptyBorrowAmount() }
 

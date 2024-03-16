@@ -20,10 +20,10 @@ contract DebToken is ScaledToken {
 
 	/// @inheritdoc IERC20
 	function balanceOf(
-	    address user
+	    address account
 	) public view virtual override returns (uint256) {
 
-		uint256 currentSupplyScaled = super.balanceOf(user);
+		uint256 currentSupplyScaled = super.balanceOf(account);
 	    if (currentSupplyScaled == 0) { return 0; }
 	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(dataStore, _underlyingAsset));
 	}
