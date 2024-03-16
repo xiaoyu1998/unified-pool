@@ -7,7 +7,7 @@ import "../position/PositionStoreUtils.sol";
 import "../position/PositionUtils.sol";
 
 // @title RedeemUtils
-// @dev Library for deposit functions, to help with the depositing of liquidity
+// @dev Library for redeem functions, to help with the redeeming of liquidity
 // into a market in return for market tokens
 library RedeemUtils {
 
@@ -24,10 +24,13 @@ library RedeemUtils {
         address to;
     }
 
-    // @dev executes a deposit
-    // @param account the depositng account
+    // @dev executes a redeem
+    // @param account the redeemng account
     // @param params ExecuteRedeemParams
-    function executeRedeem(address account, ExecuteRedeemParams calldata params) external {
+    function executeRedeem(
+        address account, 
+        ExecuteRedeemParams calldata params
+    ) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
         PoolUtils.validateEnabledPool(pool);
 
@@ -44,19 +47,51 @@ library RedeemUtils {
         IERC20(params.underlyingAsset).safeTransfer(params.to, params.amount);
     }
 
+    struct ValidateBorrowLocalVars {
+        uint256 userTotalCollateralInUsd;
+        uint256 userTotalDebtInUsd;
+        uint256 amountToBorrowInUsd;
+        uint256 healthFactor;
 
-      // /**
-      //  * @notice Validates a withdraw action.
-      //  * @param poolCache The cached data of the pool
-      //  * @param amount The amount to be withdrawn
-      //  * @param userBalance The balance of the user
-      //  */
-      // function validateRedeem(
-      //     Position.Props memory position,
-      //     PoolCache.Props memory poolCache,
-      //     uint256 amount
-      // ) internal pure {
-      //  PositionUtils.validateEnabledPosition(position);
-      // }
+        bool isActive;
+        bool isFrozen;
+        bool isPaused;
+        bool borrowingEnabled;
+    }
+
+
+    /**
+    * @notice Validates a redeem action.
+    * @param poolCache The cached data of the pool
+    * @param amount The amount to be redeemn
+    * @param userBalance The balance of the user
+    */
+    function validateRedeem(
+        Position.Props memory position,
+        PoolCache.Props memory poolCache,
+        uint256 amountToRedeem
+    ) internal pure {
+        PositionUtils.validateEnabledPosition(position);
+
+        //validate account health
+        (
+            vars.userTotalCollateralInUsd,
+            vars.userTotalDebtInUsd
+        ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
+
+        if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
+
+        vars.amountToRedeemInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset
+                                   * amountToRedeem;
+        vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
+
+        if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
+            revert Errors.CollateralCanNotCoverRedeem(
+                userTotalCollateralInUsd, 
+                userTotalDebtInUsd, 
+                amountToRedeemInUsd
+            )
+        }
+        }
     
 }
