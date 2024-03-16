@@ -40,9 +40,9 @@ library SupplyUtils {
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        uint256 supplyAmount = poolToken.recordTransferIn(poolToken.underlyingAsset());
+        uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
-        ExecuteSupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
+        SupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
 
         pool.updateInterestRates(
             poolCache, 

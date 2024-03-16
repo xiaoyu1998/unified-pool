@@ -36,9 +36,9 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     ISupplyHandler public immutable supplyHandler;
     IWithdrawalHandler public immutable withdrawalHandler;
     IDepositHandler public immutable depositHandler;
-    // IRedeemHandler public immutable redeemHandler;
     IBorrowHandler public immutable borrowHandler;
-    // IRepayHandler public immutable repayHandler;
+    IRepayHandler public immutable repayHandler;
+    // IRedeemHandler public immutable redeemHandler;
     // ILiquidationHandler public immutable liquidationHandler;
     // ISwapHandler public immutable swapHandler;
 
@@ -59,7 +59,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         withdrawalHandler  = _withdrawalHandler;
         depositHandler     = _depositHandler;
         borrowHandler      = _borrowHandler;
-        // repayHandler       = _repayHandler;
+        repayHandler       = _repayHandler;
         // redeemHandler      = _redeemHandler;
         // liquidationHandler = _liquidationHandler;
         // swapHandler        = _swapHandler;
@@ -131,6 +131,21 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         address account = msg.sender;
 
         return borrowHandler.executeBorrow(
+            account,
+            params
+        );
+    }
+
+    /**
+     * @dev execute a new Repay with the given amount, Repay parameters. The Repay is
+     * execute by calling the `executeRepay()` function on the Repay handler contract. 
+     */
+    function executeRepay(
+        RepayUtils.ExecuteRepayParams calldata params
+    ) external override payable nonReentrant  {
+        address account = msg.sender;
+
+        return repayHandler.executeRepay(
             account,
             params
         );

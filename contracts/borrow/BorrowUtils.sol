@@ -9,13 +9,13 @@ pragma solidity ^0.8.20;
 library BorrowUtils {
 
     struct BorrowParams {
-        address poolToken;
+        address underlyingAsset;
         uint256 amount;
     }
 
     struct ExecuteBorrowParams {
         DataStore dataStore;
-        address poolToken;
+        address underlyingAsset;
         uint256 amount;
     }
 
@@ -26,7 +26,7 @@ library BorrowUtils {
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
         PositionUtils.validateEnabledPosition(position);
 
-        Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, params.poolTokenAddress);
+        Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
         PoolUtils.validateEnabledPool(pool);
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
 
@@ -44,7 +44,7 @@ library BorrowUtils {
             IDebtToken(poolCache.debtTokenAddress).mint(account, params.amount, poolCache.nextBorrowIndex);
         
         pool.updateInterestRates(poolCache, params.asset, 0, amount);
-        PoolStoreUtils.set(params.dataStore, params.poolTokenAddress, PoolUtils.getPoolSalt(params.asset), pool);
+        PoolStoreUtils.set(params.dataStore, params.underlyingAsset, PoolUtils.getPoolSalt(params.asset), pool);
     }
 
 

@@ -12,33 +12,32 @@ import "../position/PositionUtils.sol";
 library DepositUtils {
 
     struct DepositParams {
-        address poolToken;
+        address underlyingAsset;
         //uint256 amount;
     }
 
     struct ExecuteDepositParams {
         DataStore dataStore;
-        address poolToken;
+        address underlyingAsset;
         //uint256 amount;
     }
 
-    // @dev executes a borrow
-    // @param account the withdrawing account
+    // @dev executes a deposit
+    // @param account the depositng account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.poolToken);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
         PoolUtils.validateEnabledPool(pool);
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
-        if(address(poolToken)  = address(0)) {revert Errors}
+        //if(address(poolToken)  = address(0)) {revert Errors}
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         if(position.account() == address(0)){
             positon.setAccount(account);
         }
 
-        address underlyingAsset = poolToken.underlyingAsset();
-        uint256 amount = poolToken.recordTransferIn(underlyingAsset);
-        if(amount <= 0)} {revert Errors}
+        //address underlyingAsset = poolToken.underlyingAsset();
+        uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 
         position.setPoolAsCollateral(pool.poolKeyId(), true)
