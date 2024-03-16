@@ -32,9 +32,11 @@ library RepayUtils {
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
         uint256 repayAmount;
+        uint256 collateralAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         if(params.amount > 0) {
             repayAmount = amount;
+            collateralAmount = poolToken.balanceOfCollateral(account);
         } else {
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset));
         }
@@ -46,7 +48,7 @@ library RepayUtils {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
-        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, poolToken, params.amount )
+        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, collateralAmount)
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
@@ -55,7 +57,7 @@ library RepayUtils {
             PositionStoreUtils.set(params.dataStore, account, position);
         }
 
-        if(params.amount > 0) {
+        if(collateralAmount > 0) {
             poolToken.removeCollateral(account, repayAmount);
             if(poolToken.balanceOfCollateral(account) == 0)) {
                 position.setPoolAsCollateral(pool.poolKeyId(), false);
@@ -95,7 +97,7 @@ library RepayUtils {
         uint256 repayAmount,
         uint256 debtAmount,
         IPoolToken poolToken,
-        uint256 amount
+        uint256 collateralAmount
     ) internal pure {
         PositionUtils.validateEnabledPosition(position);
 
@@ -107,10 +109,9 @@ library RepayUtils {
             revert Errors.EmptyRepayAmount()
         }
 
-        if(amount > 0){
-            uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-            if(collateralAmount< repayAmount){
-                revert Errors.InsufficientCollateralAmount(amount, collateralAmount);
+        if(collateralAmount > 0){
+            if(collateralAmount < repayAmount){
+                revert Errors.InsufficientCollateralAmountForRepay(repayAmount, collateralAmount);
             }
         }
     }
