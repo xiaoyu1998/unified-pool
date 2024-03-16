@@ -43,11 +43,11 @@ contract PoolToken is ScaledToken, Bank {
     // @param account the account to mint to
     // @param amount the amount of tokens to mint
     function mint(
-    	address receiver, 
+    	address to, 
     	uint256 amount, 
     	uint256 index
     ) external virtual override  onlyController returns (bool) {
-      	return _mintScaled(pool, receiver, amount, index);
+      	return _mintScaled(pool, to, amount, index);
     }
 
     // @dev burn pool tokens from an account
@@ -55,19 +55,19 @@ contract PoolToken is ScaledToken, Bank {
     // @param amount the amount of tokens to burn
     function burn(
     	address from, 
-    	address receiverOfUnderlying, 
+    	address to, 
     	uint256 amount, 
     	uint256 index
     ) external virtual override onlyController return (bool) {
-		_burnScaled(pool, from, receiverOfUnderlying, amount, index);
-		if (receiverOfUnderlying != address(this)) {
+		_burnScaled(pool, from, to, amount, index);
+		if (to != address(this)) {
 	         //TODO move to validation module
 	         uint256 availableBalance = totalUnderlyingAssetBalanceDeductTotalCollateral()
 			 if (amount > availableBalance){
 			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
 			 }
 
-			 IERC20(_underlyingAsset).safeTransfer(receiverOfUnderlying, amount);
+			 IERC20(_underlyingAsset).safeTransfer(to, amount);
 		}       
     }
 
@@ -121,25 +121,28 @@ contract PoolToken is ScaledToken, Bank {
 	}
 
 	function addCollateral(
-		address user, 
+		address account, 
 		uint256 amount
 	) public onlyController {
-        _Collaterals[user] = _Collaterals[user] + amount;
+        _Collaterals[account] = _Collaterals[account] + amount;
         _totalCollateral   = _totalCollateral + amount;
 	}
 
 	function removeCollateral(
-		address user, 
+		address account, 
 		uint256 amount
 	) public onlyController {
-        _Collaterals[user] = _Collaterals[user] - amount;
+		if( _Collaterals[account] < amount){
+			revert Errors.InsufficientCollateralAmount(amount, _Collaterals[account]);
+		}
+        _Collaterals[account] = _Collaterals[account] - amount;
         _totalCollateral   = _totalCollateral - amount;
 	}
 
 	function balanceOfCollateral(
-		address user
+		address account
 	) public view  returns (uint256)   {
-		return _Collaterals[user];
+		return _Collaterals[account];
 	}
 
 	function totalCollateral() public view  returns (uint256) {

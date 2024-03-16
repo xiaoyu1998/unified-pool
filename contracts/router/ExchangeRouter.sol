@@ -151,5 +151,20 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         );
     }
 
+    /**
+     * @dev execute a new Redeam with the given amount, Redeam parameters. The Redeam is
+     * execute by calling the `executeRedeam()` function on the Redeam handler contract. 
+     */
+    function executeRedeam(
+        RedeamUtils.ExecuteRedeamParams calldata params
+    ) external override payable nonReentrant  {
+        address account = msg.sender;
+
+        return redeamHandler.executeRedeam(
+            account,
+            params
+        );
+    }
+
 
 }
