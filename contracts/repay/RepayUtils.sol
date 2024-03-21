@@ -53,7 +53,7 @@ library RepayUtils {
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
         if(debtToken.scaledBalanceOf(account) == 0) {
-            position.setPoolAsBorrowing(pool.poolKeyId(), false)
+            position.setPoolAsBorrowing(pool.poolKeyId(), false);
             PositionStoreUtils.set(params.dataStore, account, position);
         }
 

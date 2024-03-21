@@ -86,12 +86,12 @@ library Pool {
         props.poolToken = value;
     }
 
-    function debtTokeny(Props memory props) internal pure returns (address) {
+    function debtToken(Props memory props) internal pure returns (address) {
         return props.debtToken;
     }
 
-    function setDebtTokeny(Props memory props, address value) internal pure {
-        props.debtTokeny = value;
+    function setDebtToken(Props memory props, address value) internal pure {
+        props.debtToken = value;
     }
 
     function configration(Props memory props) internal pure returns (uint256) {
