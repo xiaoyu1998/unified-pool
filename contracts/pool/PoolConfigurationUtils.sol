@@ -199,7 +199,7 @@ library PoolConfigurationUtils {
      * @return The reserve factor
      */
     function getFeeFactor(
-        uint256 poolConfigration,
+        uint256 poolConfigration
     ) internal pure returns (uint256) {
         return (poolConfigration & ~POOL_FACTOR_MASK) >> POOL_FACTOR_START_BIT_POSITION;
     }

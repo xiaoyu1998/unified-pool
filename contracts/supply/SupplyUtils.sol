@@ -2,9 +2,14 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
+
 import "../pool/Pool.sol";
-import "../pool/PoolConfigurationUtils.sol";
+import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
 
 
 // @title SupplyUtils
@@ -42,7 +47,7 @@ library SupplyUtils {
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
-        SupplyUtils.validateSupply(pool, poolCache, supplyAmountt)
+        SupplyUtils.validateSupply(pool, poolCache, supplyAmount);
 
         pool.updateInterestRates(
             poolCache, 
@@ -62,7 +67,7 @@ library SupplyUtils {
             params.receiver, 
             supplyAmount, 
             poolCache.nextLiquidityIndex
-        )
+        );
     }
 
     

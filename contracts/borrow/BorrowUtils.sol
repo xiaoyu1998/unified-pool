@@ -3,19 +3,24 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
+import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
+import "../pool/IDebtToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
+import "../oracle/IPriceOracleGetter.sol";
+
 // @title BorrowUtils
 // @dev Library for borrow functions, to help with the borrowing of liquidity
-// into a market in return for market tokens
+// from a pool in return for debt tokens
 library BorrowUtils {
 
     struct BorrowParams {
@@ -86,7 +91,9 @@ library BorrowUtils {
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal pure {
-        if (amount == 0) { revert Errors.EmptyBorrowAmount() }
+        if (amount == 0) { 
+            revert Errors.EmptyBorrowAmount(); 
+        }
 
         ValidateBorrowLocalVars memory vars;
         //validate pool configuration
@@ -124,25 +131,18 @@ library BorrowUtils {
             vars.userTotalDebtInUsd
         ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
 
-        if (vars.userCollateralInUsd == 0) { revert Errors.Collateral_Balance_Is_Zero;}
+        if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
 
-        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset
-                                   * amountToBorrow;
+        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset).rayMul(amountToBorrow);
 
         vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToBorrowInUsd);
-        // if (vars.healthFactor < HEALTH_FACTOR_LIQUIDATION_THRESHOLD) {
-        //     revert Errors.HealthFactorLiquidationThreshold(
-        //         userTotalCollateralInUsd, 
-        //         userTotalDebtInUsd, 
-        //         amountToBorrowInUsd
-        //     )
-        // }
 
         if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
             revert Errors.CollateralCanNotCoverNewBorrow(
                 userTotalCollateralInUsd, 
                 userTotalDebtInUsd, 
-                amountToBorrowInUsd
+                amountToBorrowInUsd,
+                HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
             )
         }
 

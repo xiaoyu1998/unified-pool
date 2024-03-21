@@ -2,9 +2,15 @@
 
 pragma solidity ^0.8.20;
 
-import "./Position.sol";
-import "../pool/PoolStoreUtils.sol"
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
 
+import "../pool/Pool.sol";
+import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
+import "../pool/IDebtToken.sol";
+
+import "./Position.sol";
 
 // @title PositionUtils
 // @dev Library for Position functions
@@ -36,8 +42,8 @@ library PositionUtils {
 
        calculateUserTotalCollateralAndDebtVars memory vars;
        uin256 poolCount = PoolStoreUtils.getPoolCount(dataStore);
-       while (var.i < poolCount) {
-            if (!position.isUsingAsCollateralOrBorrowing(var.i)){
+       while (vars.i < poolCount) {
+            if (!position.isUsingAsCollateralOrBorrowing(vars.i)){
                 unchecked {
                   ++vars.i;
                 }
@@ -49,12 +55,12 @@ library PositionUtils {
 
             vars.assetPrice = IPriceOracleGetter(oracle).getPrice(pool.underlyingAsset());
 
-            if (position.isUsingAsCollateral(var.i)){
+            if (position.isUsingAsCollateral(vars.i)){
                  vars.userTotalCollateralInUsd +=
                  IPoolToken(pool.poolToken()).balanceOfCollateral(account) * vars.assetPrice;
             }
 
-            if (position.isBorrowing(var.i)){
+            if (position.isBorrowing(vars.i)){
                  vars.userTotalDebtInUsd +=
                  IDebtToken(pool.debtToken()).balanceOf(account) * vars.assetPrice;  
                  //TODO: should assign pool to avoid reload               

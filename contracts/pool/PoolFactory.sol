@@ -2,11 +2,13 @@
 
 pragma solidity ^0.8.20;
 
-import "./DebtToken.sol";
-import "./PoolToken.sol";
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
+import "./PoolConfigrationUtils.sol";
 import "./PoolUtils.sol";
+import "./PoolToken.sol";
+import "./DebtToken.sol";
+
 import "../chain/Chain.sol";
 // @title PoolFactory
 // @dev Contract to create pools
@@ -19,7 +21,7 @@ contract PoolFactory is RoleModule {
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore,
+        DataStore _dataStore
         // EventEmitter _eventEmitter
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
@@ -30,7 +32,7 @@ contract PoolFactory is RoleModule {
     function createPool(
         address underlyingAsset,
         address interestRateStrategy,
-        uint256 configration,
+        uint256 configration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         bytes32 key = PoolUtils.getPoolKey(underlyingAsset);
 
@@ -44,13 +46,15 @@ contract PoolFactory is RoleModule {
 
         Pool.Props memory pool = Pool.Props(
             PoolStoreUtils.setPoolKeyAsId(key)
-        	configration,
         	1,0,1,0,
-            currentTimestamp(),
-            key,
             interestRateStrategy,
+            underlyingAsset,
             address(poolToken),
             address(debtToken),
+            configration,
+            PoolConfigurationUtils.getFeeFactor(configration),
+            0,
+            Chain.currentTimestamp()
         );
 
         PoolStoreUtils.set(dataStore, key, pool);

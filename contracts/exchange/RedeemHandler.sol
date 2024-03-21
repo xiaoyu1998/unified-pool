@@ -25,13 +25,12 @@ contract RedeemHandler is IRedeemHandler, GlobalReentrancyGuard, RoleModule {
         RedeemUtils.RedeemParams calldata redeemParams
     ) external nonReentrant returns (bytes32){
 
-        RedeemUtils.ExecuteRedeemParams memory params = RedeemUtils.ExecuteRedeemParams{
+        RedeemUtils.ExecuteRedeemParams memory params = RedeemUtils.ExecuteRedeemParams(
            dataStore,
-           redeemParams.underlyingAsset;        
-           //redeemParams.asset,
+           redeemParams.underlyingAsset,       
            redeemParams.amount,
            redeemParams.to
-        };
+        );
 
         return RedeemUtils.executeRedeem(account, params);
     }

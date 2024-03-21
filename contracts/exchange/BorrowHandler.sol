@@ -25,12 +25,12 @@ contract BorrowHandler is IBorrowHandler, GlobalReentrancyGuard, RoleModule {
         BorrowUtils.BorrowParams calldata borrowParams
     ) external nonReentrant returns (bytes32){
 
-        BorrowUtils.ExecuteBorrowParams memory params = BorrowUtils.ExecuteBorrowParams{
+        BorrowUtils.ExecuteBorrowParams memory params = BorrowUtils.ExecuteBorrowParams(
            dataStore,
-           borrowParams.poolTokenAddress;        
+           borrowParams.poolTokenAddress,     
            // borrowParams.asset,
-           borrowParams.amount,
-        };
+           borrowParams.amount
+        );
 
         return BorrowUtils.executeBorrow(account, params);
     }

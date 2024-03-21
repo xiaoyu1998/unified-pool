@@ -99,7 +99,7 @@ library PoolStoreUtils {
 
     function getPoolById(DataStore dataStore, uint256 id)  public view returns (Address) {
         address key = dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
-        return get(dataStore, key)
+        return get(dataStore, key);
     }
 
 

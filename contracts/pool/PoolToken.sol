@@ -58,11 +58,11 @@ contract PoolToken is ScaledToken, Bank {
     	address to, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual override onlyController return (bool) {
+    ) external virtual override onlyController returns (bool) {
 		_burnScaled(pool, from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 availableBalance = totalUnderlyingAssetBalanceDeductTotalCollateral()
+	         uint256 availableBalance = totalUnderlyingAssetBalanceSubstractionTotalCollateral()
 			 if (amount > availableBalance){
 			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
 			 }
@@ -149,7 +149,7 @@ contract PoolToken is ScaledToken, Bank {
 		return _totalCollateral;
 	}
 
-	function totalUnderlyingAssetBalanceDeductTotalCollateral() public view returns (uint256) {
+	function totalUnderlyingAssetBalanceSubstractionTotalCollateral() public view returns (uint256) {
 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
 	}
 

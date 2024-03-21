@@ -48,7 +48,7 @@ contract DebToken is ScaledToken {
     // @param account the account to burn tokens for
     // @param amount the amount of tokens to burn
     function burn(address from, uint256 amount, uint256 index
-    ) external virtual override onlyController return (bool) {
+    ) external virtual override onlyController returns (bool) {
 		_burnScaled(from, address(0), amount, index);
 		return scaledTotalSupply();  
     }

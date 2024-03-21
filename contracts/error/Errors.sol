@@ -5,6 +5,20 @@ pragma solidity ^0.8.20;
 library Errors {
     error ErrorToReplace();
 
+    // BorrowUtils errors
+    error PoolIsInactive();
+    error PoolIsPaused();
+    error PoolIsFrozen();
+    error PoolIsNotEnabled();
+    error PoolIsNotEnabled();
+    error CollateralBalanceIsZero();
+    error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralInUsd, uint256 userTotalDebtInUsd, uint256 amountToBorrowInUsd, uint256 healthFactorCollateralRateThreshold);
+
+
+    //PositionUtils errors
+     error EmptyPosition();
+
+
     // PoolFactory errors
     error PoolAlreadyExists(bytes32 salt, address existingPoolAddress);
 
@@ -13,6 +27,9 @@ library Errors {
 
     // SupplyUtils errors
     error EmptySupplyAmounts();
+
+    // PoolInterestRateStrategy errors
+    error InvalidOptimalUsageRate(uint256 optimalUsageRatio);
 
 
 

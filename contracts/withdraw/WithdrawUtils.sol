@@ -37,7 +37,7 @@ library WithdrawUtils {
             amountToWithdraw = userBalance;
         }
 
-        WithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance)
+        WithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance);
 
         pool.updateInterestRates(
             poolCache, 

@@ -2,9 +2,21 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
+
+import "../pool/Pool.sol";
+import "../pool/PoolCache.sol";
+import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
+import "../pool/IDebtToken.sol";
+
 import "../position/Position.sol";
-import "../position/PositionStoreUtils.sol";
 import "../position/PositionUtils.sol";
+import "../position/PositionStoreUtils.sol";
+
+import "../oracle/IPriceOracleGetter.sol";
 
 // @title RedeemUtils
 // @dev Library for redeem functions, to help with the redeeming of liquidity
@@ -91,7 +103,8 @@ library RedeemUtils {
             revert Errors.CollateralCanNotCoverRedeem(
                 userTotalCollateralInUsd, 
                 userTotalDebtInUsd, 
-                amountToRedeemInUsd
+                amountToRedeemInUsd,
+                HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
             )
         }
         }

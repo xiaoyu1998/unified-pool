@@ -25,7 +25,7 @@ contract BaseRouter is ReentrancyGuard, PayableMulticall, RoleModule {
     constructor(
         Router _router,
         RoleStore _roleStore,
-        DataStore _dataStore,
+        DataStore _dataStore
         // EventEmitter _eventEmitter
     ) RoleModule(_roleStore) {
         router = _router;

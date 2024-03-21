@@ -2,9 +2,19 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
+
+import "../pool/Pool.sol";
+import "../pool/PoolCache.sol";
+import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
+import "../pool/IDebtToken.sol";
+
 import "../position/Position.sol";
-import "../position/PositionStoreUtils.sol";
 import "../position/PositionUtils.sol";
+import "../position/PositionStoreUtils.sol";
 
 // @title RepayUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
@@ -38,7 +48,7 @@ library RepayUtils {
             repayAmount = amount;
             collateralAmount = poolToken.balanceOfCollateral(account);
         } else {
-            repayAmount = poolToken.recordTransferIn(params.underlyingAsset));
+            repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
 
         uint256 extraAmount;
@@ -48,7 +58,7 @@ library RepayUtils {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
-        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, collateralAmount)
+        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, collateralAmount);
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);

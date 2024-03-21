@@ -26,7 +26,7 @@ library PoolUtils {
     
     function updateInterestRates(
         Pool.Props memory pool,
-        PoolCache.Props memory poolCache
+        PoolCache.Props memory poolCache,
         address underlyingAsset,
         uint256 liquidityIn,
         uint256 liquidityOut
@@ -38,14 +38,14 @@ library PoolUtils {
         (   nextLiquidityRate,
             nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
-            CalculateInterestRatesParams({
+            CalculateInterestRatesParams(
                 liquidityIn,
                 liquidityOut,
                 totalDebt,
                 poolCache.feeFactor,
                 underlyingAsset,
                 poolCache.poolToken
-            })
+            )
         );
 
         pool.LiquidityRate = nextLiquidityRate;

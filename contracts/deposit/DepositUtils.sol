@@ -3,11 +3,13 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
+import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
+import "../pool/IPoolToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
@@ -15,7 +17,7 @@ import "../position/PositionStoreUtils.sol";
 
 // @title DepositUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
-// into a market in return for market tokens
+// into a pool in return for pool tokens
 library DepositUtils {
 
     struct DepositParams {
@@ -45,8 +47,8 @@ library DepositUtils {
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 
-        position.setPoolAsCollateral(pool.poolKeyId(), true)
-        PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), positon)
+        position.setPoolAsCollateral(pool.poolKeyId(), true);
+        PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), positon);
 
     }
 

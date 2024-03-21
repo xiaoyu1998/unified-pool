@@ -15,10 +15,10 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     constructor(
         uint256 optimalUsageRatio,
         uint256 rateSlope1,
-        uint256 rateSlope2,
+        uint256 rateSlope2
     ) {
         if (WadRayMath.RAY < optimalUsageRatio) {
-            revert Errors.InvalidOptimalUsageRate(optimalUsageRatio)
+            revert Errors.InvalidOptimalUsageRate(optimalUsageRatio);
         }
 
         OPTIMAL_USAGE_RATIO    = optimalUsageRatio;

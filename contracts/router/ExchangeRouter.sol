@@ -53,7 +53,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         IDepositHandler _depositHandler,
         IBorrowHandler _borrowHandler,
         IRepayHandler _repayHandler,
-        IRedeemHandler _redeemHandler,
+        IRedeemHandler _redeemHandler
         // ILiquidationHandler _liquidationHandler,
         // ISwapHandler _swapHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
