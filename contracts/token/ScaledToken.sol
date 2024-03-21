@@ -1,19 +1,17 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.20;
 
-import {SafeCast} from '../../../dependencies/openzeppelin/contracts/SafeCast.sol';
-import {Errors} from '../../libraries/helpers/Errors.sol';
-import {WadRayMath} from '../../libraries/math/WadRayMath.sol';
-import {IPool} from '../../../interfaces/IPool.sol';
-import {IScaledBalanceToken} from '../../../interfaces/IScaledBalanceToken.sol';
-import {MintableERC20} from './MintableERC20.sol';
+import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../error/Errors.sol";
+import "../utils/WadRayMath.sol";
+import "./MintableERC20.sol";
 
 /**
  * @title ScaledToken
  * @author Aave
  * @notice Basic ERC20 implementation of scaled balance token
  */
-abstract contract ScaledToken is MintableERC20, IScaledToken {
+abstract contract ScaledToken is MintableERC20 {
   using WadRayMath for uint256;
   using SafeCast for uint256;
 
@@ -68,7 +66,9 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
     uint256 index
   ) internal returns (bool) {
     uint256 amountScaled = amount.rayDiv(index);
-    require(amountScaled != 0, Errors.INVALID_MINT_AMOUNT);
+    if (amountScaled == 0){
+      revert EmptyMintAmounts();
+    }
 
     uint256 scaledBalance = super.balanceOf(to);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -
@@ -101,7 +101,10 @@ abstract contract ScaledToken is MintableERC20, IScaledToken {
     uint256 index
   ) internal {
     uint256 amountScaled = amount.rayDiv(index);
-    require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
+    // require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
+    if (amountScaled == 0){
+      revert EmptyBurnAmounts();
+    }
 
     uint256 scaledBalance = super.balanceOf(account);
     uint256 balanceIncrease = scaledBalance.rayMul(index) -

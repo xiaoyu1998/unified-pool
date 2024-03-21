@@ -7,7 +7,7 @@ import "./PoolToken.sol";
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
 import "./PoolUtils.sol";
-import "./chain/chain.sol";
+import "../chain/Chain.sol";
 // @title PoolFactory
 // @dev Contract to create pools
 contract PoolFactory is RoleModule {

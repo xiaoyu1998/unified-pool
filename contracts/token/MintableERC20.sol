@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.20;
-import {MintableToken} from './MintableToken.sol';
+import "./IndexERC20.sol";
 
 /**
  * @title MintableERC20

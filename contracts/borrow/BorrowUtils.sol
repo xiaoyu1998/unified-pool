@@ -2,6 +2,16 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+
+import "../pool/Pool.sol";
+import "../pool/PoolCache.sol";
+import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+
+import "../position/Position.sol";
+import "../position/PositionUtils.sol";
+import "../position/PositionStoreUtils.sol";
 
 // @title BorrowUtils
 // @dev Library for borrow functions, to help with the borrowing of liquidity
@@ -31,13 +41,13 @@ library BorrowUtils {
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
 
         pool.updateStateIntervalTransactions(poolCache);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount)
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
         poolToken.addCollateral(account, params.amount);//this will change Rate
 
-        position.setPoolAsCollateral(pool.poolKeyId(), true)
-        position.setPoolAsBorrowing(pool.poolKeyId(), true)
+        position.setPoolAsCollateral(pool.poolKeyId(), true);
+        position.setPoolAsBorrowing(pool.poolKeyId(), true);
         PositionStoreUtils.set(params.dataStore, account, position);
 
         poolCache.nextScaledDebt = 

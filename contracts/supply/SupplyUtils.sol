@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.20;
 
-import "../pool/pool.sol";
+import "../pool/Pool.sol";
 import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolUtils.sol";
 

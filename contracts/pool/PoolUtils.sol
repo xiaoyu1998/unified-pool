@@ -6,7 +6,7 @@ import "./Pool.sol";
 import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
 
-import "./chain/Chain.sol";
+import "../chain/Chain.sol";
 
 
 // @title PoolUtils

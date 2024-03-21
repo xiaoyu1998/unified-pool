@@ -2,9 +2,16 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+
+import "../pool/Pool.sol";
+import "../pool/PoolCache.sol";
+import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+
 import "../position/Position.sol";
-import "../position/PositionStoreUtils.sol";
 import "../position/PositionUtils.sol";
+import "../position/PositionStoreUtils.sol";
 
 // @title DepositUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
@@ -29,14 +36,12 @@ library DepositUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
         PoolUtils.validateEnabledPool(pool);
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
-        //if(address(poolToken)  = address(0)) {revert Errors}
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         if(position.account() == address(0)){
             positon.setAccount(account);
         }
 
-        //address underlyingAsset = poolToken.underlyingAsset();
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 

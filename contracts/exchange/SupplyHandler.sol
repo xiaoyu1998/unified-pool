@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
 import "./ISupplyHandler.sol";
-import "../supply/ExecuteSupplyUtils.sol";
+import "../supply/SupplyUtils.sol";
 
 // @title SupplyHandler
 // @dev Contract to handle execution of supplys
@@ -13,7 +13,7 @@ contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore,
+        DataStore _dataStore
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
 
     }

@@ -13,7 +13,7 @@ contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore,
+        DataStore _dataStore
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
 
     }
