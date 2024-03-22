@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
-import "./PoolConfigrationUtils.sol";
+import "./PoolConfigurationUtils.sol";
 import "./PoolUtils.sol";
 import "./PoolToken.sol";
 import "./DebtToken.sol";
@@ -45,7 +45,7 @@ contract PoolFactory is RoleModule {
         DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setPoolKeyAsId(key)
+            PoolStoreUtils.setPoolKeyAsId(key),
         	1,0,1,0,
             interestRateStrategy,
             underlyingAsset,

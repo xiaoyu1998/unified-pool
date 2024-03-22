@@ -41,8 +41,8 @@ library BorrowUtils {
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
         PositionUtils.validateEnabledPosition(position);
 
-        Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
-        PoolUtils.validateEnabledPool(pool);
+        Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
 
         pool.updateStateIntervalTransactions(poolCache);
@@ -143,7 +143,7 @@ library BorrowUtils {
                 userTotalDebtInUsd, 
                 amountToBorrowInUsd,
                 HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
-            )
+            );
         }
 
 

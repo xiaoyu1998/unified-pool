@@ -43,7 +43,7 @@ library FeeUtils {
         uint256 currTotalDebt      = poolCache.currScaledDebt.rayMul(poolCache.nextBorrowIndex);
         uint256 IncreaseTotalDebt  = currTotalDebt - prevTotalDebt;
         uint256 feeAmount          = IncreaseTotalDebt.percentMul(poolCache.feeFactor);
-        pool.incrementTatalFeeAmount(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
+        pool.incrementFee(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
 
     }
 

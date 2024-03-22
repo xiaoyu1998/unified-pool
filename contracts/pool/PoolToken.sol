@@ -62,9 +62,9 @@ contract PoolToken is ScaledToken, Bank {
 		_burnScaled(pool, from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 availableBalance = totalUnderlyingAssetBalanceSubstractionTotalCollateral()
+	         uint256 availableBalance = totalUnderlyingAssetBalanceSubstractionTotalCollateral();
 			 if (amount > availableBalance){
-			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance)
+			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance);
 			 }
 
 			 IERC20(_underlyingAsset).safeTransfer(to, amount);

@@ -40,7 +40,7 @@ library SupplyUtils {
         ExecuteSupplyParams calldata params
     ) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        PoolUtils.validateEnabledPool(pool);
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
@@ -78,7 +78,9 @@ library SupplyUtils {
         PoolCache.Props memory poolCache,
         uint256 amount
     ) internal view {
-        if (amount == 0) { revert Errors.EmptySupplyAmounts() }
+        if (amount == 0) { 
+            revert Errors.EmptySupplyAmounts(); 
+        }
 
         (
             bool isActive,
@@ -91,15 +93,18 @@ library SupplyUtils {
         // require(!isFrozen, Errors.RESERVE_FROZEN);
 
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
-        uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration);
-        require(
-            supplyCapacity == 0 || ((
-                IPoolTaken(poolCache.poolToken).scaledTotalSupply() 
-                + poolCache.totalPoolFee.rayMul(poolCache.nextLiquidityIndex) 
-                + amount)  <= supplyCapacity 
-                * (10 ** poolCache.configuration.getDecimals()),
-            Errors.SUPPLY_CAPACITY_EXCEEDED
-        );
+        uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
+                                 * (10 ** poolCache.configuration.getDecimals());
+
+        uint256 totalSupplyAddUnclaimedFeeAddAmount = IPoolTaken(poolCache.poolToken).scaledTotalSupply() 
+            + poolCache.unclaimedFee.rayMul(poolCache.nextLiquidityIndex) 
+            + amount;
+
+
+        if (supplyCapacity == 0 || totalSupplyAddUnclaimedFeeAddAmount <= supplyCapacity) {
+            revert Errors.SupplyCapacityExceeded(totalSupplyAddUnclaimedFeeAddAmount, supplyCapacity);
+        }
+
     }    
     
 }

@@ -43,16 +43,16 @@ library RedeemUtils {
         address account, 
         ExecuteRedeemParams calldata params
     ) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
-        PoolUtils.validateEnabledPool(pool);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount)
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount);
 
-        IPoolToken poolToken   = IPoolToken(pool.poolToken);
+        IPoolToken poolToken = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, amount);
-        if(poolToken.balanceOfCollateral(account) == 0)) {
-            position.setPoolAsCollateral(pool.poolKeyId(), false)
+        if(poolToken.balanceOfCollateral(account) == 0) {
+            position.setPoolAsCollateral(pool.poolKeyId(), false);
             PositionStoreUtils.set(params.dataStore, account, position);
         }
 

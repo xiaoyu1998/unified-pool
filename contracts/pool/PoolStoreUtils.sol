@@ -23,7 +23,8 @@ library PoolStoreUtils {
     bytes32 public constant POOL_DEBT_TOKEN             = keccak256(abi.encode("POOL_DEBT_TOKEN"));
     bytes32 public constant POOL_CONFIGRATION   = keccak256(abi.encode("POOL_CONFIGRATION"));
     bytes32 public constant POOL_FEE_FACTOR     = keccak256(abi.encode("POOL_FEE_FACTOR"));
-    bytes32 public constant POOL_TOTAL_POOL_FEE = keccak256(abi.encode("POOL_TOTAL_POOL_FEE"));
+    bytes32 public constant POOL_TOTAL_FEE = keccak256(abi.encode("POOL_TOTAL_FEE"));
+    bytes32 public constant POOL_UNCLAIMED_FEE = keccak256(abi.encode("POOL_UNCLAIMED_FEE"));
     bytes32 public constant POOL_LAST_UPDATE_TIME_STAMP = keccak256(abi.encode("POOL_LAST_UPDATE_TIME_STAMP"));
 
     function get(DataStore dataStore, Address key) public view returns (Pool.Props memory) {
@@ -76,11 +77,15 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_FEE_FACTOR))
         ));
 
-        pool.totalPoolFee(dataStore.getAddress(
-            keccak256(abi.encode(key, POOL_TOTAL_POOL_FEE))
+        pool.setTotalFee(dataStore.getAddress(
+            keccak256(abi.encode(key, POOL_TOTAL_FEE))
         ));
 
-        pool.lastUpdateTimestamp(dataStore.getAddress(
+        pool.setUnclaimedFee(dataStore.getAddress(
+            keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
+        ));
+
+        pool.setLastUpdateTimestamp(dataStore.getAddress(
             keccak256(abi.encode(key, POOL_LAST_UPDATE_TIME_STAMP))
         ));
 
@@ -166,14 +171,20 @@ library PoolStoreUtils {
         );
 
         dataStore.setUint(
+            keccak256(abi.encode(key, POOL_TOTAL_FEE)),
+            pool.totalFee()
+        );
+
+        dataStore.setUint(
+            keccak256(abi.encode(key, POOL_UNCLAIMED_FEE)),
+            pool.unclaimFee()
+        );
+
+        dataStore.setUint(
             keccak256(abi.encode(key, POOL_LAST_UPDATE_TIME_STAMP)),
             pool.lastUpdateTimestamp()
         );
 
-        dataStore.setUint(
-            keccak256(abi.encode(key, POOL_TOTAL_POOL_FEE)),
-            pool.unclaimPoolFee()
-        );
     }
 
     function remove(DataStore dataStore, address key) external {
@@ -231,7 +242,11 @@ library PoolStoreUtils {
         );
         
         dataStore.removeUint(
-            keccak256(abi.encode(key, POOL_TOTAL_POOL_FEE))
+            keccak256(abi.encode(key, POOL_TOTAL_FEE))
+        );
+
+        dataStore.removeUint(
+            keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
         );
 
         dataStore.removeUint(

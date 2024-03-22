@@ -18,7 +18,8 @@ library Pool {
 
         uint256 configration;
         uint256 feeFactor;
-        uint256 totalPoolFee;
+        uint256 totalFee;
+        uint256 unclaimedFee;
         uint256 lastUpdateTimestamp;
     }
 
@@ -110,16 +111,25 @@ library Pool {
         props.feeFactor = value;
     }
 
-    function totalPoolFee(Props memory props) internal pure returns (uint256) {
-        return props.totalPoolFee;
+    function totalFee(Props memory props) internal pure returns (uint256) {
+        return props.totalFee;
     }
 
-    function setTotalPoolFee(Props memory props, uint256 value) internal pure {
-        props.totalPoolFee = value;
+    function setTotalFee(Props memory props, uint256 value) internal pure {
+        props.totalFee = value;
     }
 
-    function incrementTotalPoolFee(Props memory props, uint256 value) internal pure returns (uint256) {
-        props.totalPoolFee += value;
+    function incrementFee(Props memory props, uint256 value) internal pure returns (uint256) {
+        props.totallFee    += value;
+        props.unclaimedFee += unclaimedFee;
+    }
+
+    function unclaimedFee(Props memory props) internal pure returns (uint256) {
+        return props.unclaimedFee;
+    }
+
+    function setUnclaimedFee(Props memory props, uint256 value) internal pure {
+        props.unclaimedFee = value;
     }
 
     function lastUpdateTimestamp(Props memory props) internal pure returns (uint256) {

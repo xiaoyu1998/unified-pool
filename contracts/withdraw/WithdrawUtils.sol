@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 
 // @title WithdrawUtils
@@ -25,8 +25,8 @@ library WithdrawUtils {
     // @param account the withdrawing account
     // @param params ExecuteWithdrawParams
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
-        PoolUtils.validateEnabledPool(pool);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(pool, poolCache);
 
@@ -52,7 +52,7 @@ library WithdrawUtils {
             pool
         );
 
-        poolToken.burn(params.to, amountToWithdraw, poolCache.nextLiquidityIndex)
+        poolToken.burn(params.to, amountToWithdraw, poolCache.nextLiquidityIndex);
     }
 
 
@@ -67,12 +67,18 @@ library WithdrawUtils {
           uint256 amount,
           uint256 userBalance
       ) internal pure {
-          if (amount == 0) { revert Errors.EmptyWithdrawAmount() }
-          require(amount <= userBalance, Errors.NOT_ENOUGH_AVAILABLE_USER_BALANCE);
+          if (amount == 0) { 
+              revert Errors.EmptyWithdrawAmounts(); 
+          }
+
+          if (amount > userBalance) {
+              revert Errors.InsufficientUserBalance(amount, userBalance);
+          }
 
           (bool isActive, , , bool isPaused) = poolCache.poolConfiguration.getFlags();
-          require(isActive, Errors.RESERVE_INACTIVE);
-          require(!isPaused, Errors.RESERVE_PAUSED);
+          
+          if (!vars.isActive)         { revert Errors.PoolIsInactive(); }  
+          if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
 
           //TODO should check the underlying token balance is sufficient to this withdraw
           // uint256 availableBalance = IPoolToken(poolCache.poolTokenAddress)

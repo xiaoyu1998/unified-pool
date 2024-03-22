@@ -7,6 +7,7 @@ import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
 
 import "../chain/Chain.sol";
+import "../utils/InterestUtils.sol";
 
 
 // @title PoolUtils
@@ -71,7 +72,8 @@ library PoolUtils {
 
         poolCache.poolConfiguration   = pool.configuration();
         poolCache.feeFactor           = PoolConfigurationUtils.getReserveFactor(poolCache.configration);
-        poolCache.totalPoolFee        = pool.totalPoolFee();
+        poolCache.totalFee            = pool.totalFee();
+        poolCache.unclaimedFee        = pool.unclaimedFee();
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp();
 
         return poolCache;
@@ -82,7 +84,7 @@ library PoolUtils {
         PoolCache.Props memory poolCache
     ) internal {
         if (poolCache.currLiquidityRate != 0) {
-            uint256 cumulatedLiquidityInterest = MathUtils.calculateInterest(
+            uint256 cumulatedLiquidityInterest = InterestUtils.calculateInterest(
                 poolCache.currLiquidityRate,
                 poolCache.lastUpdateTimestamp
             );
@@ -93,7 +95,7 @@ library PoolUtils {
         }
 
         if (poolCache.currTotalScaledDebt != 0) {
-            uint256 cumulatedBorrowInterest = MathUtils.calculateInterest(
+            uint256 cumulatedBorrowInterest = InterestUtils.calculateInterest(
                 poolCache.currBorrowRate,
                 poolCache.lastUpdateTimestamp
             );
@@ -113,39 +115,39 @@ library PoolUtils {
             return;
         }
         pool.updateIndexes(poolCache);
-        pool.incrementClaimableFeeAmount(poolCache);
+        FeeUtils.incrementClaimableFeeAmount(pool, poolCache);
         pool.setLastUpdateTimestamp(blockTimeStamp);
     }
 
     function getPoolNormalizedLiquidityIndex(
       DataStore dataStore,
-      address key,
-    ) internal return (uint256) {
-        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key)
-        validateEnabledPool(pool)
+      address key
+    ) internal returns (uint256) {
+        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key);
+        validateEnabledPool(pool, key);
 
         if (pool.lastUpdateTimestamp() == block.timestamp) {
             return pool.liquidityIndex();
         } else {
-            uint256 periodicIncomeInterest = MathUtils.calculateInterest(
+            uint256 periodicIncomeInterest = InterestUtils.calculateInterest(
                 pool.LiquidityRate(), 
                 pool.lastUpdateTimestamp()
-            )
+            );
             return periodicIncomeInterest.rayMul(pool.liquidityIndex());
         }
     }
 
     function getPoolNormalizedBorrowingIndex(
       DataStore dataStore,
-      address key,
+      address key
     ) internal return (uint256) {
-        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key)
-        validateEnabledPool(pool)
+        Pool.Props memory pool = PoolStoreUtils.get(dataStore, key);
+        validateEnabledPool(pool, key);
 
         if (pool.lastUpdateTimestamp() == block.timestamp) {
             return pool.borrowIndex();
         } else {
-            uint256 periodicBorrowInterest = MathUtils.calculateInterest(
+            uint256 periodicBorrowInterest = InterestUtils.calculateInterest(
                 pool.borrowRate(), 
                 pool.lastUpdateTimestamp()
             )
@@ -162,10 +164,11 @@ library PoolUtils {
     }
 
     function validateEnabledPool(
-        Pool.Props memory pool
+        Pool.Props memory pool,
+        address key
     ) internal view {
         if (pool.poolTokenAddress() == address(0)) {
-            revert Errors.EmptyPool();
+            revert Errors.PoolNotFound(key);
         }
 
     }

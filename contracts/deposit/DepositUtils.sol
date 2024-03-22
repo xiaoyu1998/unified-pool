@@ -35,8 +35,8 @@ library DepositUtils {
     // @param account the depositng account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, params.underlyingAsset);
-        PoolUtils.validateEnabledPool(pool);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);

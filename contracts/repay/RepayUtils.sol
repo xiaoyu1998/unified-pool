@@ -37,7 +37,7 @@ library RepayUtils {
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        PoolUtils.validateEnabledPool(pool);
+        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
@@ -58,7 +58,7 @@ library RepayUtils {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
-        RepayUtils.validateRepay(pool, poolCache, repayAmount, debtAmount, collateralAmount);
+        RepayUtils.validateRepay(pool, poolCache, account, repayAmount, debtAmount, collateralAmount);
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
@@ -69,7 +69,7 @@ library RepayUtils {
 
         if(collateralAmount > 0) {
             poolToken.removeCollateral(account, repayAmount);
-            if(poolToken.balanceOfCollateral(account) == 0)) {
+            if(poolToken.balanceOfCollateral(account) == 0) {
                 position.setPoolAsCollateral(pool.poolKeyId(), false);
                 PositionStoreUtils.set(params.dataStore, account, position);
             }
@@ -104,6 +104,7 @@ library RepayUtils {
     function validateRepay(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,
+        address account,
         uint256 repayAmount,
         uint256 debtAmount,
         IPoolToken poolToken,
@@ -112,7 +113,7 @@ library RepayUtils {
         PositionUtils.validateEnabledPosition(position);
 
         if(debtAmount == 0) {
-            revert Errors.UserDoNotHaveDebtInPool(pool.underlyingAsset())
+            revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset());
         }
 
         if(repayAmount == 0) {
