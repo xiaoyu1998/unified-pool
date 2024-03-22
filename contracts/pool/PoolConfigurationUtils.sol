@@ -84,8 +84,6 @@ library PoolConfigurationUtils {
         poolConfigration =
             (poolConfigration & ACTIVE_MASK) |
             (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
-
-        return poolConfigration;
     }
 
 
@@ -104,8 +102,6 @@ library PoolConfigurationUtils {
         poolConfigration =
             (poolConfigration & FROZEN_MASK) |
             (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
-
-        return poolConfigration;
     }
 
       
@@ -127,8 +123,6 @@ library PoolConfigurationUtils {
         poolConfigration =
           (poolConfigration & PAUSED_MASK) |
           (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
-
-        return poolConfigration;
     }
 
       
@@ -155,7 +149,6 @@ library PoolConfigurationUtils {
         }
 
         poolConfigration = (poolConfigration & DECIMALS_MASK) | (decimals << POOL_DECIMALS_START_BIT_POSITION);
-        return poolConfigration;
     }
 
     
@@ -182,8 +175,6 @@ library PoolConfigurationUtils {
         poolConfigration =
           (poolConfigration & POOL_FEE_FACTOR_MASK) |
           (feeFactor << POOL_FACTOR_START_BIT_POSITION);
-
-        return poolConfigration;
     }
 
     // @notice Gets the fee factor of the pool
@@ -207,7 +198,6 @@ library PoolConfigurationUtils {
             revert Errors.InvalidBorrowCapacity(borrowCapacity, MAX_VALID_BORROW_CAP);
         }
         poolConfigration= (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
-        return poolConfigration;
     }
 
     
@@ -232,7 +222,6 @@ library PoolConfigurationUtils {
             revert Errors.InvalidBorrowCapacity(supplyCapacity, MAX_VALID_SUPPLY_CAP);
         }
         poolConfigration = (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
-        return poolConfigration;
     }
 
     
