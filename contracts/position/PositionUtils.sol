@@ -11,6 +11,10 @@ import "../pool/IPoolToken.sol";
 import "../pool/IDebtToken.sol";
 
 import "./Position.sol";
+import "./PositionStoreUtils.sol";
+
+import "../oracle/IPriceOracleGetter.sol";
+import "../oracle/OracleStoreUtils.sol";
 
 // @title PositionUtils
 // @dev Library for Position functions
@@ -25,14 +29,12 @@ library PositionUtils {
         return key;
     }
 
-
     struct calculateUserTotalCollateralAndDebtVars {
         uint256 i;
         uint256 assetPrice;
         uint256 userTotalCollateralInUsd;
         uint256 userTotalDebtInUsd;
     }
-
 
     function calculateUserTotalCollateralAndDebt(
         address account,
@@ -41,7 +43,7 @@ library PositionUtils {
     ) internal view returns (uint256, uint256) {
 
        calculateUserTotalCollateralAndDebtVars memory vars;
-       uin256 poolCount = PoolStoreUtils.getPoolCount(dataStore);
+       uint256 poolCount = PoolStoreUtils.getPoolCount(dataStore);
        while (vars.i < poolCount) {
             if (!position.isUsingAsCollateralOrBorrowing(vars.i)){
                 unchecked {
@@ -53,7 +55,7 @@ library PositionUtils {
             bytes32 poolKey = PoolStoreUtils.getPoolKeyFromId(dataStore, vars.i);
             Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
 
-            vars.assetPrice = IPriceOracleGetter(oracle).getPrice(pool.underlyingAsset());
+            vars.assetPrice = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(pool.underlyingAsset());
 
             if (position.isUsingAsCollateral(vars.i)){
                  vars.userTotalCollateralInUsd +=

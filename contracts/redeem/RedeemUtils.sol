@@ -17,13 +17,14 @@ import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
 import "../oracle/IPriceOracleGetter.sol";
+import "../config/ConfigStoreUtils.sol";
 
 // @title RedeemUtils
 // @dev Library for redeem functions, to help with the redeeming of liquidity
 // into a market in return for market tokens
 library RedeemUtils {
 
-    uint256 public constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 0.9e18;//ToDo as governance
+    //uint256 public constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 0.9e18;//ToDo as governance
 
     struct RedeemParams {
         address underlyingAsset;
@@ -74,12 +75,11 @@ library RedeemUtils {
     }
 
 
-    /**
-    * @notice Validates a redeem action.
-    * @param poolCache The cached data of the pool
-    * @param amount The amount to be redeemn
-    * @param userBalance The balance of the user
-    */
+    
+    // @notice Validates a redeem action.
+    // @param poolCache The cached data of the pool
+    // @param amount The amount to be redeemn
+    // @param userBalance The balance of the user
     function validateRedeem(
         address account,
         DataStore dataStore,
@@ -107,15 +107,15 @@ library RedeemUtils {
                                    * amountToRedeem;
         // vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
         vars.healthFactor = (userTotalDebtInUsd + amountToRedeemInUsd).wadDiv(userTotalCollateralInUsd);
-
-        if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
+        uint256 healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        if (vars.healthFactor < healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverRedeem(
                 userTotalCollateralInUsd, 
                 userTotalDebtInUsd, 
                 amountToRedeemInUsd,
-                HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
+                healthFactorCollateralRateThreshold
             );
         }
-    
+
     }
 }

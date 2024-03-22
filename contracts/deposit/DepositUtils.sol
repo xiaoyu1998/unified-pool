@@ -53,12 +53,12 @@ library DepositUtils {
     }
 
 
-      // /**
-      //  * @notice Validates a withdraw action.
-      //  * @param poolCache The cached data of the pool
-      //  * @param amount The amount to be withdrawn
-      //  * @param userBalance The balance of the user
-      //  */
+      //
+      // @notice Validates a withdraw action.
+      // @param poolCache The cached data of the pool
+      // @param amount The amount to be withdrawn
+      // @param userBalance The balance of the user
+      //
       // function validateDeposit(
       //     Position.Props memory position,
       //     PoolCache.Props memory poolCache,

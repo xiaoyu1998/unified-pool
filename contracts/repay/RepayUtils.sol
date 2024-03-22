@@ -95,12 +95,11 @@ library RepayUtils {
     }
 
 
-    /**
-    * @notice Validates a repay action.
-    * @param poolCache The cached data of the pool
-    * @param amount The amount to be repay
-    * @param userBalance The balance of the user
-    */
+    
+    // @notice Validates a repay action.
+    // @param poolCache The cached data of the pool
+    // @param amount The amount to be repay
+    // @param userBalance The balance of the user
     function validateRepay(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,

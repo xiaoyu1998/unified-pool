@@ -18,6 +18,14 @@ library Errors {
     error InvalidOptimalUsageRate(uint256 optimalUsageRatio);
 
     //PoolConfigurationUtils errors
+    error InvalidDecimals(uint256 decimals, uint256 MaxValidDecimals);
+    error InvalidFeeFactor(uint256 feeFactor, uint256 MaxValidFeeFactor);
+    error InvalidBorrowCapacity(uint256 borrowCapacity, uint256 MaxValidBorrowCapacity);
+    error InvalidSupplyCapacity(uint256 supplyCapacity, uint256 MaxValidSupplyCapacity);
+
+
+    //Position errors
+    error InvalidPoolIndex(uint256 poolKeyId);
 
     //PositionUtils errors
     error EmptyPosition();

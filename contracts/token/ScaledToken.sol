@@ -5,23 +5,19 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../error/Errors.sol";
 import "../utils/WadRayMath.sol";
 import "./MintableERC20.sol";
-
-/**
- * @title ScaledToken
- * @author Aave
- * @notice Basic ERC20 implementation of scaled balance token
- */
+ // @title ScaledToken 
+ // @author Aave 
+ // @notice Basic ERC20 implementation of scaled balance token
 abstract contract ScaledToken is MintableERC20 {
   using WadRayMath for uint256;
   using SafeCast for uint256;
 
-  /**
-   * @dev Constructor.
-   * @param pool The reference to the main Pool contract
-   * @param name The name of the token
-   * @param symbol The symbol of the token
-   * @param decimals The number of decimals of the token
-   */
+
+ // @dev Constructor.
+ // @param pool The reference to the main Pool contract
+ // @param name The name of the token
+ // @param symbol The symbol of the token
+ // @param decimals The number of decimals of the token
   constructor(
     string memory name,
     string memory symbol,
@@ -52,14 +48,13 @@ abstract contract ScaledToken is MintableERC20 {
     return _index[account];
   }
 
-  /**
-   * @notice Implements the basic logic to mint a scaled balance token.
-   * @param caller The address performing the mint
-   * @param to The address of the user that will receive the scaled tokens
-   * @param amount The amount of tokens getting minted
-   * @param index The next liquidity index of the reserve
-   * @return `true` if the the previous balance of the user was 0
-   */
+
+ // @notice Implements the basic logic to mint a scaled balance token.
+ // @param caller The address performing the mint
+ // @param to The address of the user that will receive the scaled tokens
+ // @param amount The amount of tokens getting minted
+ // @param index The next liquidity index of the reserve
+ // @return `true` if the the previous balance of the user was 0
   function _mintScaled(
     address to,
     uint256 amount,
@@ -85,15 +80,14 @@ abstract contract ScaledToken is MintableERC20 {
     return (scaledBalance == 0);
   }
 
-  /**
-   * @notice Implements the basic logic to burn a scaled balance token.
-   * @dev In some instances, a burn transaction will emit a mint event
-   * if the amount to burn is less than the interest that the user accrued
-   * @param user The user which debt is burnt
-   * @param receiver The address that will receive the underlying, if any
-   * @param amount The amount getting burned
-   * @param index The variable debt index of the reserve
-   */
+
+ // @notice Implements the basic logic to burn a scaled balance token.
+ // @dev In some instances, a burn transaction will emit a mint event
+ // if the amount to burn is less than the interest that the user accrued
+ // @param user The user which debt is burnt
+ // @param receiver The address that will receive the underlying, if any
+ // @param amount The amount getting burned
+ // @param index The variable debt index of the reserve
   function _burnScaled(
     address account, 
     address receiver, 
@@ -125,14 +119,13 @@ abstract contract ScaledToken is MintableERC20 {
     }
   }
 
-  /**
-   * @notice Implements the basic logic to transfer scaled balance tokens between two users
-   * @dev It emits a mint event with the interest accrued per user
-   * @param sender The source address
-   * @param recipient The destination address
-   * @param amount The amount getting transferred
-   * @param index The next liquidity index of the reserve
-   */
+
+ // @notice Implements the basic logic to transfer scaled balance tokens between two users
+ // @dev It emits a mint event with the interest accrued per user
+ // @param sender The source address
+ // @param recipient The destination address
+ // @param amount The amount getting transferred
+ // @param index The next liquidity index of the reserve
   function _transfer(
     address from, 
     address to, 

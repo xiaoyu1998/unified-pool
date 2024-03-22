@@ -27,7 +27,7 @@ library PoolStoreUtils {
     bytes32 public constant POOL_UNCLAIMED_FEE = keccak256(abi.encode("POOL_UNCLAIMED_FEE"));
     bytes32 public constant POOL_LAST_UPDATE_TIME_STAMP = keccak256(abi.encode("POOL_LAST_UPDATE_TIME_STAMP"));
 
-    function get(DataStore dataStore, Address key) public view returns (Pool.Props memory) {
+    function get(DataStore dataStore, address key) public view returns (Pool.Props memory) {
         Pool.Props memory pool;
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             return pool;
@@ -69,7 +69,7 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         ));
 
-        pool.setConfigrationdat(Store.getAddress(
+        pool.setConfigration(dataStore.getAddress(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         ));
 
@@ -92,24 +92,24 @@ library PoolStoreUtils {
         return pool;
     }
 
-    function setKeyAsId(DataStore dataStore, Address key)  public view returns (uint256) {
+    function setKeyAsId(DataStore dataStore, address key)  public view returns (uint256) {
         uint256 id = dataStore.incrementInt(POOL_KEY_ID, 1);
         dataStore.setBytes32(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;
     }
 
-    function getKeyFromId(DataStore dataStore, uint256 id)  public view returns (Address) {
+    function getKeyFromId(DataStore dataStore, uint256 id)  public view returns (address) {
         return dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
     }
 
-    function getPoolById(DataStore dataStore, uint256 id)  public view returns (Address) {
+    function getPoolById(DataStore dataStore, uint256 id)  public view returns (address) {
         address key = dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
         return get(dataStore, key);
     }
 
 
     //function set(DataStore dataStore, address key, Pool.Props memory pool) external {
-    function set(DataStore dataStore, Address key,  Pool.Props memory pool) external {
+    function set(DataStore dataStore, address key,  Pool.Props memory pool) external {
         dataStore.addAddress(
             Keys.POOL_LIST,
             key

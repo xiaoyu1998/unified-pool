@@ -27,6 +27,15 @@ library Keys {
     bytes32 public constant CLAIMABLE_FEE_AMOUNT = keccak256(abi.encode("CLAIMABLE_FEE_AMOUNT"));
 
 
+    // @dev key for the oracle
+    bytes32 public constant ORACLE = keccak256(abi.encode("ORACLE"));
+
+
+    // @dev key for the Health Factor Collateral RateT hreshold
+    bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
+
+
+
     // @dev key for the claimable fee amount
     // @param market the market for the fee
     // @param token the token for the fee

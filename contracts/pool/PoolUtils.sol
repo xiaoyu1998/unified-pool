@@ -2,12 +2,22 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
+
 import "./Pool.sol";
 import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
+import "./PoolStoreUtils.sol";
+import "./IPoolToken.sol";
+import "./IDebtToken.sol";
+
+import "../interest/InterestUtils.sol";
+import "../interest/IPoolInterestRateStrategy.sol";
 
 import "../chain/Chain.sol";
-import "../utils/InterestUtils.sol";
+import "../fee/FeeUtils.sol";
+// import "../utils/InterestUtils.sol";
 
 
 // @title PoolUtils
@@ -16,13 +26,10 @@ library PoolUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
 
-    struct CalculateInterestRatesParams {
-        uint256 liquidityIn;
-        uint256 liquidityOut;
+    struct UpdateInterestRatesLocalVars {
+        uint256 nextLiquidityRate;
+        uint256 nextBorrowRate;
         uint256 totalDebt;
-        uint256 feeFactor;
-        address underlyingAsset;
-        address poolToken;
     }
     
     function updateInterestRates(
@@ -32,25 +39,28 @@ library PoolUtils {
         uint256 liquidityIn,
         uint256 liquidityOut
     ) internal {
-        totalDebt = poolCache.nextTotalScaledDebt.rayMul(
+
+        UpdateInterestRatesLocalVars memory vars;
+
+        vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
 
-        (   nextLiquidityRate,
-            nextBorrowRate
+        (   vars.nextLiquidityRate,
+            vars.nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
-            CalculateInterestRatesParams(
+            InterestUtils.CalculateInterestRatesParams(
                 liquidityIn,
                 liquidityOut,
-                totalDebt,
+                vars.totalDebt,
                 poolCache.feeFactor,
                 underlyingAsset,
                 poolCache.poolToken
             )
         );
 
-        pool.LiquidityRate = nextLiquidityRate;
-        pool.borrowRate    = nextBorrowRate;
+        pool.LiquidityRate = vars.nextLiquidityRate;
+        pool.borrowRate    = vars.nextBorrowRate;
     }
 
     function cache(

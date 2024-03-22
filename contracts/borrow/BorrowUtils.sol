@@ -18,6 +18,8 @@ import "../position/PositionStoreUtils.sol";
 
 import "../oracle/IPriceOracleGetter.sol";
 
+import "../config/ConfigStoreUtils.sol";
+
 // @title BorrowUtils
 // @dev Library for borrow functions, to help with the borrowing of liquidity
 // from a pool in return for debt tokens
@@ -79,11 +81,11 @@ library BorrowUtils {
         bool borrowingEnabled;
     }
 
-    // /**
-    //  * @notice Validates a withdraw action.
-    //  * @param poolCache The cached data of the pool
-    //  * @param amount The amount to be Borrow
-    //  */
+    // 
+    // @notice Validates a withdraw action.
+    // @param poolCache The cached data of the pool
+    // @param amount The amount to be Borrow
+    //
     function validateBorrow(
         address account,
         DataStore dataStore,
@@ -130,19 +132,18 @@ library BorrowUtils {
             vars.userTotalCollateralInUsd,
             vars.userTotalDebtInUsd
         ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
-
         if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
 
-        vars.amountToBorrowInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset).rayMul(amountToBorrow);
-
+        vars.amountToBorrowInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(poolCache.underlyingAsset).rayMul(amountToBorrow);
         vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToBorrowInUsd);
-
-        if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
+        
+        uint256 healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        if (vars.healthFactor < healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverNewBorrow(
                 userTotalCollateralInUsd, 
                 userTotalDebtInUsd, 
                 amountToBorrowInUsd,
-                HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
+                healthFactorCollateralRateThreshold
             );
         }
 

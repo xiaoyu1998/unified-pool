@@ -97,7 +97,7 @@ contract PoolToken is ScaledToken, Bank {
 		uint256 amount, 
 		bool validate
 	) internal virtual override{
-		address underlyingAsset = _underlyingAsset;
+		//address underlyingAsset = _underlyingAsset;
 
 		//Pool.Props memory pool = PoolStoreUtils.get(dataStore, _poolKey)
 		// if(pool == null){

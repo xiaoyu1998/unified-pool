@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.20;
 
-import "./Pool.sol";
-import "./PoolUtils.sol";
+import "../pool/Pool.sol";
+import "../pool/PoolUtils.sol";
 import "../utils/PercentageMath.sol";
 
 contract PoolInterestRateStrategy is IPoolInterestRateStrategy {

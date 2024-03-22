@@ -12,12 +12,8 @@ import "../error/ErrorUtils.sol";
 import "../utils/AccountUtils.sol";
 
 import "./IWNT.sol";
-
-/**
- * @title TokenUtils
- * @dev Library for token functions, helps with transferring of tokens and
- * native token functions
- */
+ // @title TokenUtils 
+ // @dev Library for token functions, helps with transferring of tokens and native token functions
 library TokenUtils {
     using Address for address;
     using SafeERC20 for IERC20;
@@ -25,26 +21,24 @@ library TokenUtils {
     event TokenTransferReverted(string reason, bytes returndata);
     event NativeTokenTransferReverted(string reason);
 
-    /**
-     * @dev Returns the address of the WNT token.
-     * @param dataStore DataStore contract instance where the address of the WNT token is stored.
-     * @return The address of the WNT token.
-     */
+   
+    // @dev Returns the address of the WNT token.
+    // @param dataStore DataStore contract instance where the address of the WNT token is stored.
+    // @return The address of the WNT token.
     function wnt(DataStore dataStore) internal view returns (address) {
         return dataStore.getAddress(Keys.WNT);
     }
 
-    /**
-     * @dev Transfers the specified amount of `token` from the caller to `receiver`.
-     * limit the amount of gas forwarded so that a user cannot intentionally
-     * construct a token call that would consume all gas and prevent necessary
-     * actions like request cancellation from being executed
-     *
-     * @param dataStore The data store that contains the `tokenTransferGasLimit` for the specified `token`.
-     * @param token The address of the ERC20 token that is being transferred.
-     * @param receiver The address of the recipient of the `token` transfer.
-     * @param amount The amount of `token` to transfer.
-     */
+   
+    // @dev Transfers the specified amount of `token` from the caller to `receiver`.
+    // limit the amount of gas forwarded so that a user cannot intentionally
+    // construct a token call that would consume all gas and prevent necessary
+    // actions like request cancellation from being executed
+   
+    // @param dataStore The data store that contains the `tokenTransferGasLimit` for the specified `token`.
+    // @param token The address of the ERC20 token that is being transferred.
+    // @param receiver The address of the recipient of the `token` transfer.
+    // @param amount The amount of `token` to transfer.
     function transfer(
         DataStore dataStore,
         address token,
@@ -59,7 +53,7 @@ library TokenUtils {
             revert Errors.EmptyTokenTranferGasLimit(token);
         }
 
-        (bool success0, /* bytes memory returndata */) = nonRevertingTransferWithGasLimit(
+        (bool success0, bytes memory returndata) = nonRevertingTransferWithGasLimit(
             IERC20(token),
             receiver,
             amount,
@@ -77,7 +71,7 @@ library TokenUtils {
         // in case transfers to the receiver fail due to blacklisting or other reasons
         // send the tokens to a holding address to avoid possible gaming through reverting
         // transfers
-        (bool success1, bytes memory returndata) = nonRevertingTransferWithGasLimit(
+        (bool success1, /* bytes memory returndata */) = nonRevertingTransferWithGasLimit(
             IERC20(token),
             holdingAddress,
             amount,
@@ -86,7 +80,7 @@ library TokenUtils {
 
         if (success1) { return; }
 
-        (string memory reason, /* bool hasRevertMessage */) = ErrorUtils.getRevertMessage(returndata);
+        (string memory reason, bool hasRevertMessage) = ErrorUtils.getRevertMessage(returndata);
         emit TokenTransferReverted(reason, returndata);
 
         // throw custom errors to prevent spoofing of errors
@@ -132,14 +126,13 @@ library TokenUtils {
         );
     }
 
-    /**
-     * Deposits the specified amount of native token and sends the specified
-     * amount of wrapped native token to the specified receiver address.
-     *
-     * @param dataStore the data store to use for storing and retrieving data
-     * @param receiver the address of the recipient of the wrapped native token transfer
-     * @param amount the amount of native token to deposit and the amount of wrapped native token to send
-     */
+   
+    // Deposits the specified amount of native token and sends the specified
+    // amount of wrapped native token to the specified receiver address.
+   
+    // @param dataStore the data store to use for storing and retrieving data
+    // @param receiver the address of the recipient of the wrapped native token transfer
+    // @param amount the amount of native token to deposit and the amount of wrapped native token to send
     function depositAndSendWrappedNativeToken(
         DataStore dataStore,
         address receiver,
@@ -159,19 +152,18 @@ library TokenUtils {
         );
     }
 
-    /**
-     * @dev Withdraws the specified amount of wrapped native token and sends the
-     * corresponding amount of native token to the specified receiver address.
-     *
-     * limit the amount of gas forwarded so that a user cannot intentionally
-     * construct a token call that would consume all gas and prevent necessary
-     * actions like request cancellation from being executed
-     *
-     * @param dataStore the data store to use for storing and retrieving data
-     * @param _wnt the address of the WNT contract to withdraw the wrapped native token from
-     * @param receiver the address of the recipient of the native token transfer
-     * @param amount the amount of wrapped native token to withdraw and the amount of native token to send
-     */
+   
+    // @dev Withdraws the specified amount of wrapped native token and sends the
+    // corresponding amount of native token to the specified receiver address.
+   
+    // limit the amount of gas forwarded so that a user cannot intentionally
+    // construct a token call that would consume all gas and prevent necessary
+    // actions like request cancellation from being executed
+   
+    // @param dataStore the data store to use for storing and retrieving data
+    // @param _wnt the address of the WNT contract to withdraw the wrapped native token from
+    // @param receiver the address of the recipient of the native token transfer
+    // @param amount the amount of wrapped native token to withdraw and the amount of native token to send
     function withdrawAndSendNativeToken(
         DataStore dataStore,
         address _wnt,
@@ -211,18 +203,17 @@ library TokenUtils {
         );
     }
 
-    /**
-     * @dev Transfers the specified amount of ERC20 token to the specified receiver
-     * address, with a gas limit to prevent the transfer from consuming all available gas.
-     * adapted from https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/utils/SafeERC20.sol
-     *
-     * @param token the ERC20 contract to transfer the tokens from
-     * @param to the address of the recipient of the token transfer
-     * @param amount the amount of tokens to transfer
-     * @param gasLimit the maximum amount of gas that the token transfer can consume
-     * @return a tuple containing a boolean indicating the success or failure of the
-     * token transfer, and a bytes value containing the return data from the token transfer
-     */
+   
+    // @dev Transfers the specified amount of ERC20 token to the specified receiver
+    // address, with a gas limit to prevent the transfer from consuming all available gas.
+    // adapted from https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/utils/SafeERC20.sol
+   
+    // @param token the ERC20 contract to transfer the tokens from
+    // @param to the address of the recipient of the token transfer
+    // @param amount the amount of tokens to transfer
+    // @param gasLimit the maximum amount of gas that the token transfer can consume
+    // @return a tuple containing a boolean indicating the success or failure of the
+    // token transfer, and a bytes value containing the return data from the token transfer
     function nonRevertingTransferWithGasLimit(
         IERC20 token,
         address to,

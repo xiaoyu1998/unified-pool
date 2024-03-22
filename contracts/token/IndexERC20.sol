@@ -2,11 +2,6 @@
 pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-/**
- * @title IndexRC20
- * @author Aave
- * @notice Implements mint and burn functions for IncentivizedERC20
- */
 abstract contract IndexRC20 is IERC20Detailed {
 
     // Map of users address and their state data (userAddress => userStateData)
@@ -21,12 +16,12 @@ abstract contract IndexRC20 is IERC20Detailed {
     uint8 private _decimals;
     uint256 internal _totalSupply;
 
-    /**
-     * @dev Constructor.
-     * @param name The name of the token
-     * @param symbol The symbol of the token
-     * @param decimals The number of decimals of the token
-     */
+   
+    // @dev Constructor.
+    // @param name The name of the token
+    // @param symbol The symbol of the token
+    // @param decimals The number of decimals of the token
+   
     constructor(string memory name_, string memory symbol_, uint8 decimals_) {
         _name = name_;
         _symbol = symbol_;
@@ -91,23 +86,21 @@ abstract contract IndexRC20 is IERC20Detailed {
         return true;
     }
 
-      /**
-     * @notice Increases the allowance of spender to spend _msgSender() tokens
-     * @param spender The user allowed to spend on behalf of _msgSender()
-     * @param addedValue The amount being added to the allowance
-     * @return `true`
-     */
+     
+    // @notice Increases the allowance of spender to spend _msgSender() tokens
+    // @param spender The user allowed to spend on behalf of _msgSender()
+    // @param addedValue The amount being added to the allowance
+    // @return `true`
     function increaseAllowance(address spender, uint256 addedValue) external virtual returns (bool) {
         _approve(_msgSender(), spender, _allowances[_msgSender()][spender] + addedValue);
         return true;
     }
 
-    /**
-     * @notice Decreases the allowance of spender to spend _msgSender() tokens
-     * @param spender The user allowed to spend on behalf of _msgSender()
-     * @param subtractedValue The amount being subtracted to the allowance
-     * @return `true`
-     */
+   
+    // @notice Decreases the allowance of spender to spend _msgSender() tokens
+    // @param spender The user allowed to spend on behalf of _msgSender()
+    // @param subtractedValue The amount being subtracted to the allowance
+    // @return `true`
     function decreaseAllowance(
         address spender,
         uint256 subtractedValue
@@ -116,12 +109,11 @@ abstract contract IndexRC20 is IERC20Detailed {
         return true;
     }
 
-    /**
-     * @notice Transfers tokens between two users and apply incentives if defined.
-     * @param from The source address
-     * @param to The destination address
-     * @param amount The amount getting transferred
-     */
+   
+    // @notice Transfers tokens between two users and apply incentives if defined.
+    // @param from The source address
+    // @param to The destination address
+    // @param amount The amount getting transferred
     function _transfer(address from, address to, uint256 amount) internal virtual {
         require(from != address(0), "IndexERC20: transfer from the zero address");
         require(to != address(0), "IndexERC20: transfer to the zero address");
@@ -138,37 +130,36 @@ abstract contract IndexRC20 is IERC20Detailed {
         //emit Transfer(from, to, amount);
     }
 
-    /**
-     * @notice Approve `spender` to use `amount` of `owner`s balance
-     * @param owner The address owning the tokens
-     * @param spender The address approved for spending
-     * @param amount The amount of tokens to approve spending of
-     */
+   
+    // @notice Approve `spender` to use `amount` of `owner`s balance
+    // @param owner The address owning the tokens
+    // @param spender The address approved for spending
+    // @param amount The amount of tokens to approve spending of
     function _approve(address owner, address spender, uint256 amount) internal virtual {
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
 
-    // /**
-    //  * @notice Update the name of the token
-    //  * @param newName The new name for the token
-    //  */
+    //
+    // @notice Update the name of the token
+    // @param newName The new name for the token
+    ///
     // function _setName(string memory newName) internal {
     //    _name = newName;
     // }
 
-    // /**
-    //  * @notice Update the symbol for the token
-    //  * @param newSymbol The new symbol for the token
-    //  */
+    //
+    // @notice Update the symbol for the token
+    // @param newSymbol The new symbol for the token
+    ///
     // function _setSymbol(string memory newSymbol) internal {
     //     _symbol = newSymbol;
     // }
 
-    // /**
-    //  * @notice Update the number of decimals for the token
-    //  * @param newDecimals The new number of decimals for the token
-    //  */
+    //
+    // @notice Update the number of decimals for the token
+    // @param newDecimals The new number of decimals for the token
+    ///
     // function _setDecimals(uint8 newDecimals) internal {
     //     _decimals = newDecimals;
     // }

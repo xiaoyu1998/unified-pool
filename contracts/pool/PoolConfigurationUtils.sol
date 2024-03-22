@@ -40,7 +40,7 @@ library PoolConfigurationUtils {
     uint256 internal constant POOL_FEE_FACTOR_MASK =           0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF;
     uint256 internal constant BORROW_CAP_MASK =                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000FFFFFFFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant SUPPLY_CAP_MASK =                0xFFFFFFFFFFFFFFFFFFFFFFFFFF000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFF; // prettier-ignore
-    
+
     uint256 internal constant POOL_DECIMALS_START_BIT_POSITION = 48;
     uint256 internal constant IS_ACTIVE_START_BIT_POSITION = 56;
     uint256 internal constant IS_FROZEN_START_BIT_POSITION = 57;
@@ -58,102 +58,94 @@ library PoolConfigurationUtils {
 
     uint256 public constant DEBT_CEILING_DECIMALS = 2;
     uint16 public constant MAX_POOLS_COUNT = 128;
-      /**
-       * @notice Gets the configuration flags of the reserve
-       * @param self The reserve configuration
-       * @return The state flag representing active
-       * @return The state flag representing frozen
-       * @return The state flag representing borrowing enabled
-       * @return The state flag representing paused
-       */
-      function getFlags(
-         uint256 poolConfigration
-      ) internal pure returns (bool, bool, bool, bool) {
-          return (
-              (poolConfigration & ~ACTIVE_MASK) != 0,
-              (poolConfigration & ~FROZEN_MASK) != 0,
-              (poolConfigration & ~BORROWING_MASK) != 0,
-              (poolConfigration & ~PAUSED_MASK) != 0
-          );
-      }
-
-    /**
-       * @notice Sets the active state of the reserve
-       * @param self The reserve configuration
-       * @param active The active state
-       */
-      function setActive(uint256 poolConfigration, bool active) internal pure {
-          poolConfigration =
-              (poolConfigration & ACTIVE_MASK) |
-              (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
-
-          return poolConfigration;
-      }
-
-      /**
-       * @notice Gets the active state of the reserve
-       * @param self The reserve configuration
-       * @return The active state
-       */
-      function getActive(uint256 poolConfigration) internal pure returns (bool) {
-          return (poolConfigration & ~ACTIVE_MASK) != 0;
-      }
-
-      /**
-       * @notice Sets the frozen state of the reserve
-       * @param self The reserve configuration
-       * @param frozen The frozen state
-       */
-      function setFrozen(uint256 poolConfigration, bool frozen) internal pure {
-          poolConfigration =
-              (poolConfigration & FROZEN_MASK) |
-              (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
-
-          return poolConfigration;
-      }
-
-      /**
-       * @notice Gets the frozen state of the reserve
-       * @param self The reserve configuration
-       * @return The frozen state
-       */
-      function getFrozen(uint256 poolConfigration) internal pure returns (bool) {
-          return (poolConfigration & ~FROZEN_MASK) != 0;
-      }
-
-      /**
-       * @notice Sets the paused state of the reserve
-       * @param self The reserve configuration
-       * @param paused The paused state
-       */
-      function setPaused(
-          uint256 poolConfigration, 
-          bool paused
-      ) internal pure {
-          poolConfigration =
-              (poolConfigration & PAUSED_MASK) |
-              (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
-
-          return poolConfigration;
-      }
-
-      /**
-       * @notice Gets the paused state of the reserve
-       * @param self The reserve configuration
-       * @return The paused state
-       */
-      function getPaused(
-          uint256 poolConfigration
-      ) internal pure returns (bool) {
-          return (poolConfigration & ~PAUSED_MASK) != 0;
-      }
+    // 
+    //   @notice Gets the configuration flags of the reserve
+    //   @param self The reserve configuration
+    //   @return The state flag representing active
+    //   @return The state flag representing frozen
+    //   @return The state flag representing borrowing enabled
+    //   @return The state flag representing paused
+    function getFlags(
+        uint256 poolConfigration
+    ) internal pure returns (bool, bool, bool, bool) {
+        return (
+            (poolConfigration & ~ACTIVE_MASK) != 0,
+            (poolConfigration & ~FROZEN_MASK) != 0,
+            (poolConfigration & ~BORROWING_MASK) != 0,
+            (poolConfigration & ~PAUSED_MASK) != 0
+        );
+    }
 
 
-    /**
-     * @notice Sets the decimals of the underlying asset of the reserve
-     * @param self The reserve configuration
-     * @param decimals The decimals
-     */
+    // @notice Sets the active state of the reserve
+    // @param self The reserve configuration
+    // @param active The active state
+    function setActive(uint256 poolConfigration, bool active) internal pure {
+        poolConfigration =
+            (poolConfigration & ACTIVE_MASK) |
+            (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
+
+        return poolConfigration;
+    }
+
+
+    // @notice Gets the active state of the reserve
+    // @param self The reserve configuration
+    // @return The active state
+    function getActive(uint256 poolConfigration) internal pure returns (bool) {
+        return (poolConfigration & ~ACTIVE_MASK) != 0;
+    }
+
+
+    // @notice Sets the frozen state of the reserve
+    // @param self The reserve configuration
+    // @param frozen The frozen state
+    function setFrozen(uint256 poolConfigration, bool frozen) internal pure {
+        poolConfigration =
+            (poolConfigration & FROZEN_MASK) |
+            (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
+
+        return poolConfigration;
+    }
+
+      
+    // @notice Gets the frozen state of the reserve
+    // @param self The reserve configuration
+    // @return The frozen state
+    function getFrozen(uint256 poolConfigration) internal pure returns (bool) {
+        return (poolConfigration & ~FROZEN_MASK) != 0;
+    }
+
+      
+    // @notice Sets the paused state of the reserve
+    // @param self The reserve configuration
+    // @param paused The paused state
+    function setPaused(
+        uint256 poolConfigration, 
+        bool paused
+    ) internal pure {
+        poolConfigration =
+          (poolConfigration & PAUSED_MASK) |
+          (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
+
+        return poolConfigration;
+    }
+
+      
+    // @notice Gets the paused state of the reserve
+    // @param self The reserve configuration
+    // @return The paused state
+    function getPaused(
+        uint256 poolConfigration
+    ) internal pure returns (bool) {
+        return (poolConfigration & ~PAUSED_MASK) != 0;
+    }
+
+
+    
+    // @notice Sets the decimals of the underlying asset of the reserve
+    // @param self The reserve configuration
+    // @param decimals The decimals
     function setDecimals(
         uint256 poolConfigration,
         uint256 decimals
@@ -166,24 +158,19 @@ library PoolConfigurationUtils {
         return poolConfigration;
     }
 
-    /**
-     * @notice Gets the decimals of the underlying asset of the reserve
-     * @param self The reserve configuration
-     * @return The decimals of the asset
-     */
+    
+    // @notice Gets the decimals of the underlying asset of the reserve
+    // @param self The reserve configuration
+    // @return The decimals of the asset
     function getDecimals(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
         return (poolConfigration & ~DECIMALS_MASK) >> POOL_DECIMALS_START_BIT_POSITION;
     }
 
-
-
-    /**
-     * @notice Sets the fee factor of the fee
-     * @param poolConfigration The fee configuration
-     * @param feeFactor The fee factor
-     */
+    // @notice Sets the fee factor of the fee
+    // @param poolConfigration The fee configuration
+    // @param feeFactor The fee factor
     function setFeeFactor(
         uint256 poolConfigration,
         uint256 feeFactor
@@ -199,22 +186,19 @@ library PoolConfigurationUtils {
         return poolConfigration;
     }
 
-    /**
-     * @notice Gets the fee factor of the pool
-     * @param self The reserve configuration
-     * @return The reserve factor
-     */
+    // @notice Gets the fee factor of the pool
+    // @param self The reserve configuration
+    // @return The reserve factor
     function getFeeFactor(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
         return (poolConfigration & ~POOL_FEE_FACTOR_MASK) >> POOL_FACTOR_START_BIT_POSITION;
     }
 
-    /**
-     * @notice Sets the borrow cap of the reserve
-     * @param self The reserve configuration
-     * @param borrowCapacity The borrow cap
-     */
+    
+    // @notice Sets the borrow cap of the reserve
+    // @param self The reserve configuration
+    // @param borrowCapacity The borrow cap
     function setBorrowCapacity(
         uint256 poolConfigration,
         uint256 borrowCapacity
@@ -226,22 +210,20 @@ library PoolConfigurationUtils {
         return poolConfigration;
     }
 
-    /**
-     * @notice Gets the borrow cap of the reserve
-     * @param self The reserve configuration
-     * @return The borrow cap
-     */
+    
+    // @notice Gets the borrow cap of the reserve
+    // @param self The reserve configuration
+    // @return The borrow cap
     function getBorrowCapacity(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
-        return (self.data & ~BORROW_CAP_MASK) >> BORROW_CAP_START_BIT_POSITION;
+        return (poolConfigration & ~BORROW_CAP_MASK) >> BORROW_CAP_START_BIT_POSITION;
     }
 
-    /**
-     * @notice Sets the supply cap of the reserve
-     * @param self The reserve configuration
-     * @param supplyCapacity The supply cap
-     */
+    
+    // @notice Sets the supply cap of the reserve
+    // @param self The reserve configuration
+    // @param supplyCapacity The supply cap
     function setSupplyCapacity(
         uint256 poolConfigration,
         uint256 supplyCapacity
@@ -253,11 +235,10 @@ library PoolConfigurationUtils {
         return poolConfigration;
     }
 
-    /**
-     * @notice Gets the supply cap of the reserve
-     * @param self The reserve configuration
-     * @return The supply cap
-     */
+    
+    // @notice Gets the supply cap of the reserve
+    // @param self The reserve configuration
+    // @return The supply cap
     function getSupplyCapacity(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
