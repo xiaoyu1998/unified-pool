@@ -33,23 +33,23 @@ library PoolStoreUtils {
             return pool;
         }
 
-        pool.setPoolKeyId(dataStore.getAddress(
+        pool.setKeyId(dataStore.getUint(
             keccak256(abi.encode(key, POOL_KEY_ID))
         ));
 
-        pool.setLiquidityIndex(dataStore.getAddress(
+        pool.setLiquidityIndex(dataStore.getUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_INDEX))
         ));
 
-        pool.setLiquidityRate(dataStore.getAddress(
+        pool.setLiquidityRate(dataStore.getUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_RATE))
         ));
 
-        pool.setBorrowIndex(dataStore.getAddress(
+        pool.setBorrowIndex(dataStore.getUint(
             keccak256(abi.encode(key, POOL_BORROW_INDEX))
         ));
 
-        pool.setBorrowRate(dataStore.getAddress(
+        pool.setBorrowRate(dataStore.getUint(
             keccak256(abi.encode(key, POOL_BORROW_RATE))
         ));
 
@@ -69,23 +69,23 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         ));
 
-        pool.setConfigration(dataStore.getAddress(
+        pool.setConfigration(dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         ));
 
-        pool.setFeeFactor(dataStore.getAddress(
+        pool.setFeeFactor(dataStore.getUint(
             keccak256(abi.encode(key, POOL_FEE_FACTOR))
         ));
 
-        pool.setTotalFee(dataStore.getAddress(
+        pool.setTotalFee(dataStore.getUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))
         ));
 
-        pool.setUnclaimedFee(dataStore.getAddress(
+        pool.setUnclaimedFee(dataStore.getUint(
             keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
         ));
 
-        pool.setLastUpdateTimestamp(dataStore.getAddress(
+        pool.setLastUpdateTimestamp(dataStore.getUint(
             keccak256(abi.encode(key, POOL_LAST_UPDATE_TIME_STAMP))
         ));
 
@@ -93,17 +93,17 @@ library PoolStoreUtils {
     }
 
     function setKeyAsId(DataStore dataStore, address key)  public view returns (uint256) {
-        uint256 id = dataStore.incrementInt(POOL_KEY_ID, 1);
-        dataStore.setBytes32(keccak256(abi.encode(id, POOL_KEY_ID)), key);
+        uint256 id = dataStore.incrementUint(POOL_KEY_ID, 1);
+        dataStore.setAddress(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;
     }
 
     function getKeyFromId(DataStore dataStore, uint256 id)  public view returns (address) {
-        return dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
+        return dataStore.getAddress(keccak256(abi.encode(id, POOL_KEY_ID)));
     }
 
-    function getPoolById(DataStore dataStore, uint256 id)  public view returns (address) {
-        address key = dataStore.getBytes3(keccak256(abi.encode(id, POOL_KEY_ID)));
+    function getPoolById(DataStore dataStore, uint256 id)  public view returns (Pool.Props memory) {
+        address key = dataStore.getAddress(keccak256(abi.encode(id, POOL_KEY_ID)));
         return get(dataStore, key);
     }
 
@@ -117,7 +117,7 @@ library PoolStoreUtils {
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_KEY_ID)),
-            pool.poolKeyId()
+            pool.keyId()
         );
 
         dataStore.setUint(

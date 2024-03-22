@@ -23,121 +23,121 @@ library Pool {
         uint256 lastUpdateTimestamp;
     }
 
-    function keyId(Props memory props) internal pure returns (uint256) {
-        return props.keyId;
-    }
+    // function keyId(Props memory props) internal pure returns (uint256) {
+    //     return props.keyId;
+    // }
 
-    function setKeyId(Props memory props, uint256 value) internal pure {
-        props.keyId = value;
-    }
+    // function setKeyId(Props memory props, uint256 value) internal pure {
+    //     props.keyId = value;
+    // }
 
-    function liquidityIndex(Props memory props) internal pure returns (uint256) {
-        return props.liquidityIndex;
-    }
+    // function liquidityIndex(Props memory props) internal pure returns (uint256) {
+    //     return props.liquidityIndex;
+    // }
 
-    function setLiquidityIndex(Props memory props, uint256 value) internal pure {
-        props.liquidityIndex = value;
-    }
+    // function setLiquidityIndex(Props memory props, uint256 value) internal pure {
+    //     props.liquidityIndex = value;
+    // }
 
-    function liquidityRate(Props memory props) internal pure returns (uint256) {
-        return props.liquidityRate;
-    }
+    // function liquidityRate(Props memory props) internal pure returns (uint256) {
+    //     return props.liquidityRate;
+    // }
 
-    function setLiquidityRate(Props memory props, uint256 value) internal pure {
-        props.liquidityRate = value;
-    }
+    // function setLiquidityRate(Props memory props, uint256 value) internal pure {
+    //     props.liquidityRate = value;
+    // }
 
-    function borrowIndex(Props memory props) internal pure returns (uint256) {
-        return props.borrowIndex;
-    }
+    // function borrowIndex(Props memory props) internal pure returns (uint256) {
+    //     return props.borrowIndex;
+    // }
 
-    function setBorrowIndex(Props memory props, uint256 value) internal pure {
-        props.borrowIndex = value;
-    }
+    // function setBorrowIndex(Props memory props, uint256 value) internal pure {
+    //     props.borrowIndex = value;
+    // }
 
-    function borrowRate(Props memory props) internal pure returns (uint256) {
-        return props.borrowRate;
-    }
+    // function borrowRate(Props memory props) internal pure returns (uint256) {
+    //     return props.borrowRate;
+    // }
 
-    function setBorrowRate(Props memory props, uint256 value) internal pure {
-        props.borrowRate = value;
-    }
+    // function setBorrowRate(Props memory props, uint256 value) internal pure {
+    //     props.borrowRate = value;
+    // }
 
-    function interestRateStrategy(Props memory props) internal pure returns (address) {
-        return props.interestRateStrategy;
-    }
+    // function interestRateStrategy(Props memory props) internal pure returns (address) {
+    //     return props.interestRateStrategy;
+    // }
 
-    function setInterestRateStrategy(Props memory props, address value) internal pure {
-        props.interestRateStrategy = value;
-    }
+    // function setInterestRateStrategy(Props memory props, address value) internal pure {
+    //     props.interestRateStrategy = value;
+    // }
 
-    function underlyingAsset(Props memory props) internal pure returns (address) {
-        return props.underlyingAsset;
-    }
+    // function underlyingAsset(Props memory props) internal pure returns (address) {
+    //     return props.underlyingAsset;
+    // }
 
-    function setUnderlyingToken(Props memory props, address value) internal pure {
-        props.underlyingAsset = value;
-    }
+    // function setUnderlyingToken(Props memory props, address value) internal pure {
+    //     props.underlyingAsset = value;
+    // }
 
-    function poolToken(Props memory props) internal pure returns (address) {
-        return props.poolToken;
-    }
+    // function poolToken(Props memory props) internal pure returns (address) {
+    //     return props.poolToken;
+    // }
 
-    function setPoolToken(Props memory props, address value) internal pure {
-        props.poolToken = value;
-    }
+    // function setPoolToken(Props memory props, address value) internal pure {
+    //     props.poolToken = value;
+    // }
 
-    function debtToken(Props memory props) internal pure returns (address) {
-        return props.debtToken;
-    }
+    // function debtToken(Props memory props) internal pure returns (address) {
+    //     return props.debtToken;
+    // }
 
-    function setDebtToken(Props memory props, address value) internal pure {
-        props.debtToken = value;
-    }
+    // function setDebtToken(Props memory props, address value) internal pure {
+    //     props.debtToken = value;
+    // }
 
-    function configration(Props memory props) internal pure returns (uint256) {
-        return props.configration;
-    }
+    // function configration(Props memory props) internal pure returns (uint256) {
+    //     return props.configration;
+    // }
 
-    function setConfigration(Props memory props, uint256 value) internal pure {
-        props.configration = value;
-    }
+    // function setConfigration(Props memory props, uint256 value) internal pure {
+    //     props.configration = value;
+    // }
 
-    function feeFactor(Props memory props) internal pure returns (uint256) {
-        return props.feeFactor;
-    }
+    // function feeFactor(Props memory props) internal pure returns (uint256) {
+    //     return props.feeFactor;
+    // }
 
-    function setFeeFactor(Props memory props, uint256 value) internal pure {
-        props.feeFactor = value;
-    }
+    // function setFeeFactor(Props memory props, uint256 value) internal pure {
+    //     props.feeFactor = value;
+    // }
 
-    function totalFee(Props memory props) internal pure returns (uint256) {
-        return props.totalFee;
-    }
+    // function totalFee(Props memory props) internal pure returns (uint256) {
+    //     return props.totalFee;
+    // }
 
-    function setTotalFee(Props memory props, uint256 value) internal pure {
-        props.totalFee = value;
-    }
+    // function setTotalFee(Props memory props, uint256 value) internal pure {
+    //     props.totalFee = value;
+    // }
 
-    function incrementFee(Props memory props, uint256 value) internal pure {
-        props.totalFee     += value;
-        props.unclaimedFee += value;
-    }
+    // function incrementFee(Props memory props, uint256 value) internal pure {
+    //     props.totalFee     += value;
+    //     props.unclaimedFee += value;
+    // }
 
-    function unclaimedFee(Props memory props) internal pure returns (uint256) {
-        return props.unclaimedFee;
-    }
+    // function unclaimedFee(Props memory props) internal pure returns (uint256) {
+    //     return props.unclaimedFee;
+    // }
 
-    function setUnclaimedFee(Props memory props, uint256 value) internal pure {
-        props.unclaimedFee = value;
-    }
+    // function setUnclaimedFee(Props memory props, uint256 value) internal pure {
+    //     props.unclaimedFee = value;
+    // }
 
-    function lastUpdateTimestamp(Props memory props) internal pure returns (uint256) {
-        return props.lastUpdateTimestamp;
-    }
+    // function lastUpdateTimestamp(Props memory props) internal pure returns (uint256) {
+    //     return props.lastUpdateTimestamp;
+    // }
 
-    function setLastUpdateTimestamp(Props memory props, uint256 value) internal pure {
-        props.lastUpdateTimestamp = value;
-    }
+    // function setLastUpdateTimestamp(Props memory props, uint256 value) internal pure {
+    //     props.lastUpdateTimestamp = value;
+    // }
 
 }
