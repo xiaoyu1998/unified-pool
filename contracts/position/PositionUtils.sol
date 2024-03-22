@@ -80,7 +80,7 @@ library PositionUtils {
         address account,
         DataStore dataStore
     ) internal view returns (uint256, uint256) {
-        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
+        Position.Props memory position  = PositionStoreUtils.get(dataStore, account);
         PositionUtils.validateEnabledPosition(position);
         return calculateUserTotalCollateralAndDebt(account, dataStore, position);
     }

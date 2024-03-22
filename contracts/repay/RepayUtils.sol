@@ -38,7 +38,7 @@ library RepayUtils {
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
-        Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
+        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(poolCache);
 
         uint256 repayAmount;

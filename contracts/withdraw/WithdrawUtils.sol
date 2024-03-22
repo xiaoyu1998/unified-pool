@@ -27,7 +27,7 @@ library WithdrawUtils {
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
-        Pool.PoolCache memory poolCache =  PoolUtils.cache(pool);
+        PoolCache.Props memory poolCache =  PoolUtils.cache(pool);
         pool.updateStateByIntervalBetweenTransactions(pool, poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);

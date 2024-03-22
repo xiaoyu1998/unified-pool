@@ -17,6 +17,7 @@ import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
 import "../oracle/IPriceOracleGetter.sol";
+import "../oracle/OracleStoreUtils.sol";
 
 import "../config/ConfigStoreUtils.sol";
 
@@ -45,10 +46,10 @@ library BorrowUtils {
 
         Pool.Props memory pool          = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
-        Pool.PoolCache memory poolCache = PoolUtils.cache(pool);
+        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
 
         pool.updateStateIntervalTransactions(poolCache);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount);
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, params.amount);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
         poolToken.addCollateral(account, params.amount);//this will change Rate
@@ -60,7 +61,7 @@ library BorrowUtils {
         poolCache.nextScaledDebt = 
             IDebtToken(poolCache.debtTokenAddress).mint(account, params.amount, poolCache.nextBorrowIndex);
         
-        pool.updateInterestRates(poolCache, params.asset, 0, amount);
+        pool.updateInterestRates(poolCache, params.asset, 0, params.amount);
         PoolStoreUtils.set(params.dataStore, params.underlyingAsset, PoolUtils.getPoolSalt(params.asset), pool);
     }
 
@@ -74,6 +75,7 @@ library BorrowUtils {
         uint256 userTotalDebtInUsd;
         uint256 amountToBorrowInUsd;
         uint256 healthFactor;
+        uint256 healthFactorCollateralRateThreshold;
 
         bool isActive;
         bool isFrozen;
@@ -93,7 +95,7 @@ library BorrowUtils {
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal pure {
-        if (amount == 0) { 
+        if (amountToBorrow == 0) { 
             revert Errors.EmptyBorrowAmount(); 
         }
 
@@ -118,8 +120,7 @@ library BorrowUtils {
         if (vars.borrowCapacity != 0) {
             vars.totalDebt =
                 poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
-                amount;
-
+                amountToBorrow;
             unchecked {
                 if (vars.totalDebt <= vars.borrowCapacity) {
                     revert Errors.Borrow_Capicaty_Exceeded();
@@ -131,24 +132,24 @@ library BorrowUtils {
         (
             vars.userTotalCollateralInUsd,
             vars.userTotalDebtInUsd
-        ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, position);
         if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
 
-        vars.amountToBorrowInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(poolCache.underlyingAsset).rayMul(amountToBorrow);
-        vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToBorrowInUsd);
+        vars.amountToBorrowInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+                                       .getPrice(poolCache.underlyingAsset)
+                                       .rayMul(amountToBorrow);
+        //vars.healthFactor = userTotalCollateralInUsd.wadDiv(vars.userTotalDebtInUsd + vars.amountToBorrowInUsd);
+        vars.healthFactor = (vars.userTotalDebtInUsd + vars.amountToBorrowInUsd).wadDiv(vars.userTotalCollateralInUsd);
         
-        uint256 healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
-        if (vars.healthFactor < healthFactorCollateralRateThreshold) {
+        vars.healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverNewBorrow(
-                userTotalCollateralInUsd, 
-                userTotalDebtInUsd, 
-                amountToBorrowInUsd,
-                healthFactorCollateralRateThreshold
+                vars.userTotalCollateralInUsd, 
+                vars.userTotalDebtInUsd, 
+                vars.amountToBorrowInUsd,
+                vars.healthFactorCollateralRateThreshold
             );
         }
-
-
-
     }
     
 }

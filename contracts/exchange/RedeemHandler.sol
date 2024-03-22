@@ -23,7 +23,7 @@ contract RedeemHandler is IRedeemHandler, GlobalReentrancyGuard, RoleModule {
     function executeRedeem(
         address account,
         RedeemUtils.RedeemParams calldata redeemParams
-    ) external nonReentrant returns (bytes32){
+    ) external globalNonReentrant returns (bytes32){
 
         RedeemUtils.ExecuteRedeemParams memory params = RedeemUtils.ExecuteRedeemParams(
            dataStore,

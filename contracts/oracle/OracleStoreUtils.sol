@@ -10,7 +10,7 @@ library OracleStoreUtils {
 
     function get(DataStore dataStore) public view returns (address) {
         return dataStore.getAddress(
-            keccak256(abi.encode(keys.ORACLE))
+            keccak256(abi.encode(Keys.ORACLE))
         );
     }
 

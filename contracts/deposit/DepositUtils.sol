@@ -41,14 +41,14 @@ library DepositUtils {
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         if(position.account() == address(0)){
-            positon.setAccount(account);
+            position.setAccount(account);
         }
 
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 
         position.setPoolAsCollateral(pool.poolKeyId(), true);
-        PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), positon);
+        PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), position);
 
     }
 

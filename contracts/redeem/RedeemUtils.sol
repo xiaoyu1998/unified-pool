@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
 
@@ -17,6 +19,8 @@ import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
 import "../oracle/IPriceOracleGetter.sol";
+import "../oracle/OracleStoreUtils.sol";
+
 import "../config/ConfigStoreUtils.sol";
 
 // @title RedeemUtils
@@ -50,10 +54,10 @@ library RedeemUtils {
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, amount);
+        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, params.amount);
 
         IPoolToken poolToken = IPoolToken(pool.poolToken);
-        poolToken.removeCollateral(account, amount);
+        poolToken.removeCollateral(account, params.amount);
         if(poolToken.balanceOfCollateral(account) == 0) {
             position.setPoolAsCollateral(pool.poolKeyId(), false);
             PositionStoreUtils.set(params.dataStore, account, position);
@@ -67,6 +71,7 @@ library RedeemUtils {
         uint256 userTotalDebtInUsd;
         uint256 amountToBorrowInUsd;
         uint256 healthFactor;
+        uint256 healthFactorCollateralRateThreshold;
 
         bool isActive;
         bool isFrozen;
@@ -74,8 +79,6 @@ library RedeemUtils {
         bool borrowingEnabled;
     }
 
-
-    
     // @notice Validates a redeem action.
     // @param poolCache The cached data of the pool
     // @param amount The amount to be redeemn
@@ -93,27 +96,30 @@ library RedeemUtils {
             revert Errors.EmptyRedeemAmount();
         }
 
+        ValidateBorrowLocalVars memory vars;
+
         //validate account health
         (
             vars.userTotalCollateralInUsd,
             vars.userTotalDebtInUsd
-        ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, position);
 
         if (vars.userCollateralInUsd == 0) { 
             revert Errors.CollateralBalanceIsZero();
         }
 
-        vars.amountToRedeemInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset)
-                                   * amountToRedeem;
+        vars.amountToRedeemInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+                                   .getPrice(poolCache.underlyingAsset)
+                                   .rayMul(amountToRedeem);
         // vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
-        vars.healthFactor = (userTotalDebtInUsd + amountToRedeemInUsd).wadDiv(userTotalCollateralInUsd);
-        uint256 healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
-        if (vars.healthFactor < healthFactorCollateralRateThreshold) {
+        vars.healthFactor = (vars.userTotalDebtInUsd + vars.amountToRedeemInUsd).wadDiv(vars.userTotalCollateralInUsd);
+        vars.healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverRedeem(
-                userTotalCollateralInUsd, 
-                userTotalDebtInUsd, 
-                amountToRedeemInUsd,
-                healthFactorCollateralRateThreshold
+                vars.userTotalCollateralInUsd, 
+                vars.userTotalDebtInUsd, 
+                vars.amountToRedeemInUsd,
+                vars.healthFactorCollateralRateThreshold
             );
         }
 
