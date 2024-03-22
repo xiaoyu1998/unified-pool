@@ -17,6 +17,8 @@ library Errors {
     // PoolInterestRateStrategy errors
     error InvalidOptimalUsageRate(uint256 optimalUsageRatio);
 
+    //PoolConfigurationUtils errors
+
     //PositionUtils errors
     error EmptyPosition();
 
@@ -24,7 +26,6 @@ library Errors {
     error PoolIsInactive();
     error PoolIsPaused();
     error PoolIsFrozen();
-    error PoolIsNotEnabled();
     error PoolIsNotEnabled();
     error CollateralBalanceIsZero();
     error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralInUsd, uint256 userTotalDebtInUsd, uint256 amountToBorrowInUsd, uint256 healthFactorCollateralRateThreshold);
@@ -41,6 +42,10 @@ library Errors {
     error EmptyRepayAmount();
     error UserDoNotHaveDebtInPool(address account, address poolKey);
     error InsufficientCollateralAmountForRepay(uint256 repayAmount, uint256 collateralAmount);
+
+    // RedeemUtils errors
+    error EmptyRedeemAmount();
+    error CollateralCanNotCoverRedeem(uint256 userTotalCollateral, uint256 userTotalDebt, uint256 amountToRedeem, uint256 HealthFactorCollateralRateThreshold);
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

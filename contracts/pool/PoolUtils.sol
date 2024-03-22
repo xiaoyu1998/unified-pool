@@ -140,7 +140,7 @@ library PoolUtils {
     function getPoolNormalizedBorrowingIndex(
       DataStore dataStore,
       address key
-    ) internal return (uint256) {
+    ) internal returns (uint256) {
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, key);
         validateEnabledPool(pool, key);
 
@@ -150,7 +150,7 @@ library PoolUtils {
             uint256 periodicBorrowInterest = InterestUtils.calculateInterest(
                 pool.borrowRate(), 
                 pool.lastUpdateTimestamp()
-            )
+            );
             return periodicBorrowInterest.rayMul(pool.borrowIndex());
         }
     }

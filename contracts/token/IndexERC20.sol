@@ -27,10 +27,10 @@ abstract contract IndexRC20 is IERC20Detailed {
      * @param symbol The symbol of the token
      * @param decimals The number of decimals of the token
      */
-    constructor(string memory name, string memory symbol, uint8 decimals) {
-        _name = name;
-        _symbol = symbol;
-        _decimals = decimals;
+    constructor(string memory name_, string memory symbol_, uint8 decimals_) {
+        _name = name_;
+        _symbol = symbol_;
+        _decimals = decimals_;
     }
 
     /// @inheritdoc IERC20Detailed

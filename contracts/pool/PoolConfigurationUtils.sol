@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.20;
 
+import "../error/Errors.sol";
+
   // struct PoolConfiguration {
   //   //bit 0-15: LTV
   //   //bit 16-31: Liq. threshold
@@ -35,7 +37,7 @@ library PoolConfigurationUtils {
     uint256 internal constant FROZEN_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant BORROWING_MASK =                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant PAUSED_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFF; // prettier-ignore  
-    uint256 internal constant POOL_FEE_MASK =                  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF;
+    uint256 internal constant POOL_FEE_FACTOR_MASK =           0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF;
     uint256 internal constant BORROW_CAP_MASK =                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000FFFFFFFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant SUPPLY_CAP_MASK =                0xFFFFFFFFFFFFFFFFFFFFFFFFFF000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFF; // prettier-ignore
     
@@ -156,7 +158,9 @@ library PoolConfigurationUtils {
         uint256 poolConfigration,
         uint256 decimals
     ) internal pure {
-        require(decimals <= MAX_VALID_DECIMALS, Errors.INVALID_DECIMALS);
+        if (decimals < MAX_VALID_DECIMALS) {
+            revert Errors.InvalidDecimals(decimals, MAX_VALID_DECIMALS);
+        }
 
         poolConfigration = (poolConfigration & DECIMALS_MASK) | (decimals << POOL_DECIMALS_START_BIT_POSITION);
         return poolConfigration;
@@ -184,10 +188,12 @@ library PoolConfigurationUtils {
         uint256 poolConfigration,
         uint256 feeFactor
     ) internal returns (uint256) {
-        require(feeFactor <= MAX_VALID_FEE_FACTOR, Errors.INVALID_POOL_FACTOR);
+        if (feeFactor > MAX_VALID_FEE_FACTOR) {
+            revert Errors.InvalidFeeFactor(feeFactor, MAX_VALID_FEE_FACTOR);
+        }
 
         poolConfigration =
-          (poolConfigration & POOL_FACTOR_MASK) |
+          (poolConfigration & POOL_FEE_FACTOR_MASK) |
           (feeFactor << POOL_FACTOR_START_BIT_POSITION);
 
         return poolConfigration;
@@ -201,7 +207,7 @@ library PoolConfigurationUtils {
     function getFeeFactor(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
-        return (poolConfigration & ~POOL_FACTOR_MASK) >> POOL_FACTOR_START_BIT_POSITION;
+        return (poolConfigration & ~POOL_FEE_FACTOR_MASK) >> POOL_FACTOR_START_BIT_POSITION;
     }
 
     /**
@@ -213,8 +219,9 @@ library PoolConfigurationUtils {
         uint256 poolConfigration,
         uint256 borrowCapacity
     ) internal pure {
-        require(borrowCapacity <= MAX_VALID_BORROW_CAP, Errors.INVALID_BORROW_CAP);
-
+        if (borrowCapacity > MAX_VALID_BORROW_CAP) {
+            revert Errors.InvalidBorrowCapacity(borrowCapacity, MAX_VALID_BORROW_CAP);
+        }
         poolConfigration= (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
         return poolConfigration;
     }
@@ -239,8 +246,9 @@ library PoolConfigurationUtils {
         uint256 poolConfigration,
         uint256 supplyCapacity
     ) internal pure {
-        require(supplyCapacity <= MAX_VALID_SUPPLY_CAP, Errors.INVALID_SUPPLY_CAP);
-
+        if (supplyCapacity > MAX_VALID_SUPPLY_CAP) {
+            revert Errors.InvalidBorrowCapacity(supplyCapacity, MAX_VALID_SUPPLY_CAP);
+        }
         poolConfigration = (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
         return poolConfigration;
     }

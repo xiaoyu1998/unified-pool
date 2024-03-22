@@ -23,6 +23,8 @@ import "../oracle/IPriceOracleGetter.sol";
 // into a market in return for market tokens
 library RedeemUtils {
 
+    uint256 public constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 0.9e18;//ToDo as governance
+
     struct RedeemParams {
         address underlyingAsset;
         uint256 amount;
@@ -87,17 +89,24 @@ library RedeemUtils {
     ) internal pure {
         PositionUtils.validateEnabledPosition(position);
 
+        if(amountToRedeem == 0) {
+            revert Errors.EmptyRedeemAmount();
+        }
+
         //validate account health
         (
             vars.userTotalCollateralInUsd,
             vars.userTotalDebtInUsd
         ) = calculateUserTotalCollateralAndDebt(account, dataStore, position);
 
-        if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
+        if (vars.userCollateralInUsd == 0) { 
+            revert Errors.CollateralBalanceIsZero();
+        }
 
-        vars.amountToRedeemInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset
+        vars.amountToRedeemInUsd = IPriceOracleGetter(oracle).getPrice(poolCache.underlyingAsset)
                                    * amountToRedeem;
-        vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
+        // vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
+        vars.healthFactor = (userTotalDebtInUsd + amountToRedeemInUsd).wadDiv(userTotalCollateralInUsd);
 
         if (vars.healthFactor < HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD) {
             revert Errors.CollateralCanNotCoverRedeem(
@@ -105,8 +114,8 @@ library RedeemUtils {
                 userTotalDebtInUsd, 
                 amountToRedeemInUsd,
                 HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD
-            )
-        }
+            );
         }
     
+    }
 }

@@ -18,9 +18,9 @@ contract PoolToken is ScaledToken, Bank {
     constructor(
     	RoleStore _roleStore, 
     	DataStore _dataStore,
-    	address underlyingAsset
+    	address underlyingAsset_
     ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN") Bank(_roleStore, _dataStore) {
-    	_underlyingAsset = underlyingAsset;
+    	_underlyingAsset = underlyingAsset_;
     }
 
 	/// @inheritdoc IERC20
