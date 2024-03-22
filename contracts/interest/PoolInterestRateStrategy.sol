@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity ^0.8.20;
-
-import "../pool/Pool.sol";
-import "../pool/PoolUtils.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./IPoolInterestRateStrategy.sol";
+import "../error/Errors.sol";
+import "../token/IPoolToken.sol";
 import "../utils/PercentageMath.sol";
+import "../utils/WadRayMath.sol";
 
 contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     uint256 public immutable OPTIMAL_USAGE_RATIO;
@@ -28,16 +30,14 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         _rateSlope2 = rateSlope2;
     }
 
-     /// @inheritdoc IDefaultInterestRateStrategy
+     
     function getRateSlope1() public view returns (uint256) {
         return _rateSlope1;
     }
 
-    /// @inheritdoc IDefaultInterestRateStrategy
     function getRateSlope2() public view returns (uint256) {
         return _rateSlope2;
     }   
-
 
 
     struct CalcInterestRatesLocalVars {
@@ -50,9 +50,9 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         uint256 availableLiquidityPlusDebt;
     }
 
-    /// @inheritdoc IReserveInterestRateStrategy
+    /// @inheritdoc IPoolInterestRateStrategy
     function calculateInterestRates(
-        PoolUtils.CalculateInterestRatesParams memory params
+        InterestUtils.CalculateInterestRatesParams memory params
     ) public view override returns (uint256, uint256) {
       	CalcInterestRatesLocalVars memory vars;
 
@@ -76,7 +76,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
             vars.currentBorrowRate  += (_rateSlope1 
                 + _rateSlope2.rayMul(excessBorrowUsageRatio));
       	} else {
-        	  vars.currentBorrowRate += _RateSlope1
+        	  vars.currentBorrowRate += _rateSlope1
                 .rayMul(vars.borrowUsageRatio)
                 .rayDiv(OPTIMAL_USAGE_RATIO);
       	}

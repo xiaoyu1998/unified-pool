@@ -2,12 +2,16 @@
 
 pragma solidity ^0.8.20;
 
+import "../role/RoleModule.sol";
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
+
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
 import "./PoolConfigurationUtils.sol";
 import "./PoolUtils.sol";
-import "./PoolToken.sol";
-import "./DebtToken.sol";
+import "../token/PoolToken.sol";
+import "../token/DebtToken.sol";
 
 import "../chain/Chain.sol";
 // @title PoolFactory

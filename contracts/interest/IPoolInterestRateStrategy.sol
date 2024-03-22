@@ -7,6 +7,6 @@ interface IPoolInterestRateStrategy {
 
     function calculateInterestRates(
         InterestUtils.CalculateInterestRatesParams memory params
-    ) external view returns (uint256, uint256, uint256);
+    ) external view returns (uint256, uint256);
 
 }

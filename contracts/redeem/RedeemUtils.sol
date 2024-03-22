@@ -11,8 +11,8 @@ import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
-import "../pool/IDebtToken.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
@@ -54,7 +54,7 @@ library RedeemUtils {
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
 
         Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, params.amount);
+        BorrowUtils.validateBorrow( account, params.dataStore, position, pool, params.amount);
 
         IPoolToken poolToken = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, params.amount);
@@ -87,7 +87,7 @@ library RedeemUtils {
         address account,
         DataStore dataStore,
         Position.Props memory position,
-        PoolCache.Props memory poolCache,
+        Pool.Props memory pool,
         uint256 amountToRedeem
     ) internal pure {
         PositionUtils.validateEnabledPosition(position);
@@ -109,7 +109,7 @@ library RedeemUtils {
         }
 
         vars.amountToRedeemInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-                                   .getPrice(poolCache.underlyingAsset)
+                                   .getPrice(pool.underlyingAsset())
                                    .rayMul(amountToRedeem);
         // vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
         vars.healthFactor = (vars.userTotalDebtInUsd + vars.amountToRedeemInUsd).wadDiv(vars.userTotalCollateralInUsd);

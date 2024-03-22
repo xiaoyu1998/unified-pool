@@ -5,5 +5,5 @@ pragma solidity ^0.8.20;
 import "../deposit/DepositUtils.sol";
 
 interface IDepositHandler {
-    function executeDeposit(address account, DepositUtils.ExecuteDepositParams calldata params) external returns (bytes32);
+    function executeDeposit(address account, DepositUtils.DepositParams calldata params) external returns (bytes32);
 }

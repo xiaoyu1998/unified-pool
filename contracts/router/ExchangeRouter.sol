@@ -34,7 +34,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     // using Liquidation for Liquidation.Props;
     // using Swap for Swap.Props;
     ISupplyHandler public immutable supplyHandler;
-    IWithdrawHandler public immutable withdrawalHandler;
+    IWithdrawHandler public immutable withdrawHandler;
     IDepositHandler public immutable depositHandler;
     IBorrowHandler public immutable borrowHandler;
     IRepayHandler public immutable repayHandler;
@@ -58,7 +58,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         // ISwapHandler _swapHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
         supplyHandler      = _supplyHandler;
-        withdrawalHandler  = _withdrawalHandler;
+        withdrawHandler    = _withdrawHandler;
         depositHandler     = _depositHandler;
         borrowHandler      = _borrowHandler;
         repayHandler       = _repayHandler;
@@ -86,19 +86,19 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev The withrawal is executed by transferring the specified amounts of pool tokens from the caller's 
-     * account to the pool, and execute a  withdrawal with the given withdrawal parameters. 
-     * The withdrawal is execute by calling the `executeWithdrawal()` function on the withdrawal 
+     * @dev The withdraw is executed by transferring the specified amounts of pool tokens from the caller's 
+     * account to the pool, and execute a  withdraw with the given withdraw parameters. 
+     * The withdraw is execute by calling the `executeWithdrawal()` function on the withdraw 
      * handler contract.
      *
-     * @param params The withdrawal parameters, as specified in the `WithdrawalUtils.ExecuteWithdrawalParams` struct
+     * @param params The withdraw parameters, as specified in the `WithdrawalUtils.ExecuteWithdrawalParams` struct
      */
     function executeWithdraw(
-        WithdrawalUtils.WithdrawalParams calldata params
-    ) external override payable nonReentrant {
+        WithdrawUtils.WithdrawParams calldata params
+    ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
-        return withdrawalHandler.executeWithdraw(
+        return withdrawHandler.executeWithdraw(
             account,
             params
         );
@@ -129,7 +129,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeBorrow(
         BorrowUtils.ExecuteBorrowParams calldata params
-    ) external override payable nonReentrant  {
+    ) external override payable nonReentrant  returns (bytes32){
         address account = msg.sender;
 
         return borrowHandler.executeBorrow(
@@ -144,7 +144,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeRepay(
         RepayUtils.ExecuteRepayParams calldata params
-    ) external override payable nonReentrant  {
+    ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
         return repayHandler.executeRepay(
@@ -159,10 +159,10 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeRedeem(
         RedeemUtils.ExecuteRedeemParams calldata params
-    ) external override payable nonReentrant  {
+    ) external override payable nonReentrant returns (bytes32) {
         address account = msg.sender;
 
-        return redeamHandler.executeRedeem(
+        return redeemHandler.executeRedeem(
             account,
             params
         );

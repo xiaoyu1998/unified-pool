@@ -2,6 +2,8 @@
 
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
 
@@ -9,8 +11,8 @@ import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
-import "../pool/IDebtToken.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
@@ -36,6 +38,8 @@ library RepayUtils {
     // @param account the repaying account
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
+        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
+
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
@@ -45,22 +49,24 @@ library RepayUtils {
         uint256 collateralAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         if(params.amount > 0) {
-            repayAmount = amount;
+            repayAmount = params.amount;
             collateralAmount = poolToken.balanceOfCollateral(account);
         } else {
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
 
-        uint256 extraAmount;
+        uint256 extraAmountToRefund;
         IDebtToken debtToken = IDebtToken(poolCache.debtToken);
         uint256 debtAmount = debtToken.balanceOf(account);
         if(repayAmount > debtAmount) {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
-        RepayUtils.validateRepay(pool, poolCache, account, repayAmount, debtAmount, collateralAmount);
 
-        Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
+        
+        RepayUtils.validateRepay(position, pool, poolCache, account, repayAmount, debtAmount, collateralAmount);
+
+        //Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
         if(debtToken.scaledBalanceOf(account) == 0) {
             position.setPoolAsBorrowing(pool.poolKeyId(), false);
@@ -101,6 +107,7 @@ library RepayUtils {
     // @param amount The amount to be repay
     // @param userBalance The balance of the user
     function validateRepay(
+        Position.Props memory position,
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,
         address account,

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
-abstract contract IndexRC20 is IERC20Detailed {
+abstract contract IndexERC20 is Context, IERC20{
 
     // Map of users address and their state data (userAddress => userStateData)
-    mapping(address => uint256) internal _balance;
+    mapping(address => uint256) internal _balances;
     mapping(address => uint256) internal _index;
 
     // Map of allowances (delegator => delegatee => allowanceAmount)
@@ -28,18 +29,18 @@ abstract contract IndexRC20 is IERC20Detailed {
         _decimals = decimals_;
     }
 
-    /// @inheritdoc IERC20Detailed
-    function name() public view override returns (string memory) {
+    /// @inheritdoc IERC20
+    function name() public view returns (string memory) {
         return _name;
     }
 
-    /// @inheritdoc IERC20Detailed
-    function symbol() external view override returns (string memory) {
+    /// @inheritdoc IERC20
+    function symbol() external view returns (string memory) {
         return _symbol;
     }
 
-    /// @inheritdoc IERC20Detailed
-    function decimals() external view override returns (uint8) {
+    /// @inheritdoc IERC20
+    function decimals() external view returns (uint8) {
         return _decimals;
     }
 
@@ -50,7 +51,7 @@ abstract contract IndexRC20 is IERC20Detailed {
 
     /// @inheritdoc IERC20
     function balanceOf(address account) public view virtual override returns (uint256) {
-        return __balance[account];
+        return _balances[account];
     }
 
     /// @inheritdoc IERC20

@@ -5,6 +5,13 @@ pragma solidity ^0.8.20;
 library Errors {
     error ErrorToReplace();
 
+    // Bank errors
+    error SelfTransferNotSupported(address receiver);
+    error InvalidNativeTokenSender(address msgSender);
+
+    // BaseRouter
+    error CouldNotSendNativeToken(address receiver, uint256 amount);
+
     // PoolFactory errors
     error PoolAlreadyExists(bytes32 salt, address existingPoolAddress);
 
@@ -65,5 +72,23 @@ library Errors {
     //token
     error EmptyBurnAmounts();
     error EmptyMintAmounts();
+    error DebtTokenOperationNotSupported();
+
+    // TokenUtils errors
+    error EmptyTokenTranferGasLimit(address token);
+    error TokenTransferError(address token, address receiver, uint256 amount);
+    error EmptyHoldingAddress();
+
+    // AccountUtils errors
+    error EmptyAccount();
+    error EmptyReceiver();
+
+    // Array errors
+    error CompactedArrayOutOfBounds(
+        uint256[] compactedValues,
+        uint256 index,
+        uint256 slotIndex,
+        string label
+    );
 
 }

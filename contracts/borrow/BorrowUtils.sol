@@ -9,8 +9,8 @@ import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
-import "../pool/IDebtToken.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
@@ -20,6 +20,8 @@ import "../oracle/IPriceOracleGetter.sol";
 import "../oracle/OracleStoreUtils.sol";
 
 import "../config/ConfigStoreUtils.sol";
+
+import "../utils/WadRayMath.sol";
 
 // @title BorrowUtils
 // @dev Library for borrow functions, to help with the borrowing of liquidity

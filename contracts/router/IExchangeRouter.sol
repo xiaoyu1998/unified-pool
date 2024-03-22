@@ -15,7 +15,7 @@ interface IExchangeRouter {
     ) external payable returns (bytes32);
 
     function executeWithdraw(
-        WithdrawalUtils.WithdrawalParams calldata params
+        WithdrawUtils.WithdrawParams calldata params
     ) external payable returns (bytes32);
 
     function executeDeposit(

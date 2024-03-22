@@ -48,9 +48,9 @@ library Role {
     bytes32 public constant ROUTER_PLUGIN = keccak256(abi.encode("ROUTER_PLUGIN"));
 
     /**
-     * @dev The MARKET_KEEPER role.
+     * @dev The POOL_KEEPER role.
      */
-    bytes32 public constant MARKET_KEEPER = keccak256(abi.encode("MARKET_KEEPER"));
+    bytes32 public constant POOL_KEEPER = keccak256(abi.encode("POOL_KEEPER"));
 
     /**
      * @dev The FEE_KEEPER role.

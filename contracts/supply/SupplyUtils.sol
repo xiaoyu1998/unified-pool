@@ -9,7 +9,7 @@ import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
+import "../token/IPoolToken.sol";
 
 
 // @title SupplyUtils
@@ -96,7 +96,7 @@ library SupplyUtils {
         uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
                                  * (10 ** poolCache.configuration.getDecimals());
 
-        uint256 totalSupplyAddUnclaimedFeeAddAmount = IPoolTaken(poolCache.poolToken).scaledTotalSupply() 
+        uint256 totalSupplyAddUnclaimedFeeAddAmount = IPoolToken(poolCache.poolToken).scaledTotalSupply() 
             + poolCache.unclaimedFee.rayMul(poolCache.nextLiquidityIndex) 
             + amount;
 

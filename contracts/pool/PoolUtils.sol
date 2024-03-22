@@ -9,8 +9,8 @@ import "./Pool.sol";
 import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
 import "./PoolStoreUtils.sol";
-import "./IPoolToken.sol";
-import "./IDebtToken.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 
 import "../interest/InterestUtils.sol";
 import "../interest/IPoolInterestRateStrategy.sol";

@@ -2,9 +2,10 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "./MintableERC20.sol";
+
 import "../error/Errors.sol";
 import "../utils/WadRayMath.sol";
-import "./MintableERC20.sol";
  // @title ScaledToken 
  // @author Aave 
  // @notice Basic ERC20 implementation of scaled balance token
@@ -26,25 +27,21 @@ abstract contract ScaledToken is MintableERC20 {
     // Intentionally left blank
   }
 
-  /// @inheritdoc IScaledBalanceToken
-  function scaledBalanceOf(address account) external view override returns (uint256) {
+  function scaledBalanceOf(address account) external view returns (uint256) {
     return super.balanceOf(account);
   }
 
-  /// @inheritdoc IScaledBalanceToken
   function getScaledUserBalanceAndSupply(
     address account
-  ) external view override returns (uint256, uint256) {
+  ) external view returns (uint256, uint256) {
     return (super.balanceOf(account), super.totalSupply());
   }
 
-  /// @inheritdoc IScaledBalanceToken
-  function scaledTotalSupply() public view virtual override returns (uint256) {
+  function scaledTotalSupply() public view virtual returns (uint256) {
     return super.totalSupply();
   }
 
-  /// @inheritdoc IScaledBalanceToken
-  function getPreviousIndex(address account) external view virtual override returns (uint256) {
+  function getPreviousIndex(address account) external view virtual returns (uint256) {
     return _index[account];
   }
 
@@ -62,7 +59,7 @@ abstract contract ScaledToken is MintableERC20 {
   ) internal returns (bool) {
     uint256 amountScaled = amount.rayDiv(index);
     if (amountScaled == 0){
-      revert EmptyMintAmounts();
+      revert Errors.EmptyMintAmounts();
     }
 
     uint256 scaledBalance = super.balanceOf(to);
@@ -75,7 +72,7 @@ abstract contract ScaledToken is MintableERC20 {
 
     uint256 amountToMint = amount + balanceIncrease;
     emit Transfer(address(0), to, amountToMint);
-    emit Mint(caller, to, amountToMint, balanceIncrease, index);
+    emit Mint(address(0), to, amountToMint, balanceIncrease, index);
 
     return (scaledBalance == 0);
   }
@@ -97,7 +94,7 @@ abstract contract ScaledToken is MintableERC20 {
     uint256 amountScaled = amount.rayDiv(index);
     // require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
     if (amountScaled == 0){
-      revert EmptyBurnAmounts();
+        revert Errors.EmptyBurnAmounts();
     }
 
     uint256 scaledBalance = super.balanceOf(account);

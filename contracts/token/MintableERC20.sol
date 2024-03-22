@@ -6,6 +6,25 @@ import "./IndexERC20.sol";
 // @notice Implements mint and burn functions for IndexERC20/
 abstract contract MintableERC20 is IndexERC20 {
 
+
+  event Mint(
+    address indexed caller,
+    address indexed to,
+    uint256 value,
+    uint256 balanceIncrease,
+    uint256 index
+  );
+
+    event Burn(
+    address indexed from,
+    address indexed to,
+    uint256 value,
+    uint256 balanceIncrease,
+    uint256 index
+  );
+
+
+
  // @dev Constructor.
  // @param pool The reference to the main Pool contract
  // @param name The name of the token

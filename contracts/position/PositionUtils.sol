@@ -7,8 +7,8 @@ import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
-import "../pool/IDebtToken.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 
 import "./Position.sol";
 import "./PositionStoreUtils.sol";

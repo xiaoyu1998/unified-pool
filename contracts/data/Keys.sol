@@ -5,6 +5,11 @@ pragma solidity ^0.8.20;
 // @title Keys
 // @dev Keys for values in the DataStore
 library Keys {
+    // @dev key for the address of the wrapped native token
+    bytes32 public constant WNT = keccak256(abi.encode("WNT"));
+
+    // @dev for holding tokens that could not be sent out
+    bytes32 public constant HOLDING_ADDRESS = keccak256(abi.encode("HOLDING_ADDRESS"));
 
     // @dev for a global pool list
     bytes32 public constant POOL_LIST = keccak256(abi.encode("POOL_LIST"));
@@ -34,7 +39,11 @@ library Keys {
     // @dev key for the Health Factor Collateral RateT hreshold
     bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
 
+    // @dev key for the amount of gas to forward for token transfers
+    bytes32 public constant TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("TOKEN_TRANSFER_GAS_LIMIT"));
 
+    // @dev key for the amount of gas to forward for native token transfers
+    bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
     // @dev key for the claimable fee amount
     // @param market the market for the fee
@@ -42,5 +51,15 @@ library Keys {
     function claimableFeeAmountKey(address pool, address token) internal pure returns (bytes32) {
         return keccak256(abi.encode(CLAIMABLE_FEE_AMOUNT, pool, token));
     }
+
+    // @dev key for gas to forward for token transfer
+    // @param the token to check
+    // @return key for gas to forward for token transfer
+    function tokenTransferGasLimit(address token) internal pure returns (bytes32) {
+        return keccak256(abi.encode(
+            TOKEN_TRANSFER_GAS_LIMIT,
+            token
+        ));
+   }
 
 }

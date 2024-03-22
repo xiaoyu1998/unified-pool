@@ -9,7 +9,7 @@ import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
-import "../pool/IPoolToken.sol";
+import "../token/IPoolToken.sol";
 
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";

@@ -2,7 +2,15 @@
 
 pragma solidity ^0.8.20;
 
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
 
+import "../pool/Pool.sol";
+import "../pool/PoolCache.sol";
+import "../pool/PoolUtils.sol";
+import "../pool/PoolStoreUtils.sol";
+import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 // @title WithdrawUtils
 // @dev Library for withdraw functions, to help with the withdrawing of liquidity
 // into a market in return for market tokens
@@ -42,7 +50,7 @@ library WithdrawUtils {
         pool.updateInterestRates(
             poolCache, 
             params.underlyingAsset, 
-            supplyAmount, 
+            amountToWithdraw, 
             0
         );
 
@@ -75,8 +83,8 @@ library WithdrawUtils {
 
           (bool isActive, , , bool isPaused) = poolCache.poolConfiguration.getFlags();
           
-          if (!vars.isActive)         { revert Errors.PoolIsInactive(); }  
-          if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
+          if (!isActive)         { revert Errors.PoolIsInactive(); }  
+          if (isPaused)          { revert Errors.PoolIsPaused();   }  
 
           //TODO should check the underlying token balance is sufficient to this withdraw
           // uint256 availableBalance = IPoolToken(poolCache.poolTokenAddress)

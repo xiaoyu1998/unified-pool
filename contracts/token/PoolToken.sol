@@ -2,15 +2,22 @@
 
 pragma solidity ^0.8.20;
 
-import "../token/ScaledToken.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../role/RoleModule.sol";
+import "../data/DataStore.sol";
+import "../error/Errors.sol";
 import "../bank/Bank.sol";
+import "../pool/PoolUtils.sol";
+import "../utils/WadRayMath.sol";
+import "./ScaledToken.sol";
 
 // @title PoolToken
 // @dev The pool token for a pool, stores funds for the pool and keeps track
 // of the liquidity owners
-contract PoolToken is ScaledToken, Bank {
+contract PoolToken is RoleModule, ScaledToken, Bank {
+	event BalanceTransfer(address indexed from, address indexed to, uint256 value, uint256 index);
+    
 	address internal _underlyingAsset;
-	// address internal _poolKey;
 
     mapping(address => uint256) private _Collaterals;
 	uint256 private _totalCollateral;
@@ -25,14 +32,14 @@ contract PoolToken is ScaledToken, Bank {
 
 	/// @inheritdoc IERC20
 	function balanceOf(
-	    address user
-	) public view virtual override(IndexRC20) returns (uint256) {
-	    return super.balanceOf(user)
+	    address account
+	) public view virtual override(IndexERC20) returns (uint256) {
+	    return super.balanceOf(account)
 	    	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20
-	function totalSupply() public view virtual override(IndexRC20) returns (uint256) {
+	function totalSupply() public view virtual override(IndexERC20) returns (uint256) {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
 		return currentSupplyScaled
@@ -46,8 +53,8 @@ contract PoolToken is ScaledToken, Bank {
     	address to, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual override  onlyController returns (bool) {
-      	return _mintScaled(pool, to, amount, index);
+    ) external virtual onlyController returns (bool) {
+      	return _mintScaled(to, amount, index);
     }
 
     // @dev burn pool tokens from an account
@@ -58,8 +65,8 @@ contract PoolToken is ScaledToken, Bank {
     	address to, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual override onlyController returns (bool) {
-		_burnScaled(pool, from, to, amount, index);
+    ) external virtual onlyController returns (bool) {
+		_burnScaled( from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
 	         uint256 availableBalance = totalUnderlyingAssetBalanceSubstractionTotalCollateral();
@@ -76,7 +83,7 @@ contract PoolToken is ScaledToken, Bank {
 		address from,
 		address to,
 		uint256 amount
-	) external virtual override onlyController {
+	) external virtual onlyController {
 		// Being a normal transfer, the Transfer() and BalanceTransfer() are emitted
 		// so no need to emit a specific event here
 		_transfer(from, to, amount, false);
@@ -86,7 +93,7 @@ contract PoolToken is ScaledToken, Bank {
 		address from, 
 		address to, 
 		uint128 amount
-	) internal virtual override {
+	) internal virtual {
 		_transfer(from, to, amount, true);
 	}
 
@@ -96,14 +103,14 @@ contract PoolToken is ScaledToken, Bank {
 		address to, 
 		uint256 amount, 
 		bool validate
-	) internal virtual override{
+	) internal virtual {
 		//address underlyingAsset = _underlyingAsset;
 
 		//Pool.Props memory pool = PoolStoreUtils.get(dataStore, _poolKey)
 		// if(pool == null){
 		// 	revert erros.PoolNotFound(_poolKey);
 		// }
-		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _poolKey);
+		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset);
 
 		// uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
 		// uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);

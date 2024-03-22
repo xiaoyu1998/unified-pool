@@ -81,8 +81,8 @@ contract RoleModule {
     /**
      * @dev Only allows addresses with the MARKET_KEEPER role to call the function.
      */
-    modifier onlyMarketKeeper() {
-        _validateRole(Role.MARKET_KEEPER, "MARKET_KEEPER");
+    modifier onlyPoolKeeper() {
+        _validateRole(Role.POOL_KEEPER, "POOL_KEEPER");
         _;
     }
 
