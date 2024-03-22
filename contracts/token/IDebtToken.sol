@@ -10,5 +10,7 @@ interface IDebtToken {
         uint256 index
     ) external returns (bool);
 
+   function scaledTotalSupply() external view returns (uint256);
+
     
 }

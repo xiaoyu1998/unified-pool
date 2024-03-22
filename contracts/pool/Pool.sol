@@ -119,10 +119,10 @@ library Pool {
     //     props.totalFee = value;
     // }
 
-    // function incrementFee(Props memory props, uint256 value) internal pure {
-    //     props.totalFee     += value;
-    //     props.unclaimedFee += value;
-    // }
+    function incrementFee(Props memory props, uint256 value) internal pure {
+        props.totalFee     += value;
+        props.unclaimedFee += value;
+    }
 
     // function unclaimedFee(Props memory props) internal pure returns (uint256) {
     //     return props.unclaimedFee;

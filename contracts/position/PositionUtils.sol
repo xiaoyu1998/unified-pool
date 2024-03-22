@@ -59,7 +59,7 @@ library PositionUtils {
 
             if (position.isUsingAsCollateral(vars.i)){
                  vars.userTotalCollateralInUsd +=
-                 IPoolToken(pool.poolToken()).balanceOfCollateral(account) * vars.assetPrice;
+                 IPoolToken(pool.poolToken).balanceOfCollateral(account) * vars.assetPrice;
             }
 
             if (position.isBorrowing(vars.i)){

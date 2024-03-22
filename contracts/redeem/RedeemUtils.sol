@@ -59,7 +59,7 @@ library RedeemUtils {
         IPoolToken poolToken = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, params.amount);
         if(poolToken.balanceOfCollateral(account) == 0) {
-            position.setPoolAsCollateral(pool.poolKeyId(), false);
+            position.setPoolAsCollateral(pool.keyId, false);
             PositionStoreUtils.set(params.dataStore, account, position);
         }
 

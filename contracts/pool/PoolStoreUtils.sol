@@ -33,61 +33,61 @@ library PoolStoreUtils {
             return pool;
         }
 
-        pool.setKeyId(dataStore.getUint(
+        pool.keyId = dataStore.getUint(
             keccak256(abi.encode(key, POOL_KEY_ID))
-        ));
+        );
 
-        pool.setLiquidityIndex(dataStore.getUint(
+        pool.liquidityIndex = dataStore.getUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_INDEX))
-        ));
+        );
 
-        pool.setLiquidityRate(dataStore.getUint(
+        pool.liquidityRate = dataStore.getUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_RATE))
-        ));
+        );
 
-        pool.setBorrowIndex(dataStore.getUint(
+        pool.borrowIndex = dataStore.getUint(
             keccak256(abi.encode(key, POOL_BORROW_INDEX))
-        ));
+        );
 
-        pool.setBorrowRate(dataStore.getUint(
+        pool.borrowRate = dataStore.getUint(
             keccak256(abi.encode(key, POOL_BORROW_RATE))
-        ));
+        );
 
-        pool.setInterestRateStrategy(dataStore.getAddress(
+        pool.interestRateStrategy = dataStore.getAddress(
             keccak256(abi.encode(key, POOL_INTEREST_RATE_STRATEGY))
-        ));
+        );
 
-        pool.setUnderlyingToken(dataStore.getAddress(
+        pool.underlyingAsset = dataStore.getAddress(
             keccak256(abi.encode(key, POOL_UNDERLYING_TOKEN))
-        ));
+        );
 
-        pool.setPoolToken(dataStore.getAddress(
+        pool.poolToken = dataStore.getAddress(
             keccak256(abi.encode(key, POOL_TOKEN))
-        ));
+        );
 
-        pool.setDebtToken(dataStore.getAddress(
+        pool.debtToken = dataStore.getAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
-        ));
+        );
 
-        pool.setConfigration(dataStore.getUint(
+        pool.configration = dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
-        ));
+        );
 
-        pool.setFeeFactor(dataStore.getUint(
+        pool.feeFactor = dataStore.getUint(
             keccak256(abi.encode(key, POOL_FEE_FACTOR))
-        ));
+        );
 
-        pool.setTotalFee(dataStore.getUint(
+        pool.totalFee = dataStore.getUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))
-        ));
+        );
 
-        pool.setUnclaimedFee(dataStore.getUint(
+        pool.unclaimedFee = dataStore.getUint(
             keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
-        ));
+        );
 
-        pool.setLastUpdateTimestamp(dataStore.getUint(
+        pool.lastUpdateTimestamp = dataStore.getUint(
             keccak256(abi.encode(key, POOL_LAST_UPDATE_TIME_STAMP))
-        ));
+        );
 
         return pool;
     }
@@ -107,8 +107,6 @@ library PoolStoreUtils {
         return get(dataStore, key);
     }
 
-
-    //function set(DataStore dataStore, address key, Pool.Props memory pool) external {
     function set(DataStore dataStore, address key,  Pool.Props memory pool) external {
         dataStore.addAddress(
             Keys.POOL_LIST,
@@ -117,72 +115,72 @@ library PoolStoreUtils {
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_KEY_ID)),
-            pool.keyId()
+            pool.keyId
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_INDEX)),
-            pool.liquidityIndex()
+            pool.liquidityIndex
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_RATE)),
-            pool.liquidityRate()
+            pool.liquidityRate
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_BORROW_INDEX)),
-            pool.borrowIndex()
+            pool.borrowIndex
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_BORROW_RATE)),
-            pool.borrowRate()
+            pool.borrowRate
         );
 
         dataStore.setAddress(
             keccak256(abi.encode(key, POOL_INTEREST_RATE_STRATEGY)),
-            pool.interestRateStrategy()
+            pool.interestRateStrategy
         );
 
         dataStore.setAddress(
             keccak256(abi.encode(key, POOL_UNDERLYING_TOKEN)),
-            pool.underlyingAsset()
+            pool.underlyingAsset
         );
 
         dataStore.setAddress(
             keccak256(abi.encode(key, POOL_TOKEN)),
-            pool.poolToken()
+            pool.poolToken
         );
 
         dataStore.setAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN)),
-            pool.debtToken()
+            pool.debtToken
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION)),
-            pool.configration()
+            pool.configration
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_FEE_FACTOR)),
-            pool.feeFactor()
+            pool.feeFactor
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE)),
-            pool.totalFee()
+            pool.totalFee
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_UNCLAIMED_FEE)),
-            pool.unclaimFee()
+            pool.unclaimedFee
         );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_LAST_UPDATE_TIME_STAMP)),
-            pool.lastUpdateTimestamp()
+            pool.lastUpdateTimestamp
         );
 
     }

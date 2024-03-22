@@ -47,7 +47,7 @@ library DepositUtils {
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 
-        position.setPoolAsCollateral(pool.poolKeyId(), true);
+        position.setPoolAsCollateral(pool.keyId, true);
         PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), position);
 
     }

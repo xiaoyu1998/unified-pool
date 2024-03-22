@@ -14,6 +14,9 @@ import "../utils/PercentageMath.sol";
 // @title FeeUtils
 // @dev Library for fee actions
 library FeeUtils {
+    using WadRayMath for uint256;
+    using PercentageMath for uint256;
+    using Pool for Pool.Props;
     // using EventUtils for EventUtils.AddressItems;
     // using EventUtils for EventUtils.UintItems;
     // using EventUtils for EventUtils.IntItems;
@@ -39,8 +42,8 @@ library FeeUtils {
           return;
         }
 
-        uint256 prevTotalDebt      = poolCache.currScaledDebt.rayMul(poolCache.currBorrowIndex);
-        uint256 currTotalDebt      = poolCache.currScaledDebt.rayMul(poolCache.nextBorrowIndex);
+        uint256 prevTotalDebt      = poolCache.currTotalScaledDebt.rayMul(poolCache.currBorrowIndex);
+        uint256 currTotalDebt      = poolCache.currTotalScaledDebt.rayMul(poolCache.nextBorrowIndex);
         uint256 IncreaseTotalDebt  = currTotalDebt - prevTotalDebt;
         uint256 feeAmount          = IncreaseTotalDebt.percentMul(poolCache.feeFactor);
         pool.incrementFee(feeAmount.rayDiv(poolCache.nextLiquidityIndex));

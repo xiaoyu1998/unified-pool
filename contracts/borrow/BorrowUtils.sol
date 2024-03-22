@@ -56,8 +56,8 @@ library BorrowUtils {
         IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
         poolToken.addCollateral(account, params.amount);//this will change Rate
 
-        position.setPoolAsCollateral(pool.poolKeyId(), true);
-        position.setPoolAsBorrowing(pool.poolKeyId(), true);
+        position.setPoolAsCollateral(pool.keyId, true);
+        position.setPoolAsBorrowing(pool.keyId, true);
         PositionStoreUtils.set(params.dataStore, account, position);
 
         poolCache.nextScaledDebt = 
