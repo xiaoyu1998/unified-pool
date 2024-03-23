@@ -10,7 +10,7 @@ import "../data/Keys.sol";
 // into a pool in return for pool tokens
 library ConfigStoreUtils {
 
-    function getHealthFactorCollateralRateThreshold(DataStore dataStore) public view returns (address) {
+    function getHealthFactorCollateralRateThreshold(DataStore dataStore) public view returns (uint256) {
         return dataStore.getUint(Keys.HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD);
     }
     

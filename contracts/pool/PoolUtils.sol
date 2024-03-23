@@ -118,7 +118,7 @@ library PoolUtils {
         }
     }
 
-    function updateStateByIntervalBetweenTransactions(
+    function updateStateBetweenTransactions(
       Pool.Props memory pool,
       PoolCache.Props memory poolCache
     ) internal {

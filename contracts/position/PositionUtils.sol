@@ -52,10 +52,10 @@ library PositionUtils {
                 continue;               
             }
 
-            bytes32 poolKey = PoolStoreUtils.getPoolKeyFromId(dataStore, vars.i);
-            Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
+            //address poolKey = PoolStoreUtils.getKeyFromId(dataStore, vars.i);
+            Pool.Props memory pool = PoolStoreUtils.getPoolById(dataStore, vars.i);
 
-            vars.assetPrice = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(pool.underlyingAsset());
+            vars.assetPrice = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(pool.underlyingAsset);
 
             if (position.isUsingAsCollateral(vars.i)){
                  vars.userTotalCollateralInUsd +=
@@ -64,7 +64,7 @@ library PositionUtils {
 
             if (position.isBorrowing(vars.i)){
                  vars.userTotalDebtInUsd +=
-                 IDebtToken(pool.debtToken()).balanceOf(account) * vars.assetPrice;  
+                 IDebtToken(pool.debtToken).balanceOf(account) * vars.assetPrice;  
                  //TODO: should assign pool to avoid reload               
             }
 
@@ -86,7 +86,7 @@ library PositionUtils {
     }
 
     function validateEnabledPosition(Position.Props memory postion) internal view {
-        if (postion.account() == address(0)) {
+        if (postion.account == address(0)) {
             revert Errors.EmptyPosition();
         }
 

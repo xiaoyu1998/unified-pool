@@ -47,7 +47,8 @@ library WithdrawUtils {
 
         WithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance);
 
-        pool.updateInterestRates(
+        PoolUtils.updateInterestRates(
+            pool,
             poolCache, 
             params.underlyingAsset, 
             amountToWithdraw, 
@@ -87,7 +88,7 @@ library WithdrawUtils {
           if (isPaused)          { revert Errors.PoolIsPaused();   }  
 
           //TODO should check the underlying token balance is sufficient to this withdraw
-          // uint256 availableBalance = IPoolToken(poolCache.poolTokenAddress)
+          // uint256 availableBalance = IPoolToken(poolCache.poolToken)
           //                                .totalUnderlyingTokenBalanceDeductCollateral()
           // require(amount < availableBalance, 
           //         Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance));

@@ -42,14 +42,15 @@ library SupplyUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        pool.updateStateByIntervalBetweenTransactions(poolCache);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         SupplyUtils.validateSupply(pool, poolCache, supplyAmount);
 
-        pool.updateInterestRates(
+        PoolUtils.updateInterestRates(
+            pool,
             poolCache, 
             params.underlyingAsset, 
             supplyAmount, 

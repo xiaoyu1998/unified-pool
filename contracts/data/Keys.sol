@@ -20,7 +20,9 @@ library Keys {
 
     // @dev for a global position list
     bytes32 public constant POSITION_LIST = keccak256(abi.encode("POSITION_LIST"));
-
+    
+    // @dev key for the account position list
+    bytes32 public constant ACCOUNT_POSITION_LIST = keccak256(abi.encode("ACCOUNT_POSITION_LIST"));
 
     // @dev for a global reentrancy guard
     bytes32 public constant REENTRANCY_GUARD_STATUS = keccak256(abi.encode("REENTRANCY_GUARD_STATUS"));
@@ -44,6 +46,13 @@ library Keys {
 
     // @dev key for the amount of gas to forward for native token transfers
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
+
+
+    // @dev key for the account position list
+    // @param account the account for the list
+    function accountPositionListKey(address account) internal pure returns (bytes32) {
+        return keccak256(abi.encode(ACCOUNT_POSITION_LIST, account));
+    }
 
     // @dev key for the claimable fee amount
     // @param market the market for the fee

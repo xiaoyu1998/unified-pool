@@ -33,6 +33,7 @@ library Errors {
 
     //Position errors
     error InvalidPoolIndex(uint256 poolKeyId);
+    error PositionNotFound(address key);
 
     //PositionUtils errors
     error EmptyPosition();

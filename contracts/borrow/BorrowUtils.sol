@@ -27,6 +27,9 @@ import "../utils/WadRayMath.sol";
 // @dev Library for borrow functions, to help with the borrowing of liquidity
 // from a pool in return for debt tokens
 library BorrowUtils {
+    using Pool for Pool.Props;
+    using PoolCache for PoolCache.Props;
+    using Position for Position.Props;
 
     struct BorrowParams {
         address underlyingAsset;
@@ -50,21 +53,32 @@ library BorrowUtils {
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
 
-        pool.updateStateIntervalTransactions(poolCache);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
         BorrowUtils.validateBorrow( account, params.dataStore, position, poolCache, params.amount);
 
-        IPoolToken poolToken = IPoolToken(poolCache.poolTokenAddress);
+        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         poolToken.addCollateral(account, params.amount);//this will change Rate
 
         position.setPoolAsCollateral(pool.keyId, true);
         position.setPoolAsBorrowing(pool.keyId, true);
         PositionStoreUtils.set(params.dataStore, account, position);
 
-        poolCache.nextScaledDebt = 
-            IDebtToken(poolCache.debtTokenAddress).mint(account, params.amount, poolCache.nextBorrowIndex);
+        (, poolCache.nextTotalScaledDebt) = 
+            IDebtToken(poolCache.debtToken).mint(account, params.amount, poolCache.nextBorrowIndex);
         
-        pool.updateInterestRates(poolCache, params.asset, 0, params.amount);
-        PoolStoreUtils.set(params.dataStore, params.underlyingAsset, PoolUtils.getPoolSalt(params.asset), pool);
+        PoolUtils.updateInterestRates(
+            pool,
+            poolCache, 
+            params.asset, 
+            0, 
+            params.amount
+        );
+
+        PoolStoreUtils.set(
+            params.dataStore, 
+            params.underlyingAsset, 
+            pool
+        );
     }
 
 

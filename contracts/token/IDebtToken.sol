@@ -11,6 +11,7 @@ interface IDebtToken {
     ) external returns (bool);
 
    function scaledTotalSupply() external view returns (uint256);
+   function balanceOf(address account) external view  returns (uint256);
 
     
 }

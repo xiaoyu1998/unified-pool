@@ -3,11 +3,17 @@
 pragma solidity ^0.8.20;
 import "../pool/PoolConfigurationUtils.sol";
 
-library Position {
+library Position2 {
 
     struct Props {
         address account;
-        uint256 collateralAndDebtPools;
+        address underlyingAsset;
+        bool hasCollateral;
+        bool hasDebt;
+
+        uint256 lastBalance;
+        uint256 averageBuyPrice;
+        uint256 averageSellPrice;
     }
 
     uint256 internal constant BORROWING_MASK =
@@ -21,7 +27,7 @@ library Position {
         bool borrowing
     ) internal pure {
         unchecked {
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
+            if (poolKeyId <= PoolConfigurationUtils.MAX_POOL_COUNT) {
                 revert Errors.InvalidPoolIndex(poolKeyId);
             }
             uint256 bit = 1 << ((poolKeyId << 1));
@@ -39,11 +45,11 @@ library Position {
         bool usingAsCollateral
     ) internal pure {
         unchecked {
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
+            if (poolKeyId <= PoolConfigurationUtils.MAX_POOL_COUNT) {
                 revert Errors.InvalidPoolIndex(poolKeyId);
             }
 
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
+            if (poolKeyId <= PoolConfigurationUtils.MAX_POOL_COUNT) {
                 revert Errors.InvalidPoolIndex(poolKeyId);
             }
             uint256 bit = 1 << ((poolKeyId << 1) + 1);
@@ -65,7 +71,7 @@ library Position {
         uint256 poolKeyId
     ) internal pure returns (bool) {
         unchecked {
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
+            if (poolKeyId <= PoolConfigurationUtils.MAX_POOL_COUNT) {
                 revert Errors.InvalidPoolIndex(poolKeyId);
             }
             return (props.collateralAndDebtPools >> (poolKeyId << 1)) & 3 != 0;
@@ -82,7 +88,7 @@ library Position {
         uint256 poolKeyId
     ) internal pure returns (bool) {
         unchecked {
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
+            if (poolKeyId <= PoolConfigurationUtils.MAX_POOL_COUNT) {
                 revert Errors.InvalidPoolIndex(poolKeyId);
             }
             return (props.collateralAndDebtPools >> (poolKeyId << 1)) & 1 != 0;
@@ -99,9 +105,7 @@ library Position {
         uint256 poolKeyId
     ) internal pure returns (bool) {
         unchecked {
-            if (poolKeyId <= PoolConfigurationUtils.MAX_POOLS_COUNT) {
-                revert Errors.InvalidPoolIndex(poolKeyId);
-            }
+            require(poolKeyId < PoolConfigurationUtils.MAX_POOLS_COUNT, Errors.INVALID_POOL_INDEX);
             return (props.collateralAndDebtPools >> ((poolKeyId << 1) + 1)) & 1 != 0;
         }
     }

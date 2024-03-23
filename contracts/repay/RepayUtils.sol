@@ -43,7 +43,7 @@ library RepayUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        pool.updateStateByIntervalBetweenTransactions(poolCache);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 
         uint256 repayAmount;
         uint256 collateralAmount;
@@ -81,7 +81,8 @@ library RepayUtils {
             }
         }
 
-        pool.updateInterestRates(
+        PoolUtils.updateInterestRates(
+            pool,
             poolCache, 
             params.underlyingAsset, 
             repayAmount, 
