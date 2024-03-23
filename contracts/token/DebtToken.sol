@@ -12,6 +12,8 @@ import "./ScaledToken.sol";
 // @title DebtToken
 // @dev The Debt token for a pool,  keeps track of the debt owners
 contract DebtToken is RoleModule, ScaledToken {
+	using WadRayMath for uint256;
+
 	DataStore public immutable dataStore;
 	address internal _underlyingAsset;
 
@@ -19,7 +21,7 @@ contract DebtToken is RoleModule, ScaledToken {
     	RoleStore _roleStore, 
     	DataStore _dataStore, 
     	address underlyingAsset_
-    ) RoleModule(_roleStore) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN")  {
+    ) RoleModule(_roleStore) ScaledToken("UF_DEBT_TOKEN", "UF_DEBT_TOKEN", 0)  {
     	dataStore = _dataStore;
     	_underlyingAsset = underlyingAsset_;
     }
@@ -45,16 +47,23 @@ contract DebtToken is RoleModule, ScaledToken {
     // @dev mint market tokens to an account
     // @param account the account to mint to
     // @param amount the amount of tokens to mint
-    function mint(address to, uint256 amount, uint256 index
-    ) external virtual onlyController returns (bool) {
+    function mint(
+    	address to, 
+    	uint256 amount, 
+    	uint256 index
+    ) external virtual onlyController returns (bool, uint256) {
+    	//_mintScaled(to, amount, index);
       	return (_mintScaled(to, amount, index), scaledTotalSupply());
     }
 
     // @dev burn market tokens from an account
     // @param account the account to burn tokens for
     // @param amount the amount of tokens to burn
-    function burn(address from, uint256 amount, uint256 index
-    ) external virtual onlyController returns (bool) {
+    function burn(
+    	address from, 
+    	uint256 amount, 
+    	uint256 index
+    ) external virtual onlyController returns (uint256) {
 		_burnScaled(from, address(0), amount, index);
 		return scaledTotalSupply();  
     }

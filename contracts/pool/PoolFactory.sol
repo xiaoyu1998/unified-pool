@@ -38,18 +38,18 @@ contract PoolFactory is RoleModule {
         address interestRateStrategy,
         uint256 configuration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
-        bytes32 key = PoolUtils.getPoolKey(underlyingAsset);
+        address key = PoolUtils.getKey(underlyingAsset);
 
-        address existingPool = PoolStoreUtils.get(dataStore, key);
-        if (existingPool != address(0)) {
-            revert Errors.PoolAlreadyExists(underlyingAsset, existingPool);
+        Pool.Props memory existingPool = PoolStoreUtils.get(dataStore, key);
+        if (existingPool.poolToken != address(0)) {
+            revert Errors.PoolAlreadyExists(key, existingPool.poolToken);
         }
 
         PoolToken poolToken = new PoolToken(roleStore, dataStore, underlyingAsset);
         DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setPoolKeyAsId(key),
+            PoolStoreUtils.setKeyAsId(key),
         	1,0,1,0,
             interestRateStrategy,
             underlyingAsset,

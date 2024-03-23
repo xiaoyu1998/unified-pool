@@ -12,25 +12,25 @@ import "../exchange/IRedeemHandler.sol";
 interface IExchangeRouter {
     function executeSupply(
         SupplyUtils.SupplyParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 
     function executeWithdraw(
         WithdrawUtils.WithdrawParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 
     function executeDeposit(
         DepositUtils.DepositParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 
     function executeBorrow(
         BorrowUtils.ExecuteBorrowParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 
     function executeRepay(
         RepayUtils.ExecuteRepayParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 
     function executeRedeem(
         RedeemUtils.ExecuteRedeemParams calldata params
-    ) external payable returns (bytes32);
+    ) external payable;
 }

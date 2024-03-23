@@ -76,7 +76,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeSupply(
         SupplyUtils.SupplyParams calldata params
-    ) external override payable nonReentrant returns (bytes32) {
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return supplyHandler.executeSupply(
@@ -95,7 +95,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeWithdraw(
         WithdrawUtils.WithdrawParams calldata params
-    ) external override payable nonReentrant returns (bytes32) {
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return withdrawHandler.executeWithdraw(
@@ -114,7 +114,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeDeposit(
         DepositUtils.DepositParams calldata params
-    ) external override payable nonReentrant returns (bytes32) {
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return depositHandler.executeDeposit(
@@ -129,7 +129,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeBorrow(
         BorrowUtils.ExecuteBorrowParams calldata params
-    ) external override payable nonReentrant  returns (bytes32){
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return borrowHandler.executeBorrow(
@@ -144,7 +144,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeRepay(
         RepayUtils.ExecuteRepayParams calldata params
-    ) external override payable nonReentrant returns (bytes32) {
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return repayHandler.executeRepay(
@@ -159,7 +159,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      */
     function executeRedeem(
         RedeemUtils.ExecuteRedeemParams calldata params
-    ) external override payable nonReentrant returns (bytes32) {
+    ) external override payable nonReentrant {
         address account = msg.sender;
 
         return redeemHandler.executeRedeem(

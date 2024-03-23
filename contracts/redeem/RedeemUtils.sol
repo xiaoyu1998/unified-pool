@@ -23,12 +23,16 @@ import "../oracle/OracleStoreUtils.sol";
 
 import "../config/ConfigStoreUtils.sol";
 
+import "../utils/WadRayMath.sol";
+
 // @title RedeemUtils
 // @dev Library for redeem functions, to help with the redeeming of liquidity
 // into a market in return for market tokens
 library RedeemUtils {
-
-    //uint256 public constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD = 0.9e18;//ToDo as governance
+    using Pool for Pool.Props;
+    using PoolCache for PoolCache.Props;
+    using Position for Position.Props;
+    using WadRayMath for uint256;
 
     struct RedeemParams {
         address underlyingAsset;
@@ -53,8 +57,14 @@ library RedeemUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
 
-        Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        BorrowUtils.validateBorrow( account, params.dataStore, position, pool, params.amount);
+        Position.Props memory position = PositionStoreUtils.get(params.dataStore, account);
+        RedeemUtils.validateRedeem( 
+            account, 
+            params.dataStore, 
+            position, 
+            pool, 
+            params.amount
+        );
 
         IPoolToken poolToken = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, params.amount);
@@ -63,13 +73,14 @@ library RedeemUtils {
             PositionStoreUtils.set(params.dataStore, account, position);
         }
 
-        IERC20(params.underlyingAsset).safeTransfer(params.to, params.amount);
+        poolToken.transferOutUnderlyingAsset(params.to, params.amount);
+        poolToken.syncUnderlyingAssetBalance();
     }
 
     struct ValidateBorrowLocalVars {
-        uint256 userTotalCollateralInUsd;
-        uint256 userTotalDebtInUsd;
-        uint256 amountToBorrowInUsd;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
+        uint256 amountToRedeemUsd;
         uint256 healthFactor;
         uint256 healthFactorCollateralRateThreshold;
 
@@ -100,25 +111,27 @@ library RedeemUtils {
 
         //validate account health
         (
-            vars.userTotalCollateralInUsd,
-            vars.userTotalDebtInUsd
+            vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, position);
 
-        if (vars.userCollateralInUsd == 0) { 
+        if (vars.userTotalCollateralUsd == 0) { 
             revert Errors.CollateralBalanceIsZero();
         }
 
-        vars.amountToRedeemInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-                                   .getPrice(pool.underlyingAsset())
+        vars.amountToRedeemUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+                                   .getPrice(pool.underlyingAsset)
                                    .rayMul(amountToRedeem);
-        // vars.healthFactor = userTotalCollateralInUsd.wadDiv(userTotalDebtInUsd + amountToRedeemInUsd);
-        vars.healthFactor = (vars.userTotalDebtInUsd + vars.amountToRedeemInUsd).wadDiv(vars.userTotalCollateralInUsd);
-        vars.healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        // vars.healthFactor = userTotalCollateralUsd.wadDiv(userTotalDebtUsd + amountToRedeemUsd);
+        vars.healthFactor = 
+            (vars.userTotalDebtUsd + vars.amountToRedeemUsd).wadDiv(vars.userTotalCollateralUsd);
+        vars.healthFactorCollateralRateThreshold =
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverRedeem(
-                vars.userTotalCollateralInUsd, 
-                vars.userTotalDebtInUsd, 
-                vars.amountToRedeemInUsd,
+                vars.userTotalCollateralUsd, 
+                vars.userTotalDebtUsd, 
+                vars.amountToRedeemUsd,
                 vars.healthFactorCollateralRateThreshold
             );
         }

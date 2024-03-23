@@ -30,6 +30,7 @@ library BorrowUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
+    using WadRayMath for uint256;
 
     struct BorrowParams {
         address underlyingAsset;
@@ -69,7 +70,7 @@ library BorrowUtils {
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
-            params.asset, 
+            params.underlyingAsset, 
             0, 
             params.amount
         );
@@ -87,9 +88,9 @@ library BorrowUtils {
         uint256 totalDebt;
         uint256 poolDecimals;
         uint256 borrowCapacity;
-        uint256 userTotalCollateralInUsd;
-        uint256 userTotalDebtInUsd;
-        uint256 amountToBorrowInUsd;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
+        uint256 amountToBorrowUsd;
         uint256 healthFactor;
         uint256 healthFactorCollateralRateThreshold;
 
@@ -112,7 +113,7 @@ library BorrowUtils {
         uint256 amountToBorrow
     ) internal pure {
         if (amountToBorrow == 0) { 
-            revert Errors.EmptyBorrowAmount(); 
+            revert Errors.EmptyBorrowAmounts(); 
         }
 
         ValidateBorrowLocalVars memory vars;
@@ -122,7 +123,7 @@ library BorrowUtils {
             vars.isFrozen,
             vars.borrowingEnabled,
             vars.isPaused
-        ) = PoolConfigurationUtils.getFlags(poolCache.poolConfiguration);  
+        ) = PoolConfigurationUtils.getFlags(poolCache.configuration);  
         if (!vars.isActive)         { revert Errors.PoolIsInactive(); }  
         if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
         if (vars.isFrozen)          { revert Errors.PoolIsFrozen();   }   
@@ -130,8 +131,8 @@ library BorrowUtils {
    
 
         //validate pool borrow capacity
-        vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.poolConfiguration);
-        vars.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.poolConfiguration) 
+        vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
+        vars.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.configuration) 
                               * (10 ** vars.poolDecimals);
         if (vars.borrowCapacity != 0) {
             vars.totalDebt =
@@ -139,30 +140,32 @@ library BorrowUtils {
                 amountToBorrow;
             unchecked {
                 if (vars.totalDebt <= vars.borrowCapacity) {
-                    revert Errors.Borrow_Capicaty_Exceeded();
+                    revert Errors.BorrowCapacityExceeded(vars.totalDebt, vars.borrowCapacity);
                 }
             }
         }
 
         //validate account health
         (
-            vars.userTotalCollateralInUsd,
-            vars.userTotalDebtInUsd
+            vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, position);
-        if (vars.userCollateralInUsd == 0) { revert Errors.CollateralBalanceIsZero();}
+        if (vars.userTotalCollateralUsd == 0) { 
+            revert Errors.CollateralBalanceIsZero();
+        }
 
-        vars.amountToBorrowInUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+        vars.amountToBorrowUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
                                        .getPrice(poolCache.underlyingAsset)
                                        .rayMul(amountToBorrow);
-        //vars.healthFactor = userTotalCollateralInUsd.wadDiv(vars.userTotalDebtInUsd + vars.amountToBorrowInUsd);
-        vars.healthFactor = (vars.userTotalDebtInUsd + vars.amountToBorrowInUsd).wadDiv(vars.userTotalCollateralInUsd);
-        
-        vars.healthFactorCollateralRateThreshold = ConfigStoreUtils.getHealthFactorCollateralRateThreshold();
+        vars.healthFactor = 
+            (vars.userTotalDebtUsd + vars.amountToBorrowUsd).wadDiv(vars.userTotalCollateralUsd);
+        vars.healthFactorCollateralRateThreshold = 
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverNewBorrow(
-                vars.userTotalCollateralInUsd, 
-                vars.userTotalDebtInUsd, 
-                vars.amountToBorrowInUsd,
+                vars.userTotalCollateralUsd, 
+                vars.userTotalDebtUsd, 
+                vars.amountToBorrowUsd,
                 vars.healthFactorCollateralRateThreshold
             );
         }

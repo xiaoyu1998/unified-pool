@@ -18,6 +18,7 @@ import "../token/IPoolToken.sol";
 library SupplyUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
+    using WadRayMath for uint256;
 
     struct SupplyParams {
         address underlyingAsset;
@@ -47,7 +48,10 @@ library SupplyUtils {
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
-        SupplyUtils.validateSupply(pool, poolCache, supplyAmount);
+        SupplyUtils.validateSupply(
+            poolCache, 
+            supplyAmount
+        );
 
         PoolUtils.updateInterestRates(
             pool,
@@ -87,7 +91,6 @@ library SupplyUtils {
             bool isActive,
             bool isFrozen, 
             bool isPaused,
-             , 
          ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
         // require(isActive, Errors.RESERVE_INACTIVE);
         // require(!isPaused, Errors.RESERVE_PAUSED);
@@ -95,11 +98,11 @@ library SupplyUtils {
 
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
         uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
-                                 * (10 ** poolCache.configuration.getDecimals());
+                                 * (10 ** PoolConfigurationUtils.getDecimals(poolCache.configuration));
 
-        uint256 totalSupplyAddUnclaimedFeeAddAmount = IPoolToken(poolCache.poolToken).scaledTotalSupply() 
-            + poolCache.unclaimedFee.rayMul(poolCache.nextLiquidityIndex) 
-            + amount;
+        uint256 totalSupplyAddUnclaimedFeeAddAmount = 
+            (IPoolToken(poolCache.poolToken).scaledTotalSupply() + poolCache.unclaimedFee)
+            .rayMul(poolCache.nextLiquidityIndex) + amount;
 
 
         if (supplyCapacity == 0 || totalSupplyAddUnclaimedFeeAddAmount <= supplyCapacity) {

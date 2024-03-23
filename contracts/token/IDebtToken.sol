@@ -8,10 +8,17 @@ interface IDebtToken {
         address to,
         uint256 amount,
         uint256 index
-    ) external returns (bool);
+    ) external returns (bool, uint256);
 
-   function scaledTotalSupply() external view returns (uint256);
+    function burn(
+        address from,
+        uint256 amount,
+        uint256 index
+    ) external returns (uint256);
+
    function balanceOf(address account) external view  returns (uint256);
+   function scaledBalanceOf(address account) external view returns (uint256);
+   function scaledTotalSupply() external view returns (uint256);
 
     
 }

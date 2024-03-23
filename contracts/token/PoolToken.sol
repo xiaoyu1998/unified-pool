@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../role/RoleModule.sol";
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
-import "../bank/Bank.sol";
+import "../bank/StrictBank.sol";
 import "../pool/PoolUtils.sol";
 import "../utils/WadRayMath.sol";
 import "./ScaledToken.sol";
@@ -14,7 +14,8 @@ import "./ScaledToken.sol";
 // @title PoolToken
 // @dev The pool token for a pool, stores funds for the pool and keeps track
 // of the liquidity owners
-contract PoolToken is RoleModule, ScaledToken, Bank {
+contract PoolToken is RoleModule, ScaledToken, StrictBank {
+	using WadRayMath for uint256;
 	event BalanceTransfer(address indexed from, address indexed to, uint256 value, uint256 index);
     
 	address internal _underlyingAsset;
@@ -26,7 +27,7 @@ contract PoolToken is RoleModule, ScaledToken, Bank {
     	RoleStore _roleStore, 
     	DataStore _dataStore,
     	address underlyingAsset_
-    ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN") Bank(_roleStore, _dataStore) {
+    ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN", 0) StrictBank(_roleStore, _dataStore) {
     	_underlyingAsset = underlyingAsset_;
     }
 
@@ -53,8 +54,8 @@ contract PoolToken is RoleModule, ScaledToken, Bank {
     	address to, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual onlyController returns (bool) {
-      	return _mintScaled(to, amount, index);
+    ) external virtual onlyController {
+      	_mintScaled(to, amount, index);
     }
 
     // @dev burn pool tokens from an account
@@ -65,16 +66,16 @@ contract PoolToken is RoleModule, ScaledToken, Bank {
     	address to, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual onlyController returns (bool) {
+    ) external virtual onlyController {
 		_burnScaled( from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 availableBalance = totalUnderlyingAssetBalanceSubstractionTotalCollateral();
+	         uint256 availableBalance = totalUnderlyingAssetBalanceSubTotalCollateral();
 			 if (amount > availableBalance){
 			 	 revert Errors.InsufficientBalanceAfterSubstractionCollateral(amount, availableBalance);
 			 }
 
-			 IERC20(_underlyingAsset).safeTransfer(to, amount);
+			 _transferOut(_underlyingAsset, to, amount);
 		}       
     }
 
@@ -127,6 +128,17 @@ contract PoolToken is RoleModule, ScaledToken, Bank {
 		return _underlyingAsset;
 	}
 
+	function transferOutUnderlyingAsset(
+        address receiver,
+        uint256 amount
+    ) external onlyController {
+        _transferOut(_underlyingAsset, receiver, amount);
+    }
+
+	function syncUnderlyingAssetBalance() external onlyController {
+        _syncTokenBalance(_underlyingAsset);
+    }
+
 	function addCollateral(
 		address account, 
 		uint256 amount
@@ -156,7 +168,7 @@ contract PoolToken is RoleModule, ScaledToken, Bank {
 		return _totalCollateral;
 	}
 
-	function totalUnderlyingAssetBalanceSubstractionTotalCollateral() public view returns (uint256) {
+	function totalUnderlyingAssetBalanceSubTotalCollateral() public view returns (uint256) {
 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
 	}
 

@@ -15,10 +15,16 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
+import "../utils/WadRayMath.sol";
+
 // @title DepositUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
 // into a pool in return for pool tokens
 library DepositUtils {
+    using Pool for Pool.Props;
+    using PoolCache for PoolCache.Props;
+    using Position for Position.Props;
+    using WadRayMath for uint256;
 
     struct DepositParams {
         address underlyingAsset;
@@ -39,16 +45,16 @@ library DepositUtils {
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
 
-        Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        if(position.account() == address(0)){
-            position.setAccount(account);
+        Position.Props memory position = PositionStoreUtils.get(params.dataStore, account);
+        if(position.account == address(0)){
+            position.account = account;
         }
 
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
         poolToken.addCollateral(account, amount);
 
         position.setPoolAsCollateral(pool.keyId, true);
-        PositionStoreUtils.set(params.dataStore, PositionUtils.getPositionKey(account), position);
+        PositionStoreUtils.set(params.dataStore, account, position);
 
     }
 

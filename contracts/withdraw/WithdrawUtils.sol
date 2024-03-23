@@ -10,11 +10,15 @@ import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
-import "../token/IDebtToken.sol";
+
+
 // @title WithdrawUtils
 // @dev Library for withdraw functions, to help with the withdrawing of liquidity
 // into a market in return for market tokens
 library WithdrawUtils {
+    using Pool for Pool.Props;
+    using PoolCache for PoolCache.Props;
+    using WadRayMath for uint256;
 
     struct WithdrawParams {
         address underlyingAsset;
@@ -36,12 +40,12 @@ library WithdrawUtils {
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
         PoolCache.Props memory poolCache =  PoolUtils.cache(pool);
-        pool.updateStateByIntervalBetweenTransactions(pool, poolCache);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 userBalance = poolToken.scaledBalanceOf(account).rayMul(poolCache.nextLiquidityIndex);
         uint256 amountToWithdraw = params.amount;
-        if (params.amount == (uint256).max) { //withdraw user balance
+        if (amountToWithdraw > userBalance) { //withdraw user balance
             amountToWithdraw = userBalance;
         }
 
@@ -61,7 +65,8 @@ library WithdrawUtils {
             pool
         );
 
-        poolToken.burn(params.to, amountToWithdraw, poolCache.nextLiquidityIndex);
+        poolToken.burn(account, params.to, amountToWithdraw, poolCache.nextLiquidityIndex);
+        poolToken.syncUnderlyingAssetBalance();
     }
 
 
@@ -82,7 +87,7 @@ library WithdrawUtils {
               revert Errors.InsufficientUserBalance(amount, userBalance);
           }
 
-          (bool isActive, , , bool isPaused) = poolCache.poolConfiguration.getFlags();
+          (bool isActive, , , bool isPaused) = PoolConfigurationUtils.getFlags(poolCache.configuration);
           
           if (!isActive)         { revert Errors.PoolIsInactive(); }  
           if (isPaused)          { revert Errors.PoolIsPaused();   }  

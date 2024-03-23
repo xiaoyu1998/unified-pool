@@ -23,11 +23,12 @@ contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
     function executeRepay(
         address account,
         RepayUtils.RepayParams calldata repayParams
-    ) external globalNonReentrant returns (bytes32){
+    ) external globalNonReentrant{
 
         RepayUtils.ExecuteRepayParams memory params = RepayUtils.ExecuteRepayParams(
-           dataStore,
-           repayParams.poolTokenAddress       
+            dataStore,
+            repayParams.underlyingAsset,   
+            repayParams.amount  
         );
 
         return RepayUtils.executeRepay(account, params);

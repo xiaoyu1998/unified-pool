@@ -13,7 +13,7 @@ library Errors {
     error CouldNotSendNativeToken(address receiver, uint256 amount);
 
     // PoolFactory errors
-    error PoolAlreadyExists(bytes32 salt, address existingPoolAddress);
+    error PoolAlreadyExists(address key);
 
     // PoolStoreUtils errors
     error PoolNotFound(address key);
@@ -44,7 +44,10 @@ library Errors {
     error PoolIsFrozen();
     error PoolIsNotEnabled();
     error CollateralBalanceIsZero();
-    error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralInUsd, uint256 userTotalDebtInUsd, uint256 amountToBorrowInUsd, uint256 healthFactorCollateralRateThreshold);
+    error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountToBorrowUsd, uint256 healthFactorCollateralRateThreshold);
+    error EmptyBorrowAmounts();
+    error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);
+
 
     // SupplyUtils errors
     error EmptySupplyAmounts();
@@ -74,6 +77,7 @@ library Errors {
     error EmptyBurnAmounts();
     error EmptyMintAmounts();
     error DebtTokenOperationNotSupported();
+    error InsufficientCollateralAmount(uint256 amountToRemove, uint256 amountBalance);
 
     // TokenUtils errors
     error EmptyTokenTranferGasLimit(address token);

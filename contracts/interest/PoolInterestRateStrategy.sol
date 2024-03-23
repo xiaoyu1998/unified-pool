@@ -2,13 +2,17 @@
 
 pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./IPoolInterestRateStrategy.sol";
 import "../error/Errors.sol";
 import "../token/IPoolToken.sol";
 import "../utils/PercentageMath.sol";
 import "../utils/WadRayMath.sol";
 
+import "./IPoolInterestRateStrategy.sol";
+
 contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
+    using WadRayMath for uint256;
+    using PercentageMath for uint256;
+
     uint256 public immutable OPTIMAL_USAGE_RATIO;
     uint256 public immutable MAX_EXCESS_USAGE_RATIO;
     uint256 internal immutable _rateSlope1;
@@ -46,8 +50,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         uint256 currentBorrowRate;
         uint256 currentLiquidityRate;
         uint256 borrowUsageRatio;
-        //uint256 supplyUsageRatio;
-        uint256 availableLiquidityPlusDebt;
+        uint256 availableLiquidityAddTotalDebt;
     }
 
     /// @inheritdoc IPoolInterestRateStrategy
@@ -65,20 +68,19 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
                 + params.liquidityIn 
                 - params.liquidityOut;
 
-        	  vars.availableLiquidityPlusTotalDebt = vars.availableLiquidity + vars.totalDebt;
-        	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityPlusTotalDebt);
+        	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
+        	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
       	}
 
       	if (vars.borrowUsageRatio > OPTIMAL_USAGE_RATIO){
-        	  uint256 excessBorrowUsageRatio = (vars.borrowUsageRatio - OPTIMAL_USAGE_RATIO).rayDiv(
+            uint256 excessBorrowUsageRatio = (vars.borrowUsageRatio - OPTIMAL_USAGE_RATIO).rayDiv(
                 MAX_EXCESS_USAGE_RATIO
             );
-            vars.currentBorrowRate  += (_rateSlope1 
-                + _rateSlope2.rayMul(excessBorrowUsageRatio));
+            vars.currentBorrowRate  += (_rateSlope1 + _rateSlope2.rayMul(excessBorrowUsageRatio));
       	} else {
         	  vars.currentBorrowRate += _rateSlope1
-                .rayMul(vars.borrowUsageRatio)
-                .rayDiv(OPTIMAL_USAGE_RATIO);
+                  .rayMul(vars.borrowUsageRatio)
+                  .rayDiv(OPTIMAL_USAGE_RATIO);
       	}
 
         //calculate Liquidity Rate
@@ -90,7 +92,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         
         return (
             vars.currentLiquidityRate,
-            vars.currentBorrowRate,
+            vars.currentBorrowRate
         );   
 
     }

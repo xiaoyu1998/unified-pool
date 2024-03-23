@@ -23,17 +23,18 @@ library PositionUtils {
     using Position for Position.Props;
     using Pool for Pool.Props;
     
-    //TODO:should change to multi-position
-    function getPositionKey(address account) internal pure returns (bytes32) {
-        bytes32 key = keccak256(abi.encode(account));
-        return key;
-    }
+    // //TODO:should change to multi-position
+    // function getPositionKey(address account) internal pure returns (address) {
+    //     bytes32 key = keccak256(abi.encode(account));
+    //     return key;
+        
+    // }
 
     struct calculateUserTotalCollateralAndDebtVars {
         uint256 i;
         uint256 assetPrice;
-        uint256 userTotalCollateralInUsd;
-        uint256 userTotalDebtInUsd;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
     }
 
     function calculateUserTotalCollateralAndDebt(
@@ -58,12 +59,12 @@ library PositionUtils {
             vars.assetPrice = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(pool.underlyingAsset);
 
             if (position.isUsingAsCollateral(vars.i)){
-                 vars.userTotalCollateralInUsd +=
+                 vars.userTotalCollateralUsd +=
                  IPoolToken(pool.poolToken).balanceOfCollateral(account) * vars.assetPrice;
             }
 
             if (position.isBorrowing(vars.i)){
-                 vars.userTotalDebtInUsd +=
+                 vars.userTotalDebtUsd +=
                  IDebtToken(pool.debtToken).balanceOf(account) * vars.assetPrice;  
                  //TODO: should assign pool to avoid reload               
             }
@@ -73,7 +74,7 @@ library PositionUtils {
             }            
        }
 
-       return (vars.userTotalCollateralInUsd, vars.userTotalDebtInUsd);
+       return (vars.userTotalCollateralUsd, vars.userTotalDebtUsd);
     }
 
     function calculateUserTotalCollateralAndDebt(

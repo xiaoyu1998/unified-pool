@@ -18,6 +18,7 @@ library PoolCache {
         uint256 currTotalScaledDebt;
         uint256 nextTotalScaledDebt;
 
+        address underlyingAsset;
         address poolToken;
         address debtToken;
 

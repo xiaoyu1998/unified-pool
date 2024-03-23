@@ -79,8 +79,9 @@ library PoolUtils {
             poolCache.debtToken
         ).scaledTotalSupply();
 
-        poolCache.poolToken     = pool.poolToken;
-        poolCache.debtToken     = pool.debtToken;
+        poolCache.underlyingAsset = pool.underlyingAsset;
+        poolCache.poolToken       = pool.poolToken;
+        poolCache.debtToken       = pool.debtToken;
 
         poolCache.configuration = pool.configuration;
         poolCache.feeFactor     = PoolConfigurationUtils.getFeeFactor(poolCache.configuration);

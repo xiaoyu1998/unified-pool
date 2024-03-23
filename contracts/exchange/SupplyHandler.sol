@@ -23,7 +23,7 @@ contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
     function executeSupply(
         address account,
         SupplyUtils.SupplyParams calldata supplyParams
-    ) external globalNonReentrant returns (bytes32){
+    ) external globalNonReentrant {
 
         SupplyUtils.ExecuteSupplyParams memory params = SupplyUtils.ExecuteSupplyParams(
            dataStore,

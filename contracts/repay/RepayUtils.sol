@@ -18,10 +18,16 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
+import "../utils/WadRayMath.sol";
+
 // @title RepayUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
 // into a market in return for market tokens
 library RepayUtils {
+    using Pool for Pool.Props;
+    using PoolCache for PoolCache.Props;
+    using Position for Position.Props;
+    using WadRayMath for uint256;
 
     struct RepayParams {
         address underlyingAsset;
@@ -64,10 +70,18 @@ library RepayUtils {
         }
 
         
-        RepayUtils.validateRepay(position, pool, poolCache, account, repayAmount, debtAmount, collateralAmount);
+        RepayUtils.validateRepay(
+            account, 
+            position, 
+            pool, 
+            poolCache, 
+            repayAmount, 
+            debtAmount, 
+            collateralAmount
+        );
 
         //Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
-        poolCache.nextScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
+        poolCache.nextTotalScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
         if(debtToken.scaledBalanceOf(account) == 0) {
             position.setPoolAsBorrowing(pool.keyId, false);
             PositionStoreUtils.set(params.dataStore, account, position);
@@ -96,7 +110,8 @@ library RepayUtils {
         );
 
         if(extraAmountToRefund > 0) {
-            IERC20(params.underlyingAsset).safeTransfer(account, extraAmountToRefund);
+            poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
+            poolToken.syncUnderlyingAssetBalance();
         }
 
     }
@@ -108,13 +123,12 @@ library RepayUtils {
     // @param amount The amount to be repay
     // @param userBalance The balance of the user
     function validateRepay(
+        address account,
         Position.Props memory position,
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,
-        address account,
         uint256 repayAmount,
         uint256 debtAmount,
-        IPoolToken poolToken,
         uint256 collateralAmount
     ) internal pure {
         PositionUtils.validateEnabledPosition(position);
@@ -124,7 +138,7 @@ library RepayUtils {
         }
 
         if(debtAmount == 0) {
-            revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset());
+            revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset);
         }
 
         if(collateralAmount > 0){
