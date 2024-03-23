@@ -79,7 +79,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		}       
     }
 
-	/// @inheritdoc IPoolToken
 	function transferOnLiquidation(
 		address from,
 		address to,

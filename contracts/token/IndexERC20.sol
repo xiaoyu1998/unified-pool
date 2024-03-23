@@ -29,17 +29,14 @@ abstract contract IndexERC20 is Context, IERC20{
         _decimals = decimals_;
     }
 
-    /// @inheritdoc IERC20
     function name() public view returns (string memory) {
         return _name;
     }
 
-    /// @inheritdoc IERC20
     function symbol() external view returns (string memory) {
         return _symbol;
     }
 
-    /// @inheritdoc IERC20
     function decimals() external view returns (uint8) {
         return _decimals;
     }

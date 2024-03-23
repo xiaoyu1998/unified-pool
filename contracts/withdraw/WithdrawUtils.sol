@@ -78,7 +78,7 @@ library WithdrawUtils {
           PoolCache.Props memory poolCache,
           uint256 amount,
           uint256 userBalance
-      ) internal pure {
+      ) internal view {
           if (amount == 0) { 
               revert Errors.EmptyWithdrawAmounts(); 
           }

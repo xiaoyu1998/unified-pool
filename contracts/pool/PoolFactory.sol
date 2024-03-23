@@ -49,7 +49,7 @@ contract PoolFactory is RoleModule {
         DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setKeyAsId(key),
+            PoolStoreUtils.setKeyAsId(dataStore, key),
         	1,0,1,0,
             interestRateStrategy,
             underlyingAsset,
@@ -57,6 +57,7 @@ contract PoolFactory is RoleModule {
             address(debtToken),
             configuration,
             PoolConfigurationUtils.getFeeFactor(configuration),
+            0,
             0,
             Chain.currentTimestamp()
         );

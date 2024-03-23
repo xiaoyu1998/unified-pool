@@ -69,7 +69,7 @@ library DepositUtils {
       //     Position.Props memory position,
       //     PoolCache.Props memory poolCache,
       //     uint256 amount
-      // ) internal pure {
+      // ) internal view {
        
       //  (
       //   vars.userCollateralInBaseCurrency,

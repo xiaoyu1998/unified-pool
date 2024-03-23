@@ -72,7 +72,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * account to the pool, and then calling the executeSupply()` function on the Supply 
      * handler contract.
      *
-     * @param params The Supply parameters, as specified in the `SupplyUtils.ExecuteSupplyParams` struct
+     * @param params The Supply parameters, as specified in the `SupplyUtils.SupplyParams` struct
      */
     function executeSupply(
         SupplyUtils.SupplyParams calldata params
@@ -91,7 +91,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * The withdraw is execute by calling the `executeWithdrawal()` function on the withdraw 
      * handler contract.
      *
-     * @param params The withdraw parameters, as specified in the `WithdrawalUtils.ExecuteWithdrawalParams` struct
+     * @param params The withdraw parameters, as specified in the `WithdrawalUtils.WithdrawalParams` struct
      */
     function executeWithdraw(
         WithdrawUtils.WithdrawParams calldata params
@@ -110,7 +110,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * account to the pool, and then calling the executeDeposit()` function on the deposit 
      * handler contract.
      *
-     * @param params The deposit parameters, as specified in the `DepositUtils.ExecuteDepositParams` struct
+     * @param params The deposit parameters, as specified in the `DepositUtils.DepositParams` struct
      */
     function executeDeposit(
         DepositUtils.DepositParams calldata params
@@ -128,7 +128,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * execute by calling the `executeBorrow()` function on the Borrow handler contract. 
      */
     function executeBorrow(
-        BorrowUtils.ExecuteBorrowParams calldata params
+        BorrowUtils.BorrowParams calldata params
     ) external override payable nonReentrant {
         address account = msg.sender;
 
@@ -143,7 +143,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * execute by calling the `executeRepay()` function on the Repay handler contract. 
      */
     function executeRepay(
-        RepayUtils.ExecuteRepayParams calldata params
+        RepayUtils.RepayParams calldata params
     ) external override payable nonReentrant {
         address account = msg.sender;
 
@@ -158,7 +158,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
      * execute by calling the `executeRedeem()` function on the Redeem handler contract. 
      */
     function executeRedeem(
-        RedeemUtils.ExecuteRedeemParams calldata params
+        RedeemUtils.RedeemParams calldata params
     ) external override payable nonReentrant {
         address account = msg.sender;
 

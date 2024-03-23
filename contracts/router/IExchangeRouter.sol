@@ -23,14 +23,14 @@ interface IExchangeRouter {
     ) external payable;
 
     function executeBorrow(
-        BorrowUtils.ExecuteBorrowParams calldata params
+        BorrowUtils.BorrowParams calldata params
     ) external payable;
 
     function executeRepay(
-        RepayUtils.ExecuteRepayParams calldata params
+        RepayUtils.RepayParams calldata params
     ) external payable;
 
     function executeRedeem(
-        RedeemUtils.ExecuteRedeemParams calldata params
+        RedeemUtils.RedeemParams calldata params
     ) external payable;
 }

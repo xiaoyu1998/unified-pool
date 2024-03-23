@@ -111,7 +111,7 @@ library BorrowUtils {
         Position.Props memory position,
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
-    ) internal pure {
+    ) internal view {
         if (amountToBorrow == 0) { 
             revert Errors.EmptyBorrowAmounts(); 
         }

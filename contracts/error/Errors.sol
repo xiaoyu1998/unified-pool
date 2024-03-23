@@ -13,7 +13,7 @@ library Errors {
     error CouldNotSendNativeToken(address receiver, uint256 amount);
 
     // PoolFactory errors
-    error PoolAlreadyExists(address key);
+    error PoolAlreadyExists(address key, address poolToken);
 
     // PoolStoreUtils errors
     error PoolNotFound(address key);

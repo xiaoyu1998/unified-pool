@@ -92,7 +92,7 @@ library PoolStoreUtils {
         return pool;
     }
 
-    function setKeyAsId(DataStore dataStore, address key)  public view returns (uint256) {
+    function setKeyAsId(DataStore dataStore, address key)  external returns (uint256) {
         uint256 id = dataStore.incrementUint(POOL_KEY_ID, 1);
         dataStore.setAddress(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;

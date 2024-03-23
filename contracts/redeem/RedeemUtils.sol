@@ -100,7 +100,7 @@ library RedeemUtils {
         Position.Props memory position,
         Pool.Props memory pool,
         uint256 amountToRedeem
-    ) internal pure {
+    ) internal view {
         PositionUtils.validateEnabledPosition(position);
 
         if(amountToRedeem == 0) {

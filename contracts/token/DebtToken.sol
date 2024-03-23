@@ -93,7 +93,6 @@ contract DebtToken is RoleModule, ScaledToken {
 		revert Errors.DebtTokenOperationNotSupported();
 	}
 
-	/// @inheritdoc IDebtToken
 	function underlyingAsset() external view returns (address) {
 		return _underlyingAsset;
 	}

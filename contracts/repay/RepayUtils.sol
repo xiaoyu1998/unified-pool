@@ -130,7 +130,7 @@ library RepayUtils {
         uint256 repayAmount,
         uint256 debtAmount,
         uint256 collateralAmount
-    ) internal pure {
+    ) internal view {
         PositionUtils.validateEnabledPosition(position);
 
         if(repayAmount == 0) {
