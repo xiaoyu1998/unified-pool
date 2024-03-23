@@ -20,16 +20,12 @@ contract PoolFactory is RoleModule {
     using Pool for Pool.Props;
 
     DataStore public immutable dataStore;
-    //IPoolInterestRateStrate public immutable poolInterestRateStrate
-    // EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
         DataStore _dataStore
-        // EventEmitter _eventEmitter
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
-        // eventEmitter = _eventEmitter;
     }
 
     // @dev creates a pool

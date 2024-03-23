@@ -74,7 +74,6 @@ library RepayUtils {
             account, 
             position, 
             pool, 
-            poolCache, 
             repayAmount, 
             debtAmount, 
             collateralAmount
@@ -126,11 +125,10 @@ library RepayUtils {
         address account,
         Position.Props memory position,
         Pool.Props memory pool,
-        PoolCache.Props memory poolCache,
         uint256 repayAmount,
         uint256 debtAmount,
         uint256 collateralAmount
-    ) internal view {
+    ) internal pure {
         PositionUtils.validateEnabledPosition(position);
 
         if(repayAmount == 0) {

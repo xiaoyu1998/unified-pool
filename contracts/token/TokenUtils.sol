@@ -80,7 +80,7 @@ library TokenUtils {
 
         if (success1) { return; }
 
-        (string memory reason, bool hasRevertMessage) = ErrorUtils.getRevertMessage(returndata);
+        (string memory reason, ) = ErrorUtils.getRevertMessage(returndata);
         emit TokenTransferReverted(reason, returndata);
 
         // throw custom errors to prevent spoofing of errors

@@ -86,7 +86,7 @@ library PositionUtils {
         return calculateUserTotalCollateralAndDebt(account, dataStore, position);
     }
 
-    function validateEnabledPosition(Position.Props memory postion) internal view {
+    function validateEnabledPosition(Position.Props memory postion) internal pure {
         if (postion.account == address(0)) {
             revert Errors.EmptyPosition();
         }

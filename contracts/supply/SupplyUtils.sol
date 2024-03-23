@@ -92,6 +92,10 @@ library SupplyUtils {
             bool isFrozen, 
             bool isPaused,
          ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
+        if (!isActive) { revert Errors.PoolIsInactive(); }  
+        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
+
         // require(isActive, Errors.RESERVE_INACTIVE);
         // require(!isPaused, Errors.RESERVE_PAUSED);
         // require(!isFrozen, Errors.RESERVE_FROZEN);

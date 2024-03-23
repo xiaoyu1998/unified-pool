@@ -167,7 +167,7 @@ library PoolConfigurationUtils {
     function setFeeFactor(
         uint256 poolConfigration,
         uint256 feeFactor
-    ) internal returns (uint256) {
+    ) internal pure {
         if (feeFactor > MAX_VALID_FEE_FACTOR) {
             revert Errors.InvalidFeeFactor(feeFactor, MAX_VALID_FEE_FACTOR);
         }

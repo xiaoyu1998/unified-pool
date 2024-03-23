@@ -179,7 +179,7 @@ library PoolUtils {
     function validateEnabledPool(
         Pool.Props memory pool,
         address key
-    ) internal view {
+    ) internal pure {
         if (pool.poolToken == address(0)) {
             revert Errors.PoolNotFound(key);
         }
