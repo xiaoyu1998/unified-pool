@@ -16,7 +16,7 @@ library Pool {
         address poolToken;
         address debtToken;
 
-        uint256 configration;
+        uint256 configuration;
         uint256 feeFactor;
         uint256 totalFee;
         uint256 unclaimedFee;
@@ -95,12 +95,12 @@ library Pool {
     //     props.debtToken = value;
     // }
 
-    // function configration(Props memory props) internal pure returns (uint256) {
-    //     return props.configration;
+    // function configuration(Props memory props) internal pure returns (uint256) {
+    //     return props.configuration;
     // }
 
     // function setConfigration(Props memory props, uint256 value) internal pure {
-    //     props.configration = value;
+    //     props.configuration = value;
     // }
 
     // function feeFactor(Props memory props) internal pure returns (uint256) {

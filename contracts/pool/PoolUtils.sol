@@ -80,12 +80,12 @@ library PoolUtils {
         ).scaledTotalSupply();
 
         poolCache.poolToken     = pool.poolToken;
-        poolCache.DebtToken     = pool.debtToken;
+        poolCache.debtToken     = pool.debtToken;
 
-        poolCache.poolConfiguration   = pool.configuration;
-        poolCache.feeFactor           = PoolConfigurationUtils.getReserveFactor(poolCache.configration);
-        poolCache.totalFee            = pool.totalFee;
-        poolCache.unclaimedFee        = pool.unclaimedFee;
+        poolCache.configuration = pool.configuration;
+        poolCache.feeFactor     = PoolConfigurationUtils.getFeeFactor(poolCache.configuration);
+        poolCache.totalFee      = pool.totalFee;
+        poolCache.unclaimedFee  = pool.unclaimedFee;
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp;
 
         return poolCache;
@@ -126,8 +126,8 @@ library PoolUtils {
         if (poolCache.lastUpdateTimestamp == blockTimeStamp) {
             return;
         }
-        pool.updateIndexes(poolCache);
-        FeeUtils.incrementClaimableFeeAmount(pool, poolCache);
+        updateIndexes(pool, poolCache);
+        FeeUtils.incrementFeeAmount(pool, poolCache);
         pool.lastUpdateTimestamp = blockTimeStamp;
     }
 
@@ -142,7 +142,7 @@ library PoolUtils {
             return pool.liquidityIndex;
         } else {
             uint256 periodicIncomeInterest = InterestUtils.calculateInterest(
-                pool.LiquidityRate, 
+                pool.liquidityRate, 
                 pool.lastUpdateTimestamp
             );
             return periodicIncomeInterest.rayMul(pool.liquidityIndex);

@@ -32,7 +32,7 @@ library InterestUtils {
    */
   function calculateInterest(
     uint256 rate,
-    uint40 lastUpdateTimestamp
+    uint256 lastUpdateTimestamp
   ) internal view returns (uint256) {
     //solium-disable-next-line
     uint256 result = rate * (Chain.currentTimestamp() - uint256(lastUpdateTimestamp));

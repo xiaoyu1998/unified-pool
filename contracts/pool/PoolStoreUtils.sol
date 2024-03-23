@@ -69,7 +69,7 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         );
 
-        pool.configration = dataStore.getUint(
+        pool.configuration = dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         );
 
@@ -160,7 +160,7 @@ library PoolStoreUtils {
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION)),
-            pool.configration
+            pool.configuration
         );
 
         dataStore.setUint(

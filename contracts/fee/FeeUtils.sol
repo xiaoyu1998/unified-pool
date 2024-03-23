@@ -34,7 +34,7 @@ library FeeUtils {
     //     uint256 amountToMint;
     // }
 
-    function incrementTotalFeeAmount(
+    function incrementFeeAmount(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
     ) external {

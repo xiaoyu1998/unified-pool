@@ -36,7 +36,7 @@ contract PoolFactory is RoleModule {
     function createPool(
         address underlyingAsset,
         address interestRateStrategy,
-        uint256 configration
+        uint256 configuration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         bytes32 key = PoolUtils.getPoolKey(underlyingAsset);
 
@@ -55,8 +55,8 @@ contract PoolFactory is RoleModule {
             underlyingAsset,
             address(poolToken),
             address(debtToken),
-            configration,
-            PoolConfigurationUtils.getFeeFactor(configration),
+            configuration,
+            PoolConfigurationUtils.getFeeFactor(configuration),
             0,
             Chain.currentTimestamp()
         );

@@ -21,7 +21,7 @@ library PoolCache {
         address poolToken;
         address debtToken;
 
-        uint256 configration;
+        uint256 configuration;
         uint256 feeFactor;
         uint256 totalFee;
         uint256 unclaimedFee;
