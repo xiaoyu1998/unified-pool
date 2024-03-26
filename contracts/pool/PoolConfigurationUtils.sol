@@ -9,15 +9,15 @@ import "../error/Errors.sol";
   //   //bit 16-31: Liq. threshold
   //   //bit 32-47: Liq. bonus
   //   //bit 48-55: Decimals
-  //   //bit 56: reserve is active
-  //   //bit 57: reserve is frozen
+  //   //bit 56: pool is active
+  //   //bit 57: pool is frozen
   //   //bit 58: borrowing is enabled
   //   //bit 59: stable rate borrowing enabled
   //   //bit 60: asset is paused
   //   //bit 61: borrowing in isolation mode is enabled
   //   //bit 62: siloed borrowing enabled
   //   //bit 63: flashloaning enabled
-  //   //bit 64-79: reserve factor
+  //   //bit 64-79: pool factor
   //   //bit 80-115 borrow cap in whole tokens, borrowCap == 0 => no cap
   //   //bit 116-151 supply cap in whole tokens, supplyCap == 0 => no cap
   //   //bit 152-167 liquidation protocol fee
@@ -59,8 +59,8 @@ library PoolConfigurationUtils {
     uint256 public constant DEBT_CEILING_DECIMALS = 2;
     uint16 public constant MAX_POOLS_COUNT = 128;
     // 
-    //   @notice Gets the configuration flags of the reserve
-    //   @param self The reserve configuration
+    //   @notice Gets the configuration flags of the pool
+    //   @param self The pool configuration
     //   @return The state flag representing active
     //   @return The state flag representing frozen
     //   @return The state flag representing borrowing enabled
@@ -77,8 +77,8 @@ library PoolConfigurationUtils {
     }
 
 
-    // @notice Sets the active state of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the active state of the pool
+    // @param self The pool configuration
     // @param active The active state
     function setActive(uint256 poolConfigration, bool active) internal pure {
         poolConfigration =
@@ -87,16 +87,16 @@ library PoolConfigurationUtils {
     }
 
 
-    // @notice Gets the active state of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the active state of the pool
+    // @param self The pool configuration
     // @return The active state
     function getActive(uint256 poolConfigration) internal pure returns (bool) {
         return (poolConfigration & ~ACTIVE_MASK) != 0;
     }
 
 
-    // @notice Sets the frozen state of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the frozen state of the pool
+    // @param self The pool configuration
     // @param frozen The frozen state
     function setFrozen(uint256 poolConfigration, bool frozen) internal pure {
         poolConfigration =
@@ -105,16 +105,16 @@ library PoolConfigurationUtils {
     }
 
       
-    // @notice Gets the frozen state of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the frozen state of the pool
+    // @param self The pool configuration
     // @return The frozen state
     function getFrozen(uint256 poolConfigration) internal pure returns (bool) {
         return (poolConfigration & ~FROZEN_MASK) != 0;
     }
 
       
-    // @notice Sets the paused state of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the paused state of the pool
+    // @param self The pool configuration
     // @param paused The paused state
     function setPaused(
         uint256 poolConfigration, 
@@ -126,8 +126,8 @@ library PoolConfigurationUtils {
     }
 
       
-    // @notice Gets the paused state of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the paused state of the pool
+    // @param self The pool configuration
     // @return The paused state
     function getPaused(
         uint256 poolConfigration
@@ -137,8 +137,8 @@ library PoolConfigurationUtils {
 
 
     
-    // @notice Sets the decimals of the underlying asset of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the decimals of the underlying asset of the pool
+    // @param self The pool configuration
     // @param decimals The decimals
     function setDecimals(
         uint256 poolConfigration,
@@ -152,8 +152,8 @@ library PoolConfigurationUtils {
     }
 
     
-    // @notice Gets the decimals of the underlying asset of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the decimals of the underlying asset of the pool
+    // @param self The pool configuration
     // @return The decimals of the asset
     function getDecimals(
         uint256 poolConfigration
@@ -178,8 +178,8 @@ library PoolConfigurationUtils {
     }
 
     // @notice Gets the fee factor of the pool
-    // @param self The reserve configuration
-    // @return The reserve factor
+    // @param self The pool configuration
+    // @return The pool factor
     function getFeeFactor(
         uint256 poolConfigration
     ) internal pure returns (uint256) {
@@ -187,8 +187,8 @@ library PoolConfigurationUtils {
     }
 
     
-    // @notice Sets the borrow cap of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the borrow cap of the pool
+    // @param self The pool configuration
     // @param borrowCapacity The borrow cap
     function setBorrowCapacity(
         uint256 poolConfigration,
@@ -201,8 +201,8 @@ library PoolConfigurationUtils {
     }
 
     
-    // @notice Gets the borrow cap of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the borrow cap of the pool
+    // @param self The pool configuration
     // @return The borrow cap
     function getBorrowCapacity(
         uint256 poolConfigration
@@ -211,8 +211,8 @@ library PoolConfigurationUtils {
     }
 
     
-    // @notice Sets the supply cap of the reserve
-    // @param self The reserve configuration
+    // @notice Sets the supply cap of the pool
+    // @param self The pool configuration
     // @param supplyCapacity The supply cap
     function setSupplyCapacity(
         uint256 poolConfigration,
@@ -225,8 +225,8 @@ library PoolConfigurationUtils {
     }
 
     
-    // @notice Gets the supply cap of the reserve
-    // @param self The reserve configuration
+    // @notice Gets the supply cap of the pool
+    // @param self The pool configuration
     // @return The supply cap
     function getSupplyCapacity(
         uint256 poolConfigration

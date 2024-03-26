@@ -252,6 +252,19 @@ library PoolStoreUtils {
         );
     }
 
+    function setConfiguration(DataStore dataStore, address key, uint256 poolConfigration) external {
+        dataStore.setUint(
+            keccak256(abi.encode(key, POOL_CONFIGRATION)),
+            poolConfigration
+        );        
+    }
+
+    function getConfiguration(DataStore dataStore, address key) external returns (uint256){
+        return dataStore.getUint(
+            keccak256(abi.encode(key, POOL_CONFIGRATION))
+        );       
+    }
+
     // function getPoolSaltHash(bytes32 salt) internal pure returns (bytes32) {
     //     return keccak256(abi.encode(POOL_SALT, salt));
     // }
