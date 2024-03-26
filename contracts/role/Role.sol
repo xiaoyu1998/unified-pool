@@ -11,10 +11,27 @@ library Role {
      * @dev The ROLE_ADMIN role.
      */
     bytes32 public constant ROLE_ADMIN = keccak256(abi.encode("ROLE_ADMIN"));
+
+    /**
+     * @dev The TIMELOCK_ADMIN role.
+     */
+    bytes32 public constant TIMELOCK_ADMIN = keccak256(abi.encode("TIMELOCK_ADMIN"));
+
+    /**
+     * @dev The TIMELOCK_MULTISIG role.
+     */
+    bytes32 public constant TIMELOCK_MULTISIG = keccak256(abi.encode("TIMELOCK_MULTISIG"));
+
     /**
      * @dev The CONFIG_KEEPER role.
      */
     bytes32 public constant CONFIG_KEEPER = keccak256(abi.encode("CONFIG_KEEPER"));
+
+    /**
+     * @dev The LIMITED_CONFIG_KEEPER role.
+     */
+    bytes32 public constant LIMITED_CONFIG_KEEPER = keccak256(abi.encode("LIMITED_CONFIG_KEEPER"));
+
     /**
      * @dev The CONTROLLER role.
      */

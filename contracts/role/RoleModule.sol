@@ -103,14 +103,6 @@ contract RoleModule {
     }
 
     /**
-     * @dev Only allows addresses with the ORDER_KEEPER role to call the function.
-     */
-    modifier onlyOrderKeeper() {
-        _validateRole(Role.ORDER_KEEPER, "ORDER_KEEPER");
-        _;
-    }
-
-    /**
      * @dev Only allows addresses with the PRICING_KEEPER role to call the function.
      */
     modifier onlyPricingKeeper() {
@@ -123,14 +115,6 @@ contract RoleModule {
      */
     modifier onlyLiquidationKeeper() {
         _validateRole(Role.LIQUIDATION_KEEPER, "LIQUIDATION_KEEPER");
-        _;
-    }
-
-    /**
-     * @dev Only allows addresses with the ADL_KEEPER role to call the function.
-     */
-    modifier onlyAdlKeeper() {
-        _validateRole(Role.ADL_KEEPER, "ADL_KEEPER");
         _;
     }
 
