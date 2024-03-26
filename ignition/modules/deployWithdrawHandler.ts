@@ -2,6 +2,7 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { withdrawUtilsModule } from "./deployWithdrawUtils"
+import { hashString } from "../../utils/hash";
 
 export const withdrawHandlerModule = buildModule("WithdrawHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -13,6 +14,7 @@ export const withdrawHandlerModule = buildModule("WithdrawHandler", (m) => {
             WithdrawUtils: withdrawUtils,
         },    
     });
+    m.call(roleStore, "grantRole",  [withdrawHandler, hashString("CONTROLLER")]);
 
     return { withdrawHandler };
 });

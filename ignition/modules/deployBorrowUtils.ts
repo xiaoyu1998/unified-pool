@@ -18,7 +18,7 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
             PositionStoreUtils: positionStoreUtils,
             FeeUtils: feeUtils,
             ConfigStoreUtils: configStoreUtils,
-            OracleStoreUtils: oracleStoreUtils,
+            OracleStoreUtils: oracleStoreUtils
         },      
     });
 

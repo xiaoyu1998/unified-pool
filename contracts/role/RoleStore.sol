@@ -7,6 +7,9 @@ import "../utils/EnumerableValues.sol";
 import "./Role.sol";
 import "../error/Errors.sol";
 
+// import "hardhat/console.sol";
+import "../utils/Printer.sol";
+
 /**
  * @title RoleStore
  * @dev Stores roles and their members.
@@ -42,6 +45,11 @@ contract RoleStore {
      * @param roleKey The key of the role to grant.
      */
     function grantRole(address account, bytes32 roleKey) external onlyRoleAdmin {
+
+        // Printer.log("account", account);
+        // Printer.log("roleKey", roleKey);
+        // Printer.log("roleKey", Role.CONFIG_KEEPER);
+
         _grantRole(account, roleKey);
     }
 
