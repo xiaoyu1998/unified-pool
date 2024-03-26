@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
 
@@ -31,7 +31,6 @@ contract Reader {
 
         return pools;
     }
-
 
     function getPosition(DataStore dataStore, address key) external view returns (Position.Props memory) {
         return PositionStoreUtils.get(dataStore, key);

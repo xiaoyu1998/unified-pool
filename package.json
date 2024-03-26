@@ -11,9 +11,12 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.6",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-ignition": "^0.15.0",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.4",
+    "@nomicfoundation/ignition-core": "^0.15.0",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "@types/chai": "^4.3.12",
@@ -28,7 +31,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.2",
-    "prb-math": "^2.4.3"
+    "@openzeppelin/contracts": "4.9.3",
+    "prb-math": "2.4.3"
   }
 }

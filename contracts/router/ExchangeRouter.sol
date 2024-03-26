@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "../exchange/ISupplyHandler.sol";
 import "../exchange/IWithdrawHandler.sol";
 import "../exchange/IDepositHandler.sol";
 import "../exchange/IBorrowHandler.sol";
+import "../exchange/IRepayHandler.sol";
+import "../exchange/IRedeemHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -14,14 +16,6 @@ import "./IExchangeRouter.sol";
  * @title ExchangeRouter
  * @dev Router for exchange functions, supports functions which require
  * token transfers from the user
- *
- * IMPORTANT: PayableMulticall uses delegatecall, msg.value will be the same for each delegatecall
- * extra care should be taken when using msg.value in any of the functions in this contract
- *
- * To avoid front-running issues, most actions require two steps to execute:
- *
- * - User sends transaction with request details, e.g. deposit / withdraw liquidity,
- * borrow, repay, swap,
  *
  * Example:
  *
@@ -103,7 +97,6 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
             params
         );
     }
-
 
     /**
      * @dev The deposit is executed by transferring the specified amounts of tokens from the caller's 

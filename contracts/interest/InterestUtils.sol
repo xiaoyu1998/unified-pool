@@ -16,12 +16,12 @@ library InterestUtils {
   uint256 internal constant SECONDS_PER_YEAR = 365 days;
 
   struct CalculateInterestRatesParams {
-        uint256 liquidityIn;
-        uint256 liquidityOut;
-        uint256 totalDebt;
-        uint256 feeFactor;
-        address underlyingAsset;
-        address poolToken;
+      uint256 liquidityIn;
+      uint256 liquidityOut;
+      uint256 totalDebt;
+      uint256 feeFactor;
+      address underlyingAsset;
+      address poolToken;
   }
 
   /**
@@ -31,16 +31,16 @@ library InterestUtils {
    * @return The interest rate linearly accumulated during the timeDelta, in ray
    */
   function calculateInterest(
-    uint256 rate,
-    uint256 lastUpdateTimestamp
+      uint256 rate,
+      uint256 lastUpdateTimestamp
   ) internal view returns (uint256) {
-    //solium-disable-next-line
-    uint256 result = rate * (Chain.currentTimestamp() - uint256(lastUpdateTimestamp));
-    unchecked {
-      result = result / SECONDS_PER_YEAR;
-    }
+      //solium-disable-next-line
+      uint256 result = rate * (Chain.currentTimestamp() - uint256(lastUpdateTimestamp));
+      unchecked {
+          result = result / SECONDS_PER_YEAR;
+      }
 
-    return WadRayMath.RAY + result;
+      return WadRayMath.RAY + result;
   }
 
 }

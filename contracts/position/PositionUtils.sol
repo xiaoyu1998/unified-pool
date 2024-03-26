@@ -26,8 +26,7 @@ library PositionUtils {
     // //TODO:should change to multi-position
     // function getPositionKey(address account) internal pure returns (address) {
     //     bytes32 key = keccak256(abi.encode(account));
-    //     return key;
-        
+    //     return key; 
     // }
 
     struct calculateUserTotalCollateralAndDebtVars {
