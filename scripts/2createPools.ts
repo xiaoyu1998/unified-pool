@@ -71,7 +71,7 @@ async function main() {
         "config.setPoolSupplyCapacity(usdt, 10)"
     );
 
-    uni
+    //uni
      await sendTxn(
         config.setPoolActive(uni, true),
         "config.setPoolActive(uni, true)"
