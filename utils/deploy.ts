@@ -37,6 +37,6 @@ export async function contractAtOptions(name, address, options, provider) {
     return await contractFactory.attach(address);
 }
 
-export function getExistingContractAddresses(name){
+export function getDeployedContractAddresses(name){
     return deployed_address[`${name}#${name}`];
 }

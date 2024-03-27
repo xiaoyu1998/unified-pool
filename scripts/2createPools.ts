@@ -1,17 +1,17 @@
-const { contractAtOptions, sendTxn, getExistingContractAddresses } = require("../utils/deploy")
+const { contractAtOptions, sendTxn, getDeployedContractAddresses } = require("../utils/deploy")
 import { hashString } from "../utils/hash";
 
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    const poolStoreUtilsAddress = getExistingContractAddresses("PoolStoreUtils");
-    const roleStoreAddress = getExistingContractAddresses("RoleStore");
-    const dataStoreAddress = getExistingContractAddresses("DataStore");
-    const configAddress = getExistingContractAddresses("Config");
-    const poolFactoryAddress = getExistingContractAddresses("PoolFactory");
-    const positionStoreUtilsAddress = getExistingContractAddresses("PositionStoreUtils");
-    const strategyAddress = getExistingContractAddresses("PoolInterestRateStrategy");
-    const readerAddress = getExistingContractAddresses("Reader");
+    const poolStoreUtilsAddress = getDeployedContractAddresses("PoolStoreUtils");
+    const roleStoreAddress = getDeployedContractAddresses("RoleStore");
+    const dataStoreAddress = getDeployedContractAddresses("DataStore");
+    const configAddress = getDeployedContractAddresses("Config");
+    const poolFactoryAddress = getDeployedContractAddresses("PoolFactory");
+    const positionStoreUtilsAddress = getDeployedContractAddresses("PositionStoreUtils");
+    const strategyAddress = getDeployedContractAddresses("PoolInterestRateStrategy");
+    const readerAddress = getDeployedContractAddresses("Reader");
 
     const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
     const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";

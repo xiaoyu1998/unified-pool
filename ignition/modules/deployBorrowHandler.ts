@@ -2,8 +2,8 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { borrowUtilsModule } from "./deployBorrowUtils"
-import { hashString } from "../../utils/hash";
-import * as keys from "../../utils/keys";
+//import { hashString } from "../../utils/hash";
+//import * as keys from "../../utils/keys";
 
 export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -16,7 +16,7 @@ export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
         },    
     });
 
-    m.call(roleStore, "grantRole",  [borrowHandler, keys.CONTROLLER]);
+    //m.call(roleStore, "grantRole",  [borrowHandler, keys.CONTROLLER]);
 
     return { borrowHandler };
 });

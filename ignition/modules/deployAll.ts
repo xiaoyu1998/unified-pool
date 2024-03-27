@@ -1,30 +1,26 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-// import { roleStoreModule } from "./deployRoleStore"
+import { roleStoreModule } from "./deployRoleStore"
+import { configModule } from "./deployConfig"
+import { poolFactoryrModule } from "./deployPoolFactory"
+import { exchangeRouterModule } from "./deployExchangeRouter"
+import { poolInterestRateStrategyModule } from "./deployPoolInterestRateStrategy"
+import { readerModule } from "./deployReader"
 // import { dataStoreModule } from "./deployDataStore"
 // import { borrowUtilsModule } from "./deployBorrowUtils"
-// import { hashString } from "../../utils/hash";
-// import * as keys from "../../utils/keys";
+import * as keys from "../../utils/keys";
 
-import { configModule } from "./deployConfig"
-
-const all = buildModule("All", (m) => {
+const allModules = buildModule("All", (m) => {
+    const { roleStore } = m.useModule(roleStoreModule)
     const { config } = m.useModule(configModule)
-    const { config } = m.useModule(configModule)    
+    const { poolFactory } = m.useModule(poolFactoryrModule)    
+    const { exchangeRouter } = m.useModule(exchangeRouterModule)    
+    const { poolInterestRateStrategy } = m.useModule(poolInterestRateStrategyModule)   
+    const { reader } = m.useModule(readerModule) 
+    
+    m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER]);
+    m.call(roleStore, "grantRole",  [config, keys.CONTROLLER]);
 
-
-
-    const { dataStore } = m.useModule(dataStoreModule)
-    const { borrowUtils } = m.useModule(borrowUtilsModule)
-
-    const borrowHandler = m.contract("BorrowHandler", [roleStore, dataStore], {
-        libraries: {
-            BorrowUtils: borrowUtils,
-        },    
-    });
-
-    m.call(roleStore, "grantRole",  [borrowHandler, keys.CONTROLLER]);
-
-    return { borrowHandler };
+    return { exchangeRouter };
 });
 
-export default borrowHandlerModule;
+export default allModules;
