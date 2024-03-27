@@ -112,9 +112,6 @@ async function main() {
     const dataStore = await contractAtOptions("DataStore", dataStoreAddress);
     const pools = await reader.getPools(dataStore.target, 0, 10);
     console.log(pools)
-
-
-
 }
 
 

@@ -4,7 +4,7 @@ import { dataStoreModule } from "./deployDataStore"
 import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 // import * as keys from "../../utils/keys";
 
-const poolFactoryrModule = buildModule("PoolFactory", (m) => {
+export const poolFactoryModule = buildModule("PoolFactory", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
     const { dataStore } = m.useModule(dataStoreModule)
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
@@ -18,4 +18,4 @@ const poolFactoryrModule = buildModule("PoolFactory", (m) => {
     return { poolFactory };
 });
 
-export default poolFactoryrModule;
+// export default poolFactoryModule;
