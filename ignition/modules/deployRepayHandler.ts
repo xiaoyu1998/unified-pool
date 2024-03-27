@@ -3,6 +3,7 @@ import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { repayUtilsModule } from "./deployRepayUtils"
 import { hashString } from "../../utils/hash";
+import * as keys from "../../utils/keys";
 
 export const repayHandlerModule = buildModule("RepayHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -14,7 +15,7 @@ export const repayHandlerModule = buildModule("RepayHandler", (m) => {
             RepayUtils: repayUtils,
         },    
     });
-    m.call(roleStore, "grantRole",  [repayHandler, hashString("CONTROLLER")]);
+    m.call(roleStore, "grantRole",  [repayHandler, keys.CONTROLLER]);
 
     return { repayHandler };
 });

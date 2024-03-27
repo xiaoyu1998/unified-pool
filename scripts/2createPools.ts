@@ -4,65 +4,96 @@ import { hashString } from "../utils/hash";
 async function main() {
     const [owner] = await ethers.getSigners();
     
-    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", "0x5FbDB2315678afecb367f032d93F642f64180aa3");
-    const poolFactory = await contractAtOptions("PoolFactory", "0x0165878A594ca255338adfa4d48449f69242Eb8F",{
+    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575");
+    const poolFactory = await contractAtOptions("PoolFactory", "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",{
         libraries: {
             PoolStoreUtils: poolStoreUtils
         },
     });
-    //console.log(poolFactory.target);
 
-    const usdt = "0xa51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0";
-    const uni  = "0x0dcd1bf9a1b36ce34237eeafef220932846bcd82";
-    const strategy = "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690";
-
+    const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
+    const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
+    const strategy = "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B";
     const configuration = 1;
-    const poolUsdt = await sendTxn(
-        poolFactory.createPool(usdt, strategy, configuration),
-        "poolFactory.createPool(USDT)"
-    );
-    //console.log(poolUsdt);
+    // await sendTxn(
+    //     poolFactory.createPool(usdt, strategy, configuration),
+    //     "poolFactory.createPool(USDT)"
+    // );
+    // await sendTxn(
+    //     poolFactory.createPool(uni, strategy, configuration),
+    //     "poolFactory.createPool(Uni)"
+    // );
 
-    const poolUni = await sendTxn(
-        poolFactory.createPool(uni, strategy, configuration),
-        "poolFactory.createPool(Uni)"
+
+    //console.log(poolFactory.target);
+    const config = await contractAtOptions("Config", "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",{
+        libraries: {
+            PoolStoreUtils: poolStoreUtils
+        },
+    });
+    //usdt
+    await sendTxn(
+        config.setPoolActive(usdt, true),
+        "config.setPoolActive(usdt, true)"
     );
-    //console.log(poolUni);
+
+    await sendTxn(
+        config.setPoolFreeze(usdt, false),
+        "config.setPoolFreeze(usdt, true)"
+    );
+    await sendTxn(
+        config.setPoolPause(usdt, false),
+        "config.setPoolFreeze(usdt, true)"
+    );
+    await sendTxn(
+        config.setPoolDecimals(usdt, 27),
+        "config.setPoolDecimals(usdt, 27)"
+    );
+    await sendTxn(
+        config.setPoolFeeFactor(usdt, 10), //1/10000
+        "config.setPoolFeeFactor(usdt, 10)"
+    );
+    await sendTxn(
+        config.setPoolBorrowCapacity(usdt, 10**10), 
+        "config.setPoolBorrowCapacity(usdt, 10)"
+    );
+    await sendTxn(
+        config.setPoolSupplyCapacity(usdt, 10**10), 
+        "config.setPoolSupplyCapacity(usdt, 10)"
+    );
+
+    //uni
+     await sendTxn(
+        config.setPoolActive(uni, true),
+        "config.setPoolActive(uni, true)"
+    );
+
+    await sendTxn(
+        config.setPoolFreeze(uni, false),
+        "config.setPoolFreeze(uni, true)"
+    );
+    await sendTxn(
+        config.setPoolPause(uni, false),
+        "config.setPoolFreeze(uni, true)"
+    );
+    await sendTxn(
+        config.setPoolDecimals(uni, 27),
+        "config.setPoolDecimals(uni, 27)"
+    );
+    await sendTxn(
+        config.setPoolFeeFactor(uni, 10), //1/10000
+        "config.setPoolFeeFactor(uni, 10)"
+    );
+    await sendTxn(
+        config.setPoolBorrowCapacity(uni, 10**10), 
+        "config.setPoolBorrowCapacity(uni, 10)"
+    );
+    await sendTxn(
+        config.setPoolSupplyCapacity(uni, 10**10), 
+        "config.setPoolSupplyCapacity(uni, 10)"
+    );   
+
 }
-
-
-// async function main() {
-//     const [owner] = await ethers.getSigners();
-    
-//     const poolFactory = await hre.ethers.getContract("PoolFactory");
-//     console.log(poolFactory.address);
-
-//     const strategy = await hre.ethers.getContract("PoolInterestRateStrategy");
-//     const usdt = await hre.ethers.getContract("USDT");
-//     const uni = await hre.ethers.getContract("UNI");
-
-
-//     const configuration = 1;
-//     const poolUsdt = await sendTxn(
-//         poolFactory.createPool(
-//             usdt.address, 
-//             strategy.address,
-//             configuration
-//         ),
-//         "poolFactory.createPool(USDT)"
-//     );
-//     console.log(poolUsdt);
-
-//     const poolUni = await sendTxn(
-//         poolFactory.createPool(
-//             uni.address, 
-//             strategy.address,
-//             configuration
-//         ),
-//         "poolFactory.createPool(Uni)"
-//     );
-//     console.log(poolUni);
-// }
 
 
 main()

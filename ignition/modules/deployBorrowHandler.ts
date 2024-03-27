@@ -3,7 +3,7 @@ import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { borrowUtilsModule } from "./deployBorrowUtils"
 import { hashString } from "../../utils/hash";
-import "../../utils/keys";
+import * as keys from "../../utils/keys";
 
 export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)

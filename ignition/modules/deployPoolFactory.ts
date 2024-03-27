@@ -2,6 +2,7 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
+import * as keys from "../../utils/keys";
 
 const poolFactoryrModule = buildModule("PoolFactory", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -13,7 +14,7 @@ const poolFactoryrModule = buildModule("PoolFactory", (m) => {
             PoolStoreUtils: poolStoreUtils
         },
     });
-    m.call(roleStore, "grantRole",  [supplyHandler, hashString("CONTROLLER")]);
+    m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER]);
 
     return { poolFactory };
 });

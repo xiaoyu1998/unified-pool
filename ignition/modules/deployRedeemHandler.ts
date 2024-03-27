@@ -3,6 +3,7 @@ import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { redeemUtilsModule } from "./deployRedeemUtils"
 import { hashString } from "../../utils/hash";
+import * as keys from "../../utils/keys";
 
 export const redeemHandlerModule = buildModule("RedeemHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -14,7 +15,7 @@ export const redeemHandlerModule = buildModule("RedeemHandler", (m) => {
             RedeemUtils: redeemUtils,
         },    
     });
-    m.call(roleStore, "grantRole",  [redeemHandler, hashString("CONTROLLER")]);
+    m.call(roleStore, "grantRole",  [redeemHandler, keys.CONTROLLER]);
 
     return { redeemHandler };
 });

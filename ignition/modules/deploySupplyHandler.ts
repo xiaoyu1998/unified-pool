@@ -3,6 +3,7 @@ import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { supplyUtilsModule } from "./deploySupplyUtils"
 import { hashString } from "../../utils/hash";
+import * as keys from "../../utils/keys";
 
 export const supplyHandlerModule = buildModule("SupplyHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -14,7 +15,7 @@ export const supplyHandlerModule = buildModule("SupplyHandler", (m) => {
             SupplyUtils: supplyUtils,
         },    
     });
-    m.call(roleStore, "grantRole",  [supplyHandler, hashString("CONTROLLER")]);
+    m.call(roleStore, "grantRole",  [supplyHandler, keys.CONTROLLER]);
 
     return { supplyHandler };
 });

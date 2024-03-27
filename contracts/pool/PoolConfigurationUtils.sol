@@ -144,7 +144,7 @@ library PoolConfigurationUtils {
         uint256 poolConfigration,
         uint256 decimals
     ) internal pure {
-        if (decimals < MAX_VALID_DECIMALS) {
+        if (decimals > MAX_VALID_DECIMALS) {
             revert Errors.InvalidDecimals(decimals, MAX_VALID_DECIMALS);
         }
 
