@@ -3,6 +3,7 @@ import { roleStoreModule } from "./deployRoleStore"
 import { dataStoreModule } from "./deployDataStore"
 import { borrowUtilsModule } from "./deployBorrowUtils"
 import { hashString } from "../../utils/hash";
+import "../../utils/keys";
 
 export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
@@ -15,7 +16,7 @@ export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
         },    
     });
 
-    m.call(roleStore, "grantRole",  [borrowHandler, hashString("CONTROLLER")]);
+    m.call(roleStore, "grantRole",  [borrowHandler, keys.CONTROLLER]);
 
     return { borrowHandler };
 });

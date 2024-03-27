@@ -2,7 +2,6 @@ const { deployContract, sendTxn } = require("../utils/deploy")
 const { expandDecimals } = require("../utils/math")
 
 async function main() {
-
   const [owner] = await ethers.getSigners();
   const usdt = await deployContract("MintableToken", ["Tether", "USDT", 6])
   const uni = await deployContract("MintableToken", ["UNI", "UNI", 18])

@@ -13,6 +13,7 @@ const poolFactoryrModule = buildModule("PoolFactory", (m) => {
             PoolStoreUtils: poolStoreUtils
         },
     });
+    m.call(roleStore, "grantRole",  [supplyHandler, hashString("CONTROLLER")]);
 
     return { poolFactory };
 });
