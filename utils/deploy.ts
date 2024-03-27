@@ -1,4 +1,5 @@
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
+import deployed_address from "../ignition/deployments/chain-31337/deployed_addresses.json";
 
 export async function sendTxn(txnPromise, label) {
     console.info(`Processsing ${label}:`)
@@ -34,4 +35,8 @@ export async function contractAtOptions(name, address, options, provider) {
         contractFactory = contractFactory.connect(provider);
     }
     return await contractFactory.attach(address);
+}
+
+export function getExistingContractAddresses(name){
+    return deployed_address[`${name}#${name}`];
 }

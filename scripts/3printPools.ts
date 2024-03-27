@@ -4,9 +4,9 @@ import { hashString } from "../utils/hash";
 async function main() {
     const [owner] = await ethers.getSigners();
     
-    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575");
-    const positionStoreUtils = await contractAtOptions("PositionStoreUtils", "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90");
-    const reader = await contractAtOptions("Reader", "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25", {
+    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", "0x5FbDB2315678afecb367f032d93F642f64180aa3");
+    const positionStoreUtils = await contractAtOptions("PositionStoreUtils", "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0");
+    const reader = await contractAtOptions("Reader", "0xa82fF9aFd8f496c3d6ac40E2a0F282E47488CFc9", {
         libraries: {
             PoolStoreUtils: poolStoreUtils,
             PositionStoreUtils: positionStoreUtils
@@ -14,7 +14,7 @@ async function main() {
     });
 
 
-    const dataStore = await contractAtOptions("DataStore", "0x162A433068F51e18b7d13932F27e66a3f99E6890");
+    const dataStore = await contractAtOptions("DataStore", "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9");
 
 
     const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";

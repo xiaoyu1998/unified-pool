@@ -10,7 +10,7 @@ import "../role/RoleModule.sol";
 import "../utils/BasicMulticall.sol";
 import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolUtils.sol";
-
+import "../utils/Printer.sol";
 // @title Config
 contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
 
@@ -44,49 +44,51 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setActive(poolConfigration, active);
+        poolConfigration = PoolConfigurationUtils.setActive(poolConfigration, active);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
+
+        Printer.log("poolConfigration", poolConfigration);
     } 
 
     function setPoolFreeze(address underlyingAsset, bool freeze) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setFrozen(poolConfigration, freeze);
+        poolConfigration = PoolConfigurationUtils.setFrozen(poolConfigration, freeze);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     } 
 
     function setPoolPause(address underlyingAsset, bool paused) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setPaused(poolConfigration, paused);
+        poolConfigration = PoolConfigurationUtils.setPaused(poolConfigration, paused);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     }  
 
     function setPoolDecimals(address underlyingAsset, uint256 decimals) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setDecimals(poolConfigration, decimals);
+        poolConfigration = PoolConfigurationUtils.setDecimals(poolConfigration, decimals);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     } 
 
     function setPoolFeeFactor(address underlyingAsset, uint256 feeFactor) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setFeeFactor(poolConfigration, feeFactor);
+        poolConfigration = PoolConfigurationUtils.setFeeFactor(poolConfigration, feeFactor);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     } 
 
     function setPoolBorrowCapacity(address underlyingAsset, uint256 borrowCapacity) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setBorrowCapacity(poolConfigration, borrowCapacity);
+        poolConfigration = PoolConfigurationUtils.setBorrowCapacity(poolConfigration, borrowCapacity);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     } 
 
     function setPoolSupplyCapacity(address underlyingAsset, uint256 supplyCapacity) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 poolConfigration = PoolStoreUtils.getConfiguration(dataStore, key);
-        PoolConfigurationUtils.setSupplyCapacity(poolConfigration, supplyCapacity);
+        poolConfigration = PoolConfigurationUtils.setSupplyCapacity(poolConfigration, supplyCapacity);
         PoolStoreUtils.setConfiguration(dataStore, key, poolConfigration);
     } 
 

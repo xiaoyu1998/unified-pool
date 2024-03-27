@@ -76,14 +76,23 @@ library PoolConfigurationUtils {
         );
     }
 
+    // // @notice Sets the active state of the pool
+    // // @param self The pool configuration
+    // // @param active The active state
+    // function setActive(uint256 poolConfigration, bool active) internal pure {
+    //     poolConfigration =
+    //         (poolConfigration & ACTIVE_MASK) |
+    //         (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
+    // }
+
 
     // @notice Sets the active state of the pool
     // @param self The pool configuration
     // @param active The active state
-    function setActive(uint256 poolConfigration, bool active) internal pure {
-        poolConfigration =
-            (poolConfigration & ACTIVE_MASK) |
-            (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
+    function setActive(uint256 poolConfigration, bool active) internal pure returns (uint256) {
+
+        return (poolConfigration & ACTIVE_MASK) |
+               (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
     }
 
 
@@ -98,10 +107,9 @@ library PoolConfigurationUtils {
     // @notice Sets the frozen state of the pool
     // @param self The pool configuration
     // @param frozen The frozen state
-    function setFrozen(uint256 poolConfigration, bool frozen) internal pure {
-        poolConfigration =
-            (poolConfigration & FROZEN_MASK) |
-            (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
+    function setFrozen(uint256 poolConfigration, bool frozen) internal pure returns (uint256)  {
+        return (poolConfigration & FROZEN_MASK) |
+               (uint256(frozen ? 1 : 0) << IS_FROZEN_START_BIT_POSITION);
     }
 
       
@@ -119,10 +127,9 @@ library PoolConfigurationUtils {
     function setPaused(
         uint256 poolConfigration, 
         bool paused
-    ) internal pure {
-        poolConfigration =
-          (poolConfigration & PAUSED_MASK) |
-          (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
+    ) internal pure returns (uint256) {
+        return (poolConfigration & PAUSED_MASK) |
+               (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
     }
 
       
@@ -143,12 +150,12 @@ library PoolConfigurationUtils {
     function setDecimals(
         uint256 poolConfigration,
         uint256 decimals
-    ) internal pure {
+    ) internal pure returns (uint256) {
         if (decimals > MAX_VALID_DECIMALS) {
             revert Errors.InvalidDecimals(decimals, MAX_VALID_DECIMALS);
         }
 
-        poolConfigration = (poolConfigration & DECIMALS_MASK) | (decimals << POOL_DECIMALS_START_BIT_POSITION);
+        return (poolConfigration & DECIMALS_MASK) | (decimals << POOL_DECIMALS_START_BIT_POSITION);
     }
 
     
@@ -167,14 +174,13 @@ library PoolConfigurationUtils {
     function setFeeFactor(
         uint256 poolConfigration,
         uint256 feeFactor
-    ) internal pure {
+    ) internal pure returns (uint256) {
         if (feeFactor > MAX_VALID_FEE_FACTOR) {
             revert Errors.InvalidFeeFactor(feeFactor, MAX_VALID_FEE_FACTOR);
         }
 
-        poolConfigration =
-          (poolConfigration & POOL_FEE_FACTOR_MASK) |
-          (feeFactor << POOL_FACTOR_START_BIT_POSITION);
+        return (poolConfigration & POOL_FEE_FACTOR_MASK) |
+               (feeFactor << POOL_FACTOR_START_BIT_POSITION);
     }
 
     // @notice Gets the fee factor of the pool
@@ -193,11 +199,11 @@ library PoolConfigurationUtils {
     function setBorrowCapacity(
         uint256 poolConfigration,
         uint256 borrowCapacity
-    ) internal pure {
+    ) internal pure returns (uint256) {
         if (borrowCapacity > MAX_VALID_BORROW_CAP) {
             revert Errors.InvalidBorrowCapacity(borrowCapacity, MAX_VALID_BORROW_CAP);
         }
-        poolConfigration= (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
+        return (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
     }
 
     
@@ -217,11 +223,11 @@ library PoolConfigurationUtils {
     function setSupplyCapacity(
         uint256 poolConfigration,
         uint256 supplyCapacity
-    ) internal pure {
+    ) internal pure returns (uint256) {
         if (supplyCapacity > MAX_VALID_SUPPLY_CAP) {
             revert Errors.InvalidBorrowCapacity(supplyCapacity, MAX_VALID_SUPPLY_CAP);
         }
-        poolConfigration = (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
+        return (poolConfigration & SUPPLY_CAP_MASK) | (poolConfigration << SUPPLY_CAP_START_BIT_POSITION);
     }
 
     

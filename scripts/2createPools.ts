@@ -1,32 +1,41 @@
-const { contractAtOptions, sendTxn } = require("../utils/deploy")
+const { contractAtOptions, sendTxn, getExistingContractAddresses } = require("../utils/deploy")
 import { hashString } from "../utils/hash";
 
 async function main() {
     const [owner] = await ethers.getSigners();
+
+    const poolStoreUtilsAddress = getExistingContractAddresses("PoolStoreUtils");
+    const roleStoreAddress = getExistingContractAddresses("RoleStore");
+    const dataStoreAddress = getExistingContractAddresses("DataStore");
+    const configAddress = getExistingContractAddresses("Config");
+    const poolFactoryAddress = getExistingContractAddresses("PoolFactory");
+    const positionStoreUtilsAddress = getExistingContractAddresses("PositionStoreUtils");
+    const strategyAddress = getExistingContractAddresses("PoolInterestRateStrategy");
+    const readerAddress = getExistingContractAddresses("Reader");
+
+    const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
+    const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
+    const configuration = 1;
     
-    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575");
-    const poolFactory = await contractAtOptions("PoolFactory", "0xf4B146FbA71F41E0592668ffbF264F1D186b2Ca8",{
+    const poolStoreUtils = await contractAtOptions("PoolStoreUtils", poolStoreUtilsAddress);
+    const poolFactory = await contractAtOptions("PoolFactory", poolFactoryAddress,{
         libraries: {
             PoolStoreUtils: poolStoreUtils
         },
     });
 
-    const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
-    const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
-    const strategy = "0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B";
-    const configuration = 1;
-    // await sendTxn(
-    //     poolFactory.createPool(usdt, strategy, configuration),
-    //     "poolFactory.createPool(USDT)"
-    // );
-    // await sendTxn(
-    //     poolFactory.createPool(uni, strategy, configuration),
-    //     "poolFactory.createPool(Uni)"
-    // );
+    await sendTxn(
+        poolFactory.createPool(usdt, strategyAddress, configuration),
+        "poolFactory.createPool(usdt)"
+    );
+    await sendTxn(
+        poolFactory.createPool(uni, strategyAddress, configuration),
+        "poolFactory.createPool(uni)"
+    );
 
 
     //console.log(poolFactory.target);
-    const config = await contractAtOptions("Config", "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB",{
+    const config = await contractAtOptions("Config", configAddress,{
         libraries: {
             PoolStoreUtils: poolStoreUtils
         },
@@ -62,7 +71,7 @@ async function main() {
         "config.setPoolSupplyCapacity(usdt, 10)"
     );
 
-    //uni
+    uni
      await sendTxn(
         config.setPoolActive(uni, true),
         "config.setPoolActive(uni, true)"
@@ -91,7 +100,20 @@ async function main() {
     await sendTxn(
         config.setPoolSupplyCapacity(uni, 10**10), 
         "config.setPoolSupplyCapacity(uni, 10)"
-    );   
+    );     
+    const positionStoreUtils = await contractAtOptions("PositionStoreUtils", positionStoreUtilsAddress);
+    const reader = await contractAtOptions("Reader", readerAddress, {
+        libraries: {
+            PoolStoreUtils: poolStoreUtils,
+            PositionStoreUtils: positionStoreUtils
+        },         
+    });
+
+    const dataStore = await contractAtOptions("DataStore", dataStoreAddress);
+    const pools = await reader.getPools(dataStore.target, 0, 10);
+    console.log(pools)
+
+
 
 }
 
