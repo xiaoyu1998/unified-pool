@@ -1,4 +1,4 @@
-## Unify Pool
+## Unified Pool
 
 Installation
 
