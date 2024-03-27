@@ -1,21 +1,19 @@
-#Unify Pool
+## Unify Pool
 
-Try running some of the following tasks:
-
-installation
+Installation
 
 ```shell
 npm install
 ```
-run local node
+Run local node
 ```shell
 npx hardhat node
 ```
-deplopy contracts
+Deplopy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```
-create pools and print states
+Create and print pools
 ```shell
 npx hardhat run scripts/2createPools.ts --network localhost
 npx hardhat run scripts/3printPools.ts --network localhost
