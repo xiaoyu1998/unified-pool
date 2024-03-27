@@ -1,13 +1,22 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+#Unify Pool
 
 Try running some of the following tasks:
 
+installation
+
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
+npm install
+```
+run local node
+```shell
 npx hardhat node
-npx hardhat run scripts/deploy.ts
+```
+deplopy contracts
+```shell
+npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
+```
+create pools and print states
+```shell
+npx hardhat run scripts/2createPools.ts --network localhost
+npx hardhat run scripts/3printPools.ts --network localhost
 ```
