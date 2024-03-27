@@ -15,7 +15,7 @@ async function main() {
 
     const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
     const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
-    const configuration = 1;
+    const configuration = 1;//TODO:should be assgined to a reasonable value
     
     const poolStoreUtils = await contractAtOptions("PoolStoreUtils", poolStoreUtilsAddress);
     const poolFactory = await contractAtOptions("PoolFactory", poolFactoryAddress,{
@@ -59,7 +59,7 @@ async function main() {
         "config.setPoolDecimals(usdt, 27)"
     );
     await sendTxn(
-        config.setPoolFeeFactor(usdt, 10), //1/10000
+        config.setPoolFeeFactor(usdt, 10), //1/1000
         "config.setPoolFeeFactor(usdt, 10)"
     );
     await sendTxn(
@@ -90,7 +90,7 @@ async function main() {
         "config.setPoolDecimals(uni, 27)"
     );
     await sendTxn(
-        config.setPoolFeeFactor(uni, 10), //1/10000
+        config.setPoolFeeFactor(uni, 10), //1/1000
         "config.setPoolFeeFactor(uni, 10)"
     );
     await sendTxn(
