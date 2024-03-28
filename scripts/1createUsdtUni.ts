@@ -1,4 +1,4 @@
-const { deployContract, sendTxn } = require("../utils/deploy")
+const { deployContract, sendTxn, writeTokenAddresses, readTokenAddresses } = require("../utils/deploy")
 const { expandDecimals } = require("../utils/math")
 
 async function main() {
@@ -9,6 +9,17 @@ async function main() {
   console.log("uni", uni.target);
   await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, 6)), "usdt.mint(owner.address)")
   await sendTxn(uni.mint(owner.address, expandDecimals(1000, 18)), "uni.mint(owner.address)")
+
+  writeTokenAddresses({
+    "usdt": usdt.target
+  });
+
+  writeTokenAddresses({
+    "uni": uni.target
+  });
+
+  console.log(readTokenAddresses());
+
 }
 
 

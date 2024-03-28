@@ -1,20 +1,25 @@
-const { contractAtOptions, sendTxn, getDeployedContractAddresses } = require("../utils/deploy")
+const { contractAtOptions, sendTxn, getDeployedContractAddresses, readTmpAddresses } = require("../utils/deploy")
 import { hashString } from "../utils/hash";
 
 async function main() {
     const [owner] = await ethers.getSigners();
 
     const poolStoreUtilsAddress = getDeployedContractAddresses("PoolStoreUtils");
+    const positionStoreUtilsAddress = getDeployedContractAddresses("PositionStoreUtils");
     const roleStoreAddress = getDeployedContractAddresses("RoleStore");
     const dataStoreAddress = getDeployedContractAddresses("DataStore");
     const configAddress = getDeployedContractAddresses("Config");
     const poolFactoryAddress = getDeployedContractAddresses("PoolFactory");
-    const positionStoreUtilsAddress = getDeployedContractAddresses("PositionStoreUtils");
     const strategyAddress = getDeployedContractAddresses("PoolInterestRateStrategy");
     const readerAddress = getDeployedContractAddresses("Reader");
 
-    const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
-    const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
+
+    const tokens = readTmpAddresses();
+    console.log("tokens", tokens);
+    const usdt = tokens.usdt;
+    const uni  = tokens.uni;
+    // const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
+    // const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
     const configuration = 1;//TODO:should be assgined to a reasonable value
     
     const poolStoreUtils = await contractAtOptions("PoolStoreUtils", poolStoreUtilsAddress);
