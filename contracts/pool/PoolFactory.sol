@@ -46,7 +46,10 @@ contract PoolFactory is RoleModule {
 
         Pool.Props memory pool = Pool.Props(
             PoolStoreUtils.setKeyAsId(dataStore, key),
-        	1,0,1,0,
+        	WadRayMath.RAY,
+            0,
+            WadRayMath.RAY,
+            0,
             interestRateStrategy,
             underlyingAsset,
             address(poolToken),

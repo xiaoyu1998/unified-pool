@@ -104,7 +104,6 @@ library PoolUtils {
 
         Printer.log("currTotalScaledDebt", poolCache.currTotalScaledDebt);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
-
         Printer.log("configuration", poolCache.configuration); 
         Printer.log("feeFactor", poolCache.feeFactor);   
         Printer.log("totalFee", poolCache.totalFee);   
