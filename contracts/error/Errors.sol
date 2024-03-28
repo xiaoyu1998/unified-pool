@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 library Errors {
-    error ErrorToReplace();
+    error ErrorStep(address account, uint256 step);
 
     // Bank errors
     error SelfTransferNotSupported(address receiver);

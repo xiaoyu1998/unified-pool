@@ -52,11 +52,18 @@ library Printer {
         );        
     }
 
+    // function log(string memory label, uint256 value) internal pure {
+    //     console.log(
+    //         "%s -%s",
+    //         label,
+    //         toString(value)
+    //     );        
+    // }
     function log(string memory label, uint256 value) internal pure {
         console.log(
             "%s -%s",
             label,
-            toString(value)
+            value
         );        
     }
 

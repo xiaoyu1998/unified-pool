@@ -1,4 +1,6 @@
-const { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens, getContract } = require("../utils/deploy")
+import { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens, getContract } from "../utils/deploy";
+import { expandDecimals } from "../utils/math";
+
 import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
 async function main() {
@@ -13,16 +15,16 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");   
     const exchangeRouter = await getContract("ExchangeRouter"); 
+    const router = await getContract("Router");
 
 
     const usdt = await contractAtOptions("MintableToken", usdtAddress);
-    await usdt.approve(exchangeRouter.target, bigNumberify(2).pow(256).sub(1));
-
-    await sendTxn(usdt.approve(exchangeRouter.target, bigNumberify(2).pow(256).sub(1)), `usdt.approve(${exchangeRouter.target})`)
+    //console.log(await usdt.allowance(owner.address, exchangeRouter.target));
+    await sendTxn(usdt.approve(router.target, expandDecimals(1000000, 6)), `usdt.approve(${router.target})`)
 
     const poolUsdt = await reader.getPool(dataStore.target, usdtAddress);
     const poolToken = poolUsdt[7];
-    const supplyAmmount = expandDecimals(10000, 6);
+    const supplyAmmount = expandDecimals(1000, 6);
 
     const params: SupplyUtils.SupplyParamsStruct = {
         underlyingAsset: usdtAddress,

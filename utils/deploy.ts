@@ -57,9 +57,9 @@ export function readTokenAddresses() {
 
 export function writeTokenAddresses(json) {
 
-    console.log(json);
+    //console.log(json);
     const tmpAddresses = Object.assign(readTokenAddresses(), json)
-    console.log(tmpAddresses);
+    //console.log(tmpAddresses);
     fs.writeFileSync(tmpAddressesFilepath, JSON.stringify(tmpAddresses))
 }
 

@@ -20,7 +20,7 @@ import "../fee/FeeUtils.sol";
 
 import "../utils/WadRayMath.sol";
 
-
+import "../utils/Printer.sol";
 // @title PoolUtils
 // @dev Library for Pool functions
 library PoolUtils {
@@ -75,19 +75,41 @@ library PoolUtils {
         poolCache.currBorrowIndex    = poolCache.nextBorrowIndex    = pool.borrowIndex;
         poolCache.currBorrowRate     = pool.borrowRate;
 
-        poolCache.currTotalScaledDebt = poolCache.nextTotalScaledDebt = IDebtToken(
-            poolCache.debtToken
-        ).scaledTotalSupply();
+        Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
+        Printer.log("nextLiquidityIndex", poolCache.nextLiquidityIndex);
+        Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
+
+        Printer.log("currBorrowIndex", poolCache.currBorrowIndex);
+        Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
+        Printer.log("currBorrowRate", poolCache.currBorrowRate);
+
+        Printer.log("underlyingAsset", poolCache.underlyingAsset);
+        Printer.log("poolToken", poolCache.poolToken);
+        Printer.log("debtToken", poolCache.debtToken);
 
         poolCache.underlyingAsset = pool.underlyingAsset;
         poolCache.poolToken       = pool.poolToken;
         poolCache.debtToken       = pool.debtToken;
+
+        poolCache.currTotalScaledDebt = poolCache.nextTotalScaledDebt = IDebtToken(
+            poolCache.debtToken
+        ).scaledTotalSupply();
 
         poolCache.configuration = pool.configuration;
         poolCache.feeFactor     = PoolConfigurationUtils.getFeeFactor(poolCache.configuration);
         poolCache.totalFee      = pool.totalFee;
         poolCache.unclaimedFee  = pool.unclaimedFee;
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp;
+
+
+        Printer.log("currTotalScaledDebt", poolCache.currTotalScaledDebt);
+        Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
+
+        Printer.log("configuration", poolCache.configuration); 
+        Printer.log("feeFactor", poolCache.feeFactor);   
+        Printer.log("totalFee", poolCache.totalFee);   
+        Printer.log("unclaimedFee", poolCache.unclaimedFee);   
+        Printer.log("lastUpdateTimestamp", poolCache.lastUpdateTimestamp);   
 
         return poolCache;
     }	
