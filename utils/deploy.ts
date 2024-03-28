@@ -56,7 +56,10 @@ export function readTokenAddresses() {
 }
 
 export function writeTokenAddresses(json) {
+
+    console.log(json);
     const tmpAddresses = Object.assign(readTokenAddresses(), json)
+    console.log(tmpAddresses);
     fs.writeFileSync(tmpAddressesFilepath, JSON.stringify(tmpAddresses))
 }
 
@@ -73,19 +76,21 @@ export async function getContract(name) {
         name == "PositionStoreUtils" ||
         name == "FeeUtils" ||
         name == "ConfigStoreUtils" ||     
-        name == "OracleStoreUtils"    
+        name == "OracleStoreUtils"  ||
+        name == "Router"
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
     }
 
-    const roleStore = getContract("RoleStore");
-    const dataStore = getContract("DataStore");
-    const poolStoreUtils = getContract("poolStoreUtils");
-    const positionStoreUtils = getContract("positionStoreUtils");
-    const feeUtils = getContract("FeeUtils");
-    const configStoreUtils = getContract("ConfigStoreUtils");
-    const oracleStoreUtils = getContract("OracleStoreUtils");
+    const roleStore = await getContract("RoleStore");
+    const dataStore = await getContract("DataStore");
+    const poolStoreUtils = await getContract("PoolStoreUtils");
+    const positionStoreUtils = await getContract("PositionStoreUtils");
+    const feeUtils = await getContract("FeeUtils");
+    const configStoreUtils = await getContract("ConfigStoreUtils");
+    const oracleStoreUtils = await getContract("OracleStoreUtils");
+    const router = await getContract("Router");
 
     //Borrow
     // if (name == "BorrowUtils") {
@@ -103,7 +108,7 @@ export async function getContract(name) {
     // const borrowUtils = getContract("BorrowUtils");
     // if (name == "BorrowHandler") {
     //      const address = getDeployedContractAddresses(name);
-    //     return await contractAtOptions(name, address, [roleStore, dataStore],  {
+    //     return await contractAtOptions(name, address,  {
     //         libraries: {
     //             BorrowUtils: borrowUtils,
     //         },        
@@ -113,14 +118,16 @@ export async function getContract(name) {
 
     if (name == "SupplyHandler") {
        const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
-       const supplyUtils = await contractAtOptions(name, supplyUtilsAddress, {
+       const supplyUtils = await contractAtOptions("SupplyUtils", supplyUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 FeeUtils: feeUtils,
             },        
         });
+
+        console.log(supplyUtils);
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore], {
+        return await contractAtOptions(name, address, {
             libraries: {
                 SupplyUtils: supplyUtils,
             },        
@@ -129,14 +136,14 @@ export async function getContract(name) {
 
     if (name == "WithdrawHandler") {
        const withdrawUtilsAddress = getDeployedContractAddresses("WithdrawUtils");
-       const withdrawUtils = await contractAtOptions(name, withdrawUtilsAddress, {
+       const withdrawUtils = await contractAtOptions("WithdrawUtils", withdrawUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 FeeUtils: feeUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore], {
+        return await contractAtOptions(name, address, {
             libraries: {
                 WithdrawUtils: withdrawUtils,
             },        
@@ -145,14 +152,14 @@ export async function getContract(name) {
 
     if (name == "DepositHandler") {
        const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
-       const depositUtils = await contractAtOptions(name, depositUtilsAddress, {
+       const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore], {
+        return await contractAtOptions(name, address, {
             libraries: {
                 DepositUtils: depositUtils,
             },        
@@ -161,7 +168,7 @@ export async function getContract(name) {
 
     if (name == "BorrowHandler") {
        const borrowUtilsAddress = getDeployedContractAddresses("BorrowUtils");
-       const borrowUtils = await contractAtOptions(name, borrowUtilsAddress, {
+       const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -171,7 +178,7 @@ export async function getContract(name) {
             },        
         });
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore],  {
+        return await contractAtOptions(name, address,  {
             libraries: {
                 BorrowUtils: borrowUtils,
             },        
@@ -180,7 +187,7 @@ export async function getContract(name) {
 
     if (name == "RepayHandler") {
        const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
-       const repayUtils = await contractAtOptions(name, repayUtilsAddress, {
+       const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -188,7 +195,7 @@ export async function getContract(name) {
             },        
         });
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore],  {
+        return await contractAtOptions(name, address,  {
             libraries: {
                 RepayUtils: repayUtils,
             },        
@@ -197,7 +204,7 @@ export async function getContract(name) {
 
     if (name == "RedeemHandler") {
        const redeemUtilsAddress = getDeployedContractAddresses("RedeemUtils");
-       const redeemUtils = await contractAtOptions(name, redeemUtilsAddress, {
+       const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -206,20 +213,21 @@ export async function getContract(name) {
             },        
         });
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore],  {
+        return await contractAtOptions(name, address,  {
             libraries: {
                 RedeemUtils: redeemUtils,
             },        
         });       
     }
 
-    const supplyHandler = getContract("SupplyHandler");
-    const withdrawHandler = getContract("WithdrawHandler");
-    const depositHandler = getContract("DepositHandler");
-    const borrowHandler = getContract("BorrowHandler");
-    const repayHandler = getContract("RepayHandler");
-    const redeemHandler = getContract("RedeemHandler");
     if (name == "ExchangeRouter") {
+        const supplyHandler = await getContract("SupplyHandler");
+        const withdrawHandler = await getContract("WithdrawHandler");
+        const depositHandler = await getContract("DepositHandler");
+        const borrowHandler = await getContract("BorrowHandler");
+        const repayHandler = await getContract("RepayHandler");
+        const redeemHandler = await getContract("RedeemHandler");
+        const router = await getContract("Router");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, [
             router,
@@ -237,7 +245,7 @@ export async function getContract(name) {
 
     if (name == "Config") {
         const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, [roleStore, dataStore], {
+        return await contractAtOptions(name, address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
             },         
@@ -253,7 +261,6 @@ export async function getContract(name) {
             },         
         });
     }
-
 
 
 }

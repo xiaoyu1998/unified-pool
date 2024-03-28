@@ -1,4 +1,4 @@
-const { contractAtOptions, sendTxn, getDeployedContractAddresses, readTmpAddresses } = require("../utils/deploy")
+const { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens } = require("../utils/deploy")
 import { hashString } from "../utils/hash";
 
 async function main() {
@@ -14,10 +14,10 @@ async function main() {
     const readerAddress = getDeployedContractAddresses("Reader");
 
 
-    const tokens = readTmpAddresses();
-    console.log("tokens", tokens);
-    const usdt = tokens.usdt;
-    const uni  = tokens.uni;
+    // const tokens = readTmpAddresses();
+    // console.log("tokens", tokens);
+    const usdt = getTokens("usdt");
+    const uni  = getTokens("uni");
     // const usdt = "0xc9a43158891282a2b1475592d5719c001986aaec";
     // const uni  = "0x1c85638e118b37167e9298c2268758e058ddfda0";
     const configuration = 1;//TODO:should be assgined to a reasonable value

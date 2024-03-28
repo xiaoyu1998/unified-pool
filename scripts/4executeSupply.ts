@@ -4,33 +4,41 @@ import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    const usdt = getTokens["usdt"];
-    console.log(usdt);
+    const usdtAddress = getTokens("usdt");
+    console.log(usdtAddress);
 
-    // const poolStoreUtils = await getContract("PoolStoreUtils");
-    // const positionStoreUtils = await getContract("PositionStoreUtils");
-    // const roleStore = await getContract("RoleStore");    
-    // const dataStore = await getContract("DataStore");   
-    // const reader = await getContract("Reader");   
-    // const exchangeRouter = await getContract("ExchangeRouter"); 
-
-    // const poolUsdt = await reader.getPool(dataStore.target, usdt);
-    // const poolToken = poolUsdt[7];
-    // const supplyAmmount = expandDecimals(10000, 6);
-
-    // const params: SupplyUtils.SupplyParamsStruct = {
-    //     underlyingAsset: usdt,
-    //     receiver: owner.address,
-    // };
-
-    // const multicallArgs = [
-    //     exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt, poolToken, supplyAmmount]),
-    //     exchangeRouter.interface.encodeFunctionData("executeSupply", [params]),
-    // ];
+    const poolStoreUtils = await getContract("PoolStoreUtils");
+    const positionStoreUtils = await getContract("PositionStoreUtils");
+    const roleStore = await getContract("RoleStore");    
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");   
+    const exchangeRouter = await getContract("ExchangeRouter"); 
 
 
+    const usdt = await contractAtOptions("MintableToken", usdtAddress);
+    await usdt.approve(exchangeRouter.target, bigNumberify(2).pow(256).sub(1));
+
+    await sendTxn(usdt.approve(exchangeRouter.target, bigNumberify(2).pow(256).sub(1)), `usdt.approve(${exchangeRouter.target})`)
+
+    const poolUsdt = await reader.getPool(dataStore.target, usdtAddress);
+    const poolToken = poolUsdt[7];
+    const supplyAmmount = expandDecimals(10000, 6);
+
+    const params: SupplyUtils.SupplyParamsStruct = {
+        underlyingAsset: usdtAddress,
+        receiver: owner.address,
+    };
+
+    const multicallArgs = [
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolToken, supplyAmmount]),
+        exchangeRouter.interface.encodeFunctionData("executeSupply", [params]),
+    ];
 
 
+   const tx = await exchangeRouter.multicall(multicallArgs);   
+
+   const pool = await reader.getPool(dataStore.target, usdtAddress);
+   console.log(pool)
 
 
 }
