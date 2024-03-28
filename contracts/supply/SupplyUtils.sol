@@ -21,6 +21,7 @@ library SupplyUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using WadRayMath for uint256;
+    using PoolConfigurationUtils for uint256;
 
     struct SupplyParams {
         address underlyingAsset;
@@ -102,7 +103,8 @@ library SupplyUtils {
             bool isActive,
             bool isFrozen, 
             bool isPaused,
-         ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
+         // ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
+         ) = poolCache.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(); }  
         if (isPaused)  { revert Errors.PoolIsPaused();   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
@@ -112,8 +114,14 @@ library SupplyUtils {
         // require(!isFrozen, Errors.RESERVE_FROZEN);
 
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
-        uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
-                                 * (10 ** PoolConfigurationUtils.getDecimals(poolCache.configuration));
+        // uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
+        // * (10 ** PoolConfigurationUtils.getDecimals(poolCache.configuration));
+        uint256 supplyCapacity = poolCache.configuration.getSupplyCapacity()
+                                 * (10 ** poolCache.configuration.getDecimals());
+
+        Printer.log("SupplyCapacity", poolCache.configuration.getSupplyCapacity());
+        Printer.log("Decimals", poolCache.configuration.getDecimals());
+        Printer.log("SupplyCapacity", supplyCapacity);
 
         uint256 totalSupplyAddUnclaimedFeeAddAmount = 
             (IPoolToken(poolCache.poolToken).scaledTotalSupply() + poolCache.unclaimedFee)

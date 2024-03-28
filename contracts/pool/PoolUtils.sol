@@ -75,6 +75,10 @@ library PoolUtils {
         poolCache.currBorrowIndex    = poolCache.nextBorrowIndex    = pool.borrowIndex;
         poolCache.currBorrowRate     = pool.borrowRate;
 
+        poolCache.underlyingAsset = pool.underlyingAsset;
+        poolCache.poolToken       = pool.poolToken;
+        poolCache.debtToken       = pool.debtToken;
+        
         Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
         Printer.log("nextLiquidityIndex", poolCache.nextLiquidityIndex);
         Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
@@ -86,10 +90,6 @@ library PoolUtils {
         Printer.log("underlyingAsset", poolCache.underlyingAsset);
         Printer.log("poolToken", poolCache.poolToken);
         Printer.log("debtToken", poolCache.debtToken);
-
-        poolCache.underlyingAsset = pool.underlyingAsset;
-        poolCache.poolToken       = pool.poolToken;
-        poolCache.debtToken       = pool.debtToken;
 
         poolCache.currTotalScaledDebt = poolCache.nextTotalScaledDebt = IDebtToken(
             poolCache.debtToken

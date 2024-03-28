@@ -1,5 +1,5 @@
 const { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens } = require("../utils/deploy")
-import { hashString } from "../utils/hash";
+import { expandDecimals } from "../utils/math";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -60,7 +60,7 @@ async function main() {
         "config.setPoolFreeze(usdt, true)"
     );
     await sendTxn(
-        config.setPoolDecimals(usdt, 27),
+        config.setPoolDecimals(usdt, 6),
         "config.setPoolDecimals(usdt, 27)"
     );
     await sendTxn(
@@ -68,11 +68,11 @@ async function main() {
         "config.setPoolFeeFactor(usdt, 10)"
     );
     await sendTxn(
-        config.setPoolBorrowCapacity(usdt, 10**10), 
+        config.setPoolBorrowCapacity(usdt, expandDecimals(1, 8)), 
         "config.setPoolBorrowCapacity(usdt, 10)"
     );
     await sendTxn(
-        config.setPoolSupplyCapacity(usdt, 10**10), 
+        config.setPoolSupplyCapacity(usdt, expandDecimals(1, 8)), 
         "config.setPoolSupplyCapacity(usdt, 10)"
     );
 
@@ -91,7 +91,7 @@ async function main() {
         "config.setPoolFreeze(uni, true)"
     );
     await sendTxn(
-        config.setPoolDecimals(uni, 27),
+        config.setPoolDecimals(uni, 18),
         "config.setPoolDecimals(uni, 27)"
     );
     await sendTxn(
@@ -99,11 +99,11 @@ async function main() {
         "config.setPoolFeeFactor(uni, 10)"
     );
     await sendTxn(
-        config.setPoolBorrowCapacity(uni, 10**10), 
+        config.setPoolBorrowCapacity(uni, expandDecimals(1, 8)), 
         "config.setPoolBorrowCapacity(uni, 10)"
     );
     await sendTxn(
-        config.setPoolSupplyCapacity(uni, 10**10), 
+        config.setPoolSupplyCapacity(uni, expandDecimals(1, 8)), 
         "config.setPoolSupplyCapacity(uni, 10)"
     );     
     const positionStoreUtils = await contractAtOptions("PositionStoreUtils", positionStoreUtilsAddress);

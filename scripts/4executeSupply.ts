@@ -19,7 +19,7 @@ async function main() {
 
 
     const usdt = await contractAtOptions("MintableToken", usdtAddress);
-    //console.log(await usdt.allowance(owner.address, exchangeRouter.target));
+    console.log(await usdt.allowance(owner.address, exchangeRouter.target));
     await sendTxn(usdt.approve(router.target, expandDecimals(1000000, 6)), `usdt.approve(${router.target})`)
 
     const poolUsdt = await reader.getPool(dataStore.target, usdtAddress);
