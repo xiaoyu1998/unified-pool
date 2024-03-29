@@ -261,7 +261,24 @@ export async function getContract(name) {
             },         
         });
     }
+}
 
+export async function getContractAt(name, address) {
+    const poolStoreUtils = await getContract("PoolStoreUtils"); 
+    if (name == "PoolToken") {
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+            },         
+        });
+    } 
 
+    if (name == "DebtToken") {
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+            },         
+        });
+    }    
 }
 

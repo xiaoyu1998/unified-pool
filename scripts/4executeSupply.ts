@@ -1,5 +1,6 @@
 import { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens, getContract } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
+import { parsePool } from "../utils/helper";
 
 import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
@@ -40,7 +41,8 @@ async function main() {
    const tx = await exchangeRouter.multicall(multicallArgs);   
 
    const pool = await reader.getPool(dataStore.target, usdtAddress);
-   console.log(pool)
+   console.log("poolUsdt", parsePool(pool));
+   //console.log(pool)
 
 
 }
