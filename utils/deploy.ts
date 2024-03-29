@@ -77,7 +77,8 @@ export async function getContract(name) {
         name == "FeeUtils" ||
         name == "ConfigStoreUtils" ||     
         name == "OracleStoreUtils"  ||
-        name == "Router"
+        name == "Router" ||
+        name == "PoolInterestRateStrategy"
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -217,6 +218,15 @@ export async function getContract(name) {
             repayHandler, 
             redeemHandler            
         ]);       
+    }
+
+    if (name == "PoolFactory") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+            },         
+        });
     }
 
 
