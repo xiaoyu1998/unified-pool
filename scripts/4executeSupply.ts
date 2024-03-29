@@ -8,7 +8,6 @@ async function main() {
     const [owner] = await ethers.getSigners();
 
     const usdtAddress = getTokens("usdt");
-    console.log(usdtAddress);
 
     const poolStoreUtils = await getContract("PoolStoreUtils");
     const positionStoreUtils = await getContract("PositionStoreUtils");
@@ -43,6 +42,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
+    console.log("usdt",await usdt.balanceOf(owner.address)); 
 
 }
 

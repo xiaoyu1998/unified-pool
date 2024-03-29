@@ -95,25 +95,18 @@ library SupplyUtils {
             bool isActive,
             bool isFrozen, 
             bool isPaused,
-         // ) = PoolConfigurationUtils.getFlags(poolCache.configuration);
          ) = poolCache.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(); }  
         if (isPaused)  { revert Errors.PoolIsPaused();   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
 
-        // require(isActive, Errors.RESERVE_INACTIVE);
-        // require(!isPaused, Errors.RESERVE_PAUSED);
-        // require(!isFrozen, Errors.RESERVE_FROZEN);
-
         //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
-        // uint256 supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolCache.configuration)
-        // * (10 ** PoolConfigurationUtils.getDecimals(poolCache.configuration));
         uint256 supplyCapacity = poolCache.configuration.getSupplyCapacity()
                                  * (10 ** poolCache.configuration.getDecimals());
 
-        Printer.log("SupplyCapacity", poolCache.configuration.getSupplyCapacity());
-        Printer.log("Decimals", poolCache.configuration.getDecimals());
-        Printer.log("SupplyCapacity", supplyCapacity);
+        // Printer.log("SupplyCapacity", poolCache.configuration.getSupplyCapacity());
+        // Printer.log("Decimals", poolCache.configuration.getDecimals());
+        // Printer.log("SupplyCapacity", supplyCapacity);
 
         uint256 totalSupplyAddUnclaimedFeeAddAmount = 
             (IPoolToken(poolCache.poolToken).scaledTotalSupply() + poolCache.unclaimedFee)

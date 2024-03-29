@@ -30,17 +30,10 @@ library TokenUtils {
     }
 
    
-    // @dev Transfers the specified amount of `token` from the caller to `receiver`.
-    // limit the amount of gas forwarded so that a user cannot intentionally
-    // construct a token call that would consume all gas and prevent necessary
-    // actions like request cancellation from being executed
-   
-    // @param dataStore The data store that contains the `tokenTransferGasLimit` for the specified `token`.
-    // @param token The address of the ERC20 token that is being transferred.
+   // @param token The address of the ERC20 token that is being transferred.
     // @param receiver The address of the recipient of the `token` transfer.
     // @param amount The amount of `token` to transfer.
     function transfer(
-        DataStore dataStore,
         address token,
         address receiver,
         uint256 amount
@@ -48,37 +41,14 @@ library TokenUtils {
         if (amount == 0) { return; }
         AccountUtils.validateReceiver(receiver);
 
-        uint256 gasLimit = dataStore.getUint(Keys.tokenTransferGasLimit(token));
-        if (gasLimit == 0) {
-            revert Errors.EmptyTokenTranferGasLimit(token);
-        }
 
         (bool success0, bytes memory returndata) = nonRevertingTransferWithGasLimit(
             IERC20(token),
             receiver,
-            amount,
-            gasLimit
+            amount
         );
 
         if (success0) { return; }
-
-        address holdingAddress = dataStore.getAddress(Keys.HOLDING_ADDRESS);
-
-        if (holdingAddress == address(0)) {
-            revert Errors.EmptyHoldingAddress();
-        }
-
-        // in case transfers to the receiver fail due to blacklisting or other reasons
-        // send the tokens to a holding address to avoid possible gaming through reverting
-        // transfers
-        (bool success1, /* bytes memory returndata */) = nonRevertingTransferWithGasLimit(
-            IERC20(token),
-            holdingAddress,
-            amount,
-            gasLimit
-        );
-
-        if (success1) { return; }
 
         (string memory reason, ) = ErrorUtils.getRevertMessage(returndata);
         emit TokenTransferReverted(reason, returndata);
@@ -88,121 +58,6 @@ library TokenUtils {
         // do not cancel requests for specific errors
         revert Errors.TokenTransferError(token, receiver, amount);
     }
-
-    function sendNativeToken(
-        DataStore dataStore,
-        address receiver,
-        uint256 amount
-    ) internal {
-        if (amount == 0) { return; }
-
-        AccountUtils.validateReceiver(receiver);
-
-        uint256 gasLimit = dataStore.getUint(Keys.NATIVE_TOKEN_TRANSFER_GAS_LIMIT);
-
-        bool success;
-        // use an assembly call to avoid loading large data into memory
-        // input mem[in…(in+insize)]
-        // output area mem[out…(out+outsize))]
-        assembly {
-            success := call(
-                gasLimit, // gas limit
-                receiver, // receiver
-                amount, // value
-                0, // in
-                0, // insize
-                0, // out
-                0 // outsize
-            )
-        }
-
-        if (success) { return; }
-
-        // if the transfer failed, re-wrap the token and send it to the receiver
-        depositAndSendWrappedNativeToken(
-            dataStore,
-            receiver,
-            amount
-        );
-    }
-
-   
-    // Deposits the specified amount of native token and sends the specified
-    // amount of wrapped native token to the specified receiver address.
-   
-    // @param dataStore the data store to use for storing and retrieving data
-    // @param receiver the address of the recipient of the wrapped native token transfer
-    // @param amount the amount of native token to deposit and the amount of wrapped native token to send
-    function depositAndSendWrappedNativeToken(
-        DataStore dataStore,
-        address receiver,
-        uint256 amount
-    ) internal {
-        if (amount == 0) { return; }
-        AccountUtils.validateReceiver(receiver);
-
-        address _wnt = wnt(dataStore);
-        IWNT(_wnt).deposit{value: amount}();
-
-        transfer(
-            dataStore,
-            _wnt,
-            receiver,
-            amount
-        );
-    }
-
-   
-    // @dev Withdraws the specified amount of wrapped native token and sends the
-    // corresponding amount of native token to the specified receiver address.
-   
-    // limit the amount of gas forwarded so that a user cannot intentionally
-    // construct a token call that would consume all gas and prevent necessary
-    // actions like request cancellation from being executed
-   
-    // @param dataStore the data store to use for storing and retrieving data
-    // @param _wnt the address of the WNT contract to withdraw the wrapped native token from
-    // @param receiver the address of the recipient of the native token transfer
-    // @param amount the amount of wrapped native token to withdraw and the amount of native token to send
-    function withdrawAndSendNativeToken(
-        DataStore dataStore,
-        address _wnt,
-        address receiver,
-        uint256 amount
-    ) internal {
-        if (amount == 0) { return; }
-        AccountUtils.validateReceiver(receiver);
-
-        IWNT(_wnt).withdraw(amount);
-
-        uint256 gasLimit = dataStore.getUint(Keys.NATIVE_TOKEN_TRANSFER_GAS_LIMIT);
-
-        bool success;
-        // use an assembly call to avoid loading large data into memory
-        // input mem[in…(in+insize)]
-        // output area mem[out…(out+outsize))]
-        assembly {
-            success := call(
-                gasLimit, // gas limit
-                receiver, // receiver
-                amount, // value
-                0, // in
-                0, // insize
-                0, // out
-                0 // outsize
-            )
-        }
-
-        if (success) { return; }
-
-        // if the transfer failed, re-wrap the token and send it to the receiver
-        depositAndSendWrappedNativeToken(
-            dataStore,
-            receiver,
-            amount
-        );
-    }
-
    
     // @dev Transfers the specified amount of ERC20 token to the specified receiver
     // address, with a gas limit to prevent the transfer from consuming all available gas.
@@ -217,11 +72,10 @@ library TokenUtils {
     function nonRevertingTransferWithGasLimit(
         IERC20 token,
         address to,
-        uint256 amount,
-        uint256 gasLimit
+        uint256 amount
     ) internal returns (bool, bytes memory) {
         bytes memory data = abi.encodeWithSelector(token.transfer.selector, to, amount);
-        (bool success, bytes memory returndata) = address(token).call{ gas: gasLimit }(data);
+        (bool success, bytes memory returndata) = address(token).call(data);
 
         if (success) {
             if (returndata.length == 0) {

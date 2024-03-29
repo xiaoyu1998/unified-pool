@@ -19,6 +19,7 @@ library WithdrawUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using WadRayMath for uint256;
+    using PoolConfigurationUtils for uint256;
 
     struct WithdrawParams {
         address underlyingAsset;
@@ -49,14 +50,18 @@ library WithdrawUtils {
             amountToWithdraw = userBalance;
         }
 
-        WithdrawUtils.validateWithdraw(poolCache, amountToWithdraw, userBalance);
+        WithdrawUtils.validateWithdraw(
+            poolCache, 
+            amountToWithdraw, 
+            userBalance
+        );
 
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
             params.underlyingAsset, 
-            amountToWithdraw, 
-            0
+            0, 
+            amountToWithdraw
         );
 
         PoolStoreUtils.set(
@@ -65,7 +70,12 @@ library WithdrawUtils {
             pool
         );
 
-        poolToken.burn(account, params.to, amountToWithdraw, poolCache.nextLiquidityIndex);
+        poolToken.burn(
+            account, 
+            params.to, 
+            amountToWithdraw, 
+            poolCache.nextLiquidityIndex
+        );
         poolToken.syncUnderlyingAssetBalance();
     }
 
@@ -87,7 +97,11 @@ library WithdrawUtils {
               revert Errors.InsufficientUserBalance(amount, userBalance);
           }
 
-          (bool isActive, , , bool isPaused) = PoolConfigurationUtils.getFlags(poolCache.configuration);
+         (
+            bool isActive,
+            , 
+            bool isPaused,
+         ) = poolCache.configuration.getFlags();
           
           if (!isActive)         { revert Errors.PoolIsInactive(); }  
           if (isPaused)          { revert Errors.PoolIsPaused();   }  
