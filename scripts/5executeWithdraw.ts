@@ -2,7 +2,7 @@ import { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens, ge
 import { expandDecimals } from "../utils/math";
 import { getPool, getLiquidity, getDebt} from "../utils/helper";
 
-import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
+import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -18,24 +18,17 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const router = await getContract("Router");
 
-
-    const usdt = await contractAtOptions("MintableToken", usdtAddress);
-    console.log(await usdt.allowance(owner.address, exchangeRouter.target));
-    await sendTxn(usdt.approve(router.target, expandDecimals(1000000, 6)), `usdt.approve(${router.target})`)
-
     const poolUsdt = await getPool(usdtAddress); 
-    const supplyAmmount = expandDecimals(1000, 6);
-    const params: SupplyUtils.SupplyParamsStruct = {
+    const withdrawAmmount = expandDecimals(1000, 6);
+    const params: WithdrawUtils.WithdrawParamsStruct = {
         underlyingAsset: usdtAddress,
+        amount: withdrawAmmount,
         to: owner.address,
     };
 
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, supplyAmmount]),
-        exchangeRouter.interface.encodeFunctionData("executeSupply", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeWithdraw", [params]),
     ];
-
-
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
     const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);

@@ -25,14 +25,14 @@ library SupplyUtils {
 
     struct SupplyParams {
         address underlyingAsset;
-        address receiver;
+        address to;
     }
 
     struct ExecuteSupplyParams {
         DataStore dataStore;
         // EventEmitter eventEmitter;
         address underlyingAsset;
-        address receiver;
+        address to;
 
     }
 
@@ -81,7 +81,7 @@ library SupplyUtils {
 
         //IERC20(underlyingAsset).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
         poolToken.mint(
-            params.receiver, 
+            params.to, 
             supplyAmount, 
             poolCache.nextLiquidityIndex
         );
