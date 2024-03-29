@@ -92,29 +92,6 @@ export async function getContract(name) {
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const router = await getContract("Router");
 
-    //Borrow
-    // if (name == "BorrowUtils") {
-    //     const address = getDeployedContractAddresses(name);
-    //     return await contractAtOptions(name, address, {
-    //         libraries: {
-    //             PoolStoreUtils: poolStoreUtils,
-    //             PositionStoreUtils: positionStoreUtils,
-    //             FeeUtils: feeUtils,
-    //             ConfigStoreUtils: configStoreUtils,
-    //             OracleStoreUtils: oracleStoreUtils
-    //         },        
-    //     });
-    // }
-    // const borrowUtils = getContract("BorrowUtils");
-    // if (name == "BorrowHandler") {
-    //      const address = getDeployedContractAddresses(name);
-    //     return await contractAtOptions(name, address,  {
-    //         libraries: {
-    //             BorrowUtils: borrowUtils,
-    //         },        
-    //     });       
-    // }
-
 
     if (name == "SupplyHandler") {
        const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
@@ -256,8 +233,8 @@ export async function getContract(name) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
-                PoolStoreUtils: poolStoreUtils,
-                PositionStoreUtils: positionStoreUtils
+                PoolStoreUtils: poolStoreUtils.target,
+                PositionStoreUtils: positionStoreUtils.target
             },         
         });
     }
