@@ -36,6 +36,13 @@ library Printer {
         return toString(abi.encodePacked(value));
     }
 
+    function log(string memory label) internal pure {
+        console.log(
+            "%s",
+            label
+        );
+    }
+
     function log(string memory label, address account) internal pure {
         console.log(
             "%s -%s",

@@ -63,6 +63,17 @@ library PoolUtils {
 
         pool.liquidityRate = vars.nextLiquidityRate;
         pool.borrowRate    = vars.nextBorrowRate;
+
+        Printer.log("------------------updateInterestRates------------------");
+        Printer.log("liquidityIn", liquidityIn);
+        Printer.log("liquidityOut", liquidityOut);
+        Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
+        Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
+        Printer.log("totalDebt", vars.totalDebt);
+        Printer.log("feeFactor", poolCache.feeFactor);   
+        Printer.log("liquidityRate", pool.liquidityRate);   
+        Printer.log("borrowRate", pool.borrowRate);   
+
     }
 
     function cache(
@@ -78,18 +89,6 @@ library PoolUtils {
         poolCache.underlyingAsset = pool.underlyingAsset;
         poolCache.poolToken       = pool.poolToken;
         poolCache.debtToken       = pool.debtToken;
-        
-        Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
-        Printer.log("nextLiquidityIndex", poolCache.nextLiquidityIndex);
-        Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
-
-        Printer.log("currBorrowIndex", poolCache.currBorrowIndex);
-        Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
-        Printer.log("currBorrowRate", poolCache.currBorrowRate);
-
-        Printer.log("underlyingAsset", poolCache.underlyingAsset);
-        Printer.log("poolToken", poolCache.poolToken);
-        Printer.log("debtToken", poolCache.debtToken);
 
         poolCache.currTotalScaledDebt = poolCache.nextTotalScaledDebt = IDebtToken(
             poolCache.debtToken
@@ -101,7 +100,16 @@ library PoolUtils {
         poolCache.unclaimedFee  = pool.unclaimedFee;
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp;
 
-
+        Printer.log("------------------cache pool------------------");
+        Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
+        Printer.log("nextLiquidityIndex", poolCache.nextLiquidityIndex);
+        Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
+        Printer.log("currBorrowIndex", poolCache.currBorrowIndex);
+        Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
+        Printer.log("currBorrowRate", poolCache.currBorrowRate);
+        Printer.log("underlyingAsset", poolCache.underlyingAsset);
+        Printer.log("poolToken", poolCache.poolToken);
+        Printer.log("debtToken", poolCache.debtToken);
         Printer.log("currTotalScaledDebt", poolCache.currTotalScaledDebt);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         Printer.log("configuration", poolCache.configuration); 
@@ -117,6 +125,7 @@ library PoolUtils {
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
     ) internal {
+        Printer.log("------------------updateIndexes------------------");
         if (poolCache.currLiquidityRate != 0) {
             uint256 cumulatedLiquidityInterest = InterestUtils.calculateInterest(
                 poolCache.currLiquidityRate,
@@ -126,6 +135,11 @@ library PoolUtils {
                 poolCache.currLiquidityIndex
             );
             pool.liquidityIndex = poolCache.nextLiquidityIndex;
+
+            Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
+            Printer.log("cumulatedLiquidityInterest", cumulatedLiquidityInterest);
+            Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
+            Printer.log("liquidityIndex", pool.liquidityIndex);
         }
 
         if (poolCache.currTotalScaledDebt != 0) {
@@ -137,7 +151,14 @@ library PoolUtils {
                 poolCache.currBorrowIndex
             );
             pool.borrowIndex = poolCache.nextBorrowIndex;
+
+            Printer.log("currBorrowRate", poolCache.currBorrowRate);
+            Printer.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
+            Printer.log("currBorrowIndex", poolCache.currBorrowIndex);
+            Printer.log("borrowIndex", pool.borrowIndex);
+
         }
+   
     }
 
     function updateStateBetweenTransactions(

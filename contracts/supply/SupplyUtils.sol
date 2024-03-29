@@ -43,21 +43,13 @@ library SupplyUtils {
         address account, 
         ExecuteSupplyParams calldata params
     ) external {
-        Printer.log("account", account);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        Printer.log("pool", pool.underlyingAsset);
         PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
-
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        Printer.log("poolCache", poolCache.underlyingAsset);
-
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
-
-        //debug
-        Printer.log("supplyAmount", supplyAmount);
 
 
         SupplyUtils.validateSupply(
