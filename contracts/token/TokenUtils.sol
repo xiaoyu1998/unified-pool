@@ -42,7 +42,7 @@ library TokenUtils {
         AccountUtils.validateReceiver(receiver);
 
 
-        (bool success0, bytes memory returndata) = nonRevertingTransferWithGasLimit(
+        (bool success0, bytes memory returndata) = nonRevertingTransfer(
             IERC20(token),
             receiver,
             amount
@@ -69,7 +69,7 @@ library TokenUtils {
     // @param gasLimit the maximum amount of gas that the token transfer can consume
     // @return a tuple containing a boolean indicating the success or failure of the
     // token transfer, and a bytes value containing the return data from the token transfer
-    function nonRevertingTransferWithGasLimit(
+    function nonRevertingTransfer(
         IERC20 token,
         address to,
         uint256 amount
