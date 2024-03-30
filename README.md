@@ -1,5 +1,10 @@
 ## Unified Pool Contracts
 
+Download
+
+```shell
+git clone git@github.com:xiaoyu1998/up-contracts.git --recursive
+```
 Installation
 
 ```shell
