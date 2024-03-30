@@ -1,4 +1,4 @@
-import { contractAtOptions, sendTxn, getDeployedContractAddresses, getTokens, getContract, getContractAt } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPool, getLiquidity, getDebt} from "../utils/helper";
 
@@ -12,7 +12,7 @@ async function main() {
 
     //approve allowances to the router
     const usdtAddress = getTokens("usdt");
-    const usdt = await contractAtOptions("MintableToken", usdtAddress);
+    const usdt = await contractAt("MintableToken", usdtAddress);
     const supplyAmmount = expandDecimals(1000, 6);
     await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)
 
