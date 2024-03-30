@@ -17,13 +17,11 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const router = await getContract("Router");
 
-
+    const supplyAmmount = expandDecimals(1000, 6);
     const usdt = await contractAtOptions("MintableToken", usdtAddress);
-    console.log(await usdt.allowance(owner.address, exchangeRouter.target));
-    await sendTxn(usdt.approve(router.target, expandDecimals(1000000, 6)), `usdt.approve(${router.target})`)
+    await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)
 
     const poolUsdt = await getPool(usdtAddress); 
-    const supplyAmmount = expandDecimals(1000, 6);
     const params: SupplyUtils.SupplyParamsStruct = {
         underlyingAsset: usdtAddress,
         to: owner.address,
@@ -33,8 +31,6 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, supplyAmmount]),
         exchangeRouter.interface.encodeFunctionData("executeSupply", [params]),
     ];
-
-
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
     const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);

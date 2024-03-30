@@ -5,19 +5,14 @@ async function main() {
   const [owner] = await ethers.getSigners();
   const usdt = await deployContract("MintableToken", ["Tether", "USDT", 6])
   const uni = await deployContract("MintableToken", ["UNI", "UNI", 18])
-  await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, 6)), "usdt.mint(owner.address)")
-  await sendTxn(uni.mint(owner.address, expandDecimals(1000, 18)), "uni.mint(owner.address)")
+  await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, 6)), `usdt.mint(${owner.address})`)
+  await sendTxn(uni.mint(owner.address, expandDecimals(1000, 18)), `usdt.mint(${owner.address})`)
 
-  writeTokenAddresses({
-    "usdt": usdt.target
-  });
-
-  writeTokenAddresses({
-    "uni": uni.target
-  });
-
+  writeTokenAddresses({"usdt": usdt.target});
+  writeTokenAddresses({"uni": uni.target });
   console.log(readTokenAddresses());
-
+  console.log("usdt", await usdt.balanceOf(owner.address)); 
+  console.log("uni", await uni.balanceOf(owner.address)); 
 }
 
 

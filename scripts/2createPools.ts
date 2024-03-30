@@ -2,11 +2,11 @@ const { getContract, sendTxn, getTokens } = require("../utils/deploy")
 import { expandDecimals } from "../utils/math";
 import { parsePool } from "../utils/helper";
 
+
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    // const tokens = readTmpAddresses();
-    // console.log("tokens", tokens);
+    //create pools
     const usdt = getTokens("usdt");
     const uni  = getTokens("uni");
     const configuration = 1;//TODO:should be assgined to a reasonable value
@@ -22,69 +22,30 @@ async function main() {
         "poolFactory.createPool(uni)"
     );
 
+    //set pool configuration
     const config = await getContract("Config");
-    //usdt
-    await sendTxn(
-        config.setPoolActive(usdt, true),
-        "config.setPoolActive(usdt, true)"
-    );
+    const multicallArgs = [
+        config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
+        config.interface.encodeFunctionData("setPoolFreeze", [usdt, false]),
+        config.interface.encodeFunctionData("setPoolPause", [usdt, false]),
+        config.interface.encodeFunctionData("setPoolDecimals", [usdt, 6]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [usdt, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt, expandDecimals(1, 8)]),
+        config.interface.encodeFunctionData("setPoolActive", [uni, true]),
+        config.interface.encodeFunctionData("setPoolFreeze", [uni, false]),
+        config.interface.encodeFunctionData("setPoolPause", [uni, false]),
+        config.interface.encodeFunctionData("setPoolDecimals", [uni, 18]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),
+    ];
+    const multicall = await getContract("Multicall3");
+    const tx = await multicall.aggregate(multicallArgs);
+    //const exchangeRouter = await getContract("ExchangeRouter"); 
+    //const tx = await exchangeRouter.multicall(multicallArgs);  
 
-    await sendTxn(
-        config.setPoolFreeze(usdt, false),
-        "config.setPoolFreeze(usdt, true)"
-    );
-    await sendTxn(
-        config.setPoolPause(usdt, false),
-        "config.setPoolFreeze(usdt, true)"
-    );
-    await sendTxn(
-        config.setPoolDecimals(usdt, 6),
-        "config.setPoolDecimals(usdt, 27)"
-    );
-    await sendTxn(
-        config.setPoolFeeFactor(usdt, 10), //1/1000
-        "config.setPoolFeeFactor(usdt, 10)"
-    );
-    await sendTxn(
-        config.setPoolBorrowCapacity(usdt, expandDecimals(1, 8)), 
-        "config.setPoolBorrowCapacity(usdt, 10)"
-    );
-    await sendTxn(
-        config.setPoolSupplyCapacity(usdt, expandDecimals(1, 8)), 
-        "config.setPoolSupplyCapacity(usdt, 10)"
-    );
-
-    //uni
-     await sendTxn(
-        config.setPoolActive(uni, true),
-        "config.setPoolActive(uni, true)"
-    );
-
-    await sendTxn(
-        config.setPoolFreeze(uni, false),
-        "config.setPoolFreeze(uni, true)"
-    );
-    await sendTxn(
-        config.setPoolPause(uni, false),
-        "config.setPoolFreeze(uni, true)"
-    );
-    await sendTxn(
-        config.setPoolDecimals(uni, 18),
-        "config.setPoolDecimals(uni, 27)"
-    );
-    await sendTxn(
-        config.setPoolFeeFactor(uni, 10), //1/1000
-        "config.setPoolFeeFactor(uni, 10)"
-    );
-    await sendTxn(
-        config.setPoolBorrowCapacity(uni, expandDecimals(1, 8)), 
-        "config.setPoolBorrowCapacity(uni, 10)"
-    );
-    await sendTxn(
-        config.setPoolSupplyCapacity(uni, expandDecimals(1, 8)), 
-        "config.setPoolSupplyCapacity(uni, 10)"
-    );     
-
+    //print pools
     const dataStore = await getContract("DataStore");    
     const reader = await getContract("Reader");    
     const pools = await reader.getPools(dataStore.target, 0, 10);
@@ -93,7 +54,6 @@ async function main() {
     }
 
 }
-
 
 main()
   .then(() => process.exit(0))

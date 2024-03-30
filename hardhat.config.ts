@@ -8,6 +8,10 @@ import { ethers, ignition } from "hardhat";
 const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
+    warnings: {
+      'Ignored.sol': 'off',
+      'ethers.js': 'off',
+    },
     settings: {
        optimizer: {
          enabled: true,

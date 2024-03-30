@@ -103,7 +103,6 @@ export async function getContract(name) {
             },        
         });
 
-        console.log(supplyUtils);
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
