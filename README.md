@@ -17,6 +17,6 @@ Create and print pools
 ```shell
 npx hardhat run scripts/1createUsdtUni.ts --network localhost
 npx hardhat run scripts/2createPools.ts --network localhost
-npx hardhat run scripts/4executeSupply.ts --network localhost
-npx hardhat run scripts/5executeWithdraw.ts --network localhost
+npx hardhat run scripts/3executeSupply.ts --network localhost
+npx hardhat run scripts/4executeWithdraw.ts --network localhost
 ```

@@ -6,13 +6,13 @@ import { parsePool } from "../utils/helper";
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    //create pools
     const usdt = getTokens("usdt");
     const uni  = getTokens("uni");
     const configuration = 1;//TODO:should be assgined to a reasonable value
     const poolFactory = await getContract("PoolFactory");
     const strategy = await getContract("PoolInterestRateStrategy");
 
+     //create pools
     await sendTxn(
         poolFactory.createPool(usdt, strategy.target, configuration),
         "poolFactory.createPool(usdt)"
