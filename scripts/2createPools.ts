@@ -1,11 +1,9 @@
 const { getContract, sendTxn, getTokens } = require("../utils/deploy")
-import { expandDecimals } from "../utils/math";
+import { bigNumberify, expandDecimals } from "../utils/math";
 import { parsePool } from "../utils/helper";
 
 
 async function main() {
-    const exchangeRouter = await getContract("ExchangeRouter"); 
-
     //create pools
     const usdt = getTokens("usdt");
     const uni  = getTokens("uni");
@@ -39,9 +37,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);  
-    // const multicall = await getContract("Multicall3");
-    // const tx = await multicall.aggregate(multicallArgs);
+    const tx = await config.multicall(multicallArgs);
 
     //print pools
     const dataStore = await getContract("DataStore");    

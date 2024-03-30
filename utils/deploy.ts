@@ -78,7 +78,8 @@ export async function getContract(name) {
         name == "ConfigStoreUtils" ||     
         name == "OracleStoreUtils"  ||
         name == "Router" ||
-        name == "PoolInterestRateStrategy"
+        name == "PoolInterestRateStrategy" ||
+        name == "Multicall3" 
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);

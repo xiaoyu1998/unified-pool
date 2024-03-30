@@ -43,6 +43,9 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     } 
     
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {
+        Printer.log("underlyingAsset", underlyingAsset);
+        // Printer.log("active", active);
+        
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, key);
         configuration = configuration.setActive(active);
