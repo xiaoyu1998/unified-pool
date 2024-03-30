@@ -4,25 +4,24 @@ import { parsePool } from "../utils/helper";
 
 
 async function main() {
-    const [owner] = await ethers.getSigners();
+    const exchangeRouter = await getContract("ExchangeRouter"); 
 
+    //create pools
     const usdt = getTokens("usdt");
     const uni  = getTokens("uni");
     const configuration = 1;//TODO:should be assgined to a reasonable value
     const poolFactory = await getContract("PoolFactory");
-    const strategy = await getContract("PoolInterestRateStrategy");
-
-     //create pools
+    const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
     await sendTxn(
-        poolFactory.createPool(usdt, strategy.target, configuration),
+        poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(usdt)"
     );
     await sendTxn(
-        poolFactory.createPool(uni, strategy.target, configuration),
+        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(uni)"
     );
 
-    //set pool configuration
+    //set pools configuration
     const config = await getContract("Config");
     const multicallArgs = [
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
@@ -40,10 +39,9 @@ async function main() {
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),
     ];
-    const multicall = await getContract("Multicall3");
-    const tx = await multicall.aggregate(multicallArgs);
-    //const exchangeRouter = await getContract("ExchangeRouter"); 
-    //const tx = await exchangeRouter.multicall(multicallArgs);  
+    const tx = await exchangeRouter.multicall(multicallArgs);  
+    // const multicall = await getContract("Multicall3");
+    // const tx = await multicall.aggregate(multicallArgs);
 
     //print pools
     const dataStore = await getContract("DataStore");    

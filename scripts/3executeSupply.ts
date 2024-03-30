@@ -6,12 +6,7 @@ import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler
 
 async function main() {
     const [owner] = await ethers.getSigners();
-
-    const poolStoreUtils = await getContract("PoolStoreUtils");
-    const positionStoreUtils = await getContract("PositionStoreUtils");
-    const roleStore = await getContract("RoleStore");    
-    const dataStore = await getContract("DataStore");   
-    const reader = await getContract("Reader");   
+    
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const router = await getContract("Router");
 
