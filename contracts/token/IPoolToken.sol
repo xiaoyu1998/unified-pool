@@ -28,6 +28,7 @@ interface IPoolToken {
     function balanceOfCollateral (address account) external view returns (uint256);
     function totalCollateral() external view  returns (uint256);
 
+    function availableLiquidity() external view  returns (uint256);
     function recordTransferIn(address token) external returns (uint256);
     function transferOutUnderlyingAsset(
         address receiver,

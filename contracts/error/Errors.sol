@@ -19,7 +19,7 @@ library Errors {
     error PoolNotFound(address key);
 
     // PoolToken errors
-    error InsufficientBalanceAfterSubstractionCollateral(uint256 amount, uint256 availableBalance);
+    error InsufficientAvailableLiquidity(uint256 amount, uint256 availableLiquidity);
 
     // PoolInterestRateStrategy errors
     error InvalidOptimalUsageRate(uint256 optimalUsageRatio);

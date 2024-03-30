@@ -71,7 +71,6 @@ library SupplyUtils {
             pool
         );
 
-        //IERC20(underlyingAsset).safeTransferFrom(msg.sender, poolCache.poolToken, params.amount);
         poolToken.mint(
             params.to, 
             supplyAmount, 
@@ -100,21 +99,16 @@ library SupplyUtils {
         if (isPaused)  { revert Errors.PoolIsPaused();   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
 
-        //uint256 unClaimedFee = FeeUtils.getUnClaimeFee(poolCache);
         uint256 supplyCapacity = poolCache.configuration.getSupplyCapacity()
                                  * (10 ** poolCache.configuration.getDecimals());
 
-        // Printer.log("SupplyCapacity", poolCache.configuration.getSupplyCapacity());
-        // Printer.log("Decimals", poolCache.configuration.getDecimals());
-        // Printer.log("SupplyCapacity", supplyCapacity);
-
-        uint256 totalSupplyAddUnclaimedFeeAddAmount = 
+        uint256 totalSupplyAddUnclaimedFeeAddSupplyAmount = 
             (IPoolToken(poolCache.poolToken).scaledTotalSupply() + poolCache.unclaimedFee)
             .rayMul(poolCache.nextLiquidityIndex) + amount;
 
 
-        if (supplyCapacity == 0 || totalSupplyAddUnclaimedFeeAddAmount > supplyCapacity) {
-            revert Errors.SupplyCapacityExceeded(totalSupplyAddUnclaimedFeeAddAmount, supplyCapacity);
+        if (supplyCapacity == 0 || totalSupplyAddUnclaimedFeeAddSupplyAmount > supplyCapacity) {
+            revert Errors.SupplyCapacityExceeded(totalSupplyAddUnclaimedFeeAddSupplyAmount, supplyCapacity);
         }
 
     }    
