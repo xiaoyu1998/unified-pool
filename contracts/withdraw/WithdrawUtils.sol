@@ -3,6 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
+import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -38,8 +39,9 @@ library WithdrawUtils {
     // @param account the withdrawing account
     // @param params ExecuteWithdrawParams
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
+        address poolKey = Keys.poolKey(params.underlyingAsset);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey;
+        PoolUtils.validateEnabledPool(pool, poolKey;
         PoolCache.Props memory poolCache =  PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 

@@ -3,6 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
+import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -41,41 +42,67 @@ library DepositUtils {
     // @param account the depositng account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
-        IPoolToken poolToken   = IPoolToken(pool.poolToken);
-
-        Position.Props memory position = PositionStoreUtils.get(params.dataStore, account);
+        address poolKey = Keys.poolKey(params.underlyingAsset);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
+        PoolUtils.validateEnabledPool(pool, poolKey);
+        // PoolCache.Props memory poolCache = PoolUtils.cache(pool);
+        // PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        
+        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+        Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
         if(position.account == address(0)){
             position.account = account;
+            position.underlyingAsset = underlyingAsset;
+            position.isLong = true;
+            position.hasCollateral = true;
+            position.hasDebt = false;
         }
 
+        IPoolToken poolToken   = IPoolToken(pool.poolToken);
+        IDebtToken debtToken   = IDebtToken(pool.poolToken);
         uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
+
+        DepositUtils.validateDeposit(
+            position,
+            poolCache, 
+            supplyAmount
+        );
+
         poolToken.addCollateral(account, amount);
+        position.hasCollateral = true;
 
-        position.setPoolAsCollateral(pool.keyId, true);
-        PositionStoreUtils.set(params.dataStore, account, position);
+        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral()) {
+           position.isLong = true;
+        }
 
+        PositionStoreUtils.set(params.dataStore, positionKey, position);
     }
 
 
-      //
-      // @notice Validates a withdraw action.
-      // @param poolCache The cached data of the pool
-      // @param amount The amount to be withdrawn
-      // @param userBalance The balance of the user
-      //
-      // function validateDeposit(
-      //     Position.Props memory position,
-      //     PoolCache.Props memory poolCache,
-      //     uint256 amount
-      // ) internal view {
+    //
+    // @notice Validates a withdraw action.
+    // @param pool The cached data of the pool
+    // @param amount The amount to be withdrawn
+    // @param userBalance The balance of the user
+    //
+    function validateDeposit(
+        Position.Props memory position,
+        Pool.Props memory pool,
+        uint256 amount
+    ) internal view {
        
-      //  (
-      //   vars.userCollateralInBaseCurrency,
-      //   vars.userDebtInBaseCurrency,
-      //   var.healthFactor,
-      //  ) = calculateUser()
-      // }
+        if (amount == 0) { 
+            revert Errors.EmptySupplyAmounts(); 
+        }
+
+        (   bool isActive,
+            bool isFrozen, 
+            bool isPaused,
+         ) = pool.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(); }  
+        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
+
+    }
     
 }

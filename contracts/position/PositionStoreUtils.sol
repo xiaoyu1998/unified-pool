@@ -14,36 +14,81 @@ import "./Position.sol";
 library PositionStoreUtils {
     using Position for Position.Props;
 
+    bytes32 public constant UNDERLYING_ASSET = keccak256(abi.encode("UNDERLYING_ASSET"));
     bytes32 public constant ACCOUNT = keccak256(abi.encode("ACCOUNT"));
-    bytes32 public constant COLLATERAL_AND_DEBT_POOLS = keccak256(abi.encode("COLLATERAL_AND_DEBT_POOLS"));
+    bytes32 public constant ENTRY_LONG_PRICE = keccak256(abi.encode("ENTRY_LONG_PRICE"));
+    bytes32 public constant ACC_LONG_AMOUNT = keccak256(abi.encode("ACC_LONG_AMOUNT"));
+    bytes32 public constant ENTRY_SHORT_PRICE = keccak256(abi.encode("ENTRY_SHORT_PRICE"));
+    bytes32 public constant ACC_SHORT_AMOUNT = keccak256(abi.encode("ACC_SHORT_AMOUNT"));
+    bytes32 public constant IS_LONG = keccak256(abi.encode("IS_LONG"));
+    bytes32 public constant HAS_COLLATERAL = keccak256(abi.encode("HAS_COLLATERAL"));
+    bytes32 public constant HAS_DEBT = keccak256(abi.encode("HAS_DEBT"));
+    // bytes32 public constant COLLATERAL_AND_DEBT_POOLS = keccak256(abi.encode("COLLATERAL_AND_DEBT_POOLS"));
 
-    function get(DataStore dataStore, address key) external view returns (Position.Props memory) {
+    function get(DataStore dataStore, bytes32 key) external view returns (Position.Props memory) {
         Position.Props memory position;
-        if (!dataStore.containsAddress(Keys.POSITION_LIST, key)) {
+        if (!dataStore.containsBytes32(Keys.POSITION_LIST, key)) {
             return position;
         }
+
+        position.underlyingAsset = dataStore.getAddress(
+            keccak256(abi.encode(key, UNDERLYING_ASSET))
+        );
 
         position.account = dataStore.getAddress(
             keccak256(abi.encode(key, ACCOUNT))
         );
 
-        position.collateralAndDebtPools = dataStore.getUint(
-            keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+        position.entryLongPrice = dataStore.getUint(
+            keccak256(abi.encode(key, ENTRY_LONG_PRICE))
         );
+
+        position.accLongAmount = dataStore.getUint(
+            keccak256(abi.encode(key, ACC_LONG_AMOUNT))
+        );
+
+        position.entryShortPrice = dataStore.getUint(
+            keccak256(abi.encode(key, ENTRY_SHORT_PRICE))
+        );
+
+        position.accShortAmount = dataStore.getUint(
+            keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
+        );
+
+        position.isLong = dataStore.getBool(
+            keccak256(abi.encode(key, IS_LONG))
+        );
+
+        position.hasCollateral = dataStore.getBool(
+            keccak256(abi.encode(key, HAS_COLLATERAL))
+        );
+
+        position.hasDebt = dataStore.getBool(
+            keccak256(abi.encode(key, HAS_DEBT))
+        );
+
+        // position.collateralAndDebtPools = dataStore.getUint(
+        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+        // );
 
         return position;
     }
 
-    function set(DataStore dataStore, address key, Position.Props memory position) external {
-        dataStore.addAddress(
+    function set(DataStore dataStore, bytes32 key, Position.Props memory position) external {
+        dataStore.addBytes32(
             Keys.POSITION_LIST,
             key
         );
 
-        // dataStore.addBytes32(
-        //     Keys.accountPositionListKey(position.account()),
-        //     key
-        // );
+        dataStore.addBytes32(
+            Keys.accountPositionListKey(position.account()),
+            key
+        );
+
+        dataStore.setAddress(
+            keccak256(abi.encode(key, UNDERLYING_ASSET)),
+            position.underlyingAsset
+        );
 
         dataStore.setAddress(
             keccak256(abi.encode(key, ACCOUNT)),
@@ -51,14 +96,49 @@ library PositionStoreUtils {
         );
 
         dataStore.setUint(
-            keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS)),
-            position.collateralAndDebtPools
+            keccak256(abi.encode(key, ENTRY_LONG_PRICE)),
+            position.entryLongPrice
         );
+
+        dataStore.setUint(
+            keccak256(abi.encode(key, ACC_LONG_AMOUNT)),
+            position.accLongAmount
+        );
+
+        dataStore.setUint(
+            keccak256(abi.encode(key, ENTRY_SHORT_PRICE)),
+            position.entryShortPrice
+        );
+
+        dataStore.setUint(
+            keccak256(abi.encode(key, ACC_SHORT_AMOUNT)),
+            position.accShortAmount
+        );
+
+        dataStore.setBool(
+            keccak256(abi.encode(key, IS_LONG)),
+            position.isLong
+        );
+
+        dataStore.setBool(
+            keccak256(abi.encode(key, HAS_COLLATERAL)),
+            position.hasCollateral
+        );
+
+        dataStore.setBool(
+            keccak256(abi.encode(key, HAS_DEBT)),
+            position.hasDebt
+        );
+
+        // dataStore.setUint(
+        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS)),
+        //     position.collateralAndDebtPools
+        // );
 
     }
 
     function remove(DataStore dataStore, address key) external {
-        if (!dataStore.containsAddress(Keys.POSITION_LIST, key)) {
+        if (!dataStore.containsByte32(Keys.POSITION_LIST, key)) {
             revert Errors.PositionNotFound(key);
         }
 
@@ -67,18 +147,51 @@ library PositionStoreUtils {
             key
         );
 
-        // dataStore.removeBytes32(
-        //     Keys.accountPositionListKey(account),
-        //     key
-        // );
+        dataStore.removeBytes32(
+            Keys.accountPositionListKey(account),
+            key
+        );
+
+        dataStore.removeAddress(
+            keccak256(abi.encode(key, UNDERLYING_ASSET))
+        );
 
         dataStore.removeAddress(
             keccak256(abi.encode(key, ACCOUNT))
         );
 
         dataStore.removeUint(
-            keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+            keccak256(abi.encode(key, ENTRY_LONG_PRICE))
         );
+
+        dataStore.removeUint(
+            keccak256(abi.encode(key, ACC_LONG_AMOUNT))
+        );
+
+        dataStore.removeUint(
+            keccak256(abi.encode(key, ENTRY_SHORT_PRICE))
+        );
+
+        dataStore.removeUint(
+            keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
+        );
+
+        dataStore.removeBool(
+            keccak256(abi.encode(key, IS_LONG))
+        );
+
+        dataStore.removeBool(
+            keccak256(abi.encode(key, HAS_COLLATERAL))
+        );
+
+        dataStore.removeBool(
+            keccak256(abi.encode(key, HAS_DEBT))
+        );
+
+
+        // dataStore.removeUint(
+        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+        // );
 
     }
 
@@ -90,11 +203,11 @@ library PositionStoreUtils {
         return dataStore.getAddressValuesAt(Keys.POSITION_LIST, start, end);
     }
 
-    // function getAccountPositionCount(DataStore dataStore, address account) internal view returns (uint256) {
-    //     return dataStore.getBytes32Count(Keys.accountPositionListKey(account));
-    // }
+    function getAccountPositionCount(DataStore dataStore, address account) internal view returns (uint256) {
+        return dataStore.getBytes32Count(Keys.accountPositionListKey(account));
+    }
 
-    // function getAccountPositionKeys(DataStore dataStore, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
-    //     return dataStore.getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
-    // }
+    function getAccountPositionKeys(DataStore dataStore, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
+        return dataStore.getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
+    }
 }

@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../data/DataStore.sol";
+import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -46,8 +47,10 @@ library RepayUtils {
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
 
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, PoolUtils.getKey(params.underlyingAsset));
-        PoolUtils.validateEnabledPool(pool, PoolUtils.getKey(params.underlyingAsset));
+
+        address poolKey = Keys.poolKey(params.underlyingAsset);
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
+        PoolUtils.validateEnabledPool(pool, poolKey);
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 

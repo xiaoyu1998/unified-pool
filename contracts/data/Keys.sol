@@ -24,6 +24,9 @@ library Keys {
     // @dev key for the account position list
     bytes32 public constant ACCOUNT_POSITION_LIST = keccak256(abi.encode("ACCOUNT_POSITION_LIST"));
 
+    // @dev key for the account position
+    bytes32 public constant ACCOUNT_POSITION = keccak256(abi.encode("ACCOUNT_POSITION"));
+
     // @dev for a global reentrancy guard
     bytes32 public constant REENTRANCY_GUARD_STATUS = keccak256(abi.encode("REENTRANCY_GUARD_STATUS"));
 
@@ -33,10 +36,8 @@ library Keys {
     // @dev key for the claimable fee amount
     bytes32 public constant CLAIMABLE_FEE_AMOUNT = keccak256(abi.encode("CLAIMABLE_FEE_AMOUNT"));
 
-
     // @dev key for the oracle
     bytes32 public constant ORACLE = keccak256(abi.encode("ORACLE"));
-
 
     // @dev key for the Health Factor Collateral RateT hreshold
     bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
@@ -47,6 +48,20 @@ library Keys {
     // @dev key for the amount of gas to forward for native token transfers
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
+
+
+    // @dev key for the pool
+    // @param underlyingAsset the underlying asset
+    function poolKey(address underlyingAsset) internal pure returns (address) {
+        // return keccak256(abi.encode(ACCOUNT_POSITION, underlyingAsset, account));
+        return underlyingAsset;
+    }
+
+    // @dev key for the account position list
+    // @param account the account for the list
+    function accountPositionKey(address underlyingAsset, address account) internal pure returns (bytes32) {
+        return keccak256(abi.encode(ACCOUNT_POSITION, underlyingAsset, account));
+    }
 
     // @dev key for the account position list
     // @param account the account for the list

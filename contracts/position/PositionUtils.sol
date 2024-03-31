@@ -22,67 +22,59 @@ library PositionUtils {
 
     using Position for Position.Props;
     using Pool for Pool.Props;
-    
-    // //TODO:should change to multi-position
-    // function getPositionKey(address account) internal pure returns (address) {
-    //     bytes32 key = keccak256(abi.encode(account));
-    //     return key; 
+
+    // struct calculateUserTotalCollateralAndDebtVars {
+    //     uint256 i;
+    //     uint256 userTotalCollateralUsd;
+    //     uint256 userTotalDebtUsd;
     // }
-
-    struct calculateUserTotalCollateralAndDebtVars {
-        uint256 i;
-        uint256 assetPrice;
-        uint256 userTotalCollateralUsd;
-        uint256 userTotalDebtUsd;
-    }
-
-    function calculateUserTotalCollateralAndDebt(
-        address account,
-        DataStore dataStore,
-        Position.Props memory position
-    ) internal view returns (uint256, uint256) {
-
-       calculateUserTotalCollateralAndDebtVars memory vars;
-       uint256 poolCount = PoolStoreUtils.getPoolCount(dataStore);
-       while (vars.i < poolCount) {
-            if (!position.isUsingAsCollateralOrBorrowing(vars.i)){
-                unchecked {
-                  ++vars.i;
-                }
-                continue;               
-            }
-
-            //address poolKey = PoolStoreUtils.getKeyFromId(dataStore, vars.i);
-            Pool.Props memory pool = PoolStoreUtils.getPoolById(dataStore, vars.i);
-
-            vars.assetPrice = IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(pool.underlyingAsset);
-
-            if (position.isUsingAsCollateral(vars.i)){
-                 vars.userTotalCollateralUsd +=
-                 IPoolToken(pool.poolToken).balanceOfCollateral(account) * vars.assetPrice;
-            }
-
-            if (position.isBorrowing(vars.i)){
-                 vars.userTotalDebtUsd +=
-                 IDebtToken(pool.debtToken).balanceOf(account) * vars.assetPrice;  
-                 //TODO: should assign pool to avoid reload               
-            }
-
-            unchecked {
-                ++vars.i;
-            }            
-       }
-
-       return (vars.userTotalCollateralUsd, vars.userTotalDebtUsd);
-    }
 
     function calculateUserTotalCollateralAndDebt(
         address account,
         DataStore dataStore
     ) internal view returns (uint256, uint256) {
-        Position.Props memory position  = PositionStoreUtils.get(dataStore, account);
-        PositionUtils.validateEnabledPosition(position);
-        return calculateUserTotalCollateralAndDebt(account, dataStore, position);
+        uint256 positionsCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+        if(positionsCount == 0) return (0, 0);
+
+        Position.Props memory positions[] = 
+            PositionStoreUtils.getAccountPositionCount(dataStore, account, 0, positionsCount);
+        calculateUserTotalCollateralAndDebtVars memory vars;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;        
+        for (uint256 i = 0; i < positionsCount; i++) {
+
+            (uint256 userCollateralUsd, uint256 userDebtUsd) = 
+                calculateUserCollateralAndDebtInPosition(datatore, position[i]);
+            userTotalCollateralUsd += userCollateralUsd;
+            userTotalDebtUsd += userDebtUsd;            
+        }
+
+        return (userTotalCollateralUsd, userTotalDebtUsd);
+
+    }
+
+    function calculateUserCollateralAndDebtInPosition(
+        DataStore dataStore,
+        Position.Props memory position
+    ) internal view returns (uint256, uint256) {
+
+        // Pool.Props memory pool = PoolStoreUtils.get(dataStore, position.underlyingAsset);
+
+        uint256 assetPrice = 
+            IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(position.underlyingAsset);
+        uint256 userCollateralUsd;
+        uint256 userDebtUsd;
+
+        if (position.hasCollateral){
+            address poolToken = PoolStoreUtils.getPoolToken(dataStore, position.underlyingAsset);
+            userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account) * assetPrice;
+        }
+
+        if (position.hasDebt){
+            address debtToken = PoolStoreUtils.getDebtToken(dataStore, position.underlyingAsset);
+            userDebtUsd = IDebtToken(debtToken).balanceOf(position.account) * assetPrice;               
+        }
+        return (userCollateralUsd, userDebtUsd);
     }
 
     function validateEnabledPosition(Position.Props memory postion) internal pure {
@@ -91,15 +83,6 @@ library PositionUtils {
         }
 
     }
-
-    // function getUserDebtInOnePool(
-    //     address account,
-    //     DataStore dataStore,
-    //     Pool.Props memory pool 
-    // ) internal pure returns (uint256, uint256, uint256) {
-    // }
-
-
 
 
 }
