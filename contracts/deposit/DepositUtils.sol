@@ -26,16 +26,15 @@ library DepositUtils {
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
     using WadRayMath for uint256;
+    using PoolConfigurationUtils for uint256;
 
     struct DepositParams {
         address underlyingAsset;
-        //uint256 amount;
     }
 
     struct ExecuteDepositParams {
         DataStore dataStore;
         address underlyingAsset;
-        //uint256 amount;
     }
 
     // @dev executes a deposit
@@ -47,12 +46,12 @@ library DepositUtils {
         PoolUtils.validateEnabledPool(pool, poolKey);
         // PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         // PoolUtils.updateStateBetweenTransactions(pool, poolCache);
-        
+       
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
         if(position.account == address(0)){
             position.account = account;
-            position.underlyingAsset = underlyingAsset;
+            position.underlyingAsset = params.underlyingAsset;
             position.isLong = true;
             position.hasCollateral = true;
             position.hasDebt = false;
@@ -60,22 +59,26 @@ library DepositUtils {
 
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
         IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        uint256 amount = poolToken.recordTransferIn(params.underlyingAsset);
+        uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
-            position,
-            poolCache, 
-            supplyAmount
+ //           position,
+            pool, 
+            depositAmount
         );
 
-        poolToken.addCollateral(account, amount);
+        poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
 
-        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral()) {
+        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account)) {
            position.isLong = true;
         }
 
-        PositionStoreUtils.set(params.dataStore, positionKey, position);
+        PositionStoreUtils.set(
+            params.dataStore, 
+            positionKey, 
+            position)
+        ;
     }
 
 
@@ -86,7 +89,7 @@ library DepositUtils {
     // @param userBalance The balance of the user
     //
     function validateDeposit(
-        Position.Props memory position,
+//        Position.Props memory position,
         Pool.Props memory pool,
         uint256 amount
     ) internal view {

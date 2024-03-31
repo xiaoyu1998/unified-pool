@@ -40,8 +40,8 @@ library WithdrawUtils {
     // @param params ExecuteWithdrawParams
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
         address poolKey = Keys.poolKey(params.underlyingAsset);
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey;
-        PoolUtils.validateEnabledPool(pool, poolKey;
+        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
+        PoolUtils.validateEnabledPool(pool, poolKey);
         PoolCache.Props memory poolCache =  PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
 
@@ -90,7 +90,7 @@ library WithdrawUtils {
         PoolCache.Props memory poolCache,
         uint256 amount,
         uint256 userBalance
-    ) internal {
+    ) internal view{
         if (amount == 0) { 
             revert Errors.EmptyWithdrawAmounts(); 
         }

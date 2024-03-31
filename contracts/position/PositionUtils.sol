@@ -19,32 +19,25 @@ import "../oracle/OracleStoreUtils.sol";
 // @title PositionUtils
 // @dev Library for Position functions
 library PositionUtils {
-
     using Position for Position.Props;
     using Pool for Pool.Props;
-
-    // struct calculateUserTotalCollateralAndDebtVars {
-    //     uint256 i;
-    //     uint256 userTotalCollateralUsd;
-    //     uint256 userTotalDebtUsd;
-    // }
 
     function calculateUserTotalCollateralAndDebt(
         address account,
         DataStore dataStore
     ) internal view returns (uint256, uint256) {
-        uint256 positionsCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-        if(positionsCount == 0) return (0, 0);
+        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+        if(positionCount == 0) return (0, 0);
 
-        Position.Props memory positions[] = 
-            PositionStoreUtils.getAccountPositionCount(dataStore, account, 0, positionsCount);
-        calculateUserTotalCollateralAndDebtVars memory vars;
+        bytes32[] memory positionKeys = 
+            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
         uint256 userTotalCollateralUsd;
         uint256 userTotalDebtUsd;        
-        for (uint256 i = 0; i < positionsCount; i++) {
-
-            (uint256 userCollateralUsd, uint256 userDebtUsd) = 
-                calculateUserCollateralAndDebtInPosition(datatore, position[i]);
+        for (uint256 i = 0; i < positionKeys.length; i++) {
+            Position.Props memory position = PositionStoreUtils.get(dataStore, positionKeys[i]);
+            (   uint256 userCollateralUsd, 
+                uint256 userDebtUsd) = 
+                calculateUserCollateralAndDebtInPosition(dataStore, position);
             userTotalCollateralUsd += userCollateralUsd;
             userTotalDebtUsd += userDebtUsd;            
         }

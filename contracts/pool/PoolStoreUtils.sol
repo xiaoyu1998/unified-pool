@@ -252,14 +252,14 @@ library PoolStoreUtils {
         );
     }
 
-    function getPoolToken(DataStore dataStore, address key) external returns (uint256){
-        return dataStore.getUint(
+    function getPoolToken(DataStore dataStore, address key) external view returns (address){
+        return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_TOKEN))
         );       
     }
 
-    function getDebtToken(DataStore dataStore, address key) external returns (uint256){
-        return dataStore.getUint(
+    function getDebtToken(DataStore dataStore, address key) external view returns (address){
+        return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         );       
     }
@@ -271,7 +271,7 @@ library PoolStoreUtils {
         );        
     }
 
-    function getConfiguration(DataStore dataStore, address key) external returns (uint256){
+    function getConfiguration(DataStore dataStore, address key) external view returns (uint256){
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         );       

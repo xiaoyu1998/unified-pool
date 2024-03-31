@@ -70,9 +70,9 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		_burnScaled( from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 availableLiquidity = availableLiquidity();
-			 if (amount > availableLiquidity){
-			 	 revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
+	         uint256 _availableLiquidity = availableLiquidity();
+			 if (amount > _availableLiquidity){
+			 	 revert Errors.InsufficientAvailableLiquidity(amount, _availableLiquidity);
 			 }
 
 			 _transferOut(_underlyingAsset, to, amount);
@@ -101,7 +101,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	function _transfer(
 		address from, 
 		address to, 
-		uint256 amount, 
+		uint256 amount,
 		bool validate
 	) internal virtual {
 		//address underlyingAsset = _underlyingAsset;

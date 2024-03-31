@@ -81,7 +81,7 @@ library PositionStoreUtils {
         );
 
         dataStore.addBytes32(
-            Keys.accountPositionListKey(position.account()),
+            Keys.accountPositionListKey(position.account),
             key
         );
 
@@ -137,12 +137,12 @@ library PositionStoreUtils {
 
     }
 
-    function remove(DataStore dataStore, address key) external {
-        if (!dataStore.containsByte32(Keys.POSITION_LIST, key)) {
+    function remove(DataStore dataStore, bytes32 key, address account) external {
+        if (!dataStore.containsBytes32(Keys.POSITION_LIST, key)) {
             revert Errors.PositionNotFound(key);
         }
 
-        dataStore.removeAddress(
+        dataStore.removeBytes32(
             Keys.POSITION_LIST,
             key
         );

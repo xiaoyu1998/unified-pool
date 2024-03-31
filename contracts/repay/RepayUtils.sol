@@ -45,9 +45,6 @@ library RepayUtils {
     // @param account the repaying account
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
-        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, account);
-
-
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
@@ -57,10 +54,13 @@ library RepayUtils {
         uint256 repayAmount;
         uint256 collateralAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        if(params.amount > 0) {
+        if(params.amount > 0) { // reduce collateral to repay
             repayAmount = params.amount;
             collateralAmount = poolToken.balanceOfCollateral(account);
-        } else {
+            // if(repayAmount > collateralAmount){// all collateral to repay 
+            //     repayAmount = collateralAmount;
+            // }
+        } else {//transferin to repay
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
 
@@ -72,7 +72,8 @@ library RepayUtils {
             repayAmount         = debtAmount;      
         }
 
-        
+        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
         RepayUtils.validateRepay(
             account, 
             position, 
@@ -82,18 +83,16 @@ library RepayUtils {
             collateralAmount
         );
 
-        //Position.Props memory position = PoolStoreUtils.get(params.dataStore, account);
         poolCache.nextTotalScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
         if(debtToken.scaledBalanceOf(account) == 0) {
-            position.setPoolAsBorrowing(pool.keyId, false);
-            PositionStoreUtils.set(params.dataStore, account, position);
+            position.hasDebt = false; 
+            PositionStoreUtils.set(params.dataStore, positionKey, position);
         }
-
-        if(collateralAmount > 0) {
+        if(collateralAmount > 0) {//reduce collateral to repay
             poolToken.removeCollateral(account, repayAmount);
             if(poolToken.balanceOfCollateral(account) == 0) {
-                position.setPoolAsCollateral(pool.keyId, false);
-                PositionStoreUtils.set(params.dataStore, account, position);
+                position.hasCollateral = false;
+                PositionStoreUtils.set(params.dataStore, positionKey, position);
             }
         }
 
@@ -107,11 +106,11 @@ library RepayUtils {
 
         PoolStoreUtils.set(
             params.dataStore, 
-            params.underlyingAsset, 
+            poolKey, 
             pool
         );
 
-        if(extraAmountToRefund > 0) {
+        if(extraAmountToRefund > 0 && collateralAmount == 0) {//Refund extra
             poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
             poolToken.syncUnderlyingAssetBalance();
         }

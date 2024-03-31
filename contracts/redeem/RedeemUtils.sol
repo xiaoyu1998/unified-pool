@@ -55,11 +55,13 @@ library RedeemUtils {
         address account, 
         ExecuteRedeemParams calldata params
     ) external {
+        //TODO:should be just get the pooltoken and pool configuration only
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
 
-        Position.Props memory position = PositionStoreUtils.get(params.dataStore, account);
+        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+        Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
@@ -71,8 +73,12 @@ library RedeemUtils {
         IPoolToken poolToken = IPoolToken(pool.poolToken);
         poolToken.removeCollateral(account, params.amount);
         if(poolToken.balanceOfCollateral(account) == 0) {
-            position.setPoolAsCollateral(pool.keyId, false);
-            PositionStoreUtils.set(params.dataStore, account, position);
+            position.hasCollateral = false;
+            PositionStoreUtils.set(
+                params.dataStore, 
+                positionKey, 
+                position
+            );
         }
 
         poolToken.transferOutUnderlyingAsset(params.to, params.amount);
@@ -115,7 +121,7 @@ library RedeemUtils {
         (
             vars.userTotalCollateralUsd,
             vars.userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, position);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
 
         if (vars.userTotalCollateralUsd == 0) { 
             revert Errors.CollateralBalanceIsZero();
@@ -124,7 +130,6 @@ library RedeemUtils {
         vars.amountToRedeemUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
                                    .getPrice(pool.underlyingAsset)
                                    .rayMul(amountToRedeem);
-        // vars.healthFactor = userTotalCollateralUsd.wadDiv(userTotalDebtUsd + amountToRedeemUsd);
         vars.healthFactor = 
             (vars.userTotalDebtUsd + vars.amountToRedeemUsd).wadDiv(vars.userTotalCollateralUsd);
         vars.healthFactorCollateralRateThreshold =
