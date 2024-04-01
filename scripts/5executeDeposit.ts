@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidity, getDebt} from "../utils/helper";
+import { getPool, getLiquidity, getDebt, getPositions} from "../utils/helper";
 
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
@@ -13,16 +13,16 @@ async function main() {
     //approve allowances to the router
     const usdtAddress = getTokens("usdt");
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const supplyAmmount = expandDecimals(1000, 6);
-    await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)
+    const depositAmmount = expandDecimals(1000, 6);
+    await sendTxn(usdt.approve(router.target, depositAmmount), `usdt.approve(${router.target})`)
 
-    //execute supply
+    //execute deposit
     const poolUsdt = await getPool(usdtAddress); 
     const params: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, supplyAmmount]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmount]),
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
@@ -33,6 +33,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
+    console.log("positions",await getPositions(owner.address)); 
     console.log("usdt",await usdt.balanceOf(owner.address)); 
 
 }

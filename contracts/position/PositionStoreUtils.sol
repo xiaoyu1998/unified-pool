@@ -31,12 +31,12 @@ library PositionStoreUtils {
             return position;
         }
 
-        position.underlyingAsset = dataStore.getAddress(
-            keccak256(abi.encode(key, UNDERLYING_ASSET))
-        );
-
         position.account = dataStore.getAddress(
             keccak256(abi.encode(key, ACCOUNT))
+        );
+
+        position.underlyingAsset = dataStore.getAddress(
+            keccak256(abi.encode(key, UNDERLYING_ASSET))
         );
 
         position.entryLongPrice = dataStore.getUint(
@@ -86,13 +86,13 @@ library PositionStoreUtils {
         );
 
         dataStore.setAddress(
-            keccak256(abi.encode(key, UNDERLYING_ASSET)),
-            position.underlyingAsset
+            keccak256(abi.encode(key, ACCOUNT)),
+            position.account
         );
 
         dataStore.setAddress(
-            keccak256(abi.encode(key, ACCOUNT)),
-            position.account
+            keccak256(abi.encode(key, UNDERLYING_ASSET)),
+            position.underlyingAsset
         );
 
         dataStore.setUint(
@@ -153,11 +153,11 @@ library PositionStoreUtils {
         );
 
         dataStore.removeAddress(
-            keccak256(abi.encode(key, UNDERLYING_ASSET))
-        );
-
-        dataStore.removeAddress(
             keccak256(abi.encode(key, ACCOUNT))
+        );
+        
+        dataStore.removeAddress(
+            keccak256(abi.encode(key, UNDERLYING_ASSET))
         );
 
         dataStore.removeUint(

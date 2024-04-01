@@ -49,16 +49,4 @@ contract Reader {
         return positions;
     }
 
-    // function getPositions(DataStore dataStore, uint256 start, uint256 end) external view returns (Position.Props[] memory) {
-    //     address[] memory positionKeys = PositionStoreUtils.getPositionKeys(dataStore,  start, end);
-    //     Position.Props[] memory positions = new Position.Props[](positionKeys.length);
-    //     for (uint256 i; i < positionKeys.length; i++) {
-    //         address positionKey = positionKeys[i];
-    //         Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
-    //         positions[i] = position;
-    //     }
-
-    //     return positions;
-    // }
-
 }
