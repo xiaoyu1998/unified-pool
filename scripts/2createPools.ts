@@ -22,6 +22,7 @@ async function main() {
     //set pools configuration
     const config = await getContract("Config");
     const multicallArgs = [
+        config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(9, 26)]),
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [usdt, false]),
         config.interface.encodeFunctionData("setPoolPause", [usdt, false]),
@@ -29,6 +30,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolFeeFactor", [usdt, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt, expandDecimals(1, 8)]),
+        config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [uni, expandDecimals(8, 26)]),
         config.interface.encodeFunctionData("setPoolActive", [uni, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [uni, false]),
         config.interface.encodeFunctionData("setPoolPause", [uni, false]),

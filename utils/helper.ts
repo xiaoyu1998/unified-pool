@@ -48,7 +48,7 @@ export async function getLiquidity(poolToken, address) {
         scaledTotalSupply: await poolToken.scaledTotalSupply(),
         totalSupply:await poolToken.totalSupply(),
         totalCollateral: await poolToken.totalCollateral(),
-        availableLiquidity: await poolToken.totalUnderlyingAssetBalanceSubTotalCollateral()
+        availableLiquidity: await poolToken.availableLiquidity()
     };
 
     if (address) {
