@@ -45,9 +45,7 @@ export function parsePosition(position) {
     return p;
 }
 
-export async function getPositions(address) {
-    const dataStore = await getContract("DataStore");   
-    const reader = await getContract("Reader");  
+export async function getPositions(dataStore, reader, address) {
     const positions = await reader.getPositions(dataStore.target, address);
     let ps = [];
     for (let i = 0; i < positions.length; i++) {

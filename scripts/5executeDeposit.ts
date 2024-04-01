@@ -9,7 +9,8 @@ async function main() {
     
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const router = await getContract("Router");
-
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
     //approve allowances to the router
     const usdtAddress = getTokens("usdt");
     const usdt = await contractAt("MintableToken", usdtAddress);
@@ -33,7 +34,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
-    console.log("positions",await getPositions(owner.address)); 
+    console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("usdt",await usdt.balanceOf(owner.address)); 
 
 }
