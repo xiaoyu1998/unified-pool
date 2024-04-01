@@ -49,6 +49,11 @@ library Keys {
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
 
+    // @dev key for the account position list
+    // @param account the account for the list
+    function healthFactorCollateralRateThresholdKey(address underlyingAsset) internal pure returns (bytes32) {
+        return keccak256(abi.encode(HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD, underlyingAsset));
+    }
 
     // @dev key for the pool
     // @param underlyingAsset the underlying asset

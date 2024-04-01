@@ -51,8 +51,6 @@ library PositionUtils {
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
 
-        // Pool.Props memory pool = PoolStoreUtils.get(dataStore, position.underlyingAsset);
-
         uint256 assetPrice = 
             IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(position.underlyingAsset);
         uint256 userCollateralUsd;

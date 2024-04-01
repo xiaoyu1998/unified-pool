@@ -133,7 +133,7 @@ library RedeemUtils {
         vars.healthFactor = 
             (vars.userTotalDebtUsd + vars.amountToRedeemUsd).wadDiv(vars.userTotalCollateralUsd);
         vars.healthFactorCollateralRateThreshold =
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore);
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, pool.underlyingAsset);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverRedeem(
                 vars.userTotalCollateralUsd, 

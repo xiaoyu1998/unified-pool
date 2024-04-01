@@ -36,10 +36,10 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     }
 
     function setHealthFactorCollateralRateThreshold(
+        address underlyingAsset,
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
-
-        dataStore.setUint(Keys.HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD, threshold);
+        dataStore.setUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset), threshold);
     } 
     
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {

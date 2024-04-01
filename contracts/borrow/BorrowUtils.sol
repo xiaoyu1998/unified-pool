@@ -173,7 +173,7 @@ library BorrowUtils {
         vars.healthFactor = 
             (vars.userTotalDebtUsd + vars.amountToBorrowUsd).wadDiv(vars.userTotalCollateralUsd);
         vars.healthFactorCollateralRateThreshold = 
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore);
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, poolCache.underlyingAsset);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverNewBorrow(
                 vars.userTotalCollateralUsd, 
