@@ -27,25 +27,24 @@ async function main() {
   ];
   const tx = await config.multicall(multicallArgs);
 
-  writeTokenAddresses({"usdt": {
-    "address":usdt.target, 
-    "decimals":usdtDecimals, 
-    "oracle":usdtOracle.target,
-    "oracleDecimals":usdtOracleDecimal,
+  writeTokenAddresses({"USDT": {
+      "address":usdt.target, 
+      "decimals":usdtDecimals, 
+      "oracle":usdtOracle.target,
+      "oracleDecimals":usdtOracleDecimal,
   }});
 
-  writeTokenAddresses({"uni": {
-    "address":uni.target, 
-    "decimals":uniDecimals, 
-    "oracle":uniOracle.target,
-    "oracleDecimals":uniOracleDecimal,
+  writeTokenAddresses({"UNI": {
+      "address":uni.target, 
+      "decimals":uniDecimals, 
+      "oracle":uniOracle.target,
+      "oracleDecimals":uniOracleDecimal,
   }});
 
   // console.log(getTokens("usdt")["priceFeed"]);
-
   console.log(readTokenAddresses());
-  console.log("usdt", await usdt.balanceOf(owner.address)); 
-  console.log("uni", await uni.balanceOf(owner.address)); 
+  console.log("USDT", await usdt.balanceOf(owner.address)); 
+  console.log("UNI", await uni.balanceOf(owner.address)); 
 }
 
 

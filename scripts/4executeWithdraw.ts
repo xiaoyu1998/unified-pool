@@ -10,7 +10,7 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
 
     //execute withdraw
-    const usdtAddress = getTokens("usdt")["address"];
+    const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const poolUsdt = await getPool(usdtAddress); 
     const withdrawAmmount = expandDecimals(1000, 6);
