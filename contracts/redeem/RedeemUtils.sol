@@ -127,15 +127,11 @@ library RedeemUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        // vars.amountToRedeemUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-        //                            .getPrice(pool.underlyingAsset)
-        //                            .rayMul(amountToRedeem);
-
         vars.amountToRedeemUsd = OracleUtils.getPrice(dataStore, pool.underlyingAsset)
                                             .rayMul(amountToRedeem);
 
         vars.healthFactor = 
-            (vars.userTotalDebtUsd + vars.amountToRedeemUsd).wadDiv(vars.userTotalCollateralUsd);
+            (vars.userTotalCollateralUsd).wadDiv(vars.userTotalDebtUsd + vars.amountToRedeemUsd);
         vars.healthFactorCollateralRateThreshold =
             ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, pool.underlyingAsset);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {

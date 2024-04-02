@@ -61,7 +61,6 @@ async function main() {
                 label: symbol,
             }); 
         };
-
         await sendTxn(multicall.aggregate3(multicallArgs), "multicall.aggregate3(oracle.setAnswer)");
     }
 }

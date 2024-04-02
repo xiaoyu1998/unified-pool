@@ -166,15 +166,11 @@ library BorrowUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        // vars.amountToBorrowUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-        //                                .getPrice(poolCache.underlyingAsset)
-        //                                .rayMul(amountToBorrow);
-
         vars.amountToBorrowUsd = OracleUtils.getPrice(dataStore, poolCache.underlyingAsset)
                                             .rayMul(amountToBorrow);
 
         vars.healthFactor = 
-            (vars.userTotalDebtUsd + vars.amountToBorrowUsd).wadDiv(vars.userTotalCollateralUsd);
+            (vars.userTotalCollateralUsd).wadDiv(vars.userTotalDebtUsd + vars.amountToBorrowUsd);
         vars.healthFactorCollateralRateThreshold = 
             ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, poolCache.underlyingAsset);
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
