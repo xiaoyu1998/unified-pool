@@ -14,7 +14,7 @@ Run local node
 ```shell
 npx hardhat node
 ```
-Deplopy contracts
+Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```

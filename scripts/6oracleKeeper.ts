@@ -82,24 +82,6 @@ async function main() {
 
 }
 
-// async function main() {
-
-//     const usdcPriceFeed = await contractAtOptions("MockPriceFeed", "0x9A94fe1A77d22b8938f8fbC9c484eBC7d868c48d") 
-//     // const wbtcPriceFeed = await contractAtOptions("MockPriceFeed", "0x5d81d8e6625F01CcF7678Fea5018b2acE6BBbD0e");
-//     // const wethPriceFeed = await contractAtOptions("MockPriceFeed", "0x703603edf3e7797ea0839e8b2cEb480996827c4E");
-//     // const uniPriceFeed = await contractAtOptions("MockPriceFeed", "0x8aE27845f6d3Ed50Cc53f32F11a6165aeBdEF35F");
-//     // const solPriceFeed = await contractAtOptions("MockPriceFeed", "0x7b41D154205DeC7E96437ddf89b804CED23196A7");
-//      while(true){
-//       //await sendTxn(usdcPriceFeed.setAnswer(bigNumberify(800000000)), "usdcPriceFeed.setLatestAnswer(answer)");
-//       //await sendTxn(usdcPriceFeed.setAnswer(expandDecimals(1, 8)), "usdcPriceFeed.setLatestAnswer(answer)");
-//       // await sendTxn(wbtcPriceFeed.setAnswer(expandDecimals(50000, 8)), "wbtcPriceFeed.setLatestAnswer(answer)");
-//       // await sendTxn(wethPriceFeed.setAnswer(expandDecimals(3000, 8)), "wethPriceFeed.setLatestAnswer(answer)");
-//       // await sendTxn(uniPriceFeed.setAnswer(expandDecimals(8, 8)), "uniPriceFeed.setLatestAnswer(answer)");
-//       // await sendTxn(solPriceFeed.setAnswer(expandDecimals(100, 8)), "solPriceFeed.setLatestAnswer(answer)");
-//       }
-
-// }
-
 main()
   .then(() => {
     process.exit(0);
