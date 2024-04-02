@@ -17,8 +17,8 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
-import "../oracle/IPriceOracleGetter.sol";
-import "../oracle/OracleStoreUtils.sol";
+//import "../oracle/IPriceFeed.sol";
+import "../oracle/OracleUtils.sol";
 
 import "../config/ConfigStoreUtils.sol";
 
@@ -141,7 +141,6 @@ library BorrowUtils {
         if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
         if (vars.isFrozen)          { revert Errors.PoolIsFrozen();   }   
         if (!vars.borrowingEnabled) { revert Errors.PoolIsNotEnabled();   } 
-   
 
         //validate pool borrow capacity
         vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
@@ -167,9 +166,13 @@ library BorrowUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        vars.amountToBorrowUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-                                       .getPrice(poolCache.underlyingAsset)
-                                       .rayMul(amountToBorrow);
+        // vars.amountToBorrowUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+        //                                .getPrice(poolCache.underlyingAsset)
+        //                                .rayMul(amountToBorrow);
+
+        vars.amountToBorrowUsd = OracleUtils.getPrice(dataStore, poolCache.underlyingAsset)
+                                            .rayMul(amountToBorrow);
+
         vars.healthFactor = 
             (vars.userTotalDebtUsd + vars.amountToBorrowUsd).wadDiv(vars.userTotalCollateralUsd);
         vars.healthFactorCollateralRateThreshold = 

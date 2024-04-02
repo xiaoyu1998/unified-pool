@@ -5,8 +5,8 @@ import { parsePool } from "../utils/helper";
 
 async function main() {
     //create pools
-    const usdt = getTokens("usdt");
-    const uni  = getTokens("uni");
+    const usdt = getTokens("usdt")["address"];
+    const uni  = getTokens("uni")["address"];
     const configuration = 1;//TODO:should be assgined to a reasonable value
     const poolFactory = await getContract("PoolFactory");
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");

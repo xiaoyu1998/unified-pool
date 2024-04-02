@@ -3,14 +3,14 @@ import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { feeUtilsModule } from "./deployFeeUtils"
 import { configStoreUtilsModule } from "./deployConfigStoreUtils"
-import { oracleStoreUtilsModule } from "./deployOracleStoreUtils"
+import { oracleUtilsModule } from "./deployOracleUtils"
 
 export const redeemUtilsModule = buildModule("RedeemUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
   //  const { feeUtils } = m.useModule(feeUtilsModule)
     const { configStoreUtils } = m.useModule(configStoreUtilsModule)
-    const { oracleStoreUtils } = m.useModule(oracleStoreUtilsModule)
+    const { oracleUtils } = m.useModule(oracleUtilsModule)
 
     const redeemUtils = m.library("RedeemUtils", {
         libraries: {
@@ -18,7 +18,7 @@ export const redeemUtilsModule = buildModule("RedeemUtils", (m) => {
             PositionStoreUtils: positionStoreUtils,
    //         FeeUtils: feeUtils,
             ConfigStoreUtils: configStoreUtils,
-            OracleStoreUtils: oracleStoreUtils,
+            OracleUtils: oracleUtils,
         },      
     });
 

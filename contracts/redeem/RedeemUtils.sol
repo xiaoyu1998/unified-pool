@@ -19,8 +19,8 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
-import "../oracle/IPriceOracleGetter.sol";
-import "../oracle/OracleStoreUtils.sol";
+//import "../oracle/IPriceFeed.sol";
+import "../oracle/OracleUtils.sol";
 
 import "../config/ConfigStoreUtils.sol";
 
@@ -127,9 +127,13 @@ library RedeemUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        vars.amountToRedeemUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
-                                   .getPrice(pool.underlyingAsset)
-                                   .rayMul(amountToRedeem);
+        // vars.amountToRedeemUsd = IPriceOracleGetter(OracleStoreUtils.get(dataStore))
+        //                            .getPrice(pool.underlyingAsset)
+        //                            .rayMul(amountToRedeem);
+
+        vars.amountToRedeemUsd = OracleUtils.getPrice(dataStore, pool.underlyingAsset)
+                                            .rayMul(amountToRedeem);
+
         vars.healthFactor = 
             (vars.userTotalDebtUsd + vars.amountToRedeemUsd).wadDiv(vars.userTotalCollateralUsd);
         vars.healthFactorCollateralRateThreshold =

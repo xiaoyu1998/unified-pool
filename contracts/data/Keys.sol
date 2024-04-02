@@ -39,6 +39,9 @@ library Keys {
     // @dev key for the oracle
     bytes32 public constant ORACLE = keccak256(abi.encode("ORACLE"));
 
+    // @dev key for the precision
+    bytes32 public constant ORACLE_DECIMALS = keccak256(abi.encode("ORACLE_DECIMALS"));
+
     // @dev key for the Health Factor Collateral RateT hreshold
     bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
 
@@ -49,8 +52,20 @@ library Keys {
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
 
-    // @dev key for the account position list
-    // @param account the account for the list
+    // @dev key for the health Factor Collateral Rate Threshold
+    // @param underlyingAsset the underlyingAsset for the threshold
+    function oracleDecimalsKey(address underlyingAsset) internal pure returns (bytes32) {
+        return keccak256(abi.encode(ORACLE_DECIMALS, underlyingAsset));
+    }
+
+    // @dev key for the oracle key
+    // @param underlyingAsset the underlyingAsset for the oracle key
+    function oracleKey(address underlyingAsset) internal pure returns (bytes32) {
+        return keccak256(abi.encode(ORACLE, underlyingAsset));
+    }
+
+    // @dev key for the health Factor Collateral Rate Threshold
+    // @param underlyingAsset the underlyingAsset for the threshold
     function healthFactorCollateralRateThresholdKey(address underlyingAsset) internal pure returns (bytes32) {
         return keccak256(abi.encode(HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD, underlyingAsset));
     }

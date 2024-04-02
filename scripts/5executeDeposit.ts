@@ -11,8 +11,9 @@ async function main() {
     const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
+    
     //approve allowances to the router
-    const usdtAddress = getTokens("usdt");
+    const usdtAddress = getTokens("usdt")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const depositAmmount = expandDecimals(1000, 6);
     await sendTxn(usdt.approve(router.target, depositAmmount), `usdt.approve(${router.target})`)

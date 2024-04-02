@@ -10,7 +10,10 @@ import "../role/RoleModule.sol";
 import "../utils/BasicMulticall.sol";
 import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolUtils.sol";
+import "../oracle/OracleStoreUtils.sol";
+
 import "../utils/Printer.sol";
+
 // @title Config
 contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     using PoolConfigurationUtils for uint256;
@@ -34,6 +37,20 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
 
         _;
     }
+
+    function setOracle(
+        address underlyingAsset,
+        address oracle
+    ) external onlyConfigKeeper nonReentrant {
+        OracleStoreUtils.set(dataStore, underlyingAsset, oracle);
+    } 
+
+    function setOracleDecimals(
+        address underlyingAsset,
+        uint256 precision
+    ) external onlyConfigKeeper nonReentrant {
+        OracleStoreUtils.setOracleDecimals(dataStore, underlyingAsset, precision);
+    } 
 
     function setHealthFactorCollateralRateThreshold(
         address underlyingAsset,

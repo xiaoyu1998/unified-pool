@@ -11,6 +11,7 @@ async function main() {
     const router = await getContract("Router");
 
     //execute borrow
+    const usdtAddress = getTokens("usdt")["address"];
     const poolUsdt = await getPool(usdtAddress); 
     const borrowAmmount = expandDecimals(1000, 6);
     const params: DepositUtils.DepositParamsStruct = {

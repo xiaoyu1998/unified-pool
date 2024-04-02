@@ -10,6 +10,9 @@ import "../pool/Pool.sol";
 import "../position/PositionStoreUtils.sol";
 import "../position/Position.sol";
 
+import "../oracle/OracleStoreUtils.sol";
+
+
 // @title Reader
 // @dev Library for read functions
 contract Reader {
@@ -47,6 +50,14 @@ contract Reader {
         }
 
         return positions;
+    }
+
+    function getOracle(DataStore dataStore, address underlyingAsset) external view returns (address) {
+        return OracleStoreUtils.get(dataStore, underlyingAsset);
+    }
+
+    function getOracleDecimals(DataStore dataStore, address underlyingAsset) external view returns (uint256) {
+        return OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
     }
 
 }

@@ -13,8 +13,8 @@ import "../token/IDebtToken.sol";
 import "./Position.sol";
 import "./PositionStoreUtils.sol";
 
-import "../oracle/IPriceOracleGetter.sol";
-import "../oracle/OracleStoreUtils.sol";
+import "../oracle/IPriceFeed.sol";
+import "../oracle/OracleUtils.sol";
 
 // @title PositionUtils
 // @dev Library for Position functions
@@ -51,8 +51,11 @@ library PositionUtils {
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
 
-        uint256 assetPrice = 
-            IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(position.underlyingAsset);
+        // uint256 assetPrice = 
+        //     IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(position.underlyingAsset);
+
+        uint256 assetPrice = OracleUtils.getPrice(dataStore, position.underlyingAsset);
+
         uint256 userCollateralUsd;
         uint256 userDebtUsd;
 

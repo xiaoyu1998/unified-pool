@@ -94,10 +94,49 @@ export async function getContract(name) {
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const router = await getContract("Router");
 
+    if (name == "OracleUtils") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                OracleStoreUtils: oracleStoreUtils,
+            },         
+        });
+    }
+
+    if (name == "PoolFactory") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+            },         
+        });
+    }
+
+
+    if (name == "Config") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                OracleStoreUtils: oracleStoreUtils,
+            },         
+        });
+    }
+
+    if (name == "Reader") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils.target,
+                PositionStoreUtils: positionStoreUtils.target,
+                OracleStoreUtils: oracleStoreUtils,
+            },         
+        });
+    }
 
     if (name == "SupplyHandler") {
-       const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
-       const supplyUtils = await contractAtOptions("SupplyUtils", supplyUtilsAddress, {
+        const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
+        const supplyUtils = await contractAtOptions("SupplyUtils", supplyUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 FeeUtils: feeUtils,
@@ -113,8 +152,8 @@ export async function getContract(name) {
     }
 
     if (name == "WithdrawHandler") {
-       const withdrawUtilsAddress = getDeployedContractAddresses("WithdrawUtils");
-       const withdrawUtils = await contractAtOptions("WithdrawUtils", withdrawUtilsAddress, {
+        const withdrawUtilsAddress = getDeployedContractAddresses("WithdrawUtils");
+        const withdrawUtils = await contractAtOptions("WithdrawUtils", withdrawUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 FeeUtils: feeUtils,
@@ -129,8 +168,8 @@ export async function getContract(name) {
     }
 
     if (name == "DepositHandler") {
-       const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
-       const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
+        const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
+        const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -145,14 +184,15 @@ export async function getContract(name) {
     }
 
     if (name == "BorrowHandler") {
-       const borrowUtilsAddress = getDeployedContractAddresses("BorrowUtils");
-       const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
+        const oracleUtils = await getContract("OracleUtils");
+        const borrowUtilsAddress = getDeployedContractAddresses("BorrowUtils");
+        const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 FeeUtils: feeUtils,
                 ConfigStoreUtils: configStoreUtils,
-                OracleStoreUtils: oracleStoreUtils,
+                OracleUtils: oracleUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -164,8 +204,8 @@ export async function getContract(name) {
     }
 
     if (name == "RepayHandler") {
-       const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
-       const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
+        const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
+        const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -181,13 +221,14 @@ export async function getContract(name) {
     }
 
     if (name == "RedeemHandler") {
-       const redeemUtilsAddress = getDeployedContractAddresses("RedeemUtils");
-       const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
+        const oracleUtils = await getContract("OracleUtils");
+        const redeemUtilsAddress = getDeployedContractAddresses("RedeemUtils");
+        const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 ConfigStoreUtils: configStoreUtils,
-                OracleStoreUtils: oracleStoreUtils,
+                OracleUtils: oracleUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -220,34 +261,6 @@ export async function getContract(name) {
         ]);       
     }
 
-    if (name == "PoolFactory") {
-        const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
-    }
-
-
-    if (name == "Config") {
-        const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
-    }
-
-    if (name == "Reader") {
-        const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils.target,
-                PositionStoreUtils: positionStoreUtils.target
-            },         
-        });
-    }
 }
 
 export async function getContractAt(name, address) {

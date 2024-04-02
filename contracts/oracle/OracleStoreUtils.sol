@@ -8,15 +8,24 @@ import "../data/Keys.sol";
 // @title OracleStoreUtils
 library OracleStoreUtils {
 
-    function get(DataStore dataStore) public view returns (address) {
-        return dataStore.getAddress(
-            keccak256(abi.encode(Keys.ORACLE))
+    function get(DataStore dataStore, address underlyingAsset) public view returns (address) {
+        return dataStore.getAddress(Keys.oracleKey(underlyingAsset));
+    }
+
+    function set(DataStore dataStore, address underlyingAsset, address oracle) external {
+         dataStore.setAddress(
+            Keys.oracleKey(underlyingAsset),
+            oracle
         );
     }
 
-    function set(DataStore dataStore, address oracle) external {
-         dataStore.setAddress(
-            Keys.ORACLE,
+    function getOracleDecimals(DataStore dataStore, address underlyingAsset) public view returns (uint256) {
+        return dataStore.getUint(Keys.oracleDecimalsKey(underlyingAsset));
+    }
+
+    function setOracleDecimals(DataStore dataStore, address underlyingAsset, uint256 oracle) external {
+         dataStore.setUint(
+            Keys.oracleDecimalsKey(underlyingAsset),
             oracle
         );
     }
