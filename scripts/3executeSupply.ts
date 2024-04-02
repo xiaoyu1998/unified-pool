@@ -11,9 +11,10 @@ async function main() {
     const router = await getContract("Router");
 
     //approve allowances to the router
+    const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const supplyAmmount = expandDecimals(1000, 6);
+    const supplyAmmount = expandDecimals(1000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)
 
     //execute supply
