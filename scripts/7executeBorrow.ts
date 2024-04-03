@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidity, getDebt} from "../utils/helper";
+import { getPool, getLiquidity, getDebt, getPositions} from "../utils/helper";
 
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
@@ -9,6 +9,8 @@ async function main() {
     
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const router = await getContract("Router");
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
 
     //execute borrows
     const usdtDecimals = 6;
@@ -32,8 +34,10 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
+    console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
     console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
+    console.log("price",await reader.getPrice(dataStore, usdtAddress)); 
 }
 
 

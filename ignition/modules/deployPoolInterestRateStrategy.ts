@@ -3,9 +3,9 @@ import { hashString } from "../../utils/hash";
 import { bigNumberify, expandDecimals } from "../../utils/math";
 
 export const poolInterestRateStrategyModule = buildModule("PoolInterestRateStrategy", (m) => {
-    const optimalUsageRatio = bigNumberify(8)*expandDecimals(1, 26);
-    const rateSlope1 = bigNumberify(5)*expandDecimals(1, 26);
-    const rateSlope2 = bigNumberify(5)*expandDecimals(1, 26);
+    const optimalUsageRatio = expandDecimals(8, 26);
+    const rateSlope1 = expandDecimals(5, 26);
+    const rateSlope2 = expandDecimals(5, 26);
 
     const poolInterestRateStrategy = m.contract("PoolInterestRateStrategy", [
         optimalUsageRatio,

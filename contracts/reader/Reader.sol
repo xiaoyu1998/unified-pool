@@ -10,7 +10,8 @@ import "../pool/Pool.sol";
 import "../position/PositionStoreUtils.sol";
 import "../position/Position.sol";
 
-import "../oracle/OracleStoreUtils.sol";
+//import "../oracle/OracleStoreUtils.sol";
+import "../oracle/OracleUtils.sol";
 
 
 // @title Reader
@@ -52,12 +53,16 @@ contract Reader {
         return positions;
     }
 
-    function getOracle(DataStore dataStore, address underlyingAsset) external view returns (address) {
-        return OracleStoreUtils.get(dataStore, underlyingAsset);
-    }
+    // function getOracle(DataStore dataStore, address underlyingAsset) external view returns (address) {
+    //     return OracleStoreUtils.get(dataStore, underlyingAsset);
+    // }
 
-    function getOracleDecimals(DataStore dataStore, address underlyingAsset) external view returns (uint256) {
-        return OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
+    // function getOracleDecimals(DataStore dataStore, address underlyingAsset) external view returns (uint256) {
+    //     return OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
+    // }
+
+    function getPrice(DataStore dataStore, address underlyingAsset) external view returns (uint256) {
+        return OracleUtils.getPrice(dataStore, underlyingAsset);
     }
 
 }

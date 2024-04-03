@@ -11,7 +11,7 @@ import "./OracleStoreUtils.sol";
 import "./IPriceFeed.sol";
 import "../utils/WadRayMath.sol";
 
-// @title OracleStoreUtils
+// @title OracleUtils
 library OracleUtils {
 
     function getPrice(DataStore dataStore, address underlyingAsset) public view returns (uint256) {
