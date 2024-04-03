@@ -77,7 +77,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
 
         	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
         	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
-              
+
               Printer.log("availableLiquidity", vars.availableLiquidity);
               Printer.log("availableLiquidityAddTotalDebt", vars.availableLiquidityAddTotalDebt);
       	}
@@ -95,11 +95,11 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
                   .rayDiv(OPTIMAL_USAGE_RATIO);
       	}
 
-        Printer.log("currentBorrowRate", vars.currentBorrowRate);
+        // Printer.log("currentBorrowRate", vars.currentBorrowRate);
 
         //calculate Liquidity Rate
         if (vars.totalDebt != 0) {
-            vars.currentLiquidityRate = vars.borrowUsageRatio.percentMul(
+            vars.currentLiquidityRate = vars.currentBorrowRate.rayMul(vars.borrowUsageRatio).percentMul(
                 PercentageMath.PERCENTAGE_FACTOR - params.feeFactor
             );	
         }
