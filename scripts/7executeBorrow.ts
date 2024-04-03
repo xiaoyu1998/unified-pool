@@ -14,7 +14,7 @@ async function main() {
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     console.log(usdtAddress);
-    
+
     const poolUsdt = await getPool(usdtAddress); 
     const borrowAmmount = expandDecimals(1000, usdtDecimals);
     const params: DepositUtils.DepositParamsStruct = {
@@ -22,7 +22,7 @@ async function main() {
         amount: borrowAmmount,
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
 

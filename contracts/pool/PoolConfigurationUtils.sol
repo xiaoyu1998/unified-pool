@@ -131,7 +131,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & PAUSED_MASK) |
                (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
     }
-
       
     // @notice Gets the paused state of the pool
     // @param self The pool configuration
@@ -142,6 +141,26 @@ library PoolConfigurationUtils {
         return (poolConfigration & ~PAUSED_MASK) != 0;
     }
 
+    // @notice Sets the borrowing state of the pool
+    // @param self The pool configuration
+    // @param paused The paused state
+    function setBorrowingEnabled(
+        uint256 poolConfigration, 
+        bool enabled
+    ) internal pure returns (uint256) {
+        return (poolConfigration & BORROWING_MASK) |
+               (uint256(enabled ? 1 : 0) << BORROWING_ENABLED_START_BIT_POSITION);
+    }
+
+    
+    // @notice Gets the borrowing state of the pool
+    // @param self The pool configuration
+    // @return The borrowing state
+    function getBorrowingEnabled(
+        uint256 poolConfigration
+    ) internal pure returns (bool) {
+        return (poolConfigration & ~BORROWING_MASK) != 0;
+    }
 
     
     // @notice Sets the decimals of the underlying asset of the pool

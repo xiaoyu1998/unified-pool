@@ -28,6 +28,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [usdt, false]),
         config.interface.encodeFunctionData("setPoolPause", [usdt, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [usdt, true]),
         config.interface.encodeFunctionData("setPoolDecimals", [usdt, usdtDecimals]),
         config.interface.encodeFunctionData("setPoolFeeFactor", [usdt, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
@@ -36,6 +37,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolActive", [uni, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [uni, false]),
         config.interface.encodeFunctionData("setPoolPause", [uni, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [uni, true]),
         config.interface.encodeFunctionData("setPoolDecimals", [uni, uniDecimals]),
         config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),//100,000,000

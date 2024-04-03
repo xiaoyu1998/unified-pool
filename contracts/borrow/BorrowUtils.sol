@@ -97,7 +97,6 @@ library BorrowUtils {
         );
     }
 
-
     struct ValidateBorrowLocalVars {
         uint256 totalDebt;
         uint256 poolDecimals;
@@ -125,14 +124,9 @@ library BorrowUtils {
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal view {
-        if (amountToBorrow == 0) { 
-            revert Errors.EmptyBorrowAmounts(); 
-        }
-
         ValidateBorrowLocalVars memory vars;
         //validate pool configuration
-        (
-            vars.isActive,
+        (   vars.isActive,
             vars.isFrozen,
             vars.borrowingEnabled,
             vars.isPaused
@@ -141,6 +135,11 @@ library BorrowUtils {
         if (vars.isPaused)          { revert Errors.PoolIsPaused();   }  
         if (vars.isFrozen)          { revert Errors.PoolIsFrozen();   }   
         if (!vars.borrowingEnabled) { revert Errors.PoolIsNotEnabled();   } 
+
+
+        if (amountToBorrow == 0) { 
+            revert Errors.EmptyBorrowAmounts(); 
+        }
 
         //validate pool borrow capacity
         vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
@@ -151,7 +150,7 @@ library BorrowUtils {
                 poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
                 amountToBorrow;
             unchecked {
-                if (vars.totalDebt <= vars.borrowCapacity) {
+                if (vars.totalDebt > vars.borrowCapacity) {
                     revert Errors.BorrowCapacityExceeded(vars.totalDebt, vars.borrowCapacity);
                 }
             }

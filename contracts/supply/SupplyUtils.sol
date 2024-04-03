@@ -88,17 +88,18 @@ library SupplyUtils {
         PoolCache.Props memory poolCache,
         uint256 amount
     ) internal view {
-        if (amount == 0) { 
-            revert Errors.EmptySupplyAmounts(); 
-        }
-
         (   bool isActive,
             bool isFrozen, 
-            bool isPaused,
+            ,
+            bool isPaused
          ) = poolCache.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(); }  
         if (isPaused)  { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
+        if (isFrozen)  { revert Errors.PoolIsFrozen();   } 
+
+        if (amount == 0) { 
+            revert Errors.EmptySupplyAmounts(); 
+        }  
 
         uint256 supplyCapacity = poolCache.configuration.getSupplyCapacity()
                                  * (10 ** poolCache.configuration.getDecimals());

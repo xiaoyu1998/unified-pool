@@ -80,6 +80,13 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         PoolStoreUtils.setConfiguration(dataStore, key, configuration);
     }  
 
+    function setPoolBorrowingEnabled(address underlyingAsset, bool enabled) external onlyConfigKeeper nonReentrant {
+        address key = PoolUtils.getKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, key);
+        configuration = configuration.setBorrowingEnabled(enabled);
+        PoolStoreUtils.setConfiguration(dataStore, key, configuration);
+    } 
+
     function setPoolDecimals(address underlyingAsset, uint256 decimals) external onlyConfigKeeper nonReentrant {
         address key = PoolUtils.getKey(underlyingAsset);
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, key);

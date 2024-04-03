@@ -109,6 +109,16 @@ library RedeemUtils {
         Pool.Props memory pool,
         uint256 amountToRedeem
     ) internal view {
+        (   bool isActive,
+            bool isFrozen, 
+            ,
+            bool isPaused
+         ) = pool.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(); }  
+        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen();   }  
+
+
         PositionUtils.validateEnabledPosition(position);
 
         if(amountToRedeem == 0) {

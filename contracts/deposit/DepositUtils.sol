@@ -93,19 +93,18 @@ library DepositUtils {
         Pool.Props memory pool,
         uint256 amount
     ) internal view {
-       
-        if (amount == 0) { 
-            revert Errors.EmptySupplyAmounts(); 
-        }
-
         (   bool isActive,
             bool isFrozen, 
-            bool isPaused,
+            ,
+            bool isPaused
          ) = pool.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(); }  
         if (isPaused)  { revert Errors.PoolIsPaused();   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
 
+        if (amount == 0) { 
+            revert Errors.EmptySupplyAmounts(); 
+        }
     }
     
 }

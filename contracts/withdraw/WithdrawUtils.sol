@@ -91,6 +91,15 @@ library WithdrawUtils {
         uint256 amount,
         uint256 userBalance
     ) internal view{
+        (   bool isActive,
+            , 
+            ,
+            bool isPaused
+        ) = poolCache.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(); }  
+        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+
+
         if (amount == 0) { 
             revert Errors.EmptyWithdrawAmounts(); 
         }
@@ -98,15 +107,6 @@ library WithdrawUtils {
         if (amount > userBalance) {
             revert Errors.InsufficientUserBalance(amount, userBalance);
         }
-
-        (
-            bool isActive,
-            , 
-            bool isPaused,
-        ) = poolCache.configuration.getFlags();
-
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
 
         uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
         if (amount > availableLiquidity) {

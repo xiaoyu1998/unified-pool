@@ -131,6 +131,15 @@ library RepayUtils {
         uint256 debtAmount,
         uint256 collateralAmount
     ) internal pure {
+        (   bool isActive,
+            bool isFrozen, 
+            ,
+            bool isPaused
+         ) = pool.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(); }  
+        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen();   }  
+
         PositionUtils.validateEnabledPosition(position);
 
         if(repayAmount == 0) {
