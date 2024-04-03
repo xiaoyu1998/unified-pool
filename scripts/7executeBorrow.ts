@@ -13,6 +13,8 @@ async function main() {
     //execute borrows
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
+    console.log(usdtAddress);
+    
     const poolUsdt = await getPool(usdtAddress); 
     const borrowAmmount = expandDecimals(1000, usdtDecimals);
     const params: DepositUtils.DepositParamsStruct = {

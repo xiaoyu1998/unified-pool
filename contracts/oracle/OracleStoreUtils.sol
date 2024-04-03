@@ -13,7 +13,7 @@ library OracleStoreUtils {
     }
 
     function set(DataStore dataStore, address underlyingAsset, address oracle) external {
-         dataStore.setAddress(
+        dataStore.setAddress(
             Keys.oracleKey(underlyingAsset),
             oracle
         );

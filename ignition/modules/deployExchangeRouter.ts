@@ -14,6 +14,7 @@ import { poolFactoryModule } from "./deployPoolFactory"
 import { poolInterestRateStrategyModule } from "./deployPoolInterestRateStrategy"
 import { readerModule } from "./deployReader"
 import { multicallModule } from "./deployMulticall"
+import { bankModule } from "./deployBank"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
@@ -33,6 +34,7 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { poolInterestRateStrategy } = m.useModule(poolInterestRateStrategyModule) ;  
     const { reader } = m.useModule(readerModule);
     const { multicall } = m.useModule(multicallModule);
+    const { bank } = m.useModule(bankModule);
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,

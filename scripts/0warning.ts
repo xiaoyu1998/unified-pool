@@ -8,22 +8,11 @@ async function main() {
     const [owner] = await ethers.getSigners();
 
 
-    const poolStoreUtilsAddress = getDeployedContractAddresses("PositionStoreUtils");
-    return await contractAt("PositionStoreUtils", poolStoreUtilsAddress);
+    // const oracleStoreUtils = getDeployedContractAddresses("OracleStoreUtils");
+    // return await contractAt("OracleStoreUtils", oracleStoreUtils);
 
-    // const configAddress = getDeployedContractAddresses("Config");
-    // return await contractAtOptions("Config", configAddress, {
-    //     libraries: {
-    //         PoolStoreUtils: poolStoreUtils,
-    //     },         
-    // });  
-
-    // const dataStore = getDeployedContractAddresses("DataStore");
-    // return await contractAtOptions("DataStore", dataStore);
-
-    // const router = getDeployedContractAddresses("ExchangeRouter");
-    // return await contractAtOptions("BaseRouter", router);
-
+    const artifact = await hre.artifacts.readArtifact("OracleStoreUtils");
+    const oracle = new ethers.Interface(artifact.abi);
 
 
 }

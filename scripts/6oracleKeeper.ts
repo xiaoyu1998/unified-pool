@@ -49,7 +49,7 @@ async function main() {
             });
         });
 
-        // console.log(prices);
+        console.log(prices);
         const multicallArgs = [];
         const artifact = await hre.artifacts.readArtifact("MockPriceFeed");
         const oracle = new hre.ethers.Interface(artifact.abi);

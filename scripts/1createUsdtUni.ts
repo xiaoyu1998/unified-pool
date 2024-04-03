@@ -7,8 +7,7 @@ async function main() {
   const usdtDecimals = 6;
   const usdtOracleDecimal = 24;
   const uniDecimals = 18;
-  const uniOracleDecimal = 24;
-
+  const uniOracleDecimal = 12;
   const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
   const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
   await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, usdtDecimals)), `usdt.mint(${owner.address})`)
