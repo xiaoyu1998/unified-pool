@@ -13,7 +13,7 @@ async function main() {
     //execute borrows
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
-    console.log(usdtAddress);
+    const usdt = await contractAt("MintableToken", usdtAddress);
 
     const poolUsdt = await getPool(usdtAddress); 
     const borrowAmmount = expandDecimals(1000, usdtDecimals);
@@ -32,7 +32,8 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
-
+    console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
+    console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
 }
 
 

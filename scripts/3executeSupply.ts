@@ -14,7 +14,7 @@ async function main() {
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const supplyAmmount = expandDecimals(1000, usdtDecimals);
+    const supplyAmmount = expandDecimals(8000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)
 
     //execute supply
@@ -35,7 +35,8 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
-    console.log("usdt",await usdt.balanceOf(owner.address)); 
+    console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
+    console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
 
 }
 

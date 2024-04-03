@@ -42,8 +42,8 @@ async function main() {
 
   // console.log(getTokens("usdt")["priceFeed"]);
   console.log(readTokenAddresses());
-  console.log("USDT", await usdt.balanceOf(owner.address)); 
-  console.log("UNI", await uni.balanceOf(owner.address)); 
+  console.log("userUSDT", await usdt.balanceOf(owner.address)); 
+  console.log("userUNI", await uni.balanceOf(owner.address)); 
 }
 
 

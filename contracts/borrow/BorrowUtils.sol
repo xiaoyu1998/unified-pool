@@ -87,7 +87,7 @@ library BorrowUtils {
             poolCache, 
             params.underlyingAsset, 
             0, 
-            params.amount
+            0 //liquidity already out while move to collateral
         );
 
         PoolStoreUtils.set(
@@ -124,6 +124,7 @@ library BorrowUtils {
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal view {
+        Printer.log("-------------------------validateBorrow--------------------------");
         ValidateBorrowLocalVars memory vars;
         //validate pool configuration
         (   vars.isActive,
@@ -145,6 +146,10 @@ library BorrowUtils {
         vars.poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
         vars.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.configuration) 
                               * (10 ** vars.poolDecimals);
+
+        Printer.log("poolDecimals", vars.poolDecimals );
+        Printer.log("borrowCapacity", vars.borrowCapacity);
+
         if (vars.borrowCapacity != 0) {
             vars.totalDebt =
                 poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
@@ -156,22 +161,33 @@ library BorrowUtils {
             }
         }
 
+        Printer.log("totalDebt",  vars.totalDebt);
+
         //validate account health
-        (
-            vars.userTotalCollateralUsd,
+        (   vars.userTotalCollateralUsd,
             vars.userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
         if (vars.userTotalCollateralUsd == 0) { 
             revert Errors.CollateralBalanceIsZero();
         }
 
+        Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
+        Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
+
         vars.amountToBorrowUsd = OracleUtils.getPrice(dataStore, poolCache.underlyingAsset)
                                             .rayMul(amountToBorrow);
 
+        Printer.log("amountToBorrow",  amountToBorrow);
+        Printer.log("amountToBorrowUsd",  vars.amountToBorrowUsd);
+
         vars.healthFactor = 
-            (vars.userTotalCollateralUsd).wadDiv(vars.userTotalDebtUsd + vars.amountToBorrowUsd);
+            (vars.userTotalCollateralUsd).rayDiv(vars.userTotalDebtUsd + vars.amountToBorrowUsd);
         vars.healthFactorCollateralRateThreshold = 
             ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, poolCache.underlyingAsset);
+
+        Printer.log("healthFactor", vars.healthFactor );
+        Printer.log("healthFactorCollateralRateThreshold", vars.healthFactorCollateralRateThreshold);
+
         if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
             revert Errors.CollateralCanNotCoverNewBorrow(
                 vars.userTotalCollateralUsd, 

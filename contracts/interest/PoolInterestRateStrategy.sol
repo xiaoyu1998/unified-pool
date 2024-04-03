@@ -8,6 +8,7 @@ import "../utils/PercentageMath.sol";
 import "../utils/WadRayMath.sol";
 
 import "./IPoolInterestRateStrategy.sol";
+import "../utils/Printer.sol";
 
 contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     using WadRayMath for uint256;
@@ -57,6 +58,12 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     function calculateInterestRates(
         InterestUtils.CalculateInterestRatesParams memory params
     ) public view override returns (uint256, uint256) {
+        Printer.log("--------------------calculateInterestRates---------------------");
+        Printer.log("optimalUsageRatio", OPTIMAL_USAGE_RATIO);
+        Printer.log("MAX_EXCESS_USAGE_RATIO", MAX_EXCESS_USAGE_RATIO);
+        Printer.log("rateSlope1", _rateSlope1);
+        Printer.log("rateSlope2", _rateSlope2);
+
       	CalcInterestRatesLocalVars memory vars;
 
       	vars.totalDebt = params.totalDebt;
@@ -70,7 +77,12 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
 
         	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
         	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
+              
+              Printer.log("availableLiquidity", vars.availableLiquidity);
+              Printer.log("availableLiquidityAddTotalDebt", vars.availableLiquidityAddTotalDebt);
       	}
+
+        Printer.log("borrowUsageRatio", vars.borrowUsageRatio);
 
       	if (vars.borrowUsageRatio > OPTIMAL_USAGE_RATIO){
             uint256 excessBorrowUsageRatio = (vars.borrowUsageRatio - OPTIMAL_USAGE_RATIO).rayDiv(
@@ -82,6 +94,8 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
                   .rayMul(vars.borrowUsageRatio)
                   .rayDiv(OPTIMAL_USAGE_RATIO);
       	}
+
+        Printer.log("currentBorrowRate", vars.currentBorrowRate);
 
         //calculate Liquidity Rate
         if (vars.totalDebt != 0) {

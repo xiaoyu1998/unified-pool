@@ -21,6 +21,7 @@ import "../oracle/OracleUtils.sol";
 library PositionUtils {
     using Position for Position.Props;
     using Pool for Pool.Props;
+    using WadRayMath for uint256;
 
     function calculateUserTotalCollateralAndDebt(
         address account,
@@ -61,12 +62,12 @@ library PositionUtils {
 
         if (position.hasCollateral){
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, position.underlyingAsset);
-            userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account) * assetPrice;
+            userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account).rayMul(assetPrice);
         }
 
         if (position.hasDebt){
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, position.underlyingAsset);
-            userDebtUsd = IDebtToken(debtToken).balanceOf(position.account) * assetPrice;               
+            userDebtUsd = IDebtToken(debtToken).balanceOf(position.account).rayMul(assetPrice);               
         }
         return (userCollateralUsd, userDebtUsd);
     }

@@ -31,7 +31,8 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
-    console.log("usdt",await usdt.balanceOf(owner.address)); 
+    console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
+    console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
 
 }
 
