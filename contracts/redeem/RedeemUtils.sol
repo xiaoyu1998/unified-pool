@@ -34,6 +34,7 @@ library RedeemUtils {
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
     using WadRayMath for uint256;
+    using PoolConfigurationUtils for uint256;
 
     struct RedeemParams {
         address underlyingAsset;
