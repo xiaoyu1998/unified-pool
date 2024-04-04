@@ -2,6 +2,7 @@
 const { getContract } = require("./deploy")
 import { Pool } from "../typechain-types/contracts/pool/PoolFactory";
 import { Position } from "../typechain-types/contracts/position/PositionStoreUtils";
+import { ReaderUtils } from "../typechain-types/contracts/reader/ReaderUtils";
 
 export function parsePool(pool) {
     const p: Pool.PropsStruct = {
@@ -54,6 +55,45 @@ export async function getPositions(dataStore, reader, address) {
     return ps;
 }
 
+export function parseAccountLiquidity(liquidity) {
+    const l: ReaderUtils.AccountLiquidityStruct = {
+        underlyingAsset: liquidity[0],
+        account: liquidity[1],
+        balance: liquidity[2],
+        scaled: liquidity[3],
+        collateral: liquidity[4],
+    };
+    return l;
+}
+
+export async function getAccountLiquidities(dataStore, reader, address) {
+    const liquidities = await reader.getAccountLiquidities(dataStore.target, address);
+    const accountLiquidities = [];
+    for (let i = 0; i < liquidities.length; i++) {
+         accountLiquidities[i] = parseAccountLiquidity(liquidities[i]);
+    }
+    return accountLiquidities;    
+}
+
+export function parsePoolLiquidity(liquidity) {
+    const l: ReaderUtils.PoolLiquidityStruct = {
+        underlyingAsset: liquidity[0],
+        scaledTotalSupply: liquidity[1],
+        totalSupply: liquidity[2],
+        totalCollateral: liquidity[3],
+        availableLiquidity: liquidity[4],
+    };
+    return l;
+}
+
+export async function getPoolsLiquidity(dataStore, reader) {
+    const liquidities = await reader.getPoolsLiquidity(dataStore.target);
+    const poolsLiquidities = [];
+    for (let i = 0; i < liquidities.length; i++) {
+         poolsLiquidities[i] = parsePoolLiquidity(liquidities[i]);
+    }
+    return poolsLiquidities;    
+}
 
 export type LiquidityPropsStruct = {
     underlyingAsset: AddressLike;
