@@ -30,6 +30,10 @@ library Errors {
     error InvalidBorrowCapacity(uint256 borrowCapacity, uint256 MaxValidBorrowCapacity);
     error InvalidSupplyCapacity(uint256 supplyCapacity, uint256 MaxValidSupplyCapacity);
 
+    //Oracle erros
+    error EmptyOracle(address underlyingAsset);
+    error InvalidOraclePrice(address underlyingAsset, int256 price);
+
 
     //Position errors
     error InvalidPoolIndex(uint256 poolKeyId);
