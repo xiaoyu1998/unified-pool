@@ -22,6 +22,7 @@ interface IPoolToken {
     function balanceOf(address account) external view  returns (uint256);
     function scaledBalanceOf(address account) external view returns (uint256);
     function scaledTotalSupply() external view returns (uint256);
+    function totalSupply() external view returns (uint256);
 
     function addCollateral(address account, uint256 amount) external;
     function removeCollateral(address account, uint256 amount) external;
@@ -36,4 +37,6 @@ interface IPoolToken {
     ) external;
 
     function syncUnderlyingAssetBalance() external;
+
+    function underlyingAsset() external view  returns (address);
 }

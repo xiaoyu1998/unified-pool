@@ -79,7 +79,8 @@ export async function getContract(name) {
         name == "OracleStoreUtils"  ||
         name == "Router" ||
         name == "PoolInterestRateStrategy" ||
-        name == "Multicall3" 
+        name == "Multicall3" ||
+        name == "ReaderUtils" 
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -125,12 +126,14 @@ export async function getContract(name) {
 
     if (name == "Reader") {
         const oracleUtils = await getContract("OracleUtils");
+        const readerUtils = await getContract("ReaderUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
+                ReaderUtils: readerUtils,
             },         
         });
     }
