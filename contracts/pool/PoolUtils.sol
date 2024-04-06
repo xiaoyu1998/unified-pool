@@ -100,7 +100,7 @@ library PoolUtils {
         poolCache.unclaimedFee  = pool.unclaimedFee;
         poolCache.lastUpdateTimestamp = pool.lastUpdateTimestamp;
 
-        Printer.log("-------------------------cachepool--------------------------1");
+        Printer.log("-------------------------cachepool--------------------------");
         Printer.log("currLiquidityIndex", poolCache.currLiquidityIndex);
         Printer.log("nextLiquidityIndex", poolCache.nextLiquidityIndex);
         Printer.log("currLiquidityRate", poolCache.currLiquidityRate);
@@ -125,7 +125,7 @@ library PoolUtils {
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
     ) internal {
-        Printer.log("-----------------------updateIndexes------------------------2");
+        Printer.log("-----------------------updateIndexes------------------------");
         if (poolCache.currLiquidityRate != 0) {
             uint256 cumulatedLiquidityInterest = InterestUtils.calculateInterest(
                 poolCache.currLiquidityRate,

@@ -63,16 +63,23 @@ library RedeemUtils {
 
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
+        
+        uint256 redeemAmount = params.amount;
+        IPoolToken poolToken = IPoolToken(pool.poolToken);
+        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+        if( redeemAmount > collateralAmount) {
+            redeemAmount = collateralAmount;
+        }
+
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
             position, 
             pool, 
-            params.amount
+            redeemAmount
         );
 
-        IPoolToken poolToken = IPoolToken(pool.poolToken);
-        poolToken.removeCollateral(account, params.amount);
+        poolToken.removeCollateral(account, redeemAmount);
         if(poolToken.balanceOfCollateral(account) == 0) {
             position.hasCollateral = false;
             PositionStoreUtils.set(
@@ -82,7 +89,7 @@ library RedeemUtils {
             );
         }
 
-        poolToken.transferOutUnderlyingAsset(params.to, params.amount);
+        poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
         poolToken.syncUnderlyingAssetBalance();
     }
 

@@ -90,6 +90,10 @@ library BorrowUtils {
             0 //liquidity already out while move to collateral
         );
 
+        // Printer.log("-------------------------executeBorrow--------------------------");
+        // Printer.log("liquidityRate", pool.liquidityRate);   
+        // Printer.log("borrowRate", pool.borrowRate);   
+
         PoolStoreUtils.set(
             params.dataStore, 
             poolKey, 

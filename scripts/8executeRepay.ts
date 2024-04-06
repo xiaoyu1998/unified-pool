@@ -12,26 +12,30 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
 
-    //execute borrows
+    //execute repay
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
+    const repayAmmount = expandDecimals(1200, usdtDecimals);
+    await sendTxn(usdt.approve(router.target, repayAmmount), `usdt.approve(${router.target})`)
 
-    const borrowAmmount = expandDecimals(1000, usdtDecimals);
+
+    const poolUsdt = await getPoolInfo(usdtAddress); 
     const params: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
-        amount: borrowAmmount,
+        amount: 0,
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeBorrow", [params]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, repayAmmount]),
+        exchangeRouter.interface.encodeFunctionData("executeRepay", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
-    //print poolUsdt
-    const poolUsdt = await getPoolInfo(usdtAddress); 
-    const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
-    console.log("poolUsdt", poolUsdt);
+    //print 
+    const poolUsdtAfterRepay = await getPoolInfo(usdtAddress); 
+    const poolToken = await getContractAt("PoolToken", poolUsdtAfterRepay.poolToken);
+    const debtToken = await getContractAt("DebtToken", poolUsdtAfterRepay.debtToken);
+    console.log("poolUsdtAfterRepay", poolUsdtAfterRepay);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 

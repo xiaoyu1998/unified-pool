@@ -44,14 +44,14 @@ export function parsePoolInfo(pool) {
         poolToken: pool[7],
         debtToken: pool[8],
         configuration: pool[9],
-        feeFactor: pool[10],
-        totalFee: pool[11],
-        unclaimedFee: pool[12],
-        lastUpdateTimestamp: pool[13],
-        isActive: pool[14],
-        isPaused: pool[15],
-        isFrozen: pool[16],
-        borrowingEnabled: pool[17],
+        totalFee: pool[10],
+        unclaimedFee: pool[11],
+        lastUpdateTimestamp: pool[12],
+        isActive: pool[13],
+        isPaused: pool[14],
+        isFrozen: pool[15],
+        borrowingEnabled: pool[16],
+        feeFactor: pool[17],
         decimals: pool[18],
         symbol: pool[19],
         price: pool[20]
@@ -181,8 +181,8 @@ export async function getDebt(debtToken, address) {
 
     if (address) {
         l.account = address;
-        l.scaledDebt = await debtToken.balanceOf(address);
-        l.debt  = await debtToken.scaledBalanceOf(address);
+        l.scaledDebt = await debtToken.scaledBalanceOf(address);
+        l.debt  = await debtToken.balanceOf(address);
     }
 
     return l;

@@ -65,6 +65,9 @@ library RepayUtils {
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
 
+        Printer.log("-------------------------executeRepay--------------------------");
+        Printer.log("repayAmount", repayAmount);   
+
         uint256 extraAmountToRefund;
         IDebtToken debtToken = IDebtToken(poolCache.debtToken);
         uint256 debtAmount = debtToken.balanceOf(account);
@@ -72,6 +75,9 @@ library RepayUtils {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
+
+        Printer.log("debtAmount", debtAmount); 
+        Printer.log("extraAmountToRefund", extraAmountToRefund); 
 
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
@@ -101,15 +107,19 @@ library RepayUtils {
             pool,
             poolCache, 
             params.underlyingAsset, 
-            repayAmount, 
+            0, //balanceOf underlyingAsset has beed added repayAmount, or Collateral has been removed repayAmount
             0
         );
+
+        Printer.log("-------------------------executeRepay--------------------------");
+        Printer.log("liquidityRate", pool.liquidityRate);   
+        Printer.log("borrowRate", pool.borrowRate); 
 
         PoolStoreUtils.set(
             params.dataStore, 
             poolKey, 
             pool
-        );
+        );  
 
         if(extraAmountToRefund > 0 && collateralAmount == 0) {//Refund extra
             poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
