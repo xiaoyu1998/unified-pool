@@ -157,8 +157,8 @@ library ReaderUtils {
             poolInfo.isPaused
         ) = PoolConfigurationUtils.getFlags(poolInfo.configuration); 
 
-        poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
         poolInfo.decimals = PoolConfigurationUtils.getDecimals(poolInfo.configuration);
+        poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
         poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
 
         //this price is not at lastUpdateTimestamp

@@ -51,8 +51,8 @@ export function parsePoolInfo(pool) {
         isPaused: pool[14],
         isFrozen: pool[15],
         borrowingEnabled: pool[16],
-        feeFactor: pool[17],
-        decimals: pool[18],
+        decimals: pool[17],
+        feeFactor: pool[18],
         symbol: pool[19],
         price: pool[20]
     };
