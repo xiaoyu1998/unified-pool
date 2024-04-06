@@ -17,10 +17,10 @@ export function parsePool(pool) {
         poolToken: pool[7],
         debtToken: pool[8],
         configuration: pool[9],
-        feeFactor: pool[10],
-        totalFee: pool[11],
-        unclaimedFee: pool[12],
-        lastUpdateTimestamp: pool[13]
+        // feeFactor: pool[10],
+        totalFee: pool[10],
+        unclaimedFee: pool[11],
+        lastUpdateTimestamp: pool[12]
     };
     return p;
 }

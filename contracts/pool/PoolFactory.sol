@@ -8,7 +8,7 @@ import "../error/Errors.sol";
 
 import "./Pool.sol";
 import "./PoolStoreUtils.sol";
-import "./PoolConfigurationUtils.sol";
+// import "./PoolConfigurationUtils.sol";
 import "./PoolUtils.sol";
 import "../token/PoolToken.sol";
 import "../token/DebtToken.sol";
@@ -55,7 +55,6 @@ contract PoolFactory is RoleModule {
             address(poolToken),
             address(debtToken),
             configuration,
-            PoolConfigurationUtils.getFeeFactor(configuration),
             0,
             0,
             Chain.currentTimestamp()

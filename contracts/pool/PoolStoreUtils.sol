@@ -73,9 +73,9 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         );
 
-        pool.feeFactor = dataStore.getUint(
-            keccak256(abi.encode(key, POOL_FEE_FACTOR))
-        );
+        // pool.feeFactor = dataStore.getUint(
+        //     keccak256(abi.encode(key, POOL_FEE_FACTOR))
+        // );
 
         pool.totalFee = dataStore.getUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))
@@ -163,10 +163,10 @@ library PoolStoreUtils {
             pool.configuration
         );
 
-        dataStore.setUint(
-            keccak256(abi.encode(key, POOL_FEE_FACTOR)),
-            pool.feeFactor
-        );
+        // dataStore.setUint(
+        //     keccak256(abi.encode(key, POOL_FEE_FACTOR)),
+        //     pool.feeFactor
+        // );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE)),
@@ -235,9 +235,9 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         );
 
-        dataStore.removeUint(
-            keccak256(abi.encode(key, POOL_FEE_FACTOR))
-        );
+        // dataStore.removeUint(
+        //     keccak256(abi.encode(key, POOL_FEE_FACTOR))
+        // );
         
         dataStore.removeUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))

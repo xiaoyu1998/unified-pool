@@ -17,7 +17,7 @@ library Pool {
         address debtToken;
 
         uint256 configuration;
-        uint256 feeFactor;
+        // uint256 feeFactor;
         uint256 totalFee;
         uint256 unclaimedFee;
         uint256 lastUpdateTimestamp;

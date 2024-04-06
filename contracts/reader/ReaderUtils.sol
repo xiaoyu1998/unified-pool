@@ -46,7 +46,6 @@ library ReaderUtils {
         address debtToken;
 
         uint256 configuration;
-        uint256 feeFactor;
         uint256 totalFee;
         uint256 unclaimedFee;
         uint256 lastUpdateTimestamp;
@@ -56,6 +55,7 @@ library ReaderUtils {
         bool isFrozen;
         bool borrowingEnabled;
         uint256 decimals;
+        uint256 feeFactor;
 
         string symbol;
         uint256 price;
@@ -139,7 +139,6 @@ library ReaderUtils {
             pool.poolToken,
             pool.debtToken,
             pool.configuration,
-            pool.feeFactor,
             pool.totalFee,
             pool.unclaimedFee,
             pool.lastUpdateTimestamp,
@@ -147,6 +146,7 @@ library ReaderUtils {
             false,
             false,
             false,
+            0,
             0,
             "",
             0        
@@ -157,6 +157,7 @@ library ReaderUtils {
             poolInfo.isPaused
         ) = PoolConfigurationUtils.getFlags(poolInfo.configuration); 
 
+        poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
         poolInfo.decimals = PoolConfigurationUtils.getDecimals(poolInfo.configuration);
         poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
 
