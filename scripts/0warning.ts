@@ -2,17 +2,17 @@ import { contractAt, sendTxn, getDeployedContractAddresses, getTokens, getContra
 import { expandDecimals } from "../utils/math";
 import { getPool, getLiquidity, getDebt} from "../utils/helper";
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
+// import OracleStoreUtils from "../artifacts/contracts/oracle/OracleStoreUtils.sol/OracleStoreUtils.json";
 
 // ethers.utils.Logger.setLogLevel(ethers.utils.Logger.levels.ERROR);
 async function main() {
-    const [owner] = await ethers.getSigners();
+    // const [owner] = await ethers.getSigners();
 
 
     // const oracleStoreUtils = getDeployedContractAddresses("OracleStoreUtils");
     // return await contractAt("OracleStoreUtils", oracleStoreUtils);
-
-    const artifact = await hre.artifacts.readArtifact("OracleStoreUtils");
-    const oracle = new ethers.Interface(artifact.abi);
+    //console.log(OracleStoreUtils);
+    const oracle = new ethers.Interface(OracleStoreUtils.abi);
 
 
 }

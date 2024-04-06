@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidity, getDebt, getPositions} from "../utils/helper";
+import { getPoolInfo, getLiquidity, getDebt, getPositions} from "../utils/helper";
 
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
@@ -17,7 +17,7 @@ async function main() {
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
 
-    const poolUsdt = await getPool(usdtAddress); 
+    const poolUsdt = await getPoolInfo(usdtAddress); 
     const borrowAmmount = expandDecimals(1000, usdtDecimals);
     const params: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
@@ -37,7 +37,7 @@ async function main() {
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
     console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
-    console.log("price",await reader.getPrice(dataStore, usdtAddress)); 
+    // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 
 }
 
 

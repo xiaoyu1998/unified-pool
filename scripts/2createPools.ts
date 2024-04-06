@@ -48,7 +48,7 @@ async function main() {
     //print pools
     const dataStore = await getContract("DataStore");    
     const reader = await getContract("Reader");    
-    const pools = await reader.getPools(dataStore.target, 0, 10);
+    const pools = await reader.getPools(dataStore.target);
     for (const pool of pools) {
         console.log(parsePool(pool));
     }

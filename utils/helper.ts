@@ -2,7 +2,8 @@
 const { getContract } = require("./deploy")
 import { Pool } from "../typechain-types/contracts/pool/PoolFactory";
 import { Position } from "../typechain-types/contracts/position/PositionStoreUtils";
-import { ReaderUtils } from "../typechain-types/contracts/reader/ReaderUtils";
+// import { ReaderUtils } from "../typechain-types/contracts/reader/ReaderUtils";
+import { ReaderUtils } from "../typechain-types/contracts/reader/Reader";
 
 export function parsePool(pool) {
     const p: Pool.PropsStruct = {
@@ -29,6 +30,40 @@ export async function getPool(address) {
     const reader = await getContract("Reader");  
     const poolUsdt = await reader.getPool(dataStore.target, address);
     return parsePool(poolUsdt);
+}
+
+export function parsePoolInfo(pool) {
+    const p: ReaderUtils.GetPoolInfoStruct = {
+        keyId: pool[0],
+        liquidityIndex: pool[1],
+        liquidityRate: pool[2],
+        borrowIndex: pool[3],
+        borrowRate: pool[4],
+        interestRateStrategy: pool[5],
+        underlyingAsset: pool[6],
+        poolToken: pool[7],
+        debtToken: pool[8],
+        configuration: pool[9],
+        feeFactor: pool[10],
+        totalFee: pool[11],
+        unclaimedFee: pool[12],
+        lastUpdateTimestamp: pool[13],
+        isActive: pool[14],
+        isPaused: pool[15],
+        isFrozen: pool[16],
+        borrowingEnabled: pool[17],
+        decimals: pool[18],
+        symbol: pool[19],
+        price: pool[20]
+    };
+    return p;
+}
+
+export async function getPoolInfo(address) {
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
+    const poolUsdt = await reader.getPoolInfo(dataStore.target, address);
+    return parsePoolInfo(poolUsdt);
 }
 
 export function parsePosition(position) {
