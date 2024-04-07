@@ -22,7 +22,7 @@ import "../position/PositionStoreUtils.sol";
 //import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
 
-import "../config/ConfigStoreUtils.sol";
+//import "../config/ConfigStoreUtils.sol";
 
 import "../utils/WadRayMath.sol";
 
@@ -70,6 +70,9 @@ library RedeemUtils {
         if( redeemAmount > collateralAmount) {
             redeemAmount = collateralAmount;
         }
+        Printer.log("-------------------------executeRepay--------------------------");
+        Printer.log("repayAmount", redeemAmount);  
+        Printer.log("collateralAmount", collateralAmount);  
 
         RedeemUtils.validateRedeem( 
             account, 
@@ -117,6 +120,7 @@ library RedeemUtils {
         Pool.Props memory pool,
         uint256 amountToRedeem
     ) internal view {
+        Printer.log("-------------------------validateRedeem--------------------------");
         (   bool isActive,
             bool isFrozen, 
             ,
@@ -133,33 +137,44 @@ library RedeemUtils {
             revert Errors.EmptyRedeemAmount();
         }
 
-        ValidateBorrowLocalVars memory vars;
+        PositionUtils.validateHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
 
-        //validate account health
-        (
-            vars.userTotalCollateralUsd,
-            vars.userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        // ValidateBorrowLocalVars memory vars;
 
-        if (vars.userTotalCollateralUsd == 0) { 
-            revert Errors.CollateralBalanceIsZero();
-        }
+        // //validate account health
+        // (
+        //     vars.userTotalCollateralUsd,
+        //     vars.userTotalDebtUsd
+        // ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        // Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
+        // Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
 
-        vars.amountToRedeemUsd = OracleUtils.getPrice(dataStore, pool.underlyingAsset)
-                                            .rayMul(amountToRedeem);
+        // if (vars.userTotalCollateralUsd == 0) { 
+        //     revert Errors.CollateralBalanceIsZero();
+        // }
 
-        vars.healthFactor = 
-            (vars.userTotalCollateralUsd).wadDiv(vars.userTotalDebtUsd + vars.amountToRedeemUsd);
-        vars.healthFactorCollateralRateThreshold =
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, pool.underlyingAsset);
-        if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
-            revert Errors.CollateralCanNotCoverRedeem(
-                vars.userTotalCollateralUsd, 
-                vars.userTotalDebtUsd, 
-                vars.amountToRedeemUsd,
-                vars.healthFactorCollateralRateThreshold
-            );
-        }
+        // vars.amountToRedeemUsd = OracleUtils.getPrice(dataStore, pool.underlyingAsset)
+        //                                     .rayMul(amountToRedeem);
+
+        // Printer.log("amountToRedeem",  amountToRedeem);
+        // Printer.log("amountToRedeemUsd",  vars.amountToRedeemUsd);
+
+        // vars.healthFactor = 
+        //     (vars.userTotalCollateralUsd).rayDiv(vars.userTotalDebtUsd + vars.amountToRedeemUsd);
+        // vars.healthFactorCollateralRateThreshold =
+        //     ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, pool.underlyingAsset);
+
+        // Printer.log("healthFactor", vars.healthFactor );
+        // Printer.log("healthFactorCollateralRateThreshold", vars.healthFactorCollateralRateThreshold);
+
+        // if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
+        //     revert Errors.CollateralCanNotCoverRedeem(
+        //         vars.userTotalCollateralUsd, 
+        //         vars.userTotalDebtUsd, 
+        //         vars.amountToRedeemUsd,
+        //         vars.healthFactorCollateralRateThreshold
+        //     );
+        // }
 
     }
 }

@@ -20,7 +20,7 @@ import "../position/PositionStoreUtils.sol";
 //import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
 
-import "../config/ConfigStoreUtils.sol";
+//import "../config/ConfigStoreUtils.sol";
 
 import "../utils/WadRayMath.sol";
 
@@ -53,6 +53,9 @@ library BorrowUtils {
         PoolUtils.validateEnabledPool(pool, poolKey);
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        Printer.log("-------------------------executeBorrow--------------------------");  
+        Printer.log("totalFee", pool.totalFee);   
+        Printer.log("unclaimedFee", pool.unclaimedFee);  
 
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
@@ -90,9 +93,11 @@ library BorrowUtils {
             0 //liquidity already out while move to collateral
         );
 
-        // Printer.log("-------------------------executeBorrow--------------------------");
+        Printer.log("-------------------------executeBorrow--------------------------");
         // Printer.log("liquidityRate", pool.liquidityRate);   
         // Printer.log("borrowRate", pool.borrowRate);   
+        Printer.log("totalFee", pool.totalFee);   
+        Printer.log("unclaimedFee", pool.unclaimedFee);   
 
         PoolStoreUtils.set(
             params.dataStore, 
@@ -167,39 +172,41 @@ library BorrowUtils {
 
         Printer.log("totalDebt",  vars.totalDebt);
 
-        //validate account health
-        (   vars.userTotalCollateralUsd,
-            vars.userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
-        if (vars.userTotalCollateralUsd == 0) { 
-            revert Errors.CollateralBalanceIsZero();
-        }
+        PositionUtils.validateHealthFactor(account, dataStore, poolCache.underlyingAsset, amountToBorrow);
 
-        Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
-        Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
+        // //validate account health
+        // (   vars.userTotalCollateralUsd,
+        //     vars.userTotalDebtUsd
+        // ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        // if (vars.userTotalCollateralUsd == 0) { 
+        //     revert Errors.CollateralBalanceIsZero();
+        // }
 
-        vars.amountToBorrowUsd = OracleUtils.getPrice(dataStore, poolCache.underlyingAsset)
-                                            .rayMul(amountToBorrow);
+        // Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
+        // Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
 
-        Printer.log("amountToBorrow",  amountToBorrow);
-        Printer.log("amountToBorrowUsd",  vars.amountToBorrowUsd);
+        // vars.amountToBorrowUsd = OracleUtils.getPrice(dataStore, poolCache.underlyingAsset)
+        //                                     .rayMul(amountToBorrow);
 
-        vars.healthFactor = 
-            (vars.userTotalCollateralUsd).rayDiv(vars.userTotalDebtUsd + vars.amountToBorrowUsd);
-        vars.healthFactorCollateralRateThreshold = 
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, poolCache.underlyingAsset);
+        // Printer.log("amountToBorrow",  amountToBorrow);
+        // Printer.log("amountToBorrowUsd",  vars.amountToBorrowUsd);
 
-        Printer.log("healthFactor", vars.healthFactor );
-        Printer.log("healthFactorCollateralRateThreshold", vars.healthFactorCollateralRateThreshold);
+        // vars.healthFactor = 
+        //     (vars.userTotalCollateralUsd).rayDiv(vars.userTotalDebtUsd + vars.amountToBorrowUsd);
+        // vars.healthFactorCollateralRateThreshold = 
+        //     ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, poolCache.underlyingAsset);
 
-        if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
-            revert Errors.CollateralCanNotCoverNewBorrow(
-                vars.userTotalCollateralUsd, 
-                vars.userTotalDebtUsd, 
-                vars.amountToBorrowUsd,
-                vars.healthFactorCollateralRateThreshold
-            );
-        }
+        // Printer.log("healthFactor", vars.healthFactor );
+        // Printer.log("healthFactorCollateralRateThreshold", vars.healthFactorCollateralRateThreshold);
+
+        // if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
+        //     revert Errors.CollateralCanNotCoverNewBorrow(
+        //         vars.userTotalCollateralUsd, 
+        //         vars.userTotalDebtUsd, 
+        //         vars.amountToBorrowUsd,
+        //         vars.healthFactorCollateralRateThreshold
+        //     );
+        // }
     }
     
 }

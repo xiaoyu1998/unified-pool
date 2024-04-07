@@ -2,7 +2,7 @@ import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../u
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidity, getDebt, getPositions} from "../utils/helper";
 
-import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
+import { RepaytUtils } from "../typechain-types/contracts/exchange/RepaytHandler";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -21,7 +21,7 @@ async function main() {
 
 
     const poolUsdt = await getPoolInfo(usdtAddress); 
-    const params: DepositUtils.DepositParamsStruct = {
+    const params: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: 0,
     };

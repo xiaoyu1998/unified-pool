@@ -67,6 +67,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
       	CalcInterestRatesLocalVars memory vars;
 
       	vars.totalDebt = params.totalDebt;
+        Printer.log("totalDebt", vars.totalDebt);
        
        //calculate Borrow Rate
       	if (vars.totalDebt != 0){
@@ -74,12 +75,10 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
                 - IPoolToken(params.poolToken).totalCollateral() 
                 + params.liquidityIn 
                 - params.liquidityOut;
-
-        	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
-        	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
-
               Printer.log("availableLiquidity", vars.availableLiquidity);
+        	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
               Printer.log("availableLiquidityAddTotalDebt", vars.availableLiquidityAddTotalDebt);
+        	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
       	}
 
         Printer.log("borrowUsageRatio", vars.borrowUsageRatio);

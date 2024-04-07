@@ -41,6 +41,7 @@ library Errors {
 
     //PositionUtils errors
     error EmptyPosition();
+    error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
 
     // BorrowUtils, WithdrawUtils errors
     error PoolIsInactive();
@@ -48,7 +49,7 @@ library Errors {
     error PoolIsFrozen();
     error PoolIsNotEnabled();
     error CollateralBalanceIsZero();
-    error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountToBorrowUsd, uint256 healthFactorCollateralRateThreshold);
+    // error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountToBorrowUsd, uint256 healthFactorCollateralRateThreshold);
     error EmptyBorrowAmounts();
     error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);
 
@@ -68,7 +69,7 @@ library Errors {
 
     // RedeemUtils errors
     error EmptyRedeemAmount();
-    error CollateralCanNotCoverRedeem(uint256 userTotalCollateral, uint256 userTotalDebt, uint256 amountToRedeem, uint256 HealthFactorCollateralRateThreshold);
+    // error CollateralCanNotCoverRedeem(uint256 userTotalCollateral, uint256 userTotalDebt, uint256 amountToRedeem, uint256 HealthFactorCollateralRateThreshold);
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

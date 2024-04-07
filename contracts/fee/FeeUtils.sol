@@ -11,6 +11,8 @@ import "../pool/PoolCache.sol";
 import "../utils/WadRayMath.sol";
 import "../utils/PercentageMath.sol";
 
+import "../utils/Printer.sol";
+
 // @title FeeUtils
 // @dev Library for fee actions
 library FeeUtils {
@@ -37,7 +39,7 @@ library FeeUtils {
     function incrementFeeAmount(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
-    ) external pure {
+    ) internal {
         if (poolCache.feeFactor == 0) {
           return;
         }
@@ -47,6 +49,14 @@ library FeeUtils {
         uint256 IncreaseTotalDebt  = currTotalDebt - prevTotalDebt;
         uint256 feeAmount          = IncreaseTotalDebt.percentMul(poolCache.feeFactor);
         pool.incrementFee(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
+
+        Printer.log("-------------------------incrementFeeAmount--------------------------");
+        Printer.log("prevTotalDebt", prevTotalDebt );
+        Printer.log("currTotalDebt", currTotalDebt );
+        Printer.log("IncreaseTotalDebt", IncreaseTotalDebt );
+        Printer.log("feeAmount", feeAmount );
+        Printer.log("totalFee", pool.totalFee );
+        Printer.log("unclaimedFee", pool.unclaimedFee );
 
     }
 

@@ -2,7 +2,7 @@ import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../u
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidity, getDebt, getPositions} from "../utils/helper";
 
-import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler";
+import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -12,26 +12,28 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
 
-    //execute borrows
+    //execute repay
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-
-    const borrowAmmount = expandDecimals(1000, usdtDecimals);
-    const params: BorrowUtils.BorrowParamsStruct = {
+    const redeemAmmount = expandDecimals(1000, usdtDecimals);
+ 
+    const poolUsdt = await getPoolInfo(usdtAddress); 
+    const params: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
-        amount: borrowAmmount,
+        amount: redeemAmmount,
+        to:owner.address
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeBorrow", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeRedeem", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
-    //print poolUsdt
-    const poolUsdt = await getPoolInfo(usdtAddress); 
-    const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
-    console.log("poolUsdt", poolUsdt);
+    //print 
+    const poolUsdtAfterRepay = await getPoolInfo(usdtAddress); 
+    const poolToken = await getContractAt("PoolToken", poolUsdtAfterRepay.poolToken);
+    const debtToken = await getContractAt("DebtToken", poolUsdtAfterRepay.debtToken);
+    console.log("poolUsdtAfterRepay", poolUsdtAfterRepay);
     console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("debtToken",await getDebt(debtToken, owner.address)); 
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 

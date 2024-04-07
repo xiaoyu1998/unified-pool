@@ -15,6 +15,7 @@ import "./PositionStoreUtils.sol";
 
 import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
+import "../config/ConfigStoreUtils.sol";
 
 // @title PositionUtils
 // @dev Library for Position functions
@@ -22,6 +23,7 @@ library PositionUtils {
     using Position for Position.Props;
     using Pool for Pool.Props;
     using WadRayMath for uint256;
+    //using PoolConfigurationUtils for uint256;
 
     function calculateUserTotalCollateralAndDebt(
         address account,
@@ -75,6 +77,48 @@ library PositionUtils {
     function validateEnabledPosition(Position.Props memory postion) internal pure {
         if (postion.account == address(0)) {
             revert Errors.EmptyPosition();
+        }
+
+    }
+
+    function validateHealthFactor(
+        address account,
+        DataStore dataStore,
+        address underlyingAsset,
+        uint256 amount
+    ) internal view returns (uint256, uint256) {
+
+        (   uint256 userTotalCollateralUsd,
+            uint256 userTotalDebtUsd
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        Printer.log("userTotalCollateralUsd",  userTotalCollateralUsd);
+        Printer.log("userTotalDebtUsd",  userTotalDebtUsd);
+
+        if (userTotalCollateralUsd == 0) { 
+            revert Errors.CollateralBalanceIsZero();
+        }
+
+        uint256 amountUsd = OracleUtils.getPrice(dataStore, underlyingAsset)
+                                            .rayMul(amount);
+
+        Printer.log("amount",  amount);
+        Printer.log("amountUsd",   amountUsd);
+
+        uint256 healthFactor = 
+            userTotalCollateralUsd.rayDiv(userTotalDebtUsd + amountUsd);
+        uint256 healthFactorCollateralRateThreshold =
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);
+
+        Printer.log("healthFactor", healthFactor );
+        Printer.log("healthFactorCollateralRateThreshold", healthFactorCollateralRateThreshold);
+
+        if (healthFactor < healthFactorCollateralRateThreshold) {
+            revert Errors.CollateralCanNotCover(
+                userTotalCollateralUsd, 
+                userTotalDebtUsd, 
+                amountUsd,
+                healthFactorCollateralRateThreshold
+            );
         }
 
     }

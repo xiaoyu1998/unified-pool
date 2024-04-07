@@ -90,7 +90,7 @@ export async function getContract(name) {
     const dataStore = await getContract("DataStore");
     const poolStoreUtils = await getContract("PoolStoreUtils");
     const positionStoreUtils = await getContract("PositionStoreUtils");
-    const feeUtils = await getContract("FeeUtils");
+//    const feeUtils = await getContract("FeeUtils");
     const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const router = await getContract("Router");
@@ -143,7 +143,7 @@ export async function getContract(name) {
         const supplyUtils = await contractAtOptions("SupplyUtils", supplyUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
-                FeeUtils: feeUtils,
+ //               FeeUtils: feeUtils,
             },        
         });
 
@@ -160,7 +160,7 @@ export async function getContract(name) {
         const withdrawUtils = await contractAtOptions("WithdrawUtils", withdrawUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
-                FeeUtils: feeUtils,
+ //               FeeUtils: feeUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -194,7 +194,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                FeeUtils: feeUtils,
+//                FeeUtils: feeUtils,
                 ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
             },        
@@ -213,7 +213,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                FeeUtils: feeUtils,
+//                FeeUtils: feeUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);

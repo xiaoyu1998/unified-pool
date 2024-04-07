@@ -7,7 +7,7 @@ const { mine } = require("@nomicfoundation/hardhat-network-helpers");
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    await mine(100);
+    await mine(10000);
     const usdtAddress = getTokens("USDT")["address"];
     const poolUsdt = await getPoolInfo(usdtAddress);
     const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken); 

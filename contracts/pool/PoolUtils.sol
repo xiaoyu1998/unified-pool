@@ -41,7 +41,7 @@ library PoolUtils {
         uint256 liquidityIn,
         uint256 liquidityOut
     ) internal {
-        Printer.log("--------------------updateInterestRates---------------------3");
+        Printer.log("--------------------updateInterestRates---------------------");
 
         UpdateInterestRatesLocalVars memory vars;
         vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
