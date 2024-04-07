@@ -96,18 +96,6 @@ library RedeemUtils {
         poolToken.syncUnderlyingAssetBalance();
     }
 
-    struct ValidateBorrowLocalVars {
-        uint256 userTotalCollateralUsd;
-        uint256 userTotalDebtUsd;
-        uint256 amountToRedeemUsd;
-        uint256 healthFactor;
-        uint256 healthFactorCollateralRateThreshold;
-
-        bool isActive;
-        bool isFrozen;
-        bool isPaused;
-        bool borrowingEnabled;
-    }
 
     // @notice Validates a redeem action.
     // @param poolCache The cached data of the pool
@@ -138,43 +126,6 @@ library RedeemUtils {
         }
 
         PositionUtils.validateHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
-
-        // ValidateBorrowLocalVars memory vars;
-
-        // //validate account health
-        // (
-        //     vars.userTotalCollateralUsd,
-        //     vars.userTotalDebtUsd
-        // ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
-        // Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
-        // Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
-
-        // if (vars.userTotalCollateralUsd == 0) { 
-        //     revert Errors.CollateralBalanceIsZero();
-        // }
-
-        // vars.amountToRedeemUsd = OracleUtils.getPrice(dataStore, pool.underlyingAsset)
-        //                                     .rayMul(amountToRedeem);
-
-        // Printer.log("amountToRedeem",  amountToRedeem);
-        // Printer.log("amountToRedeemUsd",  vars.amountToRedeemUsd);
-
-        // vars.healthFactor = 
-        //     (vars.userTotalCollateralUsd).rayDiv(vars.userTotalDebtUsd + vars.amountToRedeemUsd);
-        // vars.healthFactorCollateralRateThreshold =
-        //     ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, pool.underlyingAsset);
-
-        // Printer.log("healthFactor", vars.healthFactor );
-        // Printer.log("healthFactorCollateralRateThreshold", vars.healthFactorCollateralRateThreshold);
-
-        // if (vars.healthFactor < vars.healthFactorCollateralRateThreshold) {
-        //     revert Errors.CollateralCanNotCoverRedeem(
-        //         vars.userTotalCollateralUsd, 
-        //         vars.userTotalDebtUsd, 
-        //         vars.amountToRedeemUsd,
-        //         vars.healthFactorCollateralRateThreshold
-        //     );
-        // }
 
     }
 }
