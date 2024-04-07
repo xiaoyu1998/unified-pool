@@ -68,7 +68,7 @@ contract Reader {
 
         for (uint256 i; i < poolKeys.length; i++) {
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
-            poolsLiquidity[i] = ReaderUtils.getPoolLiquidity(dataStore, poolToken);
+            poolsLiquidity[i] = ReaderUtils._getPoolLiquidity(dataStore, poolToken);
         }
         return poolsLiquidity;
     }
@@ -76,7 +76,7 @@ contract Reader {
     function getPoolLiquidity(DataStore dataStore, address poolKey) external view returns (ReaderUtils.PoolLiquidity memory) {
         Pool.Props memory pool = ReaderUtils._getPool(dataStore, poolKey);
         ReaderUtils.PoolLiquidity memory poolLiquidity = 
-            ReaderUtils.getPoolLiquidity(dataStore, pool.poolToken);
+            ReaderUtils._getPoolLiquidity(dataStore, pool.poolToken);
         return poolLiquidity;
 
     }
@@ -90,7 +90,7 @@ contract Reader {
         for (uint256 i; i < poolKeys.length; i++) {
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
             accountLiquidities[i] = 
-                ReaderUtils.getAccountLiquidity(dataStore, poolToken, account);
+                ReaderUtils._getAccountLiquidity(dataStore, poolToken, account);
         }
         //TODO:should delete empty Liquidities
         return accountLiquidities;
@@ -99,7 +99,7 @@ contract Reader {
     function getAccountLiquidity(DataStore dataStore, address poolKey, address account) external view returns (ReaderUtils.AccountLiquidity memory) {
         Pool.Props memory pool = ReaderUtils._getPool(dataStore, poolKey);
         ReaderUtils.AccountLiquidity memory accountLiquidity = 
-            ReaderUtils.getAccountLiquidity(dataStore, pool.poolToken, account);
+            ReaderUtils._getAccountLiquidity(dataStore, pool.poolToken, account);
         return accountLiquidity;
     }
 

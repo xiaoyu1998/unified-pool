@@ -126,14 +126,14 @@ export async function getContract(name) {
 
     if (name == "Reader") {
         const oracleUtils = await getContract("OracleUtils");
-        const readerUtils = await getContract("ReaderUtils");
+        // const readerUtils = await getContract("ReaderUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
-                ReaderUtils: readerUtils,
+                // ReaderUtils: readerUtils,
             },         
         });
     }

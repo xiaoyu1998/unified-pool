@@ -61,7 +61,7 @@ library ReaderUtils {
         uint256 price;
     }
 
-    function getPoolLiquidity(DataStore dataStore, address poolTokenAddress) public view returns (PoolLiquidity memory) {
+    function _getPoolLiquidity(DataStore dataStore, address poolTokenAddress) internal view returns (PoolLiquidity memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
 
         PoolLiquidity memory poolLiquidity = PoolLiquidity(
@@ -74,11 +74,11 @@ library ReaderUtils {
         return poolLiquidity;
     }
 
-    function getAccountLiquidity(
+    function _getAccountLiquidity(
         DataStore dataStore, 
         address poolTokenAddress, 
         address account
-    ) public view returns (AccountLiquidity memory) {
+    ) internal view returns (AccountLiquidity memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
 
         AccountLiquidity memory accountLiquidity = AccountLiquidity(
