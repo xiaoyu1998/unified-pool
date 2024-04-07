@@ -36,7 +36,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	    address account
 	) public view virtual override(IndexERC20) returns (uint256) {
 	    return super.balanceOf(account)
-	    	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
+	    	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20
@@ -44,7 +44,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		uint256 currentSupplyScaled = super.totalSupply();
 		if (currentSupplyScaled == 0) {return 0;}
 		return currentSupplyScaled
-			.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset));
+			.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset));
 	}
 
     // @dev mint pool tokens to an account
@@ -110,7 +110,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		// if(pool == null){
 		// 	revert erros.PoolNotFound(_poolKey);
 		// }
-		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(dataStore, _underlyingAsset);
+		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset);
 
 		// uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
 		// uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);

@@ -39,7 +39,7 @@ library BorrowUtils {
     }
 
     struct ExecuteBorrowParams {
-        DataStore dataStore;
+        address dataStore;
         address underlyingAsset;
         uint256 amount;
     }
@@ -112,7 +112,7 @@ library BorrowUtils {
     //
     function validateBorrow(
         address account,
-        DataStore dataStore,
+        address dataStore,
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal view {

@@ -33,7 +33,7 @@ library DepositUtils {
     }
 
     struct ExecuteDepositParams {
-        DataStore dataStore;
+        address dataStore;
         address underlyingAsset;
     }
 

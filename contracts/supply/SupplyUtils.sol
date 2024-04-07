@@ -30,7 +30,7 @@ library SupplyUtils {
     }
 
     struct ExecuteSupplyParams {
-        DataStore dataStore;
+        address dataStore;
         // EventEmitter eventEmitter;
         address underlyingAsset;
         address to;

@@ -26,7 +26,7 @@ contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
     ) external globalNonReentrant{
 
         RepayUtils.ExecuteRepayParams memory params = RepayUtils.ExecuteRepayParams(
-            dataStore,
+            address(dataStore),
             repayParams.underlyingAsset,   
             repayParams.amount  
         );

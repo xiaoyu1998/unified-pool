@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import "../data/DataStore.sol";
 import "../token/TokenUtils.sol";
 import "../role/RoleModule.sol";
 
@@ -20,7 +21,7 @@ contract Bank is RoleModule {
     }
 
     receive() external payable {
-        address wnt = TokenUtils.wnt(dataStore);
+        address wnt = TokenUtils.wnt(address(dataStore));
         if (msg.sender != wnt) {
             revert Errors.InvalidNativeTokenSender(msg.sender);
         }

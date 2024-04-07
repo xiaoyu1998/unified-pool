@@ -43,7 +43,7 @@ library RedeemUtils {
     }
 
     struct ExecuteRedeemParams {
-        DataStore dataStore;
+        address dataStore;
         address underlyingAsset;
         uint256 amount;
         address to;
@@ -103,7 +103,7 @@ library RedeemUtils {
     // @param userBalance The balance of the user
     function validateRedeem(
         address account,
-        DataStore dataStore,
+        address dataStore,
         Position.Props memory position,
         Pool.Props memory pool,
         uint256 amountToRedeem

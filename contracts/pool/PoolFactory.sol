@@ -36,7 +36,7 @@ contract PoolFactory is RoleModule {
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         address key = PoolUtils.getKey(underlyingAsset);
 
-        Pool.Props memory existingPool = PoolStoreUtils.get(dataStore, key);
+        Pool.Props memory existingPool = PoolStoreUtils.get(address(dataStore), key);
         if (existingPool.poolToken != address(0)) {
             revert Errors.PoolAlreadyExists(key, existingPool.poolToken);
         }
@@ -45,7 +45,7 @@ contract PoolFactory is RoleModule {
         DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setKeyAsId(dataStore, key),
+            PoolStoreUtils.setKeyAsId(address(dataStore), key),
         	WadRayMath.RAY,
             0,
             WadRayMath.RAY,
@@ -60,7 +60,7 @@ contract PoolFactory is RoleModule {
             Chain.currentTimestamp()
         );
 
-        PoolStoreUtils.set(dataStore, key, pool);
+        PoolStoreUtils.set(address(dataStore), key, pool);
         //emitPoolCreated(address(poolToken), salt, indexToken, longToken, shortToken);
 
         return pool;

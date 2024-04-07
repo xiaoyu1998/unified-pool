@@ -3,8 +3,8 @@
 pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
-import "../data/DataStore.sol";
-
+import "../data/IDataStore.sol";
+import "../error/Errors.sol";
 import "./Pool.sol";
 
 // @title PoolStoreUtils
@@ -27,7 +27,9 @@ library PoolStoreUtils {
     bytes32 public constant POOL_UNCLAIMED_FEE = keccak256(abi.encode("POOL_UNCLAIMED_FEE"));
     bytes32 public constant POOL_LAST_UPDATE_TIME_STAMP = keccak256(abi.encode("POOL_LAST_UPDATE_TIME_STAMP"));
 
-    function get(DataStore dataStore, address key) public view returns (Pool.Props memory) {
+    function get(address dataStoreAddress, address key) public view returns (Pool.Props memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
+
         Pool.Props memory pool;
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             return pool;
@@ -92,22 +94,26 @@ library PoolStoreUtils {
         return pool;
     }
 
-    function setKeyAsId(DataStore dataStore, address key)  external returns (uint256) {
+    function setKeyAsId(address dataStoreAddress, address key)  external returns (uint256) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         uint256 id = dataStore.incrementUint(POOL_KEY_ID, 1);
         dataStore.setAddress(keccak256(abi.encode(id, POOL_KEY_ID)), key);
         return id;
     }
 
-    function getKeyFromId(DataStore dataStore, uint256 id)  public view returns (address) {
+    function getKeyFromId(address dataStoreAddress, uint256 id)  public view returns (address) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddress(keccak256(abi.encode(id, POOL_KEY_ID)));
     }
 
-    function getPoolById(DataStore dataStore, uint256 id)  public view returns (Pool.Props memory) {
+    function getPoolById(address dataStoreAddress, uint256 id)  public view returns (Pool.Props memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         address key = dataStore.getAddress(keccak256(abi.encode(id, POOL_KEY_ID)));
-        return get(dataStore, key);
+        return get(dataStoreAddress, key);
     }
 
-    function set(DataStore dataStore, address key,  Pool.Props memory pool) external {
+    function set(address dataStoreAddress, address key,  Pool.Props memory pool) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         dataStore.addAddress(
             Keys.POOL_LIST,
             key
@@ -185,7 +191,8 @@ library PoolStoreUtils {
 
     }
 
-    function remove(DataStore dataStore, address key) external {
+    function remove(address dataStoreAddress, address key) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             revert Errors.PoolNotFound(key);
         }
@@ -252,36 +259,42 @@ library PoolStoreUtils {
         );
     }
 
-    function getPoolToken(DataStore dataStore, address key) external view returns (address){
+    function getPoolToken(address dataStoreAddress, address key) external view returns (address){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_TOKEN))
         );       
     }
 
-    function getDebtToken(DataStore dataStore, address key) external view returns (address){
+    function getDebtToken(address dataStoreAddress, address key) external view returns (address){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
         );       
     }
 
-    function setConfiguration(DataStore dataStore, address key, uint256 poolConfigration) external {
+    function setConfiguration(address dataStoreAddress, address key, uint256 poolConfigration) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION)),
             poolConfigration
         );        
     }
 
-    function getConfiguration(DataStore dataStore, address key) external view returns (uint256){
+    function getConfiguration(address dataStoreAddress, address key) external view returns (uint256){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGRATION))
         );       
     }
 
-    function getPoolCount(DataStore dataStore) internal view returns (uint256) {
+    function getPoolCount(address dataStoreAddress) internal view returns (uint256) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddressCount(Keys.POOL_LIST);
     }
 
-    function getPoolKeys(DataStore dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
+    function getPoolKeys(address dataStoreAddress, uint256 start, uint256 end) internal view returns (address[] memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddressValuesAt(Keys.POOL_LIST, start, end);
     }
 

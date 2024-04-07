@@ -175,7 +175,7 @@ library PoolUtils {
     }
 
     function getPoolNormalizedLiquidityIndex(
-      DataStore dataStore,
+      address dataStore,
       address key
     ) internal view returns (uint256) {
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, key);
@@ -193,7 +193,7 @@ library PoolUtils {
     }
 
     function getPoolNormalizedBorrowingIndex(
-      DataStore dataStore,
+      address dataStore,
       address key
     ) internal view  returns (uint256) {
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, key);

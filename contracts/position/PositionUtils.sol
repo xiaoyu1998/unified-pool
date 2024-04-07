@@ -27,7 +27,7 @@ library PositionUtils {
 
     function calculateUserTotalCollateralAndDebt(
         address account,
-        DataStore dataStore
+        address dataStore
     ) internal view returns (uint256, uint256) {
         uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
         if(positionCount == 0) return (0, 0);
@@ -50,7 +50,7 @@ library PositionUtils {
     }
 
     function calculateUserCollateralAndDebtInPosition(
-        DataStore dataStore,
+        address dataStore,
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
 
@@ -83,7 +83,7 @@ library PositionUtils {
 
     function validateHealthFactor(
         address account,
-        DataStore dataStore,
+        address dataStore,
         address underlyingAsset,
         uint256 amount
     ) internal view returns (uint256, uint256) {

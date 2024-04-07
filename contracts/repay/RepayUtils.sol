@@ -37,7 +37,7 @@ library RepayUtils {
     }
 
     struct ExecuteRepayParams {
-        DataStore dataStore;
+        address dataStore;
         address underlyingAsset;
         uint256 amount;
     }

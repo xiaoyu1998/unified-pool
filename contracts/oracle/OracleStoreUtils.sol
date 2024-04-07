@@ -2,29 +2,29 @@
 
 pragma solidity ^0.8.20;
 
-import "../data/DataStore.sol";
+import "../data/IDataStore.sol";
 import "../data/Keys.sol";
 
 // @title OracleStoreUtils
 library OracleStoreUtils {
 
-    function get(DataStore dataStore, address underlyingAsset) public view returns (address) {
-        return dataStore.getAddress(Keys.oracleKey(underlyingAsset));
+    function get(address dataStore, address underlyingAsset) public view returns (address) {
+        return IDataStore(dataStore).getAddress(Keys.oracleKey(underlyingAsset));
     }
 
-    function set(DataStore dataStore, address underlyingAsset, address oracle) external {
-        dataStore.setAddress(
+    function set(address dataStore, address underlyingAsset, address oracle) external {
+        IDataStore(dataStore).setAddress(
             Keys.oracleKey(underlyingAsset),
             oracle
         );
     }
 
-    function getOracleDecimals(DataStore dataStore, address underlyingAsset) public view returns (uint256) {
-        return dataStore.getUint(Keys.oracleDecimalsKey(underlyingAsset));
+    function getOracleDecimals(address dataStore, address underlyingAsset) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.oracleDecimalsKey(underlyingAsset));
     }
 
-    function setOracleDecimals(DataStore dataStore, address underlyingAsset, uint256 oracle) external {
-         dataStore.setUint(
+    function setOracleDecimals(address dataStore, address underlyingAsset, uint256 oracle) external {
+         IDataStore(dataStore).setUint(
             Keys.oracleDecimalsKey(underlyingAsset),
             oracle
         );

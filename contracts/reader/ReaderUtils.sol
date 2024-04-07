@@ -61,7 +61,7 @@ library ReaderUtils {
         uint256 price;
     }
 
-    function _getPoolLiquidity(DataStore dataStore, address poolTokenAddress) internal view returns (PoolLiquidity memory) {
+    function _getPoolLiquidity(address dataStore, address poolTokenAddress) internal view returns (PoolLiquidity memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
 
         PoolLiquidity memory poolLiquidity = PoolLiquidity(
@@ -75,7 +75,7 @@ library ReaderUtils {
     }
 
     function _getAccountLiquidity(
-        DataStore dataStore, 
+        address dataStore, 
         address poolTokenAddress, 
         address account
     ) internal view returns (AccountLiquidity memory) {
@@ -91,11 +91,11 @@ library ReaderUtils {
         return accountLiquidity;
     }
 
-    function _getPosition(DataStore dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
+    function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
         return PositionStoreUtils.get(dataStore, positionKey);
     }
 
-    function _getPositions(DataStore dataStore, address account) internal view returns (Position.Props[] memory) {
+    function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
         uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
         bytes32[] memory positionKeys = 
             PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
@@ -110,11 +110,11 @@ library ReaderUtils {
         return positions;
     }
 
-    function _getPool(DataStore dataStore, address poolKey) internal view returns (Pool.Props memory) {
+    function _getPool(address dataStore, address poolKey) internal view returns (Pool.Props memory) {
         return PoolStoreUtils.get(dataStore, poolKey);
     }
 
-    function _getPools(DataStore dataStore, uint256 start, uint256 end) internal view returns (Pool.Props[] memory) {
+    function _getPools(address dataStore, uint256 start, uint256 end) internal view returns (Pool.Props[] memory) {
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, start, end);
         Pool.Props[] memory pools = new Pool.Props[](poolKeys.length);
         for (uint256 i; i < poolKeys.length; i++) {
@@ -126,7 +126,7 @@ library ReaderUtils {
         return pools;
     }
 
-    function _getPoolInfo(DataStore dataStore, address poolKey) internal view returns (GetPoolInfo memory) {
+    function _getPoolInfo(address dataStore, address poolKey) internal view returns (GetPoolInfo memory) {
         Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
         GetPoolInfo memory poolInfo = GetPoolInfo(
             pool.keyId,
@@ -167,7 +167,7 @@ library ReaderUtils {
         return poolInfo;
     }
 
-    function _getPoolsInfo(DataStore dataStore, uint256 start, uint256 end) internal view returns (GetPoolInfo[] memory) {
+    function _getPoolsInfo(address dataStore, uint256 start, uint256 end) internal view returns (GetPoolInfo[] memory) {
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, start, end);
         GetPoolInfo[] memory poolsInfo = new GetPoolInfo[](poolKeys.length);
         for (uint256 i; i < poolKeys.length; i++) {

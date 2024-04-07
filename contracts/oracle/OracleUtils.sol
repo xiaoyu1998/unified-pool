@@ -15,7 +15,7 @@ import "../utils/WadRayMath.sol";
 // @title OracleUtils
 library OracleUtils {
 
-    function getPrice(DataStore dataStore, address underlyingAsset) public view returns (uint256) {
+    function getPrice(address dataStore, address underlyingAsset) public view returns (uint256) {
         address oracle = OracleStoreUtils.get(dataStore, underlyingAsset);
         if (oracle == address(0)) {
             revert Errors.EmptyOracle(underlyingAsset);

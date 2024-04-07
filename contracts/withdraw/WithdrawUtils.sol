@@ -29,7 +29,7 @@ library WithdrawUtils {
     }
 
     struct ExecuteWithdrawParams {
-        DataStore dataStore;
+        address dataStore;
         address underlyingAsset;
         uint256 amount;
         address to;

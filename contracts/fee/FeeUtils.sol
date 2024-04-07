@@ -67,7 +67,7 @@ library FeeUtils {
     // // @param token the fee token
     // // @param receiver the receiver of the claimed fees
     // function claimFees(
-    //     DataStore dataStore,
+    //     address dataStore,
     //     EventEmitter eventEmitter,
     //     address market,
     //     address token,

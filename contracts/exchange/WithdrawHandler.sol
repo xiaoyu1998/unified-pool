@@ -26,7 +26,7 @@ contract WithdrawHandler is IWithdrawHandler, GlobalReentrancyGuard, RoleModule 
     ) external globalNonReentrant {
 
         WithdrawUtils.ExecuteWithdrawParams memory params = WithdrawUtils.ExecuteWithdrawParams(
-           dataStore,
+           address(dataStore),
            withdrawParams.underlyingAsset,     
            withdrawParams.amount,
            withdrawParams.to

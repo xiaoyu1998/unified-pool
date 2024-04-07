@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import "../data/DataStore.sol";
+import "../data/IDataStore.sol";
 import "../data/Keys.sol";
 import "../error/ErrorUtils.sol";
 import "../utils/AccountUtils.sol";
@@ -25,8 +25,8 @@ library TokenUtils {
     // @dev Returns the address of the WNT token.
     // @param dataStore DataStore contract instance where the address of the WNT token is stored.
     // @return The address of the WNT token.
-    function wnt(DataStore dataStore) internal view returns (address) {
-        return dataStore.getAddress(Keys.WNT);
+    function wnt(address dataStore) internal view returns (address) {
+        return IDataStore(dataStore).getAddress(Keys.WNT);
     }
 
    

@@ -26,7 +26,7 @@ contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
     ) external globalNonReentrant {
 
         SupplyUtils.ExecuteSupplyParams memory params = SupplyUtils.ExecuteSupplyParams(
-           dataStore,
+           address(dataStore),
            supplyParams.underlyingAsset,      
            supplyParams.to
         );

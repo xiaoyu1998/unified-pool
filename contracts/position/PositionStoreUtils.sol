@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
-import "../data/DataStore.sol";
+import "../data/IDataStore.sol";
 
 import "./Position.sol";
 
@@ -25,7 +25,8 @@ library PositionStoreUtils {
     bytes32 public constant HAS_DEBT = keccak256(abi.encode("HAS_DEBT"));
     // bytes32 public constant COLLATERAL_AND_DEBT_POOLS = keccak256(abi.encode("COLLATERAL_AND_DEBT_POOLS"));
 
-    function get(DataStore dataStore, bytes32 key) external view returns (Position.Props memory) {
+    function get(address dataStoreAddress, bytes32 key) external view returns (Position.Props memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         Position.Props memory position;
         if (!dataStore.containsBytes32(Keys.POSITION_LIST, key)) {
             return position;
@@ -74,7 +75,8 @@ library PositionStoreUtils {
         return position;
     }
 
-    function set(DataStore dataStore, bytes32 key, Position.Props memory position) external {
+    function set(address dataStoreAddress, bytes32 key, Position.Props memory position) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         dataStore.addBytes32(
             Keys.POSITION_LIST,
             key
@@ -137,7 +139,8 @@ library PositionStoreUtils {
 
     }
 
-    function remove(DataStore dataStore, bytes32 key, address account) external {
+    function remove(address dataStoreAddress, bytes32 key, address account) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsBytes32(Keys.POSITION_LIST, key)) {
             revert Errors.PositionNotFound(key);
         }
@@ -195,19 +198,23 @@ library PositionStoreUtils {
 
     }
 
-    function getPositionCount(DataStore dataStore) internal view returns (uint256) {
+    function getPositionCount(address dataStoreAddress) internal view returns (uint256) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddressCount(Keys.POSITION_LIST);
     }
 
-    function getPositionKeys(DataStore dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
+    function getPositionKeys(address dataStoreAddress, uint256 start, uint256 end) internal view returns (address[] memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getAddressValuesAt(Keys.POSITION_LIST, start, end);
     }
 
-    function getAccountPositionCount(DataStore dataStore, address account) internal view returns (uint256) {
+    function getAccountPositionCount(address dataStoreAddress, address account) internal view returns (uint256) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getBytes32Count(Keys.accountPositionListKey(account));
     }
 
-    function getAccountPositionKeys(DataStore dataStore, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
+    function getAccountPositionKeys(address dataStoreAddress, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
         return dataStore.getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
     }
 }
