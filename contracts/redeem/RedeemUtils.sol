@@ -56,6 +56,7 @@ library RedeemUtils {
         address account, 
         ExecuteRedeemParams calldata params
     ) external {
+        Printer.log("-------------------------executeRepay--------------------------");
         //TODO:should be just get the pooltoken and pool configuration only
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
@@ -70,7 +71,6 @@ library RedeemUtils {
         if( redeemAmount > collateralAmount) {
             redeemAmount = collateralAmount;
         }
-        Printer.log("-------------------------executeRepay--------------------------");
         Printer.log("repayAmount", redeemAmount);  
         Printer.log("collateralAmount", collateralAmount);  
 

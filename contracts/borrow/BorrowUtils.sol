@@ -93,7 +93,6 @@ library BorrowUtils {
             0 //liquidity already out while move to collateral
         );
 
-        Printer.log("-------------------------executeBorrow--------------------------");
         // Printer.log("liquidityRate", pool.liquidityRate);   
         // Printer.log("borrowRate", pool.borrowRate);   
         Printer.log("totalFee", pool.totalFee);   
@@ -105,22 +104,6 @@ library BorrowUtils {
             pool
         );
     }
-
-    // struct ValidateBorrowLocalVars {
-    //     uint256 totalDebt;
-    //     uint256 poolDecimals;
-    //     uint256 borrowCapacity;
-    //     uint256 userTotalCollateralUsd;
-    //     uint256 userTotalDebtUsd;
-    //     uint256 amountToBorrowUsd;
-    //     uint256 healthFactor;
-    //     uint256 healthFactorCollateralRateThreshold;
-
-    //     bool isActive;
-    //     bool isFrozen;
-    //     bool isPaused;
-    //     bool borrowingEnabled;
-    // }
 
     // 
     // @notice Validates a withdraw action.
@@ -134,12 +117,11 @@ library BorrowUtils {
         uint256 amountToBorrow
     ) internal view {
         Printer.log("-------------------------validateBorrow--------------------------");
-        ValidateBorrowLocalVars memory vars;
         //validate pool configuration
-        (   uint256 isActive,
-            uint256 isFrozen,
-            uint256 borrowingEnabled,
-            uint256 isPaused
+        (   bool isActive,
+            bool isFrozen,
+            bool borrowingEnabled,
+            bool isPaused
         ) = PoolConfigurationUtils.getFlags(poolCache.configuration);  
         if (!isActive)         { revert Errors.PoolIsInactive(); }  
         if (isPaused)          { revert Errors.PoolIsPaused();   }  
@@ -154,7 +136,7 @@ library BorrowUtils {
         //validate pool borrow capacity
         uint256 poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
         uint256 borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.configuration) 
-                              * (10 ** vars.poolDecimals);
+                              * (10 ** poolDecimals);
 
         Printer.log("poolDecimals", poolDecimals );
         Printer.log("borrowCapacity", borrowCapacity);
@@ -168,9 +150,8 @@ library BorrowUtils {
                     revert Errors.BorrowCapacityExceeded(totalDebt, borrowCapacity);
                 }
             }
+            Printer.log("totalDebt",  totalDebt);
         }
-
-        Printer.log("totalDebt",  totalDebt);
 
         PositionUtils.validateHealthFactor(account, dataStore, poolCache.underlyingAsset, amountToBorrow);
 
