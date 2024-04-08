@@ -1,6 +1,6 @@
 import { contractAt, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidity, getDebt} from "../utils/helper";
+import { getPool, getPoolsLiquidity, getAccountLiquidities, getDebt} from "../utils/helper";
 
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
@@ -8,12 +8,14 @@ async function main() {
     const [owner] = await ethers.getSigners();
      
     const exchangeRouter = await getContract("ExchangeRouter"); 
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
 
     //execute withdraw
     const usdtDecimals = 6;
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const poolUsdt = await getPool(usdtAddress); 
+    //const poolUsdt = await getPool(usdtAddress); 
     const withdrawAmmount = expandDecimals(1000, usdtDecimals);
     const params: WithdrawUtils.WithdrawParamsStruct = {
         underlyingAsset: usdtAddress,
@@ -30,10 +32,12 @@ async function main() {
     const poolToken = await getContractAt("PoolToken", poolUsdtAfterWithdraw.poolToken);
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterWithdraw.debtToken);
     console.log("poolUsdtAfterWithdraw", poolUsdtAfterWithdraw);
-    console.log("poolToken",await getLiquidity(poolToken, owner.address));
-    console.log("debtToken",await getDebt(debtToken, owner.address)); 
-    console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
-    console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
+    //console.log("poolToken",await getLiquidity(poolToken, owner.address));
+    console.log("pools",await getPoolsLiquidity(dataStore, reader));
+    console.log("account",await getAccountLiquidities(dataStore, reader, owner.address));
+    console.log("debt",await getDebt(debtToken, owner.address)); 
+    console.log("userUSDT",await usdt.balanceOf(owner.address)); 
+    console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
 
 }
 

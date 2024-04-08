@@ -153,12 +153,12 @@ library RepayUtils {
 
         PositionUtils.validateEnabledPosition(position);
 
-        if(repayAmount == 0) {
-            revert Errors.EmptyRepayAmount();
-        }
-
         if(debtAmount == 0) {
             revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset);
+        }
+        
+        if(repayAmount == 0) {
+            revert Errors.EmptyRepayAmount();
         }
 
         if(collateralAmount > 0){

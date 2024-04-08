@@ -37,11 +37,11 @@ async function main() {
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterSupply.debtToken);
     console.log("poolUsdtAfterSupply", poolUsdtAfterSupply);
     // console.log("poolToken",await getLiquidity(poolToken, owner.address));
-    console.log("poolsLiquidity",await getPoolsLiquidity(dataStore, reader));
-    console.log("accountLiquidities",await getAccountLiquidities(dataStore, reader, owner.address));
-    console.log("debtToken",await getDebt(debtToken, owner.address)); 
-    console.log("userUnderlyingAsset",await usdt.balanceOf(owner.address)); 
-    console.log("poolUnderlyingAsset",await usdt.balanceOf(poolToken.target)); 
+    console.log("pools",await getPoolsLiquidity(dataStore, reader));
+    console.log("account",await getAccountLiquidities(dataStore, reader, owner.address));
+    console.log("debt",await getDebt(debtToken, owner.address)); 
+    console.log("userUSDT",await usdt.balanceOf(owner.address)); 
+    console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
     //console.log("allowance", await usdt.allowance(owner.address, router.target));
 
 }

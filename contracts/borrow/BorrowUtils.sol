@@ -128,7 +128,6 @@ library BorrowUtils {
         if (isFrozen)          { revert Errors.PoolIsFrozen();   }   
         if (!borrowingEnabled) { revert Errors.PoolIsNotEnabled();   } 
 
-
         if (amountToBorrow == 0) { 
             revert Errors.EmptyBorrowAmounts(); 
         }
