@@ -12,25 +12,33 @@ import "../pool/PoolStoreUtils.sol";
 import "../pool/Pool.sol";
 import "../position/PositionStoreUtils.sol";
 import "../token/IPoolToken.sol";
+import "../token/IDebtToken.sol";
 import "../oracle/OracleUtils.sol";
 
 // @title OracleUtils
 library ReaderUtils {
 
-    struct PoolLiquidity {
+    struct PoolLiquidityAndDebt {
         address underlyingAsset;
         uint256 scaledTotalSupply;
         uint256 totalSupply;
         uint256 totalCollateral;
         uint256 availableLiquidity;
+
+        uint256 scaledTotalDebt;
+        uint256 totalDebt;
+
     }
 
-    struct AccountLiquidity {
+    struct AccountLiquidityAndDebt {
         address underlyingAsset;
         address account;
         uint256 balance;
         uint256 scaled;
         uint256 collateral;
+
+        uint256 scaledDebt;
+        uint256 debt;    
     }
 
     struct GetPoolInfo {
@@ -61,34 +69,41 @@ library ReaderUtils {
         uint256 price;
     }
 
-    function _getPoolLiquidity(address dataStore, address poolTokenAddress) internal view returns (PoolLiquidity memory) {
+    function _getPoolLiquidityAndDebt(address dataStore, address poolTokenAddress, address debtTokenAddress) internal view returns (PoolLiquidityAndDebt memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
+        IDebtToken debtToken   = IDebtToken(debtTokenAddress);
 
-        PoolLiquidity memory poolLiquidity = PoolLiquidity(
+        PoolLiquidityAndDebt memory l = PoolLiquidityAndDebt(
             poolToken.underlyingAsset(),
             poolToken.scaledTotalSupply(),
             poolToken.totalSupply(),
             poolToken.totalCollateral(),
-            poolToken.availableLiquidity()
+            poolToken.availableLiquidity(),
+            debtToken.scaledTotalSupply(),
+            debtToken.totalSupply()
         );
-        return poolLiquidity;
+        return l;
     }
 
-    function _getAccountLiquidity(
+    function _getAccountLiquidityAndDebt(
+        address account,
         address dataStore, 
         address poolTokenAddress, 
-        address account
-    ) internal view returns (AccountLiquidity memory) {
+        address debtTokenAddress
+    ) internal view returns (AccountLiquidityAndDebt memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
+        IDebtToken debtToken   = IDebtToken(debtTokenAddress);
 
-        AccountLiquidity memory accountLiquidity = AccountLiquidity(
+        AccountLiquidityAndDebt memory l = AccountLiquidityAndDebt(
             poolToken.underlyingAsset(),
             account,
             poolToken.balanceOf(account),
             poolToken.scaledBalanceOf(account),
-            poolToken.balanceOfCollateral(account)
+            poolToken.balanceOfCollateral(account),
+            debtToken.scaledBalanceOf(account),
+            debtToken.balanceOf(account)
         );
-        return accountLiquidity;
+        return l;
     }
 
     function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {

@@ -90,42 +90,46 @@ export async function getPositions(dataStore, reader, address) {
     return ps;
 }
 
-export function parseAccountLiquidity(liquidity) {
-    const l: ReaderUtils.AccountLiquidityStruct = {
+export function parseAccountLiquidityAndDebt(liquidity) {
+    const l: ReaderUtils.AccountLiquidityAndDebtStruct = {
         underlyingAsset: liquidity[0],
         account: liquidity[1],
         balance: liquidity[2],
         scaled: liquidity[3],
         collateral: liquidity[4],
+        scaledDebt: liquidity[5],
+        debt: liquidity[6],
     };
     return l;
 }
 
-export async function getAccountLiquidities(dataStore, reader, address) {
-    const liquidities = await reader.getAccountLiquidities(dataStore.target, address);
+export async function getAccountLiquidityAndDebtInPools(dataStore, reader, address) {
+    const liquidities = await reader.getAccountLiquidityAndDebtInPools(dataStore.target, address);
     const accountLiquidities = [];
     for (let i = 0; i < liquidities.length; i++) {
-         accountLiquidities[i] = parseAccountLiquidity(liquidities[i]);
+         accountLiquidities[i] = parseAccountLiquidityAndDebt(liquidities[i]);
     }
     return accountLiquidities;    
 }
 
-export function parsePoolLiquidity(liquidity) {
-    const l: ReaderUtils.PoolLiquidityStruct = {
+export function parsePoolLiquidityAndDebt(liquidity) {
+    const l: ReaderUtils.PoolLiquidityAndDebtStruct = {
         underlyingAsset: liquidity[0],
         scaledTotalSupply: liquidity[1],
         totalSupply: liquidity[2],
         totalCollateral: liquidity[3],
         availableLiquidity: liquidity[4],
+        scaledTotalDebt: liquidity[5],
+        totalDebt: liquidity[6],
     };
     return l;
 }
 
-export async function getPoolsLiquidity(dataStore, reader) {
-    const liquidities = await reader.getPoolsLiquidity(dataStore.target);
+export async function getPoolsLiquidityAndDebt(dataStore, reader) {
+    const liquidities = await reader.getPoolsLiquidityAndDebt(dataStore.target);
     const poolsLiquidities = [];
     for (let i = 0; i < liquidities.length; i++) {
-         poolsLiquidities[i] = parsePoolLiquidity(liquidities[i]);
+         poolsLiquidities[i] = parsePoolLiquidityAndDebt(liquidities[i]);
     }
     return poolsLiquidities;    
 }
