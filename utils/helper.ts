@@ -130,37 +130,37 @@ export async function getPoolsLiquidity(dataStore, reader) {
     return poolsLiquidities;    
 }
 
-export type LiquidityPropsStruct = {
-    underlyingAsset: AddressLike;
-    scaledTotalSupply: BigNumberish;
-    totalSupply: BigNumberish;
-    totalCollateral: BigNumberish;
-    availableLiquidity: BigNumberish;
+// export type LiquidityPropsStruct = {
+//     underlyingAsset: AddressLike;
+//     scaledTotalSupply: BigNumberish;
+//     totalSupply: BigNumberish;
+//     totalCollateral: BigNumberish;
+//     availableLiquidity: BigNumberish;
 
-    account: AddressLike;
-    balance: BigNumberish;
-    scaled: BigNumberish;
-    collateral: BigNumberish;
-};
+//     account: AddressLike;
+//     balance: BigNumberish;
+//     scaled: BigNumberish;
+//     collateral: BigNumberish;
+// };
 
-export async function getLiquidity(poolToken, address) {
-    const l: LiquidityPropsStruct = {
-        underlyingAsset: await poolToken.underlyingAsset(),
-        scaledTotalSupply: await poolToken.scaledTotalSupply(),
-        totalSupply:await poolToken.totalSupply(),
-        totalCollateral: await poolToken.totalCollateral(),
-        availableLiquidity: await poolToken.availableLiquidity()
-    };
+// export async function getLiquidity(poolToken, address) {
+//     const l: LiquidityPropsStruct = {
+//         underlyingAsset: await poolToken.underlyingAsset(),
+//         scaledTotalSupply: await poolToken.scaledTotalSupply(),
+//         totalSupply:await poolToken.totalSupply(),
+//         totalCollateral: await poolToken.totalCollateral(),
+//         availableLiquidity: await poolToken.availableLiquidity()
+//     };
 
-    if (address) {
-        l.account = address;
-        l.balance = await poolToken.balanceOf(address);
-        l.scaled  = await poolToken.scaledBalanceOf(address);
-        l.collateral = await poolToken.balanceOfCollateral(address);
-    }
+//     if (address) {
+//         l.account = address;
+//         l.balance = await poolToken.balanceOf(address);
+//         l.scaled  = await poolToken.scaledBalanceOf(address);
+//         l.collateral = await poolToken.balanceOfCollateral(address);
+//     }
 
-    return l;
-}
+//     return l;
+// }
 
 export type DebtPropsStruct = {
     underlyingAsset: AddressLike;

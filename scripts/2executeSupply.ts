@@ -32,9 +32,10 @@ async function main() {
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
     //print poolUsdt
-    const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
-    console.log("poolUsdt", poolUsdt);
+    const poolUsdtAfterSupply = await getPool(usdtAddress); 
+    const poolToken = await getContractAt("PoolToken", poolUsdtAfterSupply.poolToken);
+    const debtToken = await getContractAt("DebtToken", poolUsdtAfterSupply.debtToken);
+    console.log("poolUsdtAfterSupply", poolUsdtAfterSupply);
     // console.log("poolToken",await getLiquidity(poolToken, owner.address));
     console.log("poolsLiquidity",await getPoolsLiquidity(dataStore, reader));
     console.log("accountLiquidities",await getAccountLiquidities(dataStore, reader, owner.address));
