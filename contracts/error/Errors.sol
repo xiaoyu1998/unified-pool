@@ -53,6 +53,8 @@ library Errors {
     error EmptyBorrowAmounts();
     error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);
 
+    // DepositUtils errors
+    error EmptyDepositAmounts();
 
     // SupplyUtils errors
     error EmptySupplyAmounts();

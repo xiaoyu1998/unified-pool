@@ -44,8 +44,8 @@ library DepositUtils {
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
-        // PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        // PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
        
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
@@ -67,6 +67,12 @@ library DepositUtils {
             depositAmount
         );
 
+        PoolStoreUtils.set(
+            params.dataStore, 
+            params.underlyingAsset, 
+            pool
+        );
+
         poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
 
@@ -77,8 +83,8 @@ library DepositUtils {
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
-            position)
-        ;
+            position
+        );
     }
 
 
@@ -103,7 +109,7 @@ library DepositUtils {
         if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
 
         if (amount == 0) { 
-            revert Errors.EmptySupplyAmounts(); 
+            revert Errors.EmptyDepositAmounts(); 
         }
     }
     

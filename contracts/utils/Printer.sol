@@ -66,6 +66,7 @@ library Printer {
     //         toString(value)
     //     );        
     // }
+    
     function log(string memory label, uint256 value) internal pure {
         console.log(
             "%s -%s",
