@@ -250,7 +250,7 @@ export async function getContract(name) {
         const borrowHandler = await getContract("BorrowHandler");
         const repayHandler = await getContract("RepayHandler");
         const redeemHandler = await getContract("RedeemHandler");
-        const router = await getContract("Router");
+        //const router = await getContract("Router");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, [
             router,
@@ -269,7 +269,7 @@ export async function getContract(name) {
 
 export async function getContractAt(name, address) {
     const poolStoreUtils = await getContract("PoolStoreUtils"); 
-    if (name == "PoolToken") {
+    if (name == "PoolToken" || name == "DebtToken") {
         return await contractAtOptions(name, address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
@@ -277,12 +277,12 @@ export async function getContractAt(name, address) {
         });
     } 
 
-    if (name == "DebtToken") {
-        return await contractAtOptions(name, address, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
-    }    
+    // if (name == "DebtToken") {
+    //     return await contractAtOptions(name, address, {
+    //         libraries: {
+    //             PoolStoreUtils: poolStoreUtils,
+    //         },         
+    //     });
+    // }    
 }
 

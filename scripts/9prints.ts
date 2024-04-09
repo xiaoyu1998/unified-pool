@@ -7,14 +7,17 @@ const { mine } = require("@nomicfoundation/hardhat-network-helpers");
 async function main() {
     const [owner] = await ethers.getSigners();
 
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader"); 
+
     await mine(10000);
     const usdtAddress = getTokens("USDT")["address"];
     const poolUsdt = await getPoolInfo(usdtAddress);
     const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken); 
     const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
     console.log("poolUsdt", poolUsdt);
-    console.log("poolToken",await getLiquidity(poolToken, owner.address));
-    console.log("debtToken",await getDebt(debtToken, owner.address));
+    console.log("pools",await getPoolsLiquidityAndDebt(dataStore, reader));
+    console.log("account",await getAccountLiquidityAndDebtInPools(dataStore, reader, owner.address));
 }
 
 
