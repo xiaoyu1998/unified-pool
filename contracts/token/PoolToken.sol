@@ -86,40 +86,18 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	) external virtual onlyController {
 		// Being a normal transfer, the Transfer() and BalanceTransfer() are emitted
 		// so no need to emit a specific event here
-		_transfer(from, to, amount, false);
+		_transfer(from, to, amount;
 	}
 
 	function _transfer(
 		address from, 
 		address to, 
-		uint128 amount
+		uint256 amount
 	) internal virtual {
-		_transfer(from, to, amount, true);
-	}
-
-
-	function _transfer(
-		address from, 
-		address to, 
-		uint256 amount,
-		bool validate
-	) internal virtual {
-		//address underlyingAsset = _underlyingAsset;
-
-		//Pool.Props memory pool = PoolStoreUtils.get(dataStore, _poolKey)
-		// if(pool == null){
-		// 	revert erros.PoolNotFound(_poolKey);
-		// }
 		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset);
-
-		// uint256 fromBalanceBefore = super.balanceOf(from).rayMul(index);
-		// uint256 toBalanceBefore = super.balanceOf(to).rayMul(index);
 
 		super._transfer(from, to, amount, index);
 
-		// if (validate) {
-		//   POOL.finalizeTransfer(underlyingAsset, from, to, amount, fromBalanceBefore, toBalanceBefore);
-		// }
 		emit BalanceTransfer(from, to, amount.rayDiv(index), index);
 	}
 
