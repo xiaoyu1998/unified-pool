@@ -95,8 +95,8 @@ library BorrowUtils {
 
         // Printer.log("liquidityRate", pool.liquidityRate);   
         // Printer.log("borrowRate", pool.borrowRate);   
-        Printer.log("totalFee", pool.totalFee);   
-        Printer.log("unclaimedFee", pool.unclaimedFee);   
+        // Printer.log("totalFee", pool.totalFee);   
+        // Printer.log("unclaimedFee", pool.unclaimedFee);   
 
         PoolStoreUtils.set(
             params.dataStore, 
@@ -153,7 +153,6 @@ library BorrowUtils {
         }
 
         PositionUtils.validateHealthFactor(account, dataStore, poolCache.underlyingAsset, amountToBorrow);
-
     }
     
 }
