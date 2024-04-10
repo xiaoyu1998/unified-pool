@@ -52,9 +52,17 @@ export function parsePoolInfo(pool) {
         isFrozen: pool[15],
         borrowingEnabled: pool[16],
         decimals: pool[17],
-        feeFactor: pool[18],
-        symbol: pool[19],
-        price: pool[20]
+        borrowCapacity: pool[18],
+        supplyCapacity: pool[19],        
+        feeFactor: pool[20],
+        scaledTotalSupply: pool[21], 
+        totalSupply: pool[22],
+        totalCollateral: pool[23], 
+        availableLiquidity: pool[24],
+        scaledTotalDebt: pool[25],  
+        totalDebt: pool[26],         
+        symbol: pool[27],
+        price: pool[28]
     };
     return p;
 }
@@ -90,8 +98,8 @@ export async function getPositions(dataStore, reader, address) {
     return ps;
 }
 
-export function parseAccountLiquidityAndDebt(liquidity) {
-    const l: ReaderUtils.AccountLiquidityAndDebtStruct = {
+export function parseLiquidityAndDebt(liquidity) {
+    const l: ReaderUtils.LiquidityAndDebtStruct = {
         underlyingAsset: liquidity[0],
         account: liquidity[1],
         balance: liquidity[2],
@@ -103,68 +111,14 @@ export function parseAccountLiquidityAndDebt(liquidity) {
     return l;
 }
 
-export async function getAccountLiquidityAndDebtInPools(dataStore, reader, address) {
-    const liquidities = await reader.getAccountLiquidityAndDebtInPools(dataStore.target, address);
+export async function getLiquidityAndDebts(dataStore, reader, address) {
+    const liquidities = await reader.getLiquidityAndDebts(dataStore.target, address);
     const accountLiquidities = [];
     for (let i = 0; i < liquidities.length; i++) {
-         accountLiquidities[i] = parseAccountLiquidityAndDebt(liquidities[i]);
+         accountLiquidities[i] = parseLiquidityAndDebt(liquidities[i]);
     }
     return accountLiquidities;    
 }
-
-export function parsePoolLiquidityAndDebt(liquidity) {
-    const l: ReaderUtils.PoolLiquidityAndDebtStruct = {
-        underlyingAsset: liquidity[0],
-        scaledTotalSupply: liquidity[1],
-        totalSupply: liquidity[2],
-        totalCollateral: liquidity[3],
-        availableLiquidity: liquidity[4],
-        scaledTotalDebt: liquidity[5],
-        totalDebt: liquidity[6],
-    };
-    return l;
-}
-
-export async function getPoolsLiquidityAndDebt(dataStore, reader) {
-    const liquidities = await reader.getPoolsLiquidityAndDebt(dataStore.target);
-    const poolsLiquidities = [];
-    for (let i = 0; i < liquidities.length; i++) {
-         poolsLiquidities[i] = parsePoolLiquidityAndDebt(liquidities[i]);
-    }
-    return poolsLiquidities;    
-}
-
-// export type LiquidityPropsStruct = {
-//     underlyingAsset: AddressLike;
-//     scaledTotalSupply: BigNumberish;
-//     totalSupply: BigNumberish;
-//     totalCollateral: BigNumberish;
-//     availableLiquidity: BigNumberish;
-
-//     account: AddressLike;
-//     balance: BigNumberish;
-//     scaled: BigNumberish;
-//     collateral: BigNumberish;
-// };
-
-// export async function getLiquidity(poolToken, address) {
-//     const l: LiquidityPropsStruct = {
-//         underlyingAsset: await poolToken.underlyingAsset(),
-//         scaledTotalSupply: await poolToken.scaledTotalSupply(),
-//         totalSupply:await poolToken.totalSupply(),
-//         totalCollateral: await poolToken.totalCollateral(),
-//         availableLiquidity: await poolToken.availableLiquidity()
-//     };
-
-//     if (address) {
-//         l.account = address;
-//         l.balance = await poolToken.balanceOf(address);
-//         l.scaled  = await poolToken.scaledBalanceOf(address);
-//         l.collateral = await poolToken.balanceOfCollateral(address);
-//     }
-
-//     return l;
-// }
 
 export type DebtPropsStruct = {
     underlyingAsset: AddressLike;

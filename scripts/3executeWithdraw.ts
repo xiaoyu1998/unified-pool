@@ -1,6 +1,6 @@
 import { contractAt, getTokens, getContract, getContractAt } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getPoolsLiquidityAndDebt, getAccountLiquidityAndDebtInPools, getDebt} from "../utils/helper";
+import { getPool, getLiquidityAndDebts } from "../utils/helper";
 
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
@@ -32,10 +32,7 @@ async function main() {
     const poolToken = await getContractAt("PoolToken", poolUsdtAfterWithdraw.poolToken);
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterWithdraw.debtToken);
     console.log("poolUsdtAfterWithdraw", poolUsdtAfterWithdraw);
-    //console.log("poolToken",await getLiquidity(poolToken, owner.address));
-    console.log("pools",await getPoolsLiquidityAndDebt(dataStore, reader));
-    console.log("account",await getAccountLiquidityAndDebtInPools(dataStore, reader, owner.address));
-    // console.log("debt",await getDebt(debtToken, owner.address)); 
+    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("userUSDT",await usdt.balanceOf(owner.address)); 
     console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
 

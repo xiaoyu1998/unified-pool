@@ -18,19 +18,7 @@ import "../oracle/OracleUtils.sol";
 // @title OracleUtils
 library ReaderUtils {
 
-    struct PoolLiquidityAndDebt {
-        address underlyingAsset;
-        uint256 scaledTotalSupply;
-        uint256 totalSupply;
-        uint256 totalCollateral;
-        uint256 availableLiquidity;
-
-        uint256 scaledTotalDebt;
-        uint256 totalDebt;
-
-    }
-
-    struct AccountLiquidityAndDebt {
+    struct LiquidityAndDebt {
         address underlyingAsset;
         address account;
         uint256 balance;
@@ -63,38 +51,31 @@ library ReaderUtils {
         bool isFrozen;
         bool borrowingEnabled;
         uint256 decimals;
+        uint256 borrowCapacity;
+        uint256 supplyCapacity;
         uint256 feeFactor;
+
+        uint256 scaledTotalSupply;
+        uint256 totalSupply;
+        uint256 totalCollateral;
+        uint256 availableLiquidity;
+        uint256 scaledTotalDebt;
+        uint256 totalDebt;
 
         string symbol;
         uint256 price;
     }
 
-    function _getPoolLiquidityAndDebt(address dataStore, address poolTokenAddress, address debtTokenAddress) internal view returns (PoolLiquidityAndDebt memory) {
-        IPoolToken poolToken   = IPoolToken(poolTokenAddress);
-        IDebtToken debtToken   = IDebtToken(debtTokenAddress);
-
-        PoolLiquidityAndDebt memory l = PoolLiquidityAndDebt(
-            poolToken.underlyingAsset(),
-            poolToken.scaledTotalSupply(),
-            poolToken.totalSupply(),
-            poolToken.totalCollateral(),
-            poolToken.availableLiquidity(),
-            debtToken.scaledTotalSupply(),
-            debtToken.totalSupply()
-        );
-        return l;
-    }
-
-    function _getAccountLiquidityAndDebt(
+    function _getLiquidityAndDebt(
         address account,
         address dataStore, 
         address poolTokenAddress, 
         address debtTokenAddress
-    ) internal view returns (AccountLiquidityAndDebt memory) {
+    ) internal view returns (LiquidityAndDebt memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
         IDebtToken debtToken   = IDebtToken(debtTokenAddress);
 
-        AccountLiquidityAndDebt memory l = AccountLiquidityAndDebt(
+        LiquidityAndDebt memory l = LiquidityAndDebt(
             poolToken.underlyingAsset(),
             account,
             poolToken.balanceOf(account),
@@ -157,12 +138,9 @@ library ReaderUtils {
             pool.totalFee,
             pool.unclaimedFee,
             pool.lastUpdateTimestamp,
-            false,
-            false,
-            false,
-            false,
-            0,
-            0,
+            false,false,false,false,
+            0,0,0,0,
+            0,0,0,0,0,0,
             "",
             0        
         );
@@ -173,9 +151,20 @@ library ReaderUtils {
         ) = PoolConfigurationUtils.getFlags(poolInfo.configuration); 
 
         poolInfo.decimals = PoolConfigurationUtils.getDecimals(poolInfo.configuration);
+        poolInfo.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolInfo.configuration);
+        poolInfo.supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolInfo.configuration);
         poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
-        poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
+ 
+        IPoolToken poolToken   = IPoolToken(pool.poolToken);
+        IDebtToken debtToken   = IDebtToken(pool.debtToken);
+        poolInfo.scaledTotalSupply = poolToken.scaledTotalSupply();
+        poolInfo.totalSupply = poolToken.totalSupply();
+        poolInfo.totalCollateral = poolToken.totalCollateral();
+        poolInfo.availableLiquidity = poolToken.availableLiquidity();
+        poolInfo.scaledTotalDebt = debtToken.scaledTotalSupply();
+        poolInfo.totalDebt = debtToken.totalSupply();
 
+        poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
         //this price is not at lastUpdateTimestamp
         poolInfo.price = OracleUtils.getPrice(dataStore, poolInfo.underlyingAsset);
 

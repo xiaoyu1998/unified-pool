@@ -18,22 +18,6 @@ contract Reader {
     using SafeCast for uint256;
     using Position for Position.Props;
 
-    // function _getPool(address dataStore, address poolKey) internal view returns (Pool.Props memory) {
-    //     return PoolStoreUtils.get(dataStore, poolKey);
-    // }
-
-    // function _getPools(address dataStore, uint256 start, uint256 end) internal view returns (Pool.Props[] memory) {
-    //     address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, start, end);
-    //     Pool.Props[] memory pools = new Pool.Props[](poolKeys.length);
-    //     for (uint256 i; i < poolKeys.length; i++) {
-    //         address poolKey = poolKeys[i];
-    //         Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
-    //         pools[i] = pool;
-    //     }
-
-    //     return pools;
-    // }
-
    function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
         return ReaderUtils._getPosition(dataStore, positionKey);
     }
@@ -60,52 +44,28 @@ contract Reader {
         return ReaderUtils._getPoolsInfo(dataStore, 0, poolsCount);
     }
 
-    function getPoolsLiquidityAndDebt(address dataStore) external view returns (ReaderUtils.PoolLiquidityAndDebt[] memory) {
-        uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
-        address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);
-        ReaderUtils.PoolLiquidityAndDebt[] memory poolsLiquidity = 
-            new ReaderUtils.PoolLiquidityAndDebt[](poolKeys.length);
 
-        for (uint256 i; i < poolKeys.length; i++) {
-            address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
-            address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKeys[i]);
-            poolsLiquidity[i] = ReaderUtils._getPoolLiquidityAndDebt(dataStore, poolToken, debtToken);
-        }
-        return poolsLiquidity;
-    }
-
-    function getPoolLiquidityAndDebt(address dataStore, address poolKey) external view returns (ReaderUtils.PoolLiquidityAndDebt memory) {
-        //Pool.Props memory pool = ReaderUtils._getPool(dataStore, poolKey);
-        address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
-        address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
-
-        ReaderUtils.PoolLiquidityAndDebt memory poolLiquidity = 
-            ReaderUtils._getPoolLiquidityAndDebt(dataStore, poolToken, debtToken);
-        return poolLiquidity;
-
-    }
-
-    function getAccountLiquidityAndDebtInPools(address dataStore, address account) external view returns (ReaderUtils.AccountLiquidityAndDebt[] memory) {
+    function getLiquidityAndDebts(address dataStore, address account) external view returns (ReaderUtils.LiquidityAndDebt[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);
 
-        ReaderUtils.AccountLiquidityAndDebt[] memory accountLiquidities = 
-            new ReaderUtils.AccountLiquidityAndDebt[](poolKeys.length);
+        ReaderUtils.LiquidityAndDebt[] memory accountLiquidities = 
+            new ReaderUtils.LiquidityAndDebt[](poolKeys.length);
         for (uint256 i; i < poolKeys.length; i++) {
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKeys[i]);
             accountLiquidities[i] = 
-                ReaderUtils._getAccountLiquidityAndDebt(account, dataStore, poolToken, debtToken);
+                ReaderUtils._getLiquidityAndDebt(account, dataStore, poolToken, debtToken);
         }
-        //TODO:should delete empty Liquidities
+        //TODO:should delete empty items
         return accountLiquidities;
     }
 
-    function getAccountLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.AccountLiquidityAndDebt memory) {
+    function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.LiquidityAndDebt memory) {
         address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
-        ReaderUtils.AccountLiquidityAndDebt memory accountLiquidity = 
-            ReaderUtils._getAccountLiquidityAndDebt(account, dataStore, poolToken, debtToken);
+        ReaderUtils.LiquidityAndDebt memory accountLiquidity = 
+            ReaderUtils._getLiquidityAndDebt(account, dataStore, poolToken, debtToken);
         return accountLiquidity;
     }
 
