@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -71,6 +72,8 @@ library BorrowUtils {
             params.amount
         );
 
+
+        //TODO:Should have borrow "to"
         IPoolToken(poolCache.poolToken).addCollateral(account, params.amount);//this will change Rate
         (, poolCache.nextTotalScaledDebt) = IDebtToken(poolCache.debtToken).mint(
             account, 
@@ -103,6 +106,8 @@ library BorrowUtils {
             poolKey, 
             pool
         );
+
+        emit EventUtils.Borrow(params.underlyingAsset, msg.sender, params.amount, pool.borrowRate);
     }
 
     // 

@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -79,6 +80,8 @@ library WithdrawUtils {
             poolCache.nextLiquidityIndex
         );
         poolToken.syncUnderlyingAssetBalance();
+
+        emit EventUtils.Withdraw(params.underlyingAsset, msg.sender, params.to, amountToWithdraw);
     }
 
 

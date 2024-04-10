@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -102,6 +103,8 @@ library RedeemUtils {
 
         poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
         poolToken.syncUnderlyingAssetBalance();
+
+        emit EventUtils.Redeem(params.underlyingAsset, msg.sender, params.to, redeemAmount);
     }
 
 

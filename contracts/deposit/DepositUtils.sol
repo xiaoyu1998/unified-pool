@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -85,6 +86,8 @@ library DepositUtils {
             positionKey, 
             position
         );
+
+        emit EventUtils.Deposit(params.underlyingAsset, msg.sender, depositAmount);
     }
 
 

@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -78,6 +79,8 @@ library SupplyUtils {
             supplyAmount, 
             poolCache.nextLiquidityIndex
         );
+
+        emit EventUtils.Supply(params.underlyingAsset, msg.sender, params.to, supplyAmount);
     }
 
     

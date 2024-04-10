@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
+import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -125,6 +126,10 @@ library RepayUtils {
             poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
             poolToken.syncUnderlyingAssetBalance();
         }
+
+        bool useCollateral = (params.amount > 0)?true:false;
+
+        emit EventUtils.Repay(params.underlyingAsset, msg.sender, repayAmount, useCollateral);
 
     }
 
