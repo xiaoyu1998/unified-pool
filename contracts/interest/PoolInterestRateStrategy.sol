@@ -71,8 +71,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
        
        //calculate Borrow Rate
       	if (vars.totalDebt != 0){
-        	  vars.availableLiquidity = IERC20(params.underlyingAsset).balanceOf(params.poolToken) 
-                - IPoolToken(params.poolToken).totalCollateral() 
+              vars.availableLiquidity = IPoolToken(params.poolToken).availableLiquidity() //TODO:should sub unclaimed fee
                 + params.liquidityIn 
                 - params.liquidityOut;
               Printer.log("availableLiquidity", vars.availableLiquidity);
