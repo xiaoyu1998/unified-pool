@@ -10,12 +10,14 @@ import "../withdraw/WithdrawUtils.sol";
 // @title WithdrawHandler
 // @dev Contract to handle execution of withdraw
 contract WithdrawHandler is IWithdrawHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a withdraw
@@ -27,6 +29,7 @@ contract WithdrawHandler is IWithdrawHandler, GlobalReentrancyGuard, RoleModule 
 
         WithdrawUtils.ExecuteWithdrawParams memory params = WithdrawUtils.ExecuteWithdrawParams(
            address(dataStore),
+           address(eventEmitter),
            withdrawParams.underlyingAsset,     
            withdrawParams.amount,
            withdrawParams.to

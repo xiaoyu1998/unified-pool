@@ -10,12 +10,14 @@ import "../borrow/BorrowUtils.sol";
 // @title BorrowHandler
 // @dev Contract to handle execution of borrow
 contract BorrowHandler is IBorrowHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a borrow
@@ -27,6 +29,7 @@ contract BorrowHandler is IBorrowHandler, GlobalReentrancyGuard, RoleModule {
 
         BorrowUtils.ExecuteBorrowParams memory params = BorrowUtils.ExecuteBorrowParams(
            address(dataStore),
+           address(eventEmitter),
            BorrowParams.underlyingAsset,     
            BorrowParams.amount
         );

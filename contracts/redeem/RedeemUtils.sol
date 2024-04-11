@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
-import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -19,13 +18,11 @@ import "../token/IDebtToken.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-
-//import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
-
-//import "../config/ConfigStoreUtils.sol";
-
 import "../utils/WadRayMath.sol";
+
+import "../event/EventEmitter.sol";
+import "./RedeemEventUtils.sol";
 
 // @title RedeemUtils
 // @dev Library for redeem functions, to help with the redeeming of liquidity
@@ -45,6 +42,7 @@ library RedeemUtils {
 
     struct ExecuteRedeemParams {
         address dataStore;
+        address eventEmitter;
         address underlyingAsset;
         uint256 amount;
         address to;
@@ -104,7 +102,13 @@ library RedeemUtils {
         poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
         poolToken.syncUnderlyingAssetBalance();
 
-        emit EventUtils.Redeem(params.underlyingAsset, msg.sender, params.to, redeemAmount);
+        RedeemEventUtils.emitRedeem(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            msg.sender, 
+            params.to, 
+            redeemAmount
+        );
     }
 
 

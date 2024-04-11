@@ -5,13 +5,15 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
-import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
+
+import "../event/EventEmitter.sol";
+import "./WithdrawEventUtils.sol";
 
 
 // @title WithdrawUtils
@@ -31,6 +33,7 @@ library WithdrawUtils {
 
     struct ExecuteWithdrawParams {
         address dataStore;
+        address eventEmitter;
         address underlyingAsset;
         uint256 amount;
         address to;
@@ -81,7 +84,13 @@ library WithdrawUtils {
         );
         poolToken.syncUnderlyingAssetBalance();
 
-        emit EventUtils.Withdraw(params.underlyingAsset, msg.sender, params.to, amountToWithdraw);
+        WithdrawEventUtils.emitWithdraw(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            msg.sender, 
+            params.to, 
+            amountToWithdraw
+        );
     }
 
 

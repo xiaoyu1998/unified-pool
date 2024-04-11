@@ -4,6 +4,7 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 //import { feeUtilsModule } from "./deployFeeUtils"
 import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
+import { borrowEventUtilsModule } from "./deployBorrowEventUtils"
 
 export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
@@ -11,6 +12,7 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
  //   const { feeUtils } = m.useModule(feeUtilsModule)
     const { configStoreUtils } = m.useModule(configStoreUtilsModule)
     const { oracleUtils } = m.useModule(oracleUtilsModule)
+    const { borrowEventUtils } = m.useModule(borrowEventUtilsModule)
 
     const borrowUtils = m.library("BorrowUtils", {
         libraries: {
@@ -18,7 +20,8 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
             PositionStoreUtils: positionStoreUtils,
  //           FeeUtils: feeUtils,
             ConfigStoreUtils: configStoreUtils,
-            OracleUtils: oracleUtils
+            OracleUtils: oracleUtils,
+            BorrowEventUtils: borrowEventUtils,
         },      
     });
 

@@ -28,11 +28,11 @@ export async function contractAt(name, address, options, provider) {
 }
 
 export async function contractAtOptions(name, address, options, provider) {
-    let contractFactory
+    let contractFactory;
     if (options){
-        contractFactory = await ethers.getContractFactory(name, options)
+        contractFactory = await ethers.getContractFactory(name, options);
     } else {
-        contractFactory = await ethers.getContractFactory(name)
+        contractFactory = await ethers.getContractFactory(name);
     }
     
     if (provider) {
@@ -68,6 +68,18 @@ export function getTokens(name) {
     return tokens[name];
 }
 
+export async function getEventEmitter() {
+    const provider = new ethers.WebSocketProvider("ws://127.0.0.1:8545");
+    const address = getDeployedContractAddresses("EventEmitter");
+    // let contractFactory = await ethers.getContractFactory("EventEmitter");
+    // contractFactory = contractFactory.connect(provider);
+
+    // return await contractFactory.attach(address);
+
+    return contractAtOptions("EventEmitter", address, undefined, provider);
+
+}
+
 export async function getContract(name) {
 
     if (name == "RoleStore" ||
@@ -80,7 +92,14 @@ export async function getContract(name) {
         name == "Router" ||
         name == "PoolInterestRateStrategy" ||
         name == "Multicall3" ||
-        name == "ReaderUtils" 
+        name == "ReaderUtils" ||
+        name == "BorrowEventUtils" ||
+        name == "DepositEventUtils" ||
+        name == "RedeemEventUtils" ||
+        name == "RepayEventUtils" ||
+        name == "SupplyEventUtils" ||
+        name == "WithdrawEventUtils" ||
+        name == "EventEmitter"
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -94,6 +113,16 @@ export async function getContract(name) {
     const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const router = await getContract("Router");
+
+
+    // if (name == "EventEmitter") {
+    //     const address = getDeployedContractAddresses(name);
+    //     return await contractAtOptions(name, address, {
+    //         libraries: {
+    //             RoleStore: roleStore,
+    //         },         
+    //     });
+    // }
 
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
@@ -139,10 +168,12 @@ export async function getContract(name) {
     }
 
     if (name == "SupplyHandler") {
+        const supplyEventUtils = await getContract("SupplyEventUtils");
         const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
         const supplyUtils = await contractAtOptions("SupplyUtils", supplyUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
+                SupplyEventUtils: supplyEventUtils,
  //               FeeUtils: feeUtils,
             },        
         });
@@ -156,10 +187,12 @@ export async function getContract(name) {
     }
 
     if (name == "WithdrawHandler") {
+        const withdrawEventUtils = await getContract("WithdrawEventUtils");
         const withdrawUtilsAddress = getDeployedContractAddresses("WithdrawUtils");
         const withdrawUtils = await contractAtOptions("WithdrawUtils", withdrawUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
+                WithdrawEventUtils: withdrawEventUtils,
  //               FeeUtils: feeUtils,
             },        
         });
@@ -172,11 +205,13 @@ export async function getContract(name) {
     }
 
     if (name == "DepositHandler") {
+        const depositEventUtils = await getContract("DepositEventUtils");
         const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
         const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
+                DepositEventUtils: depositEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -188,6 +223,7 @@ export async function getContract(name) {
     }
 
     if (name == "BorrowHandler") {
+        const borrowEventUtils = await getContract("BorrowEventUtils");
         const oracleUtils = await getContract("OracleUtils");
         const borrowUtilsAddress = getDeployedContractAddresses("BorrowUtils");
         const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
@@ -197,6 +233,7 @@ export async function getContract(name) {
 //                FeeUtils: feeUtils,
                 ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
+                BorrowEventUtils: borrowEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -208,11 +245,13 @@ export async function getContract(name) {
     }
 
     if (name == "RepayHandler") {
+        const repayEventUtils = await getContract("RepayEventUtils");
         const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
         const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
+                RepayEventUtils: repayEventUtils,
 //                FeeUtils: feeUtils,
             },        
         });
@@ -225,6 +264,7 @@ export async function getContract(name) {
     }
 
     if (name == "RedeemHandler") {
+        const redeemEventUtils = await getContract("RedeemEventUtils");
         const oracleUtils = await getContract("OracleUtils");
         const redeemUtilsAddress = getDeployedContractAddresses("RedeemUtils");
         const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
@@ -233,6 +273,7 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
+                RedeemEventUtils: redeemEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);

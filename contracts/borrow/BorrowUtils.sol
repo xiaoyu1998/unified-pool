@@ -5,7 +5,6 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
-import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -18,12 +17,10 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
-//import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
-
-//import "../config/ConfigStoreUtils.sol";
-
 import "../utils/WadRayMath.sol";
+import "../event/EventEmitter.sol";
+import "./BorrowEventUtils.sol";
 
 // @title BorrowUtils
 // @dev Library for borrow functions, to help with the borrowing of liquidity
@@ -41,6 +38,7 @@ library BorrowUtils {
 
     struct ExecuteBorrowParams {
         address dataStore;
+        address eventEmitter;
         address underlyingAsset;
         uint256 amount;
     }
@@ -107,7 +105,13 @@ library BorrowUtils {
             pool
         );
 
-        emit EventUtils.Borrow(params.underlyingAsset, msg.sender, params.amount, pool.borrowRate);
+        BorrowEventUtils.emitBorrow(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            msg.sender, 
+            params.amount,
+            pool.borrowRate
+        );
     }
 
     // 

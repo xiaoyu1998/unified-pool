@@ -10,12 +10,14 @@ import "../supply/SupplyUtils.sol";
 // @title SupplyHandler
 // @dev Contract to handle execution of supplys
 contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a supply
@@ -27,6 +29,7 @@ contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
 
         SupplyUtils.ExecuteSupplyParams memory params = SupplyUtils.ExecuteSupplyParams(
            address(dataStore),
+           address(eventEmitter),
            supplyParams.underlyingAsset,      
            supplyParams.to
         );

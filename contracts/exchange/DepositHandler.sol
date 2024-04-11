@@ -10,12 +10,14 @@ import "../deposit/DepositUtils.sol";
 // @title DepositHandler
 // @dev Contract to handle execution of deposit
 contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a deposit
@@ -27,6 +29,7 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
 
         DepositUtils.ExecuteDepositParams memory params = DepositUtils.ExecuteDepositParams(
            address(dataStore),
+           address(eventEmitter),
            depositParams.underlyingAsset      
         );
 

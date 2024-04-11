@@ -5,7 +5,6 @@ pragma solidity ^0.8.20;
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
-import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -16,8 +15,9 @@ import "../token/IPoolToken.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-
 import "../utils/WadRayMath.sol";
+import "../event/EventEmitter.sol";
+import "./DepositEventUtils.sol";
 
 // @title DepositUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
@@ -35,6 +35,7 @@ library DepositUtils {
 
     struct ExecuteDepositParams {
         address dataStore;
+        address eventEmitter;
         address underlyingAsset;
     }
 
@@ -87,7 +88,12 @@ library DepositUtils {
             position
         );
 
-        emit EventUtils.Deposit(params.underlyingAsset, msg.sender, depositAmount);
+        DepositEventUtils.emitDeposit(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            msg.sender, 
+            depositAmount
+        );
     }
 
 

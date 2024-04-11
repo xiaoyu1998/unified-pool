@@ -10,12 +10,14 @@ import "../repay/RepayUtils.sol";
 // @title RepayHandler
 // @dev Contract to handle execution of repay
 contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a repay
@@ -27,6 +29,7 @@ contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
 
         RepayUtils.ExecuteRepayParams memory params = RepayUtils.ExecuteRepayParams(
             address(dataStore),
+            address(eventEmitter),
             repayParams.underlyingAsset,   
             repayParams.amount  
         );

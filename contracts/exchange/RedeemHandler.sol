@@ -10,12 +10,14 @@ import "../redeem/RedeemUtils.sol";
 // @title RedeemHandler
 // @dev Contract to handle execution of redeem
 contract RedeemHandler is IRedeemHandler, GlobalReentrancyGuard, RoleModule {
+    EventEmitter public immutable eventEmitter;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore
+        DataStore _dataStore,
+        EventEmitter _eventEmitter
     ) RoleModule(_roleStore) GlobalReentrancyGuard(_dataStore) {
-
+        eventEmitter = _eventEmitter;
     }
 
     // @dev executes a redeem
@@ -27,6 +29,7 @@ contract RedeemHandler is IRedeemHandler, GlobalReentrancyGuard, RoleModule {
 
         RedeemUtils.ExecuteRedeemParams memory params = RedeemUtils.ExecuteRedeemParams(
            address(dataStore),
+           address(eventEmitter),
            redeemParams.underlyingAsset,       
            redeemParams.amount,
            redeemParams.to

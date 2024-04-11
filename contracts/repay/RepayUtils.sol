@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 import "../error/Errors.sol";
-import "../event/EventUtils.sol";
 
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
@@ -19,8 +18,9 @@ import "../token/IDebtToken.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-
 import "../utils/WadRayMath.sol";
+import "../event/EventEmitter.sol";
+import "./RepayEventUtils.sol";
 
 // @title RepayUtils
 // @dev Library for deposit functions, to help with the depositing of liquidity
@@ -39,6 +39,7 @@ library RepayUtils {
 
     struct ExecuteRepayParams {
         address dataStore;
+        address eventEmitter;
         address underlyingAsset;
         uint256 amount;
     }
@@ -129,7 +130,13 @@ library RepayUtils {
 
         bool useCollateral = (params.amount > 0)?true:false;
 
-        emit EventUtils.Repay(params.underlyingAsset, msg.sender, repayAmount, useCollateral);
+        RepayEventUtils.emitRepay(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            msg.sender, 
+            repayAmount,
+            useCollateral
+        );
 
     }
 
