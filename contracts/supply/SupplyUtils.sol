@@ -86,7 +86,7 @@ library SupplyUtils {
         SupplyEventUtils.emitSupply(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             params.to, 
             supplyAmount
         );

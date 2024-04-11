@@ -133,7 +133,7 @@ library RepayUtils {
         RepayEventUtils.emitRepay(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             repayAmount,
             useCollateral
         );

@@ -87,7 +87,7 @@ library WithdrawUtils {
         WithdrawEventUtils.emitWithdraw(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             params.to, 
             amountToWithdraw
         );

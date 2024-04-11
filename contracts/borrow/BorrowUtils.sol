@@ -108,7 +108,7 @@ library BorrowUtils {
         BorrowEventUtils.emitBorrow(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             params.amount,
             pool.borrowRate
         );

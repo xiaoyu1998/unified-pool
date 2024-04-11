@@ -105,7 +105,7 @@ library RedeemUtils {
         RedeemEventUtils.emitRedeem(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             params.to, 
             redeemAmount
         );

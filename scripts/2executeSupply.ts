@@ -13,7 +13,7 @@ async function main() {
     const reader = await getContract("Reader");  
     const eventEmitter = await getEventEmitter();  
     eventEmitter.on("Supply", (pool, user, to, amount) =>{
-        console.log("eventEmitter Supply",pool, user, to, amount);
+        console.log("eventEmitter Supply" ,pool, user, to, amount);
     });
 
     //approve allowances to the router

@@ -13,6 +13,7 @@ const config: HardhatUserConfig = {
       'ethers.js': 'off',
     },
     settings: {
+       viaIR: true,
        optimizer: {
          enabled: true,
          runs: 200

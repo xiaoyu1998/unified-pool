@@ -91,7 +91,7 @@ library DepositUtils {
         DepositEventUtils.emitDeposit(
             params.eventEmitter, 
             params.underlyingAsset, 
-            msg.sender, 
+            account, 
             depositAmount
         );
     }
