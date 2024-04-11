@@ -1,5 +1,5 @@
-const { deployContract, sendTxn, writeTokenAddresses, readTokenAddresses, getTokens, getContract } = require("../utils/deploy")
-const { expandDecimals } = require("../utils/math")
+import { deployContract, sendTxn, writeTokenAddresses, readTokenAddresses, getTokens, getContract } from "../utils/deploy"
+import { expandDecimals } from "../utils/math"
 
 async function main() {
   const [owner] = await ethers.getSigners();

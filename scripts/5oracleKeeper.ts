@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import { getContract, sendTxn, getTokens} from "../utils/deploy";
-const { bigNumberify } = require("../utils/math")
+import  { bigNumberify } from "../utils/math";
 import queryString from "query-string";
 
 function buildUrl(baseUrl: string, path: string, query?: Record<string, string | number | boolean | undefined>) {

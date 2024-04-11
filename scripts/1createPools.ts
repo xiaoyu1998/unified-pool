@@ -1,4 +1,4 @@
-const { getContract, sendTxn, getTokens } = require("../utils/deploy")
+import { getContract, sendTxn, getTokens } from "../utils/deploy";
 import { bigNumberify, expandDecimals } from "../utils/math";
 import { parsePool } from "../utils/helper";
 
