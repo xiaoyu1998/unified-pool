@@ -45,12 +45,12 @@ contract Reader {
     }
 
 
-    function getLiquidityAndDebts(address dataStore, address account) external view returns (ReaderUtils.LiquidityAndDebt[] memory) {
+    function getLiquidityAndDebts(address dataStore, address account) external view returns (ReaderUtils.GetLiquidityAndDebt[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);
 
-        ReaderUtils.LiquidityAndDebt[] memory accountLiquidities = 
-            new ReaderUtils.LiquidityAndDebt[](poolKeys.length);
+        ReaderUtils.GetLiquidityAndDebt[] memory accountLiquidities = 
+            new ReaderUtils.GetLiquidityAndDebt[](poolKeys.length);
         for (uint256 i; i < poolKeys.length; i++) {
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKeys[i]);
@@ -61,10 +61,10 @@ contract Reader {
         return accountLiquidities;
     }
 
-    function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.LiquidityAndDebt memory) {
+    function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
         address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
-        ReaderUtils.LiquidityAndDebt memory accountLiquidity = 
+        ReaderUtils.GetLiquidityAndDebt memory accountLiquidity = 
             ReaderUtils._getLiquidityAndDebt(account, dataStore, poolToken, debtToken);
         return accountLiquidity;
     }

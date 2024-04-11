@@ -18,13 +18,13 @@ import "../oracle/OracleUtils.sol";
 // @title OracleUtils
 library ReaderUtils {
 
-    struct LiquidityAndDebt {
+    struct GetLiquidityAndDebt {
         address underlyingAsset;
         address account;
         uint256 balance;
         uint256 scaled;
-        uint256 collateral;
 
+        uint256 collateral;
         uint256 scaledDebt;
         uint256 debt;    
     }
@@ -71,11 +71,11 @@ library ReaderUtils {
         address dataStore, 
         address poolTokenAddress, 
         address debtTokenAddress
-    ) internal view returns (LiquidityAndDebt memory) {
+    ) internal view returns (GetLiquidityAndDebt memory) {
         IPoolToken poolToken   = IPoolToken(poolTokenAddress);
         IDebtToken debtToken   = IDebtToken(debtTokenAddress);
 
-        LiquidityAndDebt memory l = LiquidityAndDebt(
+        GetLiquidityAndDebt memory l = GetLiquidityAndDebt(
             poolToken.underlyingAsset(),
             account,
             poolToken.balanceOf(account),

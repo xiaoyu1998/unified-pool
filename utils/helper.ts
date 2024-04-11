@@ -99,7 +99,7 @@ export async function getPositions(dataStore, reader, address) {
 }
 
 export function parseLiquidityAndDebt(liquidity) {
-    const l: ReaderUtils.LiquidityAndDebtStruct = {
+    const l: ReaderUtils.GetLiquidityAndDebtStruct = {
         underlyingAsset: liquidity[0],
         account: liquidity[1],
         balance: liquidity[2],
