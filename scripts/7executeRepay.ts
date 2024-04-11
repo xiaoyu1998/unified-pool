@@ -1,4 +1,4 @@
-import { contractAt, sendTxn, getTokens, getContract, getContractAt } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts,  getPositions} from "../utils/helper";
 
@@ -11,6 +11,10 @@ async function main() {
     const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Repay", (pool, repayer, to, amount) =>{
+        console.log("eventEmitter Repay" ,pool, repayer, to, amount);
+    });
 
     //execute repay
     const usdtDecimals = 6;

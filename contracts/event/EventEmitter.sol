@@ -11,21 +11,21 @@ contract EventEmitter is RoleModule {
 
     event Supply(
         address indexed pool,
-        address user,
+        address supplier,
         address indexed to,
         uint256 amount
     );
 
     event Withdraw(
         address indexed pool, 
-        address indexed user, 
+        address indexed withdrawer, 
         address indexed to, 
         uint256 amount
     );
 
     event Deposit(
         address indexed pool,
-        address user,
+        address depositer,
         //address indexed to,
         uint256 amount
     );
@@ -39,7 +39,7 @@ contract EventEmitter is RoleModule {
 
     event Borrow(
         address indexed pool,
-        address user,
+        address borrower,
         //address indexed to,
         uint256 amount,
         uint256 borrowRate

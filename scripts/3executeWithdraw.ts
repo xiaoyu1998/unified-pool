@@ -1,4 +1,4 @@
-import { contractAt, getTokens, getContract, getContractAt } from "../utils/deploy";
+import { contractAt, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPool, getLiquidityAndDebts } from "../utils/helper";
 
@@ -9,7 +9,11 @@ async function main() {
      
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
-    const reader = await getContract("Reader");  
+    const reader = await getContract("Reader"); 
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Withdraw", (pool, withdrawer, to, amount) =>{
+        console.log("eventEmitter Withdraw" ,pool, withdrawer, to, amount);
+    }); 
 
     //execute withdraw
     const usdtDecimals = 6;

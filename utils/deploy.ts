@@ -71,13 +71,7 @@ export function getTokens(name) {
 export async function getEventEmitter() {
     const provider = new ethers.WebSocketProvider("ws://127.0.0.1:8545");
     const address = getDeployedContractAddresses("EventEmitter");
-    // let contractFactory = await ethers.getContractFactory("EventEmitter");
-    // contractFactory = contractFactory.connect(provider);
-
-    // return await contractFactory.attach(address);
-
     return contractAtOptions("EventEmitter", address, undefined, provider);
-
 }
 
 export async function getContract(name) {

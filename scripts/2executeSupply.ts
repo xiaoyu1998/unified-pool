@@ -12,8 +12,8 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Supply", (pool, user, to, amount) =>{
-        console.log("eventEmitter Supply" ,pool, user, to, amount);
+    eventEmitter.on("Supply", (pool, supplier, to, amount) =>{
+        console.log("eventEmitter Supply" ,pool, supplier, to, amount);
     });
 
     //approve allowances to the router
