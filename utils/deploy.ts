@@ -4,6 +4,7 @@ import parse from 'csv-parse';
 
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
 import deployed_address from "../ignition/deployments/chain-31337/deployed_addresses.json";
+import { WS_URL } from "./constants"
 
 export async function sendTxn(txnPromise, label) {
     console.info(`Processsing ${label}:`)
@@ -69,10 +70,19 @@ export function getTokens(name) {
 }
 
 export async function getEventEmitter() {
-    const provider = new ethers.WebSocketProvider("ws://127.0.0.1:8545");
     const address = getDeployedContractAddresses("EventEmitter");
+    const provider = new ethers.WebSocketProvider(WS_URL);
     return contractAtOptions("EventEmitter", address, undefined, provider);
+    // return getWebSocketContract("EventEmitter", address)
 }
+
+export async function getWebSocketContract(abi, bytecode, address) {
+    const provider = new ethers.WebSocketProvider(WS_URL);
+    let contractFactory = new ethers.ContractFactory(abi, bytecode);
+    contractFactory = contractFactory.connect(provider);
+    return await contractFactory.attach(address);
+}
+
 
 export async function getContract(name) {
 

@@ -1,4 +1,4 @@
-import { contractAt, sendTxn, getDeployedContractAddresses, getTokens, getContract, getContractAt } from "../utils/deploy";
+import { contractAt, sendTxn, getDeployedContractAddresses, getTokens, getContract, getContractAt, getWebSocketContract } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt, decodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidity, getDebt} from "../utils/helper";
 import { FeeAmount} from "../utils/constants";
@@ -35,9 +35,10 @@ async function main() {
     const price = decodePriceSqrt(sqrtPriceX96);
     console.log(sqrtPriceX96, price);
 
-    // pool.on("Initialize", (sqrtPriceX96, tick) =>{
-    //     console.log("Initialize" , sqrtPriceX96, tick);
-    // });
+    const poolWebSocket = await getWebSocketContract(POOL_ABI, POOL_BYTECODE, poolAddress);
+    poolWebSocket.on("Initialize", (sqrtPriceX96, tick) =>{
+        console.log("Initialize" , sqrtPriceX96, tick);
+    });
     await pool.initialize(sqrtPriceX96);
 
     console.log("factory", await pool.factory());

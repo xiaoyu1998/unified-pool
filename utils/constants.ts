@@ -11,3 +11,5 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
   [FeeAmount.MEDIUM]: 60,
   [FeeAmount.HIGH]: 200,
 }
+
+export const WS_URL = "ws://127.0.0.1:8545";
