@@ -33,6 +33,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolFeeFactor", [usdt, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [usdt, true]),
         config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [uni, expandDecimals(120, 25)]),//120%
         config.interface.encodeFunctionData("setPoolActive", [uni, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [uni, false]),
@@ -42,6 +43,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [uni, false]),
     ];
     const tx = await config.multicall(multicallArgs);
 
