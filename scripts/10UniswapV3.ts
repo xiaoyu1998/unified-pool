@@ -75,7 +75,7 @@ async function main() {
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing;
     console.log(tickTrim, tickLower, tickUpper);
-    await uniswapV3Callee.mint(pool.target, owner.address, tickLower, tickUpper, 100000000000);
+    await uniswapV3Callee.mint(pool.target, owner.address, tickLower, tickUpper, expandDecimals(1, 16));
     console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
 
