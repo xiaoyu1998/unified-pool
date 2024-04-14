@@ -1,4 +1,5 @@
 export const MaxUint128 = BigInt(2)**BigInt(128) - BigInt(1);
+export const MaxUint256 = BigInt(2)**BigInt(256) - BigInt(1);
 
 export enum FeeAmount {
   LOW = 500,

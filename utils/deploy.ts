@@ -76,8 +76,13 @@ export async function getEventEmitter() {
     // return getWebSocketContract("EventEmitter", address)
 }
 
-export async function getWebSocketContract(abi, bytecode, address) {
+export async function getWebSocketContract(name, abi, bytecode, address) {
     const provider = new ethers.WebSocketProvider(WS_URL);
+    if (name){
+        address = getDeployedContractAddresses(name);
+        return contractAtOptions(name, address, undefined, provider);       
+    }
+
     let contractFactory = new ethers.ContractFactory(abi, bytecode);
     contractFactory = contractFactory.connect(provider);
     return await contractFactory.attach(address);
@@ -103,7 +108,8 @@ export async function getContract(name) {
         name == "RepayEventUtils" ||
         name == "SupplyEventUtils" ||
         name == "WithdrawEventUtils" ||
-        name == "EventEmitter"
+        name == "EventEmitter"  || 
+        name == "UniswapV3Callee"
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);

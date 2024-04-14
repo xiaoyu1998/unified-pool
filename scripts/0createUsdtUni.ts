@@ -11,7 +11,7 @@ async function main() {
   const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
   const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
   await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, usdtDecimals)), `usdt.mint(${owner.address})`)
-  await sendTxn(uni.mint(owner.address, expandDecimals(1000, uniDecimals)), `usdt.mint(${owner.address})`)
+  await sendTxn(uni.mint(owner.address, expandDecimals(10000, uniDecimals)), `usdt.mint(${owner.address})`)
 
   const usdtOracle = await deployContract("MockPriceFeed", []);
   const uniOracle = await deployContract("MockPriceFeed", []);
