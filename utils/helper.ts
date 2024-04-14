@@ -62,7 +62,8 @@ export function parsePoolInfo(pool) {
         scaledTotalDebt: pool[25],  
         totalDebt: pool[26],         
         symbol: pool[27],
-        price: pool[28]
+        price: pool[28],
+        isUsd: pool[29]
     };
     return p;
 }
@@ -82,7 +83,7 @@ export function parsePosition(position) {
         accLongAmount: position[3],
         entryShortPrice: position[4],
         accShortAmount: position[5],
-        isLong: position[6],
+        positionType: position[6],
         hasCollateral: position[7],
         hasDebt: position[8]
     };

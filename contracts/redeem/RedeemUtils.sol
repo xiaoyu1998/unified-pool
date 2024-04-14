@@ -89,6 +89,11 @@ library RedeemUtils {
             pool
         );
 
+        // IDebtToken debtToken   = IDebtToken(pool.poolToken);
+        // if(debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account)) {
+        //    position.positionType = Position.PositionTypeShort;
+        // }
+
         poolToken.removeCollateral(account, redeemAmount);
         if(poolToken.balanceOfCollateral(account) == 0) {
             position.hasCollateral = false;

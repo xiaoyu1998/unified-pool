@@ -54,7 +54,7 @@ library DepositUtils {
         if(position.account == address(0)){
             position.account = account;
             position.underlyingAsset = params.underlyingAsset;
-            position.isLong = true;
+            position.positionType = Position.PositionTypeLong;
             position.hasCollateral = true;
             position.hasDebt = false;
         }
@@ -79,7 +79,7 @@ library DepositUtils {
         position.hasCollateral = true;
 
         if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account)) {
-           position.isLong = true;
+           position.positionType = Position.PositionTypeLong;
         }
 
         PositionStoreUtils.set(

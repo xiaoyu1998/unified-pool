@@ -1,4 +1,4 @@
-import { contractAt, sendTxn, getDeployedContractAddresses, getTokens, getContract, getContractAt, getWebSocketContract } from "../utils/deploy";
+import { contractAt, sendTxn, writeTokenAddresses, getTokens, getContract,  getWebSocketContract } from "../utils/deploy";
 import { bigNumberify, expandDecimals, encodePriceSqrt, decodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidity, getDebt} from "../utils/helper";
 import { MaxUint256, FeeAmount, TICK_SPACINGS} from "../utils/constants";
@@ -11,17 +11,6 @@ import {
   abi as POOL_ABI,
   bytecode as POOL_BYTECODE,
 } from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
-
-// import {
-//   abi as FACTORY_ABI,
-//   bytecode as FACTORY_BYTECODE,
-// } from '/Users/xiaoyu/work/uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json'
-
-// import {
-//   abi as POOL_ABI,
-//   bytecode as POOL_BYTECODE,
-// } from '/Users/xiaoyu/work/uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json'
-
 
 const { mine } = require("@nomicfoundation/hardhat-network-helpers");
 
@@ -87,6 +76,13 @@ async function main() {
     await swap(pool.target, expandDecimals(1, uniDecimals), owner.address, sqrtPriceLimitX96);
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
+
+    //write address
+    writeTokenAddresses({"pool_v3": {
+        "address":pool.target, 
+        "uniIsZero":uniIsZero
+    }});
+
 }
 
 

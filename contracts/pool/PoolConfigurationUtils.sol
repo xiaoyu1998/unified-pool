@@ -4,30 +4,6 @@ pragma solidity ^0.8.20;
 
 import "../error/Errors.sol";
 
-  // struct PoolConfiguration {
-  //   //bit 0-15: LTV
-  //   //bit 16-31: Liq. threshold
-  //   //bit 32-47: Liq. bonus
-  //   //bit 48-55: Decimals
-  //   //bit 56: pool is active
-  //   //bit 57: pool is frozen
-  //   //bit 58: borrowing is enabled
-  //   //bit 59: stable rate borrowing enabled
-  //   //bit 60: asset is paused
-  //   //bit 61: borrowing in isolation mode is enabled
-  //   //bit 62: siloed borrowing enabled
-  //   //bit 63: flashloaning enabled
-  //   //bit 64-79: pool factor
-  //   //bit 80-115 borrow cap in whole tokens, borrowCap == 0 => no cap
-  //   //bit 116-151 supply cap in whole tokens, supplyCap == 0 => no cap
-  //   //bit 152-167 liquidation protocol fee
-  //   //bit 168-175 eMode category
-  //   //bit 176-211 unbacked mint cap in whole tokens, unbackedMintCap == 0 => minting disabled
-  //   //bit 212-251 debt ceiling for isolation mode with (ReserveConfiguration::DEBT_CEILING_DECIMALS) decimals
-  //   //bit 252-255 unused
-  //   uint256 data;
-  // }
-
 
 // @title PoolUtils
 // @dev Library for Pool functions
@@ -36,6 +12,7 @@ library PoolConfigurationUtils {
     uint256 internal constant ACTIVE_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant FROZEN_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant BORROWING_MASK =                 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFBFFFFFFFFFFFFFF; // prettier-ignore
+    uint256 internal constant USD_MASK =                       0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant PAUSED_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFF; // prettier-ignore  
     uint256 internal constant POOL_FEE_FACTOR_MASK =           0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF;
     uint256 internal constant BORROW_CAP_MASK =                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000FFFFFFFFFFFFFFFFFFFF; // prettier-ignore
@@ -45,6 +22,7 @@ library PoolConfigurationUtils {
     uint256 internal constant IS_ACTIVE_START_BIT_POSITION = 56;
     uint256 internal constant IS_FROZEN_START_BIT_POSITION = 57;
     uint256 internal constant BORROWING_ENABLED_START_BIT_POSITION = 58;
+    uint256 internal constant IS_USD_START_BIT_POSITION = 59;
     uint256 internal constant IS_PAUSED_START_BIT_POSITION = 60;
     uint256 internal constant POOL_FACTOR_START_BIT_POSITION = 64;
     uint256 internal constant BORROW_CAP_START_BIT_POSITION = 80;
@@ -132,13 +110,33 @@ library PoolConfigurationUtils {
                (uint256(paused ? 1 : 0) << IS_PAUSED_START_BIT_POSITION);
     }
       
-    // @notice Gets the paused state of the pool
+    // @notice Gets the usd state of the pool
     // @param self The pool configuration
-    // @return The paused state
+    // @return The usd state
     function getPaused(
         uint256 poolConfigration
     ) internal pure returns (bool) {
         return (poolConfigration & ~PAUSED_MASK) != 0;
+    }
+
+    // @notice Sets the paused state of the pool
+    // @param self The pool configuration
+    // @param paused The paused state
+    function setUsd(
+        uint256 poolConfigration, 
+        bool isUsd
+    ) internal pure returns (uint256) {
+        return (poolConfigration & USD_MASK) |
+               (uint256(isUsd ? 1 : 0) << IS_USD_START_BIT_POSITION);
+    }
+      
+    // @notice Gets the usd state of the pool
+    // @param self The pool configuration
+    // @return The paused state
+    function getUsd(
+        uint256 poolConfigration
+    ) internal pure returns (bool) {
+        return (poolConfigration & ~USD_MASK) != 0;
     }
 
     // @notice Sets the borrowing state of the pool

@@ -61,7 +61,7 @@ library BorrowUtils {
         if(position.account == address(0)){
             position.account = account;
             position.underlyingAsset = params.underlyingAsset;
-            position.isLong = false;
+            position.positionType = Position.PositionTypeShort;
         }
         BorrowUtils.validateBorrow( 
             account, 
@@ -69,7 +69,6 @@ library BorrowUtils {
             poolCache, 
             params.amount
         );
-
 
         //TODO:Should have borrow "to"
         IPoolToken(poolCache.poolToken).addCollateral(account, params.amount);//this will change Rate
@@ -85,6 +84,11 @@ library BorrowUtils {
             positionKey, 
             position
         );
+
+        // IDebtToken debtToken   = IDebtToken(pool.poolToken);
+        // if(debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account)) {
+        //    position.positionType = Position.PositionTypeShort;
+        // }
         
         PoolUtils.updateInterestRates(
             pool,

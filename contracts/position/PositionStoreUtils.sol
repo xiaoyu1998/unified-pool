@@ -20,7 +20,8 @@ library PositionStoreUtils {
     bytes32 public constant ACC_LONG_AMOUNT = keccak256(abi.encode("ACC_LONG_AMOUNT"));
     bytes32 public constant ENTRY_SHORT_PRICE = keccak256(abi.encode("ENTRY_SHORT_PRICE"));
     bytes32 public constant ACC_SHORT_AMOUNT = keccak256(abi.encode("ACC_SHORT_AMOUNT"));
-    bytes32 public constant IS_LONG = keccak256(abi.encode("IS_LONG"));
+    bytes32 public constant IS_USD = keccak256(abi.encode("IS_USD"));
+    bytes32 public constant POSITION_TYPE = keccak256(abi.encode("POSITION_TYPE"));
     bytes32 public constant HAS_COLLATERAL = keccak256(abi.encode("HAS_COLLATERAL"));
     bytes32 public constant HAS_DEBT = keccak256(abi.encode("HAS_DEBT"));
     // bytes32 public constant COLLATERAL_AND_DEBT_POOLS = keccak256(abi.encode("COLLATERAL_AND_DEBT_POOLS"));
@@ -56,8 +57,12 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
         );
 
-        position.isLong = dataStore.getBool(
-            keccak256(abi.encode(key, IS_LONG))
+        // position.isUSD = dataStore.getBool(
+        //     keccak256(abi.encode(key, IS_USD))
+        // );
+
+        position.positionType = dataStore.getUint(
+            keccak256(abi.encode(key, POSITION_TYPE))
         );
 
         position.hasCollateral = dataStore.getBool(
@@ -117,9 +122,14 @@ library PositionStoreUtils {
             position.accShortAmount
         );
 
-        dataStore.setBool(
-            keccak256(abi.encode(key, IS_LONG)),
-            position.isLong
+        // dataStore.setBool(
+        //     keccak256(abi.encode(key, IS_USD)),
+        //     position.isUSD
+        // );
+
+        dataStore.setUint(
+            keccak256(abi.encode(key, POSITION_TYPE)),
+            position.positionType
         );
 
         dataStore.setBool(
@@ -179,8 +189,12 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
         );
 
-        dataStore.removeBool(
-            keccak256(abi.encode(key, IS_LONG))
+        // dataStore.removeBool(
+        //     keccak256(abi.encode(key, IS_USD))
+        // );
+
+        dataStore.removeUint(
+            keccak256(abi.encode(key, POSITION_TYPE))
         );
 
         dataStore.removeBool(
@@ -190,8 +204,7 @@ library PositionStoreUtils {
         dataStore.removeBool(
             keccak256(abi.encode(key, HAS_DEBT))
         );
-
-
+        
         // dataStore.removeUint(
         //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
         // );

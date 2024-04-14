@@ -64,6 +64,7 @@ library ReaderUtils {
 
         string symbol;
         uint256 price;
+        bool isUsd;
     }
 
     function _getLiquidityAndDebt(
@@ -142,13 +143,16 @@ library ReaderUtils {
             0,0,0,0,
             0,0,0,0,0,0,
             "",
-            0        
+            0,
+            false    
         );
         (   poolInfo.isActive,
             poolInfo.isFrozen,
             poolInfo.borrowingEnabled,
             poolInfo.isPaused
         ) = PoolConfigurationUtils.getFlags(poolInfo.configuration); 
+
+        poolInfo.isUsd = PoolConfigurationUtils.getUsd(poolInfo.configuration); 
 
         poolInfo.decimals = PoolConfigurationUtils.getDecimals(poolInfo.configuration);
         poolInfo.borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolInfo.configuration);

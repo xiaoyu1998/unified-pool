@@ -4,6 +4,7 @@ import { expandDecimals } from "../utils/math"
 async function main() {
   const [owner] = await ethers.getSigners();
 
+  //create underlyingAsset
   const usdtDecimals = 6;
   const usdtOracleDecimal = 24;
   const uniDecimals = 18;
@@ -13,10 +14,9 @@ async function main() {
   await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, usdtDecimals)), `usdt.mint(${owner.address})`)
   await sendTxn(uni.mint(owner.address, expandDecimals(10000, uniDecimals)), `usdt.mint(${owner.address})`)
 
+  //set oracle
   const usdtOracle = await deployContract("MockPriceFeed", []);
   const uniOracle = await deployContract("MockPriceFeed", []);
-
-  //set oracle
   const config = await getContract("Config");
   const multicallArgs = [
       config.interface.encodeFunctionData("setOracle", [usdt.target, usdtOracle.target]),
@@ -26,6 +26,7 @@ async function main() {
   ];
   const tx = await config.multicall(multicallArgs);
 
+  //write address
   writeTokenAddresses({"USDT": {
       "address":usdt.target, 
       "decimals":usdtDecimals, 
@@ -44,6 +45,8 @@ async function main() {
   console.log(readTokenAddresses());
   console.log("userUSDT", await usdt.balanceOf(owner.address)); 
   console.log("userUNI", await uni.balanceOf(owner.address)); 
+
+
 }
 
 

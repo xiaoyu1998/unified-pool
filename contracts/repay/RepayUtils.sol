@@ -104,6 +104,10 @@ library RepayUtils {
                 PositionStoreUtils.set(params.dataStore, positionKey, position);
             }
         }
+        //TODO:should be Long?
+        // if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account)) {
+        //    position.positionType = Position.PositionTypeLong;
+        // }
 
         PoolUtils.updateInterestRates(
             pool,
