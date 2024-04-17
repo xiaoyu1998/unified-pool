@@ -55,13 +55,17 @@ library BorrowUtils {
         Printer.log("-------------------------executeBorrow--------------------------");  
         Printer.log("totalFee", pool.totalFee);   
         Printer.log("unclaimedFee", pool.unclaimedFee);  
-
+        
+        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
         if(position.account == address(0)){
             position.account = account;
             position.underlyingAsset = params.underlyingAsset;
-            position.positionType = Position.PositionTypeShort;
+            position.positionType = Position.PositionTypeNone;
+            if (!poolIsUsd) {
+                position.positionType = Position.PositionTypeShort;
+            }
         }
         BorrowUtils.validateBorrow( 
             account, 
@@ -136,10 +140,10 @@ library BorrowUtils {
             bool borrowingEnabled,
             bool isPaused
         ) = PoolConfigurationUtils.getFlags(poolCache.configuration);  
-        if (!isActive)         { revert Errors.PoolIsInactive(); }  
-        if (isPaused)          { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)          { revert Errors.PoolIsFrozen();   }   
-        if (!borrowingEnabled) { revert Errors.PoolIsNotEnabled();   } 
+        if (!isActive)         { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
+        if (isPaused)          { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
+        if (isFrozen)          { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }   
+        if (!borrowingEnabled) { revert Errors.PoolIsNotBorrowing(poolCache.underlyingAsset);   } 
 
         if (amountToBorrow == 0) { 
             revert Errors.EmptyBorrowAmounts(); 

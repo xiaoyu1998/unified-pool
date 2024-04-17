@@ -14,3 +14,7 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
 }
 
 export const WS_URL = "ws://127.0.0.1:8545";
+export const usdtDecimals = 6;
+export const usdtOracleDecimal = 24;
+export const uniDecimals = 18;
+export const uniOracleDecimal = 12;

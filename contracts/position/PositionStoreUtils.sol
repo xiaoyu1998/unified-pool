@@ -57,10 +57,6 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
         );
 
-        // position.isUSD = dataStore.getBool(
-        //     keccak256(abi.encode(key, IS_USD))
-        // );
-
         position.positionType = dataStore.getUint(
             keccak256(abi.encode(key, POSITION_TYPE))
         );
@@ -121,11 +117,6 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, ACC_SHORT_AMOUNT)),
             position.accShortAmount
         );
-
-        // dataStore.setBool(
-        //     keccak256(abi.encode(key, IS_USD)),
-        //     position.isUSD
-        // );
 
         dataStore.setUint(
             keccak256(abi.encode(key, POSITION_TYPE)),
@@ -188,10 +179,6 @@ library PositionStoreUtils {
         dataStore.removeUint(
             keccak256(abi.encode(key, ACC_SHORT_AMOUNT))
         );
-
-        // dataStore.removeBool(
-        //     keccak256(abi.encode(key, IS_USD))
-        // );
 
         dataStore.removeUint(
             keccak256(abi.encode(key, POSITION_TYPE))

@@ -105,7 +105,8 @@ library RepayUtils {
             }
         }
         //TODO:should be Long?
-        // if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account)) {
+        // bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
+        // if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && !poolIsUsd) {
         //    position.positionType = Position.PositionTypeLong;
         // }
 
@@ -163,9 +164,9 @@ library RepayUtils {
             ,
             bool isPaused
          ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen();   }  
+        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }  
 
         PositionUtils.validateEnabledPosition(position);
 

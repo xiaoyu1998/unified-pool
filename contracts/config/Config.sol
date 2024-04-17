@@ -11,6 +11,7 @@ import "../utils/BasicMulticall.sol";
 import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolUtils.sol";
 import "../oracle/OracleStoreUtils.sol";
+import "../dex/DexStoreUtils.sol";
 
 import "../utils/Printer.sol";
 
@@ -120,6 +121,10 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
         configuration = configuration.setSupplyCapacity(supplyCapacity);
         PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+    } 
+
+    function setDex(address underlyingAssetA, address underlyingAssetB, address dex) external onlyConfigKeeper nonReentrant {
+        DexStoreUtils.set(address(dataStore), underlyingAssetA, underlyingAssetB, dex);
     } 
 
 }

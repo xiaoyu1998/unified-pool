@@ -5,8 +5,8 @@ import { parsePool } from "../utils/helper";
 
 async function main() {
     //create pools
-    const usdtDecimals = 6;
-    const uniDecimals = 18;
+    const usdtDecimals = getTokens("USDT")["decimals"];
+    const uniDecimals = getTokens("UNI")["decimals"];
     const usdt = getTokens("USDT")["address"];
     const uni  = getTokens("UNI")["address"];
     const configuration = 0;//TODO:should be assgined to a reasonable configuration

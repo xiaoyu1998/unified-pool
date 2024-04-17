@@ -8,6 +8,7 @@ import "../exchange/IDepositHandler.sol";
 import "../exchange/IBorrowHandler.sol";
 import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
+import "../exchange/ISwapHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -33,8 +34,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     IBorrowHandler public immutable borrowHandler;
     IRepayHandler public immutable repayHandler;
     IRedeemHandler public immutable redeemHandler;
+    ISwapHandler public immutable swapHandler;
     // ILiquidationHandler public immutable liquidationHandler;
-    // ISwapHandler public immutable swapHandler;
 
     // @dev Constructor that initializes the contract with the provided Router, RoleStore, DataStore,
     // EventEmitter, IDepositHandler, IWithdrawHandler, IOrderHandler, and OrderStore instances
@@ -47,9 +48,9 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         IDepositHandler _depositHandler,
         IBorrowHandler _borrowHandler,
         IRepayHandler _repayHandler,
-        IRedeemHandler _redeemHandler
+        IRedeemHandler _redeemHandler,
+        ISwapHandler _swapHandler
         // ILiquidationHandler _liquidationHandler,
-        // ISwapHandler _swapHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
         supplyHandler      = _supplyHandler;
         withdrawHandler    = _withdrawHandler;
@@ -57,8 +58,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         borrowHandler      = _borrowHandler;
         repayHandler       = _repayHandler;
         redeemHandler      = _redeemHandler;
+        swapHandler        = _swapHandler;
         // liquidationHandler = _liquidationHandler;
-        // swapHandler        = _swapHandler;
     }
 
     /**
@@ -156,6 +157,21 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         address account = msg.sender;
 
         return redeemHandler.executeRedeem(
+            account,
+            params
+        );
+    }
+
+    /**
+     * @dev execute a new Swap with the given amount, Swap parameters. The Swap is
+     * execute by calling the `executeSwap()` function on the Swap handler contract. 
+     */
+    function executeSwap(
+        SwapUtils.SwapParams calldata params
+    ) external override payable nonReentrant {
+        address account = msg.sender;
+
+        return swapHandler.executeSwap(
             account,
             params
         );

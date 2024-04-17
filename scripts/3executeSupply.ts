@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidityAndDebts } from "../utils/helper";
+import { getPoolInfo, getLiquidityAndDebts } from "../utils/helper";
 
 import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
@@ -17,14 +17,14 @@ async function main() {
     });
 
     //approve allowances to the router
-    const usdtDecimals = 6;
+    const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const supplyAmmount = expandDecimals(8000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)  
 
     //execute supply
-    const poolUsdt = await getPool(usdtAddress); 
+    const poolUsdt = await getPoolInfo(usdtAddress); 
     const params: SupplyUtils.SupplyParamsStruct = {
         underlyingAsset: usdtAddress,
         to: owner.address,
@@ -36,7 +36,7 @@ async function main() {
     const tx = await exchangeRouter.multicall(multicallArgs);
 
     //print poolUsdt
-    const poolUsdtAfterSupply = await getPool(usdtAddress); 
+    const poolUsdtAfterSupply = await getPoolInfo(usdtAddress); 
     const poolToken = await getContractAt("PoolToken", poolUsdtAfterSupply.poolToken);
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterSupply.debtToken);
     console.log("poolUsdtAfterSupply", poolUsdtAfterSupply);

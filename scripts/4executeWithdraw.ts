@@ -1,6 +1,6 @@
 import { contractAt, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidityAndDebts } from "../utils/helper";
+import { getPoolInfo, getLiquidityAndDebts } from "../utils/helper";
 
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
@@ -16,10 +16,10 @@ async function main() {
     }); 
 
     //execute withdraw
-    const usdtDecimals = 6;
+    const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    //const poolUsdt = await getPool(usdtAddress); 
+    //const poolUsdt = await getPoolInfo(usdtAddress); 
     const withdrawAmmount = expandDecimals(1000, usdtDecimals);
     const params: WithdrawUtils.WithdrawParamsStruct = {
         underlyingAsset: usdtAddress,
@@ -32,7 +32,7 @@ async function main() {
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
     //print poolUsdt
-    const poolUsdtAfterWithdraw = await getPool(usdtAddress); 
+    const poolUsdtAfterWithdraw = await getPoolInfo(usdtAddress); 
     const poolToken = await getContractAt("PoolToken", poolUsdtAfterWithdraw.poolToken);
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterWithdraw.debtToken);
     console.log("poolUsdtAfterWithdraw", poolUsdtAfterWithdraw);

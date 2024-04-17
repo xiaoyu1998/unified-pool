@@ -123,5 +123,63 @@ library PositionUtils {
 
     }
 
+    function UpdateEntryLongPrice(
+      Position.Props memory position,
+      uint256 price,
+      uint256 amount
+    ) internal {
+
+        if (position.positionType == Position.PositionTypeNone) {
+            revert Errors.UsdDoNotHaveLongOperation();
+        }
+
+        if (position.positionType == Position.PositionTypeLong) {
+            uint256 totalValue = position.entryLongPrice.rayMul(position.accLongAmount) +
+                                 price.rayMul(amount);
+            position.accLongAmount += amount;
+            position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
+        }
+
+        if (position.positionType == Position.PositionTypeShort) {
+            if (position.accLongAmount - amount > 0){
+                position.accLongAmount -= amount;
+            } else {
+                position.positionType = Position.PositionTypeLong;
+                position.accLongAmount = amount;
+                position.entryLongPrice = price;
+            }
+        }
+
+    }
+
+    function UpdateEntryShortPrice(
+      Position.Props memory position,
+      uint256 price,
+      uint256 amount
+    ) internal {
+
+        if (position.positionType == Position.PositionTypeNone) {
+            revert Errors.UsdDoNotHaveShortOperation();
+        }
+
+        if (position.positionType == Position.PositionTypeShort) {
+            uint256 totalValue = position.entryLongPrice.rayMul(position.accShortAmount) +
+                                 price.rayMul(amount);
+            position.accShortAmount += amount;
+            position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
+        }
+
+        if (position.positionType == Position.PositionTypeShort) {
+            if (position.accShortAmount - amount > 0){
+                position.accShortAmount -= amount;
+            } else {
+                position.positionType = Position.PositionTypeShort;
+                position.accShortAmount = amount;
+                position.entryShortPrice = price;
+            }
+        }
+
+    }
+
 
 }

@@ -39,6 +39,9 @@ library Keys {
     // @dev key for the oracle
     bytes32 public constant ORACLE = keccak256(abi.encode("ORACLE"));
 
+    // @dev key for the dex
+    bytes32 public constant DEX = keccak256(abi.encode("DEX"));
+
     // @dev key for the precision
     bytes32 public constant ORACLE_DECIMALS = keccak256(abi.encode("ORACLE_DECIMALS"));
 
@@ -51,6 +54,12 @@ library Keys {
     // @dev key for the amount of gas to forward for native token transfers
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
+    // @dev key for the dex key
+    // @param underlyingAsset the underlyingAsset for the dex key
+    function dexKey(address underlyingAssetIn, address underlyingAssetOut) internal pure returns (bytes32) {
+        (address token0, address token1) = underlyingAssetIn < underlyingAssetOut ? (underlyingAssetIn, underlyingAssetOut) : (underlyingAssetOut, underlyingAssetIn);
+        return keccak256(abi.encode(DEX, token0, token1));
+    }
 
     // @dev key for the health Factor Collateral Rate Threshold
     // @param underlyingAsset the underlyingAsset for the threshold

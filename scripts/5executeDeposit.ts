@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool, getLiquidityAndDebts, getPositions} from "../utils/helper";
+import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
 
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
@@ -17,14 +17,14 @@ async function main() {
     }); 
     
     //approve allowances to the router
-    const usdtDecimals = 6;
+    const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const depositAmmount = expandDecimals(12000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, depositAmmount), `usdt.approve(${router.target})`)
 
     //execute deposit
-    const poolUsdt = await getPool(usdtAddress); 
+    const poolUsdt = await getPoolInfo(usdtAddress); 
     const params: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
     };
@@ -35,7 +35,7 @@ async function main() {
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
     //print poolUsdt
-    const poolUsdtAfterDeposit = await getPool(usdtAddress);
+    const poolUsdtAfterDeposit = await getPoolInfo(usdtAddress);
     const poolToken = await getContractAt("PoolToken", poolUsdtAfterDeposit.poolToken);
     const debtToken = await getContractAt("DebtToken", poolUsdtAfterDeposit.debtToken);
     console.log("poolUsdtAfterDeposit", poolUsdtAfterDeposit);

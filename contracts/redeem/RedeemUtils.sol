@@ -134,9 +134,9 @@ library RedeemUtils {
             ,
             bool isPaused
          ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen();   }  
+        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }  
 
 
         PositionUtils.validateEnabledPosition(position);

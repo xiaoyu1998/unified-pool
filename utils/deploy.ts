@@ -109,7 +109,7 @@ export async function getContract(name) {
         name == "SupplyEventUtils" ||
         name == "WithdrawEventUtils" ||
         name == "EventEmitter"  || 
-        name == "UniswapV3Callee"
+        name == "DexStoreUtils" 
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -122,6 +122,7 @@ export async function getContract(name) {
 //    const feeUtils = await getContract("FeeUtils");
     const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
+    const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
 
 
@@ -159,6 +160,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 OracleStoreUtils: oracleStoreUtils,
+                DexStoreUtils: dexStoreUtils
             },         
         });
     }
@@ -294,6 +296,28 @@ export async function getContract(name) {
         });       
     }
 
+    if (name == "SwapHandler") {
+        //const redeemEventUtils = await getContract("SwapEventUtils");
+        const oracleUtils = await getContract("OracleUtils");
+        const swapUtilsAddress = getDeployedContractAddresses("SwapUtils");
+        const swapUtils = await contractAtOptions("SwapUtils", swapUtilsAddress, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+               // ConfigStoreUtils: configStoreUtils,
+                OracleUtils: oracleUtils,
+                DexStoreUtils: dexStoreUtils,
+                //SwapEventUtils: swapEventUtils,
+            },        
+        });
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address,  {
+            libraries: {
+                SwapUtils: swapUtils,
+            },        
+        });       
+    }
+
     if (name == "ExchangeRouter") {
         const supplyHandler = await getContract("SupplyHandler");
         const withdrawHandler = await getContract("WithdrawHandler");
@@ -301,6 +325,7 @@ export async function getContract(name) {
         const borrowHandler = await getContract("BorrowHandler");
         const repayHandler = await getContract("RepayHandler");
         const redeemHandler = await getContract("RedeemHandler");
+        const swapHandler = await getContract("SwapHandler");
         //const router = await getContract("Router");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, [
@@ -312,7 +337,8 @@ export async function getContract(name) {
             depositHandler,
             borrowHandler,
             repayHandler, 
-            redeemHandler            
+            redeemHandler,  
+            swapHandler         
         ]);       
     }
 
@@ -326,14 +352,6 @@ export async function getContractAt(name, address) {
                 PoolStoreUtils: poolStoreUtils,
             },         
         });
-    } 
-
-    // if (name == "DebtToken") {
-    //     return await contractAtOptions(name, address, {
-    //         libraries: {
-    //             PoolStoreUtils: poolStoreUtils,
-    //         },         
-    //     });
-    // }    
+    }    
 }
 

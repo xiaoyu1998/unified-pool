@@ -108,8 +108,8 @@ library WithdrawUtils {
             ,
             bool isPaused
         ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
+        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
 
 
         if (amount == 0) { 

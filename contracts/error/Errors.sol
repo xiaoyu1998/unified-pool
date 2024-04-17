@@ -34,7 +34,6 @@ library Errors {
     error EmptyOracle(address underlyingAsset);
     error InvalidOraclePrice(address underlyingAsset, int256 price);
 
-
     //Position errors
     error InvalidPoolIndex(uint256 poolKeyId);
     error PositionNotFound(bytes32 key);
@@ -42,12 +41,14 @@ library Errors {
     //PositionUtils errors
     error EmptyPosition();
     error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
+    error UsdDoNotHaveLongOperation();
+    error UsdDoNotHaveShortOperation();
 
     // BorrowUtils, WithdrawUtils errors
-    error PoolIsInactive();
-    error PoolIsPaused();
-    error PoolIsFrozen();
-    error PoolIsNotEnabled();
+    error PoolIsInactive(address pool);
+    error PoolIsPaused(address pool);
+    error PoolIsFrozen(address pool);
+    error PoolIsNotBorrowing(address pool);
     error CollateralBalanceIsZero();
     // error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountToBorrowUsd, uint256 healthFactorCollateralRateThreshold);
     error EmptyBorrowAmounts();
@@ -72,6 +73,16 @@ library Errors {
     // RedeemUtils errors
     error EmptyRedeemAmount();
     // error CollateralCanNotCoverRedeem(uint256 userTotalCollateral, uint256 userTotalDebt, uint256 amountToRedeem, uint256 HealthFactorCollateralRateThreshold);
+    
+
+    // DexUniswapV3 errors
+    error TokenCanNotSwapWithSelf(address token);
+    error TokenDoNotMatch(address pool, address token0, address token1, address token);
+
+    // SwapUtils errors
+    error SwapPoolsNotMatch(address pool0, address pool1);
+    error EmptySwapAmount();
+
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

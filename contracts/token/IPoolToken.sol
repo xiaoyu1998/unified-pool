@@ -35,6 +35,10 @@ interface IPoolToken {
         address receiver,
         uint256 amount
     ) external;
+    function approveLiquidity(
+        address spender, 
+        uint256 addedValue
+    ) external returns (bool);
 
     function syncUnderlyingAssetBalance() external;
 

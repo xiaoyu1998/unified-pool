@@ -49,14 +49,18 @@ library DepositUtils {
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
        
+        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
         if(position.account == address(0)){
             position.account = account;
             position.underlyingAsset = params.underlyingAsset;
-            position.positionType = Position.PositionTypeLong;
+            position.positionType = Position.PositionTypeNone;
             position.hasCollateral = true;
             position.hasDebt = false;
+            if (!poolIsUsd) {
+                position.positionType = Position.PositionTypeLong;
+            }
         }
 
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
@@ -78,7 +82,7 @@ library DepositUtils {
         poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
 
-        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account)) {
+        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && !poolIsUsd) {
            position.positionType = Position.PositionTypeLong;
         }
 
@@ -113,9 +117,9 @@ library DepositUtils {
             ,
             bool isPaused
          ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen();   }   
+        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }   
 
         if (amount == 0) { 
             revert Errors.EmptyDepositAmounts(); 

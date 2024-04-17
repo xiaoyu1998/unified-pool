@@ -105,9 +105,9 @@ library SupplyUtils {
             ,
             bool isPaused
          ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(); }  
-        if (isPaused)  { revert Errors.PoolIsPaused();   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen();   } 
+        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   } 
 
         if (amount == 0) { 
             revert Errors.EmptySupplyAmounts(); 

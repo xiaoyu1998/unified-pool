@@ -17,7 +17,7 @@ async function main() {
     }); 
 
     //execute repay
-    const usdtDecimals = 6;
+    const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const redeemAmmount = expandDecimals(1000, usdtDecimals);
