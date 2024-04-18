@@ -147,4 +147,10 @@ export async function getDebt(debtToken, address) {
     return l;
 }
 
+export async function getMaxAmountToRedeem(dataStore, reader, address, underlyingAsset) {
+    return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
+}
+
+
+
 

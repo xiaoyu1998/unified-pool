@@ -86,7 +86,7 @@ library PositionUtils {
         address dataStore,
         address underlyingAsset,
         uint256 amount
-    ) internal view returns (uint256, uint256) {
+    ) internal view {
 
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
@@ -121,6 +121,48 @@ library PositionUtils {
             );
         }
 
+    }
+
+    function maxAmountToRedeem(
+        address account,
+        address dataStore,
+        address underlyingAsset,
+        uint256 collateralAmount
+    ) internal view returns (uint256) {
+
+        if (collateralAmount == 0) {
+            return 0;
+        }
+
+        (   uint256 userTotalCollateralUsd,
+            uint256 userTotalDebtUsd
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        Printer.log("userTotalCollateralUsd",  userTotalCollateralUsd);
+        Printer.log("userTotalDebtUsd",  userTotalDebtUsd);
+
+        if (userTotalCollateralUsd == 0) { 
+            revert Errors.CollateralBalanceIsZero();
+        }
+
+        uint256 price = OracleUtils.getPrice(dataStore, underlyingAsset);
+        uint256 collateralAmountUsd = price.rayMul(collateralAmount);
+
+        uint256 multiplierFactor = ConfigStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
+        uint256 mulDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
+        if (userTotalCollateralUsd < mulDebtUsd) {
+            return 0;
+        }
+        uint256 collteralSubMulDebt = (userTotalCollateralUsd - mulDebtUsd).rayDiv(price);
+
+        Printer.log("collateralAmount",  collateralAmount);
+        Printer.log("multiplierFactor",   multiplierFactor);
+        Printer.log("collteralSubMulDebt",   collteralSubMulDebt);
+
+        if (collteralSubMulDebt > collateralAmount) {
+            return collateralAmount;
+        }
+
+        return collteralSubMulDebt;
     }
 
     function UpdateEntryLongPrice(

@@ -69,11 +69,11 @@ library RedeemUtils {
         uint256 redeemAmount = params.amount;
         IPoolToken poolToken = IPoolToken(pool.poolToken);
         uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        if( redeemAmount > collateralAmount) {
-            redeemAmount = collateralAmount;
+        uint256 maxAmountToRedeem = PositionUtils.maxAmountToRedeem(account, params.dataStore, params.underlyingAsset, collateralAmount);
+        if( redeemAmount > maxAmountToRedeem) {
+            redeemAmount = maxAmountToRedeem;
         }
         Printer.log("repayAmount", redeemAmount);  
-        Printer.log("collateralAmount", collateralAmount);  
 
         RedeemUtils.validateRedeem( 
             account, 

@@ -174,6 +174,7 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
+                ConfigStoreUtils: configStoreUtils,
                 // ReaderUtils: readerUtils,
             },         
         });

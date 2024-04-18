@@ -48,6 +48,9 @@ library Keys {
     // @dev key for the Health Factor Collateral RateT hreshold
     bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
 
+    // @dev key for the debt Multiplier Factor For Redeem
+    bytes32 public constant DEBT_MULTIPLIER_FACTOR_FOR_REDEEM = keccak256(abi.encode("DEBT_MULTIPLIER_FACTOR_FOR_REDEEM"));
+
     // @dev key for the amount of gas to forward for token transfers
     bytes32 public constant TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("TOKEN_TRANSFER_GAS_LIMIT"));
 

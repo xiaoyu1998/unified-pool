@@ -8,9 +8,11 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 
+import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../pool/Pool.sol";
 import "../position/PositionStoreUtils.sol";
+import "../position/PositionUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
 import "../oracle/OracleUtils.sol";
@@ -26,7 +28,7 @@ library ReaderUtils {
 
         uint256 collateral;
         uint256 scaledDebt;
-        uint256 debt;    
+        uint256 debt; 
     }
 
     struct GetPoolInfo {
@@ -185,5 +187,15 @@ library ReaderUtils {
 
         return poolsInfo;
     }
+
+    function _getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) internal view returns (uint256) {
+        address poolKey = Keys.poolKey(underlyingAsset);
+        Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
+        PoolUtils.validateEnabledPool(pool, poolKey);
+        IPoolToken poolToken = IPoolToken(pool.poolToken);
+        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+        return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
+    }
+
     
 }

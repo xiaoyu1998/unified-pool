@@ -81,4 +81,8 @@ contract Reader {
         return OracleUtils.getPrice(dataStore, underlyingAsset);
     }
 
+    function getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) external view returns (uint256) {
+        return ReaderUtils._getMaxAmountToRedeem(dataStore, underlyingAsset, account);
+    }
+
 }

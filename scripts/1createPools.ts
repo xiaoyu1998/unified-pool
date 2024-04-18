@@ -24,6 +24,7 @@ async function main() {
     //set pools configuration
     const config = await getContract("Config");
     const multicallArgs = [
+        config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
         config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [usdt, false]),

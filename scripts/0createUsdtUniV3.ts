@@ -16,11 +16,11 @@ import {
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    //create underlyingAsset
+    //create underlyingAssets
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
     const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
-    await sendTxn(usdt.mint(owner.address, expandDecimals(1000000, usdtDecimals)), `usdt.mint(${owner.address})`)
-    await sendTxn(uni.mint(owner.address, expandDecimals(10000, uniDecimals)), `usdt.mint(${owner.address})`)
+    await usdt.mint(owner.address, expandDecimals(1000000, usdtDecimals));
+    await uni.mint(owner.address, expandDecimals(10000, uniDecimals));
 
     //set oracle
     const usdtOracle = await deployContract("MockPriceFeed", []);
@@ -73,18 +73,18 @@ async function main() {
     // });
     const sqrtPriceX96 = uniIsZero?
                          encodePriceSqrt(expandDecimals(10, usdtDecimals), expandDecimals(1, uniDecimals)):
-                         encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(10, usdtDecimals));
+                         encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(10, usdtDecimals));//1uni = 10usdt
     await uniswapPool.initialize(sqrtPriceX96);
     const slot0 = await uniswapPool.slot0();
     const currentTick = slot0[1];
-    const uniswapV3MintCallee = await deployContract("UniswapV3MintCallee", []);
-    await sendTxn(usdt.approve(uniswapV3MintCallee.target, MaxUint256), `usdt.approve(${uniswapV3MintCallee.target})`)  
-    await sendTxn(uni.approve(uniswapV3MintCallee.target, MaxUint256), `uni.approve(${uniswapV3MintCallee.target})`)  
+    const uniswapV3MintCallee = await deployContract("UniswapV3MintCallee", []); 
+    await usdt.approve(uniswapV3MintCallee.target, MaxUint256);
+    await uni.approve(uniswapV3MintCallee.target, MaxUint256);
     const tickSpacing = BigInt(TICK_SPACINGS[FeeAmount.MEDIUM]);
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing;
-    console.log(tickTrim, tickLower, tickUpper);
+    //console.log(tickTrim, tickLower, tickUpper);
     await uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(1, 16));
     console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
@@ -94,7 +94,7 @@ async function main() {
     const sqrtPriceLimitX96 = uniIsZero?
                        encodePriceSqrt(expandDecimals(8, usdtDecimals), expandDecimals(1, uniDecimals)):
                        encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(8, usdtDecimals));
-    await sendTxn(uni.approve(dex.target, MaxUint256), `uni.approve(${dex.target})`) 
+    await uni.approve(dex.target, MaxUint256);
     await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, sqrtPriceLimitX96);
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 

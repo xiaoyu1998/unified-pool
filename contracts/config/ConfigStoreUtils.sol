@@ -14,5 +14,9 @@ library ConfigStoreUtils {
     function getHealthFactorCollateralRateThreshold(address dataStore, address underlyingAsset) public view returns (uint256) {
         return IDataStore(dataStore).getUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset));
     }
+
+    function getDebtMultiplierFactorForRedeem(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM);
+    }
     
 }

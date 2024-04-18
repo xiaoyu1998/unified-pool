@@ -53,6 +53,12 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         OracleStoreUtils.setOracleDecimals(address(dataStore), underlyingAsset, precision);
     } 
 
+    function setDebtMultiplierFactorForRedeem(
+        uint256 multiplierFactor
+    ) external onlyConfigKeeper nonReentrant {
+        dataStore.setUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM, multiplierFactor);
+    }
+
     function setHealthFactorCollateralRateThreshold(
         address underlyingAsset,
         uint256 threshold
