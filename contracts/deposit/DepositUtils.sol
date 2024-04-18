@@ -111,7 +111,7 @@ library DepositUtils {
 //        Position.Props memory position,
         Pool.Props memory pool,
         uint256 amount
-    ) internal view {
+    ) internal pure {
         (   bool isActive,
             bool isFrozen, 
             ,

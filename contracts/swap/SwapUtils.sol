@@ -41,7 +41,6 @@ library SwapUtils {
         address underlyingAssetOut;
         uint256 amountIn;
         uint256 sqrtPriceLimitX96;
-        //address to;
     }
 
     struct ExecuteSwapParams {
@@ -51,7 +50,6 @@ library SwapUtils {
         address underlyingAssetOut;
         uint256 amountIn;
         uint256 sqrtPriceLimitX96;
-        //address to;
     }
 
     // @dev executes a swap
@@ -75,6 +73,7 @@ library SwapUtils {
         Pool.Props memory poolOut = PoolStoreUtils.get(params.dataStore, poolKeyOut);
         PoolUtils.validateEnabledPool(poolOut, poolKeyOut);
 
+        bool poolInIsUsd = PoolConfigurationUtils.getUsd(poolIn.configuration);
         bool poolOutIsUsd = PoolConfigurationUtils.getUsd(poolOut.configuration);
         // PoolCache.Props memory poolCacheOut = PoolUtils.cache(poolOut);
         // PoolUtils.updateStateBetweenTransactions(poolOut, poolCacheOut);
@@ -90,14 +89,8 @@ library SwapUtils {
                 positionOut.positionType = Position.PositionTypeLong;
             }
         }
-
-        bool isLong = true;
-        if (poolOutIsUsd) {
-            isLong = false;
-        }
         
         address dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
-
         SwapUtils.validateSwap( 
             account, 
             params.dataStore, 
@@ -109,10 +102,10 @@ library SwapUtils {
             dex
         );
 
+        //swap
         IPoolToken poolTokenIn  = IPoolToken(poolIn.poolToken);
         IPoolToken poolTokenOut  = IPoolToken(poolOut.poolToken);
         poolTokenIn.approveLiquidity(dex, params.amountIn);
-
         IDex(dex).swap(
             address(poolTokenIn), 
             params.underlyingAssetIn, 
@@ -121,25 +114,31 @@ library SwapUtils {
             uint160(params.sqrtPriceLimitX96)
         );
 
+        //update collateral
         uint256 amountOut = poolTokenOut.recordTransferIn(params.underlyingAssetOut);
-        
         poolTokenIn.removeCollateral(account, params.amountIn);//this line will assert if account InsufficientCollateralAmount
         poolTokenOut.addCollateral(account, amountOut);
+        
+        //update position price
+        if (poolInIsUsd || poolOutIsUsd) {
+            uint256 price = OracleUtils.calcPrice(
+                params.amountIn,
+                PoolConfigurationUtils.getDecimals(poolIn.configuration), 
+                amountOut,
+                PoolConfigurationUtils.getDecimals(poolOut.configuration),
+                poolOutIsUsd
+            );
+            
+            if (poolInIsUsd && !poolOutIsUsd) { //long out
+                PositionUtils.UpdateEntryLongPrice(positionOut, price, amountOut);
+            }
 
-        uint256 price = OracleUtils.calcPrice(
-            params.amountIn,
-            PoolConfigurationUtils.getDecimals(poolIn.configuration), 
-            amountOut,
-            PoolConfigurationUtils.getDecimals(poolOut.configuration),
-            poolOutIsUsd
-        );
-
-        if (isLong) {
-            PositionUtils.UpdateEntryLongPrice(positionOut, price, amountOut);
-        } else {
-            PositionUtils.UpdateEntryShortPrice(positionIn,  price, params.amountIn);
+            if (!poolInIsUsd && poolOutIsUsd) { //Short in
+                PositionUtils.UpdateEntryShortPrice(positionIn,  price, params.amountIn);
+            } 
         }
 
+        //update postions
         PositionStoreUtils.set(
             params.dataStore, 
             positionKeyIn, 
@@ -191,7 +190,7 @@ library SwapUtils {
         Pool.Props memory poolOut,
         uint256 amountIn,
         address dex
-    ) internal view {
+    ) internal pure {
         Printer.log("-------------------------validateSwap--------------------------");
         if (dex == address(0)){
              revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);

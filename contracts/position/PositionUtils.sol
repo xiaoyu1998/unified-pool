@@ -145,31 +145,31 @@ library PositionUtils {
         }
 
         uint256 price = OracleUtils.getPrice(dataStore, underlyingAsset);
-        uint256 collateralAmountUsd = price.rayMul(collateralAmount);
+        //uint256 collateralAmountUsd = price.rayMul(collateralAmount);
 
         uint256 multiplierFactor = ConfigStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
-        uint256 mulDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
-        if (userTotalCollateralUsd < mulDebtUsd) {
+        uint256 timesTotalDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
+        if (userTotalCollateralUsd < timesTotalDebtUsd) {
             return 0;
         }
-        uint256 collteralSubMulDebt = (userTotalCollateralUsd - mulDebtUsd).rayDiv(price);
+        uint256 totalAvailable = (userTotalCollateralUsd - timesTotalDebtUsd).rayDiv(price);
 
         Printer.log("collateralAmount",  collateralAmount);
         Printer.log("multiplierFactor",   multiplierFactor);
-        Printer.log("collteralSubMulDebt",   collteralSubMulDebt);
+        Printer.log("totalAvailable",   totalAvailable);
 
-        if (collteralSubMulDebt > collateralAmount) {
+        if (totalAvailable > collateralAmount) {
             return collateralAmount;
         }
 
-        return collteralSubMulDebt;
+        return totalAvailable;
     }
 
     function UpdateEntryLongPrice(
       Position.Props memory position,
       uint256 price,
       uint256 amount
-    ) internal {
+    ) internal pure {
 
         if (position.positionType == Position.PositionTypeNone) {
             revert Errors.UsdDoNotHaveLongOperation();
@@ -198,7 +198,7 @@ library PositionUtils {
       Position.Props memory position,
       uint256 price,
       uint256 amount
-    ) internal {
+    ) internal pure {
 
         if (position.positionType == Position.PositionTypeNone) {
             revert Errors.UsdDoNotHaveShortOperation();

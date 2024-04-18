@@ -27,7 +27,7 @@ library OracleUtils {
             /* uint80 roundID */,
             int256 _price,
             /* uint256 startedAt */,
-            uint256 timestamp,
+            /*uint256 timestamp*/,
             /* uint80 answeredInRound */
          ) = priceFeed.latestRoundData();
 
@@ -51,7 +51,7 @@ library OracleUtils {
         uint256 amountOut, 
         uint256 decimalsOut,
         bool poolOutIsUsd
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
 
         uint256 amountUsd = amountIn;
         uint256 decimalsUsd = decimalsIn;

@@ -49,7 +49,6 @@ async function main() {
         "oracleDecimals":uniOracleDecimal,
     }});
 
-    // console.log(getTokens("usdt")["priceFeed"]);
     console.log(readTokenAddresses());
     console.log("userUSDT", await usdt.balanceOf(owner.address)); 
     console.log("userUNI", await uni.balanceOf(owner.address)); 
