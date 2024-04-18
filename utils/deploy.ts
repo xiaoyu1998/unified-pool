@@ -108,6 +108,7 @@ export async function getContract(name) {
         name == "RepayEventUtils" ||
         name == "SupplyEventUtils" ||
         name == "WithdrawEventUtils" ||
+        name == "SwapEventUtils" ||
         name == "EventEmitter"  || 
         name == "DexStoreUtils" 
     ) {
@@ -298,7 +299,7 @@ export async function getContract(name) {
     }
 
     if (name == "SwapHandler") {
-        //const redeemEventUtils = await getContract("SwapEventUtils");
+        const swapEventUtils = await getContract("SwapEventUtils");
         const oracleUtils = await getContract("OracleUtils");
         const swapUtilsAddress = getDeployedContractAddresses("SwapUtils");
         const swapUtils = await contractAtOptions("SwapUtils", swapUtilsAddress, {
@@ -308,7 +309,7 @@ export async function getContract(name) {
                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 DexStoreUtils: dexStoreUtils,
-                //SwapEventUtils: swapEventUtils,
+                SwapEventUtils: swapEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);

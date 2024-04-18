@@ -1,4 +1,4 @@
-import { contractAt, getTokens, getContract } from "../utils/deploy";
+import { contractAt, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import {  expandDecimals, encodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
 
@@ -10,6 +10,10 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Swap", (underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut) =>{
+        console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut);
+    });
 
     const usdtDecimals = getTokens("USDT")["decimals"];
     const uniDecimals = getTokens("UNI")["decimals"];

@@ -44,4 +44,12 @@ interface IEventEmitter {
         uint256 repayAmount,
         bool useCollateral
     ) external;
+
+    function emitSwap(
+        address underlyingAssetIn,
+        address underlyingAssetOut,
+        address account,
+        uint256 amountIn,
+        uint256 amountOut
+    ) external;
 }

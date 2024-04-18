@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 
@@ -51,6 +51,14 @@ contract EventEmitter is RoleModule {
         address indexed repayer,
         uint256 amount,
         bool useCollateral
+    );
+
+    event Swap(
+        address indexed underlyingAssetIn,
+        address indexed underlyingAssetOut,
+        address indexed account,
+        uint256 amountIn,
+        uint256 amountOut
     );
 
 
@@ -137,6 +145,22 @@ contract EventEmitter is RoleModule {
             repayer,
             repayAmount,
             useCollateral
+        );
+    }
+
+    function emitSwap(
+        address underlyingAssetIn,
+        address underlyingAssetOut,
+        address account,
+        uint256 amountIn,
+        uint256 amountOut
+    ) external onlyController {
+        emit Swap(
+            underlyingAssetIn,
+            underlyingAssetOut,
+            account,
+            amountIn,
+            amountOut
         );
     }
 

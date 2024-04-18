@@ -5,7 +5,7 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
-// import { swapEventUtilsModule } from "./deploySwapEventUtils"
+import { swapEventUtilsModule } from "./deploySwapEventUtils"
 
 export const swapUtilsModule = buildModule("SwapUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
@@ -14,7 +14,7 @@ export const swapUtilsModule = buildModule("SwapUtils", (m) => {
  //   const { configStoreUtils } = m.useModule(configStoreUtilsModule)
     const { oracleUtils } = m.useModule(oracleUtilsModule)
     const { dexStoreUtils } = m.useModule(dexStoreUtilsModule);
-    //const { swapEventUtils } = m.useModule(swapEventUtilsModule)
+    const { swapEventUtils } = m.useModule(swapEventUtilsModule)
 
     const swapUtils = m.library("SwapUtils", {
         libraries: {
@@ -24,7 +24,7 @@ export const swapUtilsModule = buildModule("SwapUtils", (m) => {
  //           ConfigStoreUtils: configStoreUtils,
             OracleUtils: oracleUtils,
             DexStoreUtils: dexStoreUtils,
-            // SwapEventUtils: swapEventUtils,
+            SwapEventUtils: swapEventUtils,
         },      
     });
 

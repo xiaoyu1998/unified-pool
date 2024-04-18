@@ -24,7 +24,7 @@ import "../dex/DexStoreUtils.sol";
 import "../dex/IDex.sol";
 
 import "../event/EventEmitter.sol";
-// import "./SwapEventUtils.sol";
+import "./SwapEventUtils.sol";
 
 // @title SwapUtils
 // @dev Library for swap functions, to help with the swaping of liquidity
@@ -113,6 +113,7 @@ library SwapUtils {
             address(poolTokenOut), 
             uint160(params.sqrtPriceLimitX96)
         );
+        //TODO:should check the amountIn has been exactly swapped in, and remove allowance
 
         //update collateral
         uint256 amountOut = poolTokenOut.recordTransferIn(params.underlyingAssetOut);
@@ -176,11 +177,20 @@ library SwapUtils {
         //     poolOut
         // );
 
+        SwapEventUtils.emitSwap(
+            params.eventEmitter, 
+            params.underlyingAssetIn, 
+            params.underlyingAssetOut, 
+            account, 
+            params.amountIn,
+            amountOut
+        );
+
     }
 
 
     // @notice Validates a swap action.
-    // @param amountIn The amount to be swap in
+    // @param amountIn The amount to be swapped in
     function validateSwap(
         address account,
         address dataStore,
