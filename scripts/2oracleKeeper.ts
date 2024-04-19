@@ -28,7 +28,6 @@ async function main() {
 
     const uniOracleAddress = getTokens("UNI")["oracle"];
     const artifactAggregator = await hre.artifacts.readArtifact("MockAggregator");
-    //console.log(artifactAggregator);
     const uniOracle = await getWebSocketContract(undefined, artifactAggregator.abi, artifactAggregator.bytecode, uniOracleAddress);
     uniOracle.on("AnswerUpdated", (answer, lastestRound, updateAt) =>{
         console.log("AnswerUpdated" , answer, lastestRound, updateAt);
@@ -73,7 +72,7 @@ async function main() {
                 label: symbol,
             }); 
         };
-        await sendTxn(multicall.aggregate3(multicallArgs), "multicall.aggregate3(oracle.setAnswer)");
+        await multicall.aggregate3(multicallArgs);
     }
 }
 
