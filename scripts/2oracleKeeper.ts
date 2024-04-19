@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import { getContract, sendTxn, getTokens} from "../utils/deploy";
+import { getContract, sendTxn, getTokens, getWebSocketContract} from "../utils/deploy";
 import  { bigNumberify } from "../utils/math";
 import queryString from "query-string";
 
@@ -25,6 +25,18 @@ function fetchPrices(): Promise<TickersResponse> {
 }
 
 async function main() {
+
+    const uniOracleAddress = getTokens("UNI")["oracle"];
+    const artifactAggregator = await hre.artifacts.readArtifact("MockAggregator");
+    //console.log(artifactAggregator);
+    const uniOracle = await getWebSocketContract(undefined, artifactAggregator.abi, artifactAggregator.bytecode, uniOracleAddress);
+    uniOracle.on("AnswerUpdated", (answer, lastestRound, updateAt) =>{
+        console.log("AnswerUpdated" , answer, lastestRound, updateAt);
+    }); 
+    uniOracle.on("NewRound", (lastestRound, sender, startAt) =>{
+        console.log("NewRound" , lastestRound, sender, startAt);
+    }); 
+
     const multicall = await getContract("Multicall3");
     while(true){
         const prices = [];
@@ -51,7 +63,7 @@ async function main() {
 
         console.log(prices);
         const multicallArgs = [];
-        const artifact = await hre.artifacts.readArtifact("MockPriceFeed");
+        const artifact = await hre.artifacts.readArtifact("MockAggregator");
         const oracle = new hre.ethers.Interface(artifact.abi);
         for (const {symbol, address, price} of prices){     
             multicallArgs.push({

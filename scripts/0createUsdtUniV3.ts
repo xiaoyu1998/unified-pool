@@ -23,8 +23,8 @@ async function main() {
     await uni.mint(owner.address, expandDecimals(10000, uniDecimals));
 
     //set oracle
-    const usdtOracle = await deployContract("MockPriceFeed", []);
-    const uniOracle = await deployContract("MockPriceFeed", []);
+    const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimal, expandDecimals(1, usdtOracleDecimal)]);
+    const uniOracle = await deployContract("MockAggregator", [uniOracleDecimal, expandDecimals(10, uniOracleDecimal)]);
     const config = await getContract("Config");
     const multicallArgs = [
         config.interface.encodeFunctionData("setOracle", [usdt.target, usdtOracle.target]),
