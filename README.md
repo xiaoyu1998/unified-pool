@@ -20,13 +20,14 @@ npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network l
 ```
 Execute contract terms
 ```shell
-npx hardhat run scripts/0createUsdtUni.ts --network localhost
+npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
 npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2executeSupply.ts --network localhost
-npx hardhat run scripts/3executeWithdraw.ts --network localhost
-npx hardhat run scripts/4executeDeposit.ts --network localhost
-npx hardhat run scripts/5oracleKeeper.ts --network localhost
+npx hardhat run scripts/2oracleKeeper.ts --network localhost
+npx hardhat run scripts/3executeSupply.ts --network localhost
+npx hardhat run scripts/4executeWithdraw.ts --network localhost
+npx hardhat run scripts/5executeDeposit.ts --network localhost
 npx hardhat run scripts/6executeBorrow.ts --network localhost
 npx hardhat run scripts/7executeRepay.ts --network localhost
 npx hardhat run scripts/8executeRedeem.ts --network localhost
+npx hardhat run scripts/9executeSwap.ts --network localhost
 ```
