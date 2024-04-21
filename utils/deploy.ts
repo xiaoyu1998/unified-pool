@@ -46,7 +46,6 @@ export function getDeployedContractAddresses(name){
     return deployed_address[`${name}#${name}`];
 }
 
-
 const tmpAddressesFilepath = path.join(__dirname, '..', '..', `.tmp-addresses-${process.env.HARDHAT_NETWORK}.json`)
 
 export function readTokenAddresses() {
@@ -88,7 +87,6 @@ export async function getWebSocketContract(name, abi, bytecode, address) {
     return await contractFactory.attach(address);
 }
 
-
 export async function getContract(name) {
 
     if (name == "RoleStore" ||
@@ -126,7 +124,6 @@ export async function getContract(name) {
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
 
-
     // if (name == "EventEmitter") {
     //     const address = getDeployedContractAddresses(name);
     //     return await contractAtOptions(name, address, {
@@ -153,7 +150,6 @@ export async function getContract(name) {
             },         
         });
     }
-
 
     if (name == "Config") {
         const address = getDeployedContractAddresses(name);

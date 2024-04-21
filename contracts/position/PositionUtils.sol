@@ -25,6 +25,12 @@ library PositionUtils {
     using WadRayMath for uint256;
     //using PoolConfigurationUtils for uint256;
 
+    function validateEnabledPosition(Position.Props memory postion) internal pure {
+        if (postion.account == address(0)) {
+            revert Errors.EmptyPosition();
+        }
+
+    }
     function calculateUserTotalCollateralAndDebt(
         address account,
         address dataStore
@@ -72,13 +78,6 @@ library PositionUtils {
             userDebtUsd = IDebtToken(debtToken).balanceOf(position.account).rayMul(assetPrice);               
         }
         return (userCollateralUsd, userDebtUsd);
-    }
-
-    function validateEnabledPosition(Position.Props memory postion) internal pure {
-        if (postion.account == address(0)) {
-            revert Errors.EmptyPosition();
-        }
-
     }
 
     function validateHealthFactor(
@@ -144,14 +143,12 @@ library PositionUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        uint256 price = OracleUtils.getPrice(dataStore, underlyingAsset);
-        //uint256 collateralAmountUsd = price.rayMul(collateralAmount);
-
         uint256 multiplierFactor = ConfigStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
         uint256 timesTotalDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
         if (userTotalCollateralUsd < timesTotalDebtUsd) {
             return 0;
         }
+        uint256 price = OracleUtils.getPrice(dataStore, underlyingAsset);
         uint256 totalAvailable = (userTotalCollateralUsd - timesTotalDebtUsd).rayDiv(price);
 
         Printer.log("collateralAmount",  collateralAmount);
@@ -165,7 +162,7 @@ library PositionUtils {
         return totalAvailable;
     }
 
-    function UpdateEntryLongPrice(
+    function UpdateLongPosition(
       Position.Props memory position,
       uint256 price,
       uint256 amount
@@ -191,10 +188,9 @@ library PositionUtils {
                 position.entryLongPrice = price;
             }
         }
-
     }
 
-    function UpdateEntryShortPrice(
+    function UpdateShortPosition(
       Position.Props memory position,
       uint256 price,
       uint256 amount
@@ -220,7 +216,6 @@ library PositionUtils {
                 position.entryShortPrice = price;
             }
         }
-
     }
 
 

@@ -29,7 +29,7 @@ async function main() {
     const uniOracleAddress = getTokens("UNI")["oracle"];
     const artifactAggregator = await hre.artifacts.readArtifact("MockAggregator");
     const uniOracle = await getWebSocketContract(undefined, artifactAggregator.abi, artifactAggregator.bytecode, uniOracleAddress);
-    uniOracle.on("AnswerUpdated", (answer, lastestRound, updateAt) =>{
+    uniOracle.on("AnswerUpdated", (answer, lastestRound, updateAt) => {
         console.log("AnswerUpdated" , answer, lastestRound, updateAt);
     }); 
     uniOracle.on("NewRound", (lastestRound, sender, startAt) =>{

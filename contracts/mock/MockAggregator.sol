@@ -5,7 +5,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../oracle/IPriceFeed.sol";
 
-// @title MockPriceFeed
+// @title MockAggregator
 // @dev Mock price feed for testing and testnets
 contract MockAggregator is IPriceFeed, Ownable {
    event AnswerUpdated(int256 indexed current, uint256 indexed roundId, uint256 updatedAt);
