@@ -82,7 +82,10 @@ library DepositUtils {
         poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
 
-        if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && !poolIsUsd) {
+        if (debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && 
+            position.positionType == Position.PositionTypeShort && 
+            !poolIsUsd
+        ) {
            //TODO:Should update entryLongPrice and accLongAmount
            position.positionType = Position.PositionTypeLong;
         }
@@ -103,10 +106,9 @@ library DepositUtils {
 
 
     //
-    // @notice Validates a withdraw action.
+    // @notice Validates a deposit action.
     // @param pool The cached data of the pool
-    // @param amount The amount to be withdrawn
-    // @param userBalance The balance of the user
+    // @param amount The amount to be deposit
     //
     function validateDeposit(
 //        Position.Props memory position,

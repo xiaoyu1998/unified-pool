@@ -90,10 +90,9 @@ library SupplyUtils {
             supplyAmount
         );
     }
-
     
     // @dev validates a supply action.
-    // @param pool The cached data of the pool
+    // @param poolCache The cached data of the pool
     // @param amount The amount to be supply
     function validateSupply(
         PoolCache.Props memory poolCache,

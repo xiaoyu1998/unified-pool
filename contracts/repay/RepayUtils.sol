@@ -48,6 +48,7 @@ library RepayUtils {
     // @param account the repaying account
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
+        Printer.log("-------------------------executeRepay--------------------------");
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
@@ -57,27 +58,23 @@ library RepayUtils {
         uint256 repayAmount;
         uint256 collateralAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        if(params.amount > 0) { // reduce collateral to repay
+        bool useCollateral = (params.amount > 0) ? true:false;
+        if (useCollateral) { // reduce collateral to repay
             repayAmount = params.amount;
             collateralAmount = poolToken.balanceOfCollateral(account);
-            // if(repayAmount > collateralAmount){// all collateral to repay 
-            //     repayAmount = collateralAmount;
-            // }
         } else {//transferin to repay
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
 
-        Printer.log("-------------------------executeRepay--------------------------");
         Printer.log("repayAmount", repayAmount);   
 
         uint256 extraAmountToRefund;
         IDebtToken debtToken = IDebtToken(poolCache.debtToken);
         uint256 debtAmount = debtToken.balanceOf(account);
-        if(repayAmount > debtAmount) {
+        if (repayAmount > debtAmount) {
             extraAmountToRefund = repayAmount - debtAmount;
             repayAmount         = debtAmount;      
         }
-
         Printer.log("debtAmount", debtAmount); 
         Printer.log("extraAmountToRefund", extraAmountToRefund); 
 
@@ -93,34 +90,36 @@ library RepayUtils {
         );
 
         poolCache.nextTotalScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
-        if(debtToken.scaledBalanceOf(account) == 0) {
+        if (debtToken.scaledBalanceOf(account) == 0) {
             position.hasDebt = false; 
-            PositionStoreUtils.set(params.dataStore, positionKey, position);
         }
-        if(collateralAmount > 0) {//reduce collateral to repay
+        if (useCollateral) {//reduce collateral to repay
             poolToken.removeCollateral(account, repayAmount);
             if(poolToken.balanceOfCollateral(account) == 0) {
                 position.hasCollateral = false;
-                PositionStoreUtils.set(params.dataStore, positionKey, position);
             }
         }
-        //TODO:should be Long?
-        // bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
-        // if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && !poolIsUsd) {
-        //    position.positionType = Position.PositionTypeLong;
-        // }
+        //TODO:should change to Long?
+        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
+        if (debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && 
+            position.positionType == Position.PositionTypeShort && 
+            !poolIsUsd
+        ) {
+            position.positionType = Position.PositionTypeLong;
+        }
+        PositionStoreUtils.set(
+            params.dataStore, 
+            positionKey, 
+            position
+        );
 
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
             params.underlyingAsset, 
-            0, //balanceOf underlyingAsset has beed added repayAmount, or Collateral has been removed repayAmount
+            0, //balanceOf underlyingAsset has been added repayAmount, or Collateral has been removed repayAmount
             0
         );
-
-        Printer.log("-------------------------executeRepay--------------------------");
-        Printer.log("liquidityRate", pool.liquidityRate);   
-        Printer.log("borrowRate", pool.borrowRate); 
 
         PoolStoreUtils.set(
             params.dataStore, 
@@ -128,12 +127,10 @@ library RepayUtils {
             pool
         );  
 
-        if(extraAmountToRefund > 0 && collateralAmount == 0) {//Refund extra
+        if(extraAmountToRefund > 0 && !useCollateral) {//Refund extra
             poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
             poolToken.syncUnderlyingAssetBalance();
         }
-
-        bool useCollateral = (params.amount > 0)?true:false;
 
         RepayEventUtils.emitRepay(
             params.eventEmitter, 
@@ -144,13 +141,10 @@ library RepayUtils {
         );
 
     }
-
-
     
     // @notice Validates a repay action.
     // @param poolCache The cached data of the pool
-    // @param amount The amount to be repay
-    // @param userBalance The balance of the user
+    // @param repayAmount The amount to be repay
     function validateRepay(
         address account,
         Position.Props memory position,

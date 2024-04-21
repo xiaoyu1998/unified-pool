@@ -47,14 +47,14 @@ library BorrowUtils {
     // @param account the withdrawing account
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
+        Printer.log("-------------------------executeBorrow--------------------------");  
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
-        Printer.log("-------------------------executeBorrow--------------------------");  
-        Printer.log("totalFee", pool.totalFee);   
-        Printer.log("unclaimedFee", pool.unclaimedFee);  
+        // Printer.log("totalFee", pool.totalFee);   
+        // Printer.log("unclaimedFee", pool.unclaimedFee);  
         
         bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
@@ -75,37 +75,36 @@ library BorrowUtils {
         );
 
         //TODO:Should have borrow "to"
-        IPoolToken(poolCache.poolToken).addCollateral(account, params.amount);//this will change Rate
+        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
+        poolToken.addCollateral(account, params.amount);//this line will change Rate
         (, poolCache.nextTotalScaledDebt) = IDebtToken(poolCache.debtToken).mint(
             account, 
             params.amount, 
             poolCache.nextBorrowIndex
         );
         position.hasCollateral = true;
-        position.hasDebt = true;       
+        position.hasDebt = true; 
+        //TODO:should change to short?      
+        IDebtToken debtToken   = IDebtToken(pool.poolToken);
+        if (debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account) && 
+            position.positionType == Position.PositionTypeLong && 
+            !poolIsUsd
+        ) {
+           position.positionType = Position.PositionTypeShort;
+        }
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
             position
         );
-
-        // IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        // if(debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account)) {
-        //    position.positionType = Position.PositionTypeShort;
-        // }
         
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
             params.underlyingAsset, 
             0, 
-            0 //liquidity already out while move to collateral
-        );
-
-        // Printer.log("liquidityRate", pool.liquidityRate);   
-        // Printer.log("borrowRate", pool.borrowRate);   
-        // Printer.log("totalFee", pool.totalFee);   
-        // Printer.log("unclaimedFee", pool.unclaimedFee);   
+            0 //liquidity has been added while move to collateral
+        );   
 
         PoolStoreUtils.set(
             params.dataStore, 

@@ -55,7 +55,7 @@ library RedeemUtils {
         address account, 
         ExecuteRedeemParams calldata params
     ) external {
-        Printer.log("-------------------------executeRepay--------------------------");
+        Printer.log("-------------------------executeRedeem--------------------------");
         //TODO:should be just get the pooltoken and pool configuration only
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
@@ -95,8 +95,12 @@ library RedeemUtils {
             position.hasCollateral = false;
         }
 
+        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        if (debtToken.balanceOf(account) > remainCollateral) {
+        if (debtToken.balanceOf(account) > remainCollateral && 
+            position.positionType == Position.PositionTypeLong && 
+            !poolIsUsd
+        ) {
           //TODO:Should update entryShortPrice and accShortAmount
            position.positionType = Position.PositionTypeShort;
         }
@@ -119,11 +123,9 @@ library RedeemUtils {
         );
     }
 
-
     // @notice Validates a redeem action.
     // @param poolCache The cached data of the pool
-    // @param amount The amount to be redeemn
-    // @param userBalance The balance of the user
+    // @param amountToRedeem The amount to be redeemn
     function validateRedeem(
         address account,
         address dataStore,

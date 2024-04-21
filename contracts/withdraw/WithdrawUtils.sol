@@ -93,11 +93,10 @@ library WithdrawUtils {
         );
     }
 
-
     // @notice Validates a withdraw action.
     // @param poolCache The cached data of the pool
     // @param amount The amount to be withdrawn
-    // @param userBalance The balance of the user   
+    // @param userBalance The supply balance of the user   
     function validateWithdraw(
         PoolCache.Props memory poolCache,
         uint256 amount,
