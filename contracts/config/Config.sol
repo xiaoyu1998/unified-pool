@@ -67,66 +67,66 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     } 
     
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setActive(active);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolFreeze(address underlyingAsset, bool freeze) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setFrozen(freeze);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolPause(address underlyingAsset, bool paused) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setPaused(paused);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     }  
 
     function setPoolUsd(address underlyingAsset, bool usd) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setUsd(usd);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     }
 
     function setPoolBorrowingEnabled(address underlyingAsset, bool enabled) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setBorrowingEnabled(enabled);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolDecimals(address underlyingAsset, uint256 decimals) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setDecimals(decimals);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolFeeFactor(address underlyingAsset, uint256 feeFactor) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setFeeFactor(feeFactor);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolBorrowCapacity(address underlyingAsset, uint256 borrowCapacity) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setBorrowCapacity(borrowCapacity);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setPoolSupplyCapacity(address underlyingAsset, uint256 supplyCapacity) external onlyConfigKeeper nonReentrant {
-        address key = PoolUtils.getKey(underlyingAsset);
-        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), key);
+        address poolKey = Keys.poolKey(underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setSupplyCapacity(supplyCapacity);
-        PoolStoreUtils.setConfiguration(address(dataStore), key, configuration);
+        PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
     function setDex(address underlyingAssetA, address underlyingAssetB, address dex) external onlyConfigKeeper nonReentrant {

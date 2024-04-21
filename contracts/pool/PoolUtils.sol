@@ -28,10 +28,14 @@ library PoolUtils {
     using PoolCache for PoolCache.Props;
     using WadRayMath for uint256;
 
-    struct UpdateInterestRatesLocalVars {
-        uint256 nextLiquidityRate;
-        uint256 nextBorrowRate;
-        uint256 totalDebt;
+    function validateEnabledPool(
+        Pool.Props memory pool,
+        address key
+    ) internal pure {
+        if (pool.poolToken == address(0)) {
+            revert Errors.PoolNotFound(key);
+        }
+
     }
     
     function updateInterestRates(
@@ -43,8 +47,7 @@ library PoolUtils {
     ) internal {
         Printer.log("--------------------updateInterestRates---------------------");
 
-        UpdateInterestRatesLocalVars memory vars;
-        vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
+        uint256 totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
 
@@ -52,24 +55,24 @@ library PoolUtils {
         Printer.log("liquidityOut", liquidityOut);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
-        Printer.log("totalDebt", vars.totalDebt);
+        Printer.log("totalDebt", totalDebt);
         Printer.log("feeFactor", poolCache.feeFactor); 
 
-        (   vars.nextLiquidityRate,
-            vars.nextBorrowRate
+        (   uint256 nextLiquidityRate,
+            uint256 nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
             InterestUtils.CalculateInterestRatesParams(
                 liquidityIn,
                 liquidityOut,
-                vars.totalDebt,
+                totalDebt,
                 poolCache.feeFactor,
                 underlyingAsset,
                 poolCache.poolToken
             )
         );
 
-        pool.liquidityRate = vars.nextLiquidityRate;
-        pool.borrowRate    = vars.nextBorrowRate;
+        pool.liquidityRate = nextLiquidityRate;
+        pool.borrowRate    = nextBorrowRate;
   
         Printer.log("liquidityRate", pool.liquidityRate);   
         Printer.log("borrowRate", pool.borrowRate);   
@@ -156,7 +159,6 @@ library PoolUtils {
             Printer.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
             Printer.log("currBorrowIndex", poolCache.currBorrowIndex);
             Printer.log("borrowIndex", pool.borrowIndex);
-
         }
    
     }
@@ -210,23 +212,13 @@ library PoolUtils {
         }
     }
 
-    function getKey(
-        address underlyingAsset
-    ) internal pure returns (address) {
-        // bytes32 key = keccak256(abi.encode(underlyingAsset));
-        // return key;
-        return underlyingAsset;
-    }
-
-    function validateEnabledPool(
-        Pool.Props memory pool,
-        address key
-    ) internal pure {
-        if (pool.poolToken == address(0)) {
-            revert Errors.PoolNotFound(key);
-        }
-
-    }
+    // function getKey(
+    //     address underlyingAsset
+    // ) internal pure returns (address) {
+    //     // bytes32 key = keccak256(abi.encode(underlyingAsset));
+    //     // return key;
+    //     return underlyingAsset;
+    // }
 
 
 }
