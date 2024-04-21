@@ -73,7 +73,7 @@ library RedeemUtils {
         if( redeemAmount > maxAmountToRedeem) {
             redeemAmount = maxAmountToRedeem;
         }
-        Printer.log("repayAmount", redeemAmount);  
+        //Printer.log("repayAmount", redeemAmount);  
 
         RedeemUtils.validateRedeem( 
             account, 
@@ -89,20 +89,23 @@ library RedeemUtils {
             pool
         );
 
-        // IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        // if(debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account)) {
-        //    position.positionType = Position.PositionTypeShort;
-        // }
-
         poolToken.removeCollateral(account, redeemAmount);
-        if(poolToken.balanceOfCollateral(account) == 0) {
+        uint256 remainCollateral = poolToken.balanceOfCollateral(account);
+        if (remainCollateral == 0) {
             position.hasCollateral = false;
-            PositionStoreUtils.set(
-                params.dataStore, 
-                positionKey, 
-                position
-            );
         }
+
+        IDebtToken debtToken   = IDebtToken(pool.poolToken);
+        if (debtToken.balanceOf(account) > remainCollateral) {
+          //TODO:Should update entryShortPrice and accShortAmount
+           position.positionType = Position.PositionTypeShort;
+        }
+
+        PositionStoreUtils.set(
+            params.dataStore, 
+            positionKey, 
+            position
+        );
 
         poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
         poolToken.syncUnderlyingAssetBalance();

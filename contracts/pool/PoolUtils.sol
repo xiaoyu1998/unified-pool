@@ -212,13 +212,4 @@ library PoolUtils {
         }
     }
 
-    // function getKey(
-    //     address underlyingAsset
-    // ) internal pure returns (address) {
-    //     // bytes32 key = keccak256(abi.encode(underlyingAsset));
-    //     // return key;
-    //     return underlyingAsset;
-    // }
-
-
 }

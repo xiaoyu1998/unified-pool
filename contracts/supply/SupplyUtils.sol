@@ -38,7 +38,6 @@ library SupplyUtils {
         address eventEmitter;
         address underlyingAsset;
         address to;
-
     }
 
     // @dev executes a supply
@@ -119,7 +118,6 @@ library SupplyUtils {
         uint256 totalSupplyAddUnclaimedFeeAddSupplyAmount = 
             (IPoolToken(poolCache.poolToken).scaledTotalSupply() + poolCache.unclaimedFee)
             .rayMul(poolCache.nextLiquidityIndex) + amount;
-
 
         if (supplyCapacity == 0 || totalSupplyAddUnclaimedFeeAddSupplyAmount > supplyCapacity) {
             revert Errors.SupplyCapacityExceeded(totalSupplyAddUnclaimedFeeAddSupplyAmount, supplyCapacity);

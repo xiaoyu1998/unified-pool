@@ -111,7 +111,6 @@ library WithdrawUtils {
         if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
         if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
 
-
         if (amount == 0) { 
             revert Errors.EmptyWithdrawAmounts(); 
         }

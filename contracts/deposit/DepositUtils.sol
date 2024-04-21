@@ -43,6 +43,7 @@ library DepositUtils {
     // @param account the depositng account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
+        Printer.log("-------------------------executeDeposit--------------------------");
         address poolKey = Keys.poolKey(params.underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
@@ -68,7 +69,6 @@ library DepositUtils {
         uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
- //           position,
             pool, 
             depositAmount
         );
@@ -83,6 +83,7 @@ library DepositUtils {
         position.hasCollateral = true;
 
         if(debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && !poolIsUsd) {
+           //TODO:Should update entryLongPrice and accLongAmount
            position.positionType = Position.PositionTypeLong;
         }
 
