@@ -197,5 +197,8 @@ library ReaderUtils {
         return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
     }
 
+    function _getLiquidationHealthFactor(address dataStore, address account) external view returns (uint256, uint256, bool) {
+        return PositionUtils.getLiquidationHealthFactor(account, dataStore);
+    }
     
 }

@@ -99,7 +99,6 @@ export async function getContract(name) {
         name == "Router" ||
         name == "PoolInterestRateStrategy" ||
         name == "Multicall3" ||
-        name == "ReaderUtils" ||
         name == "BorrowEventUtils" ||
         name == "DepositEventUtils" ||
         name == "RedeemEventUtils" ||
@@ -124,20 +123,24 @@ export async function getContract(name) {
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
 
-    // if (name == "EventEmitter") {
-    //     const address = getDeployedContractAddresses(name);
-    //     return await contractAtOptions(name, address, {
-    //         libraries: {
-    //             RoleStore: roleStore,
-    //         },         
-    //     });
-    // }
-
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
                 OracleStoreUtils: oracleStoreUtils,
+            },         
+        });
+    }
+
+    if (name == "ReaderUtils") {
+        const oracleUtils = await getContract("OracleUtils");
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+                OracleUtils: oracleUtils,
+                ConfigStoreUtils: configStoreUtils,
             },         
         });
     }
@@ -164,7 +167,7 @@ export async function getContract(name) {
 
     if (name == "Reader") {
         const oracleUtils = await getContract("OracleUtils");
-        // const readerUtils = await getContract("ReaderUtils");
+        const readerUtils = await getContract("ReaderUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
@@ -172,7 +175,7 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
                 ConfigStoreUtils: configStoreUtils,
-                // ReaderUtils: readerUtils,
+                ReaderUtils: readerUtils,
             },         
         });
     }

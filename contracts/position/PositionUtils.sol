@@ -35,6 +35,8 @@ library PositionUtils {
         address account,
         address dataStore
     ) internal view returns (uint256, uint256) {
+        Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
+        // Printer.log("account", account);
         uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
         if(positionCount == 0) return (0, 0);
 
@@ -47,6 +49,7 @@ library PositionUtils {
             (   uint256 userCollateralUsd, 
                 uint256 userDebtUsd) = 
                 calculateUserCollateralAndDebtInPosition(dataStore, position);
+
             userTotalCollateralUsd += userCollateralUsd;
             userTotalDebtUsd += userDebtUsd;            
         }
@@ -80,6 +83,30 @@ library PositionUtils {
         return (userCollateralUsd, userDebtUsd);
     }
 
+    function getLiquidationHealthFactor(
+        address account,
+        address dataStore
+    ) internal view returns(uint256, uint256, bool) {
+        Printer.log("-------------------------getLiquidationHealthFactor1--------------------------");
+        (   uint256 userTotalCollateralUsd,
+            uint256 userTotalDebtUsd
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+
+        Printer.log("userTotalCollateralUsd", userTotalCollateralUsd);
+        Printer.log("userTotalDebtUsd", userTotalDebtUsd);
+        uint256 healthFactor;
+        if (userTotalDebtUsd > 0 )
+            healthFactor = userTotalCollateralUsd.rayDiv(userTotalDebtUsd);
+
+        uint256 healthFactorLiquidationThreshold =
+            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+        Printer.log("healthFactorLiquidationThreshold", healthFactorLiquidationThreshold);
+
+        return (healthFactor,  
+                healthFactorLiquidationThreshold, 
+                healthFactor > healthFactorLiquidationThreshold);
+    }
+
     function validateLiquidationHealthFactor(
         address account,
         address dataStore,
@@ -105,8 +132,6 @@ library PositionUtils {
 
         uint256 healthFactor = 
             userTotalCollateralUsd.rayDiv(userTotalDebtUsd + amountUsd);
-        // uint256 healthFactorCollateralRateThreshold =
-        //     ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);
 
         uint256 healthFactorLiquidationThreshold =
             ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);

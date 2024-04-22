@@ -151,6 +151,8 @@ export async function getMaxAmountToRedeem(dataStore, reader, address, underlyin
     return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
 }
 
-
+export async function getLiquidationHealthFactor(dataStore, reader, address) {
+    return reader.getLiquidationHealthFactor(dataStore, address);
+}
 
 
