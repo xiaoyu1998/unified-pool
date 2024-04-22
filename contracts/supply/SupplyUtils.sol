@@ -15,7 +15,6 @@ import "../token/IPoolToken.sol";
 import "../event/EventEmitter.sol";
 import "./SupplyEventUtils.sol";
 
-
 import "../utils/Printer.sol";
 
 
@@ -55,7 +54,6 @@ library SupplyUtils {
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
-
 
         SupplyUtils.validateSupply(
             poolCache, 
@@ -102,7 +100,7 @@ library SupplyUtils {
             bool isFrozen, 
             ,
             bool isPaused
-         ) = poolCache.configuration.getFlags();
+        ) = poolCache.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
         if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   } 

@@ -119,7 +119,7 @@ library DepositUtils {
             bool isFrozen, 
             ,
             bool isPaused
-         ) = pool.configuration.getFlags();
+        ) = pool.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
         if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }   

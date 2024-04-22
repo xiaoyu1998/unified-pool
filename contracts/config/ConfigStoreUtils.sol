@@ -18,5 +18,9 @@ library ConfigStoreUtils {
     function getDebtMultiplierFactorForRedeem(address dataStore) public view returns (uint256) {
         return IDataStore(dataStore).getUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM);
     }
+
+    function getHealthFactorLiquidationThreshold(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD);
+    }
     
 }

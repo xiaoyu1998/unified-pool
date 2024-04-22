@@ -138,7 +138,7 @@ library RedeemUtils {
             bool isFrozen, 
             ,
             bool isPaused
-         ) = pool.configuration.getFlags();
+        ) = pool.configuration.getFlags();
         if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
         if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
         if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }  
@@ -150,7 +150,13 @@ library RedeemUtils {
             revert Errors.EmptyRedeemAmount();
         }
 
-        PositionUtils.validateHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
+        PositionUtils.validateLiquidationHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
+
+        IPoolToken poolToken = IPoolToken(pool.poolToken);
+        IDebtToken debtToken   = IDebtToken(pool.poolToken);
+        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+        uint256 debtAmount = debtToken.balanceOf(account);
+        PositionUtils.validateCollateralRateHealthFactor(dataStore, pool.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
 
     }
 }

@@ -80,7 +80,7 @@ library PositionUtils {
         return (userCollateralUsd, userDebtUsd);
     }
 
-    function validateHealthFactor(
+    function validateLiquidationHealthFactor(
         address account,
         address dataStore,
         address underlyingAsset,
@@ -105,21 +105,42 @@ library PositionUtils {
 
         uint256 healthFactor = 
             userTotalCollateralUsd.rayDiv(userTotalDebtUsd + amountUsd);
-        uint256 healthFactorCollateralRateThreshold =
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);
+        // uint256 healthFactorCollateralRateThreshold =
+        //     ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);
+
+        uint256 healthFactorLiquidationThreshold =
+            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
 
         Printer.log("healthFactor", healthFactor );
-        Printer.log("healthFactorCollateralRateThreshold", healthFactorCollateralRateThreshold);
+        Printer.log("healthFactorLiquidationThreshold", healthFactorLiquidationThreshold);
+
+        if (healthFactor < healthFactorLiquidationThreshold) {
+            revert Errors.HealthFactorLowerThanLiquidationThreshold(
+                healthFactor, 
+                healthFactorLiquidationThreshold
+            );
+        }
+    }
+
+    function validateCollateralRateHealthFactor(
+        address dataStore,
+        address underlyingAsset,
+        uint256 collateralAmount,
+        uint256 debtAmount,
+        uint256 amountAddToDebt
+    ) internal view {
+        uint256 healthFactor = 
+            collateralAmount.rayDiv(debtAmount + amountAddToDebt);
+
+        uint256 healthFactorCollateralRateThreshold =
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);        
 
         if (healthFactor < healthFactorCollateralRateThreshold) {
-            revert Errors.CollateralCanNotCover(
-                userTotalCollateralUsd, 
-                userTotalDebtUsd, 
-                amountUsd,
+            revert Errors.HealthFactorLowerThanCollateralRateThreshold(
+                healthFactor, 
                 healthFactorCollateralRateThreshold
             );
         }
-
     }
 
     function maxAmountToRedeem(

@@ -53,6 +53,12 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         OracleStoreUtils.setOracleDecimals(address(dataStore), underlyingAsset, precision);
     } 
 
+    function setHealthFactorLiquidationThreshold(
+        uint256 threshold
+    ) external onlyConfigKeeper nonReentrant {
+        dataStore.setUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD, threshold);
+    }
+
     function setDebtMultiplierFactorForRedeem(
         uint256 multiplierFactor
     ) external onlyConfigKeeper nonReentrant {

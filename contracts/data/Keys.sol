@@ -45,8 +45,11 @@ library Keys {
     // @dev key for the precision
     bytes32 public constant ORACLE_DECIMALS = keccak256(abi.encode("ORACLE_DECIMALS"));
 
-    // @dev key for the Health Factor Collateral RateT hreshold
+    // @dev key for the Health Factor Collateral Rate hreshold
     bytes32 public constant HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_COLLATERAL_RATE_THRESHOLD"));
+
+    // @dev key for the Health Factor Liquidation hreshold
+    bytes32 public constant HEALTH_FACTOR_LIQUIDATION_THRESHOLD = keccak256(abi.encode("HEALTH_FACTOR_LIQUIDATION_THRESHOLD"));
 
     // @dev key for the debt Multiplier Factor For Redeem
     bytes32 public constant DEBT_MULTIPLIER_FACTOR_FOR_REDEEM = keccak256(abi.encode("DEBT_MULTIPLIER_FACTOR_FOR_REDEEM"));

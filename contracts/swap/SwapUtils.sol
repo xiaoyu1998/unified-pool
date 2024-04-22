@@ -210,7 +210,7 @@ library SwapUtils {
             bool isFrozenIn, 
             ,
             bool isPausedIn
-         ) = poolIn.configuration.getFlags();
+        ) = poolIn.configuration.getFlags();
         if (!isActiveIn) { revert Errors.PoolIsInactive(poolIn.underlyingAsset); }  
         if (isPausedIn)  { revert Errors.PoolIsPaused(poolIn.underlyingAsset);   }  
         if (isFrozenIn)  { revert Errors.PoolIsFrozen(poolIn.underlyingAsset);   }  
@@ -219,7 +219,7 @@ library SwapUtils {
             bool isFrozenOut, 
             ,
             bool isPausedOut
-         ) = poolOut.configuration.getFlags();
+        ) = poolOut.configuration.getFlags();
         if (!isActiveOut) { revert Errors.PoolIsInactive(poolOut.underlyingAsset); }  
         if (isPausedOut)  { revert Errors.PoolIsPaused(poolOut.underlyingAsset);   }  
         if (isFrozenOut)  { revert Errors.PoolIsFrozen(poolOut.underlyingAsset);   } 

@@ -40,9 +40,11 @@ library Errors {
 
     //PositionUtils errors
     error EmptyPosition();
-    error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
+    //error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
     error UsdDoNotHaveLongOperation();
     error UsdDoNotHaveShortOperation();
+    error HealthFactorLowerThanLiquidationThreshold(uint256 healthFactor, uint256 healthFactorLiquidationThreshold);
+    error HealthFactorLowerThanCollateralRateThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
 
     // BorrowUtils, WithdrawUtils errors
     error PoolIsInactive(address pool);
