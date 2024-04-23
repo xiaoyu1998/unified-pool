@@ -61,18 +61,20 @@ library LiquidationUtils {
         uint256 positionCount = PositionStoreUtils.getAccountPositionCount(params.dataStore, params.account);
         bytes32[] memory positionKeys = 
             PositionStoreUtils.getAccountPositionKeys(params.dataStore, params.account, 0, positionCount);
+
         for (uint256 i; i < positionKeys.length; i++) {
             //TODO: should update pools
             bytes32 positionKey = positionKeys[i];
             Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
 
             address poolKey = Keys.poolKey(position.underlyingAsset);
-            uint256 configuration = PoolStoreUtils.getConfiguration(params.dataStore, poolKey);
-            LiquidationUtils.validatePool(poolKey, configuration);
+            Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
+            PoolUtils.validateEnabledPool(pool, poolKey);
+            PoolCache.Props memory poolCache = PoolUtils.cache(pool);
+            PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+            LiquidationUtils.validatePool(poolKey, pool.configuration);
 
-            address poolTokenAddress = PoolStoreUtils.getPoolToken(params.dataStore, poolKey);
-            IPoolToken poolToken = IPoolToken(poolTokenAddress);
-
+            IPoolToken poolToken = IPoolToken(pool.poolToken);
             uint256 collateralAmount;
             uint256 debtAmount;
             if (position.hasCollateral){
@@ -82,8 +84,7 @@ library LiquidationUtils {
             }
 
             if (position.hasDebt){
-                address debtTokenAddress = PoolStoreUtils.getDebtToken(params.dataStore, poolKey);
-                IDebtToken debtToken = IDebtToken(debtTokenAddress);
+                IDebtToken debtToken = IDebtToken(pool.debtToken);
                 debtAmount = debtToken.balanceOf(position.account);
                 debtToken.burnAll(position.account);
 
@@ -94,6 +95,20 @@ library LiquidationUtils {
 
             PositionUtils.reset(position);
             PositionStoreUtils.set(params.dataStore, positionKey, position);
+
+            PoolUtils.updateInterestRates(
+                pool,
+                poolCache, 
+                position.underlyingAsset, 
+                0, 
+                0
+            );
+
+            PoolStoreUtils.set(
+                params.dataStore, 
+                position.underlyingAsset, 
+                pool
+            );
 
             LiquidationEventUtils.emitLiquidation(
                 params.eventEmitter, 
