@@ -37,6 +37,18 @@ library PoolUtils {
         }
 
     }
+
+    function updatePoolAndCache(
+        address dataStore, 
+        address underlyingAsset
+    ) internal returns(Pool.Props memory, PoolCache.Props memory){
+        address poolKey = Keys.poolKey(underlyingAsset);
+        Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
+        PoolUtils.validateEnabledPool(pool, poolKey);
+        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
+        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        return (pool, poolCache);
+    }
     
     function updateInterestRates(
         Pool.Props memory pool,

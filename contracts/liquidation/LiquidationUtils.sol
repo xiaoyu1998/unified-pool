@@ -63,16 +63,20 @@ library LiquidationUtils {
             PositionStoreUtils.getAccountPositionKeys(params.dataStore, params.account, 0, positionCount);
 
         for (uint256 i; i < positionKeys.length; i++) {
-            //TODO: should update pools
             bytes32 positionKey = positionKeys[i];
             Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
 
-            address poolKey = Keys.poolKey(position.underlyingAsset);
-            Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
-            PoolUtils.validateEnabledPool(pool, poolKey);
-            PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-            PoolUtils.updateStateBetweenTransactions(pool, poolCache);
-            LiquidationUtils.validatePool(poolKey, pool.configuration);
+            // address poolKey = Keys.poolKey(position.underlyingAsset);
+            // Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
+            // PoolUtils.validateEnabledPool(pool, poolKey);
+            // PoolCache.Props memory poolCache = PoolUtils.cache(pool);
+            // PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+            (
+                Pool.Props memory pool,
+                PoolCache.Props memory poolCache 
+            ) = PoolUtils.updatePoolAndCache(params.dataStore, position.underlyingAsset);
+
+            LiquidationUtils.validatePool(position.underlyingAsset, pool.configuration);
 
             IPoolToken poolToken = IPoolToken(pool.poolToken);
             uint256 collateralAmount;
