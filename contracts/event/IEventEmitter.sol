@@ -52,4 +52,19 @@ interface IEventEmitter {
         uint256 amountIn,
         uint256 amountOut
     ) external;
+
+    function emitLiquidation(
+        address underlyingAsset,
+        address account,
+        uint256 collateral,
+        uint256 debt,
+        uint256 price
+    ) external;
+
+    function emitHealthFactorLowerThanLiquidationThreshold(
+        address account,
+        uint256 healthFactor,
+        uint256 healthFactorLiquidationThreshold
+    ) external;
+
 }

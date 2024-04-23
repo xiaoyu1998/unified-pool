@@ -24,7 +24,7 @@ library PositionStoreUtils {
     bytes32 public constant POSITION_TYPE = keccak256(abi.encode("POSITION_TYPE"));
     bytes32 public constant HAS_COLLATERAL = keccak256(abi.encode("HAS_COLLATERAL"));
     bytes32 public constant HAS_DEBT = keccak256(abi.encode("HAS_DEBT"));
-    // bytes32 public constant COLLATERAL_AND_DEBT_POOLS = keccak256(abi.encode("COLLATERAL_AND_DEBT_POOLS"));
+    //bytes32 public constant IS_LIQUIDATED = keccak256(abi.encode("IS_LIQUIDATED"));
 
     function get(address dataStoreAddress, bytes32 key) external view returns (Position.Props memory) {
         IDataStore dataStore = IDataStore(dataStoreAddress);
@@ -69,8 +69,8 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, HAS_DEBT))
         );
 
-        // position.collateralAndDebtPools = dataStore.getUint(
-        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+        // position.isLiquidated = dataStore.getBool(
+        //     keccak256(abi.encode(key, IS_LIQUIDATED))
         // );
 
         return position;
@@ -133,9 +133,9 @@ library PositionStoreUtils {
             position.hasDebt
         );
 
-        // dataStore.setUint(
-        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS)),
-        //     position.collateralAndDebtPools
+        // dataStore.setBool(
+        //     keccak256(abi.encode(key, IS_LIQUIDATED)),
+        //     position.isLiquidated
         // );
 
     }
@@ -191,9 +191,9 @@ library PositionStoreUtils {
         dataStore.removeBool(
             keccak256(abi.encode(key, HAS_DEBT))
         );
-        
-        // dataStore.removeUint(
-        //     keccak256(abi.encode(key, COLLATERAL_AND_DEBT_POOLS))
+
+        // dataStore.removeBool(
+        //     keccak256(abi.encode(key, IS_LIQUIDATED))
         // );
 
     }

@@ -61,6 +61,20 @@ contract EventEmitter is RoleModule {
         uint256 amountOut
     );
 
+    event Liquidation(
+        address indexed underlyingAsset,
+        address indexed account,
+        uint256 collateral,
+        uint256 debt,
+        uint256 price
+    );
+
+    event HealthFactorLowerThanLiquidationThreshold(
+        address indexed account,
+        uint256 healthFactor,
+        uint256 healthFactorLiquidationThreshold
+    );
+
 
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
@@ -164,5 +178,32 @@ contract EventEmitter is RoleModule {
         );
     }
 
+    function emitLiquidation(
+        address underlyingAsset,
+        address account,
+        uint256 collateral,
+        uint256 debt,
+        uint256 price
+    ) external onlyController {
+        emit Liquidation(
+            underlyingAsset,
+            account,
+            collateral,
+            debt,
+            price
+        );
+    }
+
+    function emitHealthFactorLowerThanLiquidationThreshold(
+        address account,
+        uint256 healthFactor,
+        uint256 healthFactorLiquidationThreshold
+    ) external onlyController {
+        emit HealthFactorLowerThanLiquidationThreshold(
+            account,
+            healthFactor,
+            healthFactorLiquidationThreshold
+        );
+    }
 
 }

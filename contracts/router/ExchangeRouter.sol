@@ -9,6 +9,7 @@ import "../exchange/IBorrowHandler.sol";
 import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
 import "../exchange/ISwapHandler.sol";
+import "../exchange/ILiquidationHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -22,12 +23,6 @@ import "./IExchangeRouter.sol";
  *
  */
 contract ExchangeRouter is IExchangeRouter, BaseRouter {
-    //using Deposit for Deposit.Props;
-    // using Withdrawal for Withdrawal.Props;
-    // using Borrow for Borrow.Props;
-    // using Repay for Repay.Props;
-    // using Liquidation for Liquidation.Props;
-    // using Swap for Swap.Props;
     ISupplyHandler public immutable supplyHandler;
     IWithdrawHandler public immutable withdrawHandler;
     IDepositHandler public immutable depositHandler;
@@ -35,10 +30,11 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     IRepayHandler public immutable repayHandler;
     IRedeemHandler public immutable redeemHandler;
     ISwapHandler public immutable swapHandler;
-    // ILiquidationHandler public immutable liquidationHandler;
+    ILiquidationHandler public immutable liquidationHandler;
 
     // @dev Constructor that initializes the contract with the provided Router, RoleStore, DataStore,
-    // EventEmitter, IDepositHandler, IWithdrawHandler, IOrderHandler, and OrderStore instances
+    // ISupplyHandler, IWithdrawHandler, IDepositHandler, IBorrowHandler, IRepayHandler, IRedeemHandler,
+    // ISwapHandler and ILiquidationHandler instances
     constructor(
         Router _router,
         RoleStore _roleStore,
@@ -49,8 +45,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         IBorrowHandler _borrowHandler,
         IRepayHandler _repayHandler,
         IRedeemHandler _redeemHandler,
-        ISwapHandler _swapHandler
-        // ILiquidationHandler _liquidationHandler,
+        ISwapHandler _swapHandler,
+        ILiquidationHandler _liquidationHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
         supplyHandler      = _supplyHandler;
         withdrawHandler    = _withdrawHandler;
@@ -59,7 +55,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         repayHandler       = _repayHandler;
         redeemHandler      = _redeemHandler;
         swapHandler        = _swapHandler;
-        // liquidationHandler = _liquidationHandler;
+        liquidationHandler = _liquidationHandler;
     }
 
     /**
@@ -173,6 +169,21 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
 
         return swapHandler.executeSwap(
             account,
+            params
+        );
+    }
+
+    /**
+     * @dev execute a new Liquidation with the given amount, Liquidation parameters. The Liquidation is
+     * execute by calling the `executeLiquidation()` function on the Liquidation handler contract. 
+     */
+    function executeLiquidation(
+        LiquidationUtils.LiquidationParams calldata params
+    ) external override payable nonReentrant {
+        address liquidator = msg.sender;
+
+        return liquidationHandler.executeLiquidation(
+            liquidator,
             params
         );
     }

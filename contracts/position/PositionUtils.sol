@@ -31,21 +31,45 @@ library PositionUtils {
         }
 
     }
+
+    function reset(Position.Props memory postion) internal pure {
+        postion.entryLongPrice = 0;
+        postion.accLongAmount = 0;
+        postion.entryShortPrice = 0;
+        postion.accShortAmount = 0;
+        postion.accShortAmount = Position.PositionTypeNone;
+        postion.hasCollateral = false;
+        postion.hasDebt = false;
+        // postion.isLiquidated = false;
+    }
+
+    function getPositions(address account, address dataStore) internal view returns (Position.Props[] memory) {
+        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+        bytes32[] memory positionKeys = 
+            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
+        Position.Props[] memory positions = 
+            new Position.Props[](positionKeys.length);
+        for (uint256 i; i < positionKeys.length; i++) {
+            bytes32 positionKey = positionKeys[i];
+            Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
+            positions[i] = position;
+        }
+
+        return positions;
+    }
+
     function calculateUserTotalCollateralAndDebt(
         address account,
         address dataStore
     ) internal view returns (uint256, uint256) {
         Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
         // Printer.log("account", account);
-        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-        if(positionCount == 0) return (0, 0);
+        Position.Props[] memory positions = PositionUtils.getPositions(account, dataStore);
 
-        bytes32[] memory positionKeys = 
-            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
         uint256 userTotalCollateralUsd;
         uint256 userTotalDebtUsd;        
-        for (uint256 i = 0; i < positionKeys.length; i++) {
-            Position.Props memory position = PositionStoreUtils.get(dataStore, positionKeys[i]);
+        for (uint256 i = 0; i < positions.length; i++) {
+            Position.Props memory position = positions[i];
             (   uint256 userCollateralUsd, 
                 uint256 userDebtUsd) = 
                 calculateUserCollateralAndDebtInPosition(dataStore, position);
@@ -57,6 +81,33 @@ library PositionUtils {
         return (userTotalCollateralUsd, userTotalDebtUsd);
 
     }
+
+    // function calculateUserTotalCollateralAndDebt(
+    //     address account,
+    //     address dataStore
+    // ) internal view returns (uint256, uint256) {
+    //     Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
+    //     // Printer.log("account", account);
+    //     uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+    //     if(positionCount == 0) return (0, 0);
+
+    //     bytes32[] memory positionKeys = 
+    //         PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
+    //     uint256 userTotalCollateralUsd;
+    //     uint256 userTotalDebtUsd;        
+    //     for (uint256 i = 0; i < positionKeys.length; i++) {
+    //         Position.Props memory position = PositionStoreUtils.get(dataStore, positionKeys[i]);
+    //         (   uint256 userCollateralUsd, 
+    //             uint256 userDebtUsd) = 
+    //             calculateUserCollateralAndDebtInPosition(dataStore, position);
+
+    //         userTotalCollateralUsd += userCollateralUsd;
+    //         userTotalDebtUsd += userDebtUsd;            
+    //     }
+
+    //     return (userTotalCollateralUsd, userTotalDebtUsd);
+
+    // }
 
     function calculateUserCollateralAndDebtInPosition(
         address dataStore,

@@ -44,6 +44,7 @@ library Errors {
     error UsdDoNotHaveLongOperation();
     error UsdDoNotHaveShortOperation();
     error HealthFactorLowerThanLiquidationThreshold(uint256 healthFactor, uint256 healthFactorLiquidationThreshold);
+    error HealthFactorHigherThanLiquidationThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
     error HealthFactorLowerThanCollateralRateThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
 
     // BorrowUtils, WithdrawUtils errors

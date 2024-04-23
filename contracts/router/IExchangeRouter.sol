@@ -9,6 +9,7 @@ import "../exchange/IBorrowHandler.sol";
 import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
 import "../exchange/ISwapHandler.sol";
+import "../exchange/ILiquidationHandler.sol";
 
 interface IExchangeRouter {
     function executeSupply(
@@ -37,5 +38,9 @@ interface IExchangeRouter {
 
     function executeSwap(
         SwapUtils.SwapParams calldata params
+    ) external payable;
+
+    function executeLiquidation(
+        LiquidationUtils.LiquidationParams calldata params
     ) external payable;
 }

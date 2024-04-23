@@ -106,6 +106,7 @@ export async function getContract(name) {
         name == "SupplyEventUtils" ||
         name == "WithdrawEventUtils" ||
         name == "SwapEventUtils" ||
+        name == "LiquidationEventUtils" ||
         name == "EventEmitter"  || 
         name == "DexStoreUtils" 
     ) {
@@ -319,6 +320,27 @@ export async function getContract(name) {
         });       
     }
 
+    if (name == "LiquidationHandler") {
+        const liquidationEventUtils = await getContract("LiquidationEventUtils");
+        const oracleUtils = await getContract("OracleUtils");
+        const liquidationUtilsAddress = getDeployedContractAddresses("LiquidationUtils");
+        const liquidationUtils = await contractAtOptions("LiquidationUtils", liquidationUtilsAddress, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+                ConfigStoreUtils: configStoreUtils,
+                OracleUtils: oracleUtils,
+                LiquidationEventUtils: liquidationEventUtils,
+            },        
+        });
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address,  {
+            libraries: {
+                LiquidationUtils: liquidationUtils,
+            },        
+        });       
+    }
+
     if (name == "ExchangeRouter") {
         const supplyHandler = await getContract("SupplyHandler");
         const withdrawHandler = await getContract("WithdrawHandler");
@@ -327,6 +349,7 @@ export async function getContract(name) {
         const repayHandler = await getContract("RepayHandler");
         const redeemHandler = await getContract("RedeemHandler");
         const swapHandler = await getContract("SwapHandler");
+        const liquidationHandler = await getContract("LiquidationHandler");
         //const router = await getContract("Router");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, [
@@ -339,7 +362,8 @@ export async function getContract(name) {
             borrowHandler,
             repayHandler, 
             redeemHandler,  
-            swapHandler         
+            swapHandler, 
+            liquidationHandler       
         ]);       
     }
 

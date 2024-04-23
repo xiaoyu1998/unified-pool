@@ -68,6 +68,17 @@ contract DebtToken is RoleModule, ScaledToken {
 		return scaledTotalSupply();  
     }
 
+    // @dev burn market tokens from an account
+    // @param account the account to burn tokens for
+    // @param amount the amount of tokens to burn
+    function burnAll(
+    	address from
+    ) external virtual onlyController returns (uint256) {
+    	uint256 index = PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset);
+		_burnAll(from, address(0), index);
+		return scaledTotalSupply();  
+    }
+
 
 	function transfer(address, uint256) external virtual override returns (bool) {
 		revert Errors.DebtTokenOperationNotSupported();

@@ -116,6 +116,34 @@ abstract contract ScaledToken is MintableERC20 {
     }
   }
 
+  // @notice Implements the basic logic to burn all sbalance token.
+ // @dev In some instances, a burn transaction will emit a burn event
+ // @param user The user which debt is burnt
+ // @param receiver The address that will receive the underlying, if any
+  function _burnAll(
+    address account,
+    address receiver,
+    uint256 index
+  ) internal {
+
+    // uint256 index = PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset);
+    uint256 scaledBalance = super.balanceOf(account);
+
+    if (scaledBalance == 0){
+        revert Errors.EmptyBurnAmounts();
+    }
+    uint256 balanceIncrease = scaledBalance.rayMul(index) -
+        scaledBalance.rayMul(_index[account]);
+
+    _index[account] = index;
+    _burn(account, scaledBalance);
+
+    uint256 amountToBurn = scaledBalance.rayMul(index);
+    emit Transfer(account, address(0), amountToBurn);
+    emit Burn(account, receiver, amountToBurn, balanceIncrease, index);
+    
+  }
+
 
  // @notice Implements the basic logic to transfer scaled balance tokens between two users
  // @dev It emits a mint event with the interest accrued per user
