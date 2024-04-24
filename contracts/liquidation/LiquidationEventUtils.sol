@@ -6,7 +6,7 @@ import "../event/IEventEmitter.sol";
 
 library LiquidationEventUtils {
 
-    function emitLiquidation(
+    function emitPositionLiquidation(
         address eventEmitter,
         address underlyingAsset,
         address account,
@@ -14,7 +14,7 @@ library LiquidationEventUtils {
         uint256 debt,
         uint256 price
     ) external {
-        IEventEmitter(eventEmitter).emitLiquidation(
+        IEventEmitter(eventEmitter).emitPositionLiquidation(
             underlyingAsset,
             account,
             collateral,
@@ -23,7 +23,7 @@ library LiquidationEventUtils {
         );
     }
 
-    function emitHealthFactorLowerThanLiquidationThreshold(
+    function emitLiquidation(
         address eventEmitter,
         address account,
         uint256 healthFactor,
@@ -31,7 +31,7 @@ library LiquidationEventUtils {
         uint256 totalCollateralUsd,
         uint256 totalDebtUsd
     ) external {
-        IEventEmitter(eventEmitter).emitHealthFactorLowerThanLiquidationThreshold(
+        IEventEmitter(eventEmitter).emitLiquidation(
             account,
             healthFactor,
             healthFactorLiquidationThreshold,

@@ -61,7 +61,7 @@ contract EventEmitter is RoleModule {
         uint256 amountOut
     );
 
-    event Liquidation(
+    event PositionLiquidation(
         address indexed underlyingAsset,
         address indexed account,
         uint256 collateral,
@@ -69,7 +69,7 @@ contract EventEmitter is RoleModule {
         uint256 price
     );
 
-    event HealthFactorLowerThanLiquidationThreshold(
+    event Liquidation(
         address indexed account,
         uint256 healthFactor,
         uint256 healthFactorLiquidationThreshold,
@@ -180,14 +180,14 @@ contract EventEmitter is RoleModule {
         );
     }
 
-    function emitLiquidation(
+    function emitPositionLiquidation(
         address underlyingAsset,
         address account,
         uint256 collateral,
         uint256 debt,
         uint256 price
     ) external onlyController {
-        emit Liquidation(
+        emit PositionLiquidation(
             underlyingAsset,
             account,
             collateral,
@@ -196,14 +196,14 @@ contract EventEmitter is RoleModule {
         );
     }
 
-    function emitHealthFactorLowerThanLiquidationThreshold(
+    function emitLiquidation(
         address account,
         uint256 healthFactor,
         uint256 healthFactorLiquidationThreshold,
         uint256 totalCollateralUsd,
         uint256 totalDebtUsd
     ) external onlyController {
-        emit HealthFactorLowerThanLiquidationThreshold(
+        emit Liquidation(
             account,
             healthFactor,
             healthFactorLiquidationThreshold,

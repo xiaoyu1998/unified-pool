@@ -53,7 +53,7 @@ library LiquidationUtils {
             params.dataStore
         );
 
-        LiquidationEventUtils.emitHealthFactorLowerThanLiquidationThreshold(
+        LiquidationEventUtils.emitLiquidation(
             params.eventEmitter, 
             params.account,
             healthFactor, 
@@ -123,7 +123,7 @@ library LiquidationUtils {
                 pool
             );
 
-            LiquidationEventUtils.emitLiquidation(
+            LiquidationEventUtils.emitPositionLiquidation(
                 params.eventEmitter, 
                 position.underlyingAsset, 
                 params.account, 

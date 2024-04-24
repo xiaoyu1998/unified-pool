@@ -53,7 +53,7 @@ interface IEventEmitter {
         uint256 amountOut
     ) external;
 
-    function emitLiquidation(
+    function emitPositionLiquidation(
         address underlyingAsset,
         address account,
         uint256 collateral,
@@ -61,7 +61,7 @@ interface IEventEmitter {
         uint256 price
     ) external;
 
-    function emitHealthFactorLowerThanLiquidationThreshold(
+    function emitLiquidation(
         address account,
         uint256 healthFactor,
         uint256 healthFactorLiquidationThreshold,
