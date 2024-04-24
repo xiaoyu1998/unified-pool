@@ -72,7 +72,9 @@ contract EventEmitter is RoleModule {
     event HealthFactorLowerThanLiquidationThreshold(
         address indexed account,
         uint256 healthFactor,
-        uint256 healthFactorLiquidationThreshold
+        uint256 healthFactorLiquidationThreshold,
+        uint256 totalCollateralUsd,
+        uint256 totalDebtUsd
     );
 
 
@@ -197,12 +199,16 @@ contract EventEmitter is RoleModule {
     function emitHealthFactorLowerThanLiquidationThreshold(
         address account,
         uint256 healthFactor,
-        uint256 healthFactorLiquidationThreshold
+        uint256 healthFactorLiquidationThreshold,
+        uint256 totalCollateralUsd,
+        uint256 totalDebtUsd
     ) external onlyController {
         emit HealthFactorLowerThanLiquidationThreshold(
             account,
             healthFactor,
-            healthFactorLiquidationThreshold
+            healthFactorLiquidationThreshold,
+            totalCollateralUsd,
+            totalDebtUsd
         );
     }
 

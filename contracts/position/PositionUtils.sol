@@ -137,7 +137,7 @@ library PositionUtils {
     function getLiquidationHealthFactor(
         address account,
         address dataStore
-    ) internal view returns(uint256, uint256, bool) {
+    ) internal view returns(uint256, uint256, bool, uint256, uint256) {
         Printer.log("-------------------------getLiquidationHealthFactor1--------------------------");
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
@@ -155,7 +155,9 @@ library PositionUtils {
 
         return (healthFactor,  
                 healthFactorLiquidationThreshold, 
-                healthFactor > healthFactorLiquidationThreshold);
+                healthFactor > healthFactorLiquidationThreshold,
+                userTotalCollateralUsd,
+                userTotalDebtUsd);
     }
 
     function validateLiquidationHealthFactor(

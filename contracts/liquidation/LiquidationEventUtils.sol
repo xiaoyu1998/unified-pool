@@ -27,12 +27,16 @@ library LiquidationEventUtils {
         address eventEmitter,
         address account,
         uint256 healthFactor,
-        uint256 healthFactorLiquidationThreshold
+        uint256 healthFactorLiquidationThreshold,
+        uint256 totalCollateralUsd,
+        uint256 totalDebtUsd
     ) external {
         IEventEmitter(eventEmitter).emitHealthFactorLowerThanLiquidationThreshold(
             account,
             healthFactor,
-            healthFactorLiquidationThreshold
+            healthFactorLiquidationThreshold,
+            totalCollateralUsd,
+            totalDebtUsd
         );
     }
 }

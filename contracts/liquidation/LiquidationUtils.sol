@@ -45,7 +45,9 @@ library LiquidationUtils {
     function executeLiquidation(address liquidator, ExecuteLiquidationParams calldata params) external {
         Printer.log("-------------------------executeLiquidation--------------------------");
         (   uint256 healthFactor,
-            uint256 healthFactorLiquidationThreshold
+            uint256 healthFactorLiquidationThreshold,
+            uint256 userTotalCollateralUsd,
+            uint256 userTotalDebtUsd
         ) = LiquidationUtils.validateLiquidation(
             params.account, 
             params.dataStore
@@ -55,13 +57,22 @@ library LiquidationUtils {
             params.eventEmitter, 
             params.account,
             healthFactor, 
-            healthFactorLiquidationThreshold
+            healthFactorLiquidationThreshold,
+            userTotalCollateralUsd,
+            userTotalDebtUsd
         );
 
-        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(params.dataStore, params.account);
+        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(
+            params.dataStore, 
+            params.account
+        );
         bytes32[] memory positionKeys = 
-            PositionStoreUtils.getAccountPositionKeys(params.dataStore, params.account, 0, positionCount);
-
+            PositionStoreUtils.getAccountPositionKeys(
+                params.dataStore, 
+                params.account, 
+                0, 
+                positionCount
+            );
         for (uint256 i; i < positionKeys.length; i++) {
             bytes32 positionKey = positionKeys[i];
             Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
@@ -87,7 +98,11 @@ library LiquidationUtils {
                 debtToken.burnAll(position.account);
 
                 //TODO:should be move to Router
-                IERC20(position.underlyingAsset).safeTransferFrom(liquidator, address(poolToken), debtAmount);
+                IERC20(position.underlyingAsset).safeTransferFrom(
+                    liquidator, 
+                    address(poolToken), 
+                    debtAmount
+                );
                 poolToken.syncUnderlyingAssetBalance();             
             }
 
@@ -125,10 +140,12 @@ library LiquidationUtils {
     function validateLiquidation(
         address account,
         address dataStore
-    ) internal view returns(uint256, uint256) {
+    ) internal view returns(uint256, uint256, uint256, uint256) {
         (   uint256 healthFactor,
             uint256 healthFactorLiquidationThreshold,
-            bool isHealtherFactorHigherThanLiquidationThreshold
+            bool isHealtherFactorHigherThanLiquidationThreshold,
+            uint256 userTotalCollateralUsd,
+            uint256 userTotalDebtUsd
         ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);
 
         if (isHealtherFactorHigherThanLiquidationThreshold) {
@@ -138,7 +155,10 @@ library LiquidationUtils {
             );
         }
 
-        return (healthFactor, healthFactorLiquidationThreshold);
+        return (healthFactor,
+                healthFactorLiquidationThreshold,
+                userTotalCollateralUsd,
+                userTotalDebtUsd);
     }
 
     function validatePool(
