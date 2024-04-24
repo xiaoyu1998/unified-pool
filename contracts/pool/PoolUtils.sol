@@ -41,13 +41,13 @@ library PoolUtils {
     function updatePoolAndCache(
         address dataStore, 
         address underlyingAsset
-    ) internal returns(Pool.Props memory, PoolCache.Props memory){
+    ) internal returns(Pool.Props memory, PoolCache.Props memory, address){
         address poolKey = Keys.poolKey(underlyingAsset);
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, poolKey);
         PoolUtils.validateEnabledPool(pool, poolKey);
         PoolCache.Props memory poolCache = PoolUtils.cache(pool);
         PoolUtils.updateStateBetweenTransactions(pool, poolCache);
-        return (pool, poolCache);
+        return (pool, poolCache, poolKey);
     }
     
     function updateInterestRates(
@@ -58,7 +58,6 @@ library PoolUtils {
         uint256 liquidityOut
     ) internal {
         Printer.log("--------------------updateInterestRates---------------------");
-
         uint256 totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
