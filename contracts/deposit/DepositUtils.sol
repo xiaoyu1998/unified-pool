@@ -12,6 +12,7 @@ import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
 
+import "../oracle/OracleUtils.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
@@ -82,12 +83,9 @@ library DepositUtils {
         poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
 
-        if (debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && 
-            position.positionType == Position.PositionTypeShort && 
-            !poolIsUsd
-        ) {
-           //TODO:Should update entryLongPrice and accLongAmount
-           position.positionType = Position.PositionTypeLong;
+        if (!poolIsUsd){
+            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.longPosition(position, price, depositAmount);
         }
 
         PositionStoreUtils.set(

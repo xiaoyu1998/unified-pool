@@ -86,12 +86,12 @@ library BorrowUtils {
         position.hasDebt = true; 
         //TODO:should change to short?      
         IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        if (debtToken.balanceOf(account) > poolToken.balanceOfCollateral(account) && 
-            position.positionType == Position.PositionTypeLong && 
-            !poolIsUsd
-        ) {
-           position.positionType = Position.PositionTypeShort;
+
+        if (!poolIsUsd){
+            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.shortPosition(position, price, params.amount);
         }
+
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
@@ -168,13 +168,24 @@ library BorrowUtils {
             Printer.log("totalDebt",  totalDebt);
         }
 
-        PositionUtils.validateLiquidationHealthFactor(account, dataStore, poolCache.underlyingAsset, amountToBorrow);
+        PositionUtils.validateLiquidationHealthFactor(
+            account, 
+            dataStore, 
+            poolCache.underlyingAsset, 
+            amountToBorrow
+        );
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         IDebtToken debtToken   = IDebtToken(poolCache.poolToken);
         uint256 collateralAmount = poolToken.balanceOfCollateral(account);
         uint256 debtAmount = debtToken.balanceOf(account);
-        PositionUtils.validateCollateralRateHealthFactor(dataStore, poolCache.underlyingAsset, collateralAmount, debtAmount, amountToBorrow);
+        PositionUtils.validateCollateralRateHealthFactor(
+            dataStore, 
+            poolCache.underlyingAsset, 
+            collateralAmount, 
+            debtAmount, 
+            amountToBorrow
+        );
     }
     
 }

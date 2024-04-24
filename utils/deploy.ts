@@ -220,11 +220,13 @@ export async function getContract(name) {
 
     if (name == "DepositHandler") {
         const depositEventUtils = await getContract("DepositEventUtils");
+        const oracleUtils = await getContract("OracleUtils");
         const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
         const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
+                OracleUtils: oracleUtils,
                 DepositEventUtils: depositEventUtils,
             },        
         });

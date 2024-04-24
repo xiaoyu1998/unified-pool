@@ -96,13 +96,8 @@ library RedeemUtils {
         }
 
         bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
-        IDebtToken debtToken   = IDebtToken(pool.poolToken);
-        if (debtToken.balanceOf(account) > remainCollateral && 
-            position.positionType == Position.PositionTypeLong && 
-            !poolIsUsd
-        ) {
-          //TODO:Should update entryShortPrice and accShortAmount
-           position.positionType = Position.PositionTypeShort;
+        if (!poolIsUsd){
+            PositionUtils.shortPosition(position, 0, redeemAmount);
         }
 
         PositionStoreUtils.set(

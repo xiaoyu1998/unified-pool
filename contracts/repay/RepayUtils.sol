@@ -99,14 +99,12 @@ library RepayUtils {
                 position.hasCollateral = false;
             }
         }
-        //TODO:should change to Long?
+
         bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
-        if (debtToken.balanceOf(account) < poolToken.balanceOfCollateral(account) && 
-            position.positionType == Position.PositionTypeShort && 
-            !poolIsUsd
-        ) {
-            position.positionType = Position.PositionTypeLong;
+        if (!poolIsUsd){
+            PositionUtils.longPosition(position, 0, repayAmount);
         }
+
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 

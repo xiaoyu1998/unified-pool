@@ -261,7 +261,7 @@ library PositionUtils {
         return totalAvailable;
     }
 
-    function UpdateLongPosition(
+    function longPosition(
       Position.Props memory position,
       uint256 price,
       uint256 amount
@@ -272,24 +272,30 @@ library PositionUtils {
         }
 
         if (position.positionType == Position.PositionTypeLong) {
-            uint256 totalValue = position.entryLongPrice.rayMul(position.accLongAmount) +
-                                 price.rayMul(amount);
             position.accLongAmount += amount;
-            position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
+            if (price != 0){
+                uint256 totalValue = position.entryLongPrice.rayMul(position.accLongAmount) +
+                                     price.rayMul(amount);
+                position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
+            }
         }
 
         if (position.positionType == Position.PositionTypeShort) {
-            if (position.accLongAmount - amount > 0){
-                position.accLongAmount -= amount;
+            if (position.accShortAmount - amount > 0){
+                position.accShortAmount -= amount;
             } else {
                 position.positionType = Position.PositionTypeLong;
-                position.accLongAmount = amount;
-                position.entryLongPrice = price;
+                position.accLongAmount = amount - position.accShortAmount;
+                position.accShortAmount = 0;
+                position.entryShortPrice = 0;
+                if (price != 0){//TODO:repay should close postion, no longer need price
+                    position.entryLongPrice = price;
+                }
             }
         }
     }
 
-    function UpdateShortPosition(
+    function shortPosition(
       Position.Props memory position,
       uint256 price,
       uint256 amount
@@ -300,19 +306,25 @@ library PositionUtils {
         }
 
         if (position.positionType == Position.PositionTypeShort) {
-            uint256 totalValue = position.entryLongPrice.rayMul(position.accShortAmount) +
-                                 price.rayMul(amount);
             position.accShortAmount += amount;
-            position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
+            if (price != 0){//
+                uint256 totalValue = position.entryLongPrice.rayMul(position.accShortAmount) +
+                                     price.rayMul(amount);
+                position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
+            }
         }
 
-        if (position.positionType == Position.PositionTypeShort) {
-            if (position.accShortAmount - amount > 0){
-                position.accShortAmount -= amount;
+        if (position.positionType == Position.PositionTypeLong) {
+            if (position.accLongAmount - amount > 0){
+                position.accLongAmount -= amount;
             } else {
                 position.positionType = Position.PositionTypeShort;
-                position.accShortAmount = amount;
-                position.entryShortPrice = price;
+                position.accShortAmount = amount - position.accLongAmount;
+                position.accLongAmount = 0;
+                position.entryLongPrice = 0;
+                if (price != 0){//TODO:redeem should close postion, no longer need price
+                    position.entryShortPrice = price;
+                }
             }
         }
     }

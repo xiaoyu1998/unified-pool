@@ -131,11 +131,11 @@ library SwapUtils {
             );
             
             if (poolInIsUsd && !poolOutIsUsd) { //long out
-                PositionUtils.UpdateLongPosition(positionOut, price, amountOut);
+                PositionUtils.longPosition(positionOut, price, amountOut);
             }
 
             if (!poolInIsUsd && poolOutIsUsd) { //Short in
-                PositionUtils.UpdateShortPosition(positionIn,  price, params.amountIn);
+                PositionUtils.shortPosition(positionIn,  price, params.amountIn);
             } 
         }
 
