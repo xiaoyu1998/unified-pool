@@ -36,7 +36,7 @@ async function main() {
 
     const eventEmitter = await getEventEmitter();  
     eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
-        const e: LiquidationEvent.OutputTuple = {
+        const event: LiquidationEvent.OutputTuple = {
             liquidator: liquidator,
             account: account,
             healthFactor: healthFactor,
@@ -44,10 +44,10 @@ async function main() {
             totalCollateralUsd: totalCollateralUsd,
             totalDebtUsd: totalDebtUsd
         };
-        console.log("eventEmitter Liquidation" , e);
+        console.log("eventEmitter Liquidation" , event);
     });
-    eventEmitter.on("PositionLiquidation", (underlyingAsset, account, collateral, debt, price) => {
-        const e: PositionLiquidationEvent.OutputTuple = {
+    eventEmitter.on("PositionLiquidation", (liquidator, underlyingAsset, account, collateral, debt, price) => {
+        const event: PositionLiquidationEvent.OutputTuple = {
             liquidator: liquidator,
             underlyingAsset: underlyingAsset,
             account: account,
@@ -55,15 +55,8 @@ async function main() {
             debt: debt,
             price: price
         };
-        console.log("eventEmitter PositionLiquidation", e);
+        console.log("eventEmitter PositionLiquidation", event);
     });
-
-    // eventEmitter.on("Liquidation", (liquidation) => { 
-    //     console.log("eventEmitter Liquidation", liquidation);
-    // });
-    // eventEmitter.on("PositionLiquidation", (positionLiquidation) => {
-    //     console.log("eventEmitter PositionLiquidation", positionLiquidation);
-    // });
 
     const config = await getContract("Config");
     await config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25))//400%
@@ -76,7 +69,6 @@ async function main() {
             await liquidation(account);
         }
     }
-
 }
 
 main()
