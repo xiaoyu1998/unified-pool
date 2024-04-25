@@ -8,6 +8,7 @@ library LiquidationEventUtils {
 
     function emitPositionLiquidation(
         address eventEmitter,
+        address liquidator,
         address underlyingAsset,
         address account,
         uint256 collateral,
@@ -15,6 +16,7 @@ library LiquidationEventUtils {
         uint256 price
     ) external {
         IEventEmitter(eventEmitter).emitPositionLiquidation(
+            liquidator,
             underlyingAsset,
             account,
             collateral,
@@ -25,6 +27,7 @@ library LiquidationEventUtils {
 
     function emitLiquidation(
         address eventEmitter,
+        address liquidator,
         address account,
         uint256 healthFactor,
         uint256 healthFactorLiquidationThreshold,
@@ -32,6 +35,7 @@ library LiquidationEventUtils {
         uint256 totalDebtUsd
     ) external {
         IEventEmitter(eventEmitter).emitLiquidation(
+            liquidator,
             account,
             healthFactor,
             healthFactorLiquidationThreshold,

@@ -85,7 +85,7 @@ contract Reader {
         return ReaderUtils._getMaxAmountToRedeem(dataStore, underlyingAsset, account);
     }
 
-    function getLiquidationHealthFactor(address dataStore, address account) external view returns (uint256, uint256, bool, uint256, uint256) {
+    function getLiquidationHealthFactor(address dataStore, address account) external view returns (ReaderUtils.GetLiquidationHealthFactor memory) {
         return ReaderUtils._getLiquidationHealthFactor(dataStore, account);
     }
 

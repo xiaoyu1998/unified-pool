@@ -151,8 +151,22 @@ export async function getMaxAmountToRedeem(dataStore, reader, address, underlyin
     return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
 }
 
-export async function getLiquidationHealthFactor(dataStore, reader, address) {
-    return reader.getLiquidationHealthFactor(dataStore, address);
+export function parseLiquidationHealthFactor(Factor) {
+    const f: ReaderUtils.GetLiquidationHealthFactor = {
+        healthFactor: Factor[0],
+        healthFactorLiquidationThreshold: Factor[1],
+        isHealthFactorHigherThanLiquidationThreshold: Factor[2],
+        userTotalCollateralUsd: Factor[3],
+        userTotalDebtUsd: Factor[4],
+    };
+    return f;
+}
+
+export async function getLiquidationHealthFactor(address) {
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
+    const f = await reader.getLiquidationHealthFactor(dataStore.target, address);
+    return parseLiquidationHealthFactor(f);
 }
 
 

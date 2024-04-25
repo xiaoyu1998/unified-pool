@@ -69,6 +69,14 @@ library ReaderUtils {
         bool isUsd;
     }
 
+    struct GetLiquidationHealthFactor {
+        uint256 healthFactor;
+        uint256 healthFactorLiquidationThreshold;
+        bool isHealthFactorHigherThanLiquidationThreshold;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
+    }
+
     function _getLiquidityAndDebt(
         address account,
         address dataStore, 
@@ -198,8 +206,15 @@ library ReaderUtils {
         return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
     }
 
-    function _getLiquidationHealthFactor(address dataStore, address account) external view returns (uint256, uint256, bool, uint256, uint256) {
-        return PositionUtils.getLiquidationHealthFactor(account, dataStore);
+    function _getLiquidationHealthFactor(address dataStore, address account) external view returns (GetLiquidationHealthFactor memory) {
+        GetLiquidationHealthFactor memory liquidationHealthFactor;
+        (   liquidationHealthFactor.healthFactor,
+            liquidationHealthFactor.healthFactorLiquidationThreshold,
+            liquidationHealthFactor.isHealthFactorHigherThanLiquidationThreshold,
+            liquidationHealthFactor.userTotalCollateralUsd,
+            liquidationHealthFactor.userTotalDebtUsd
+        ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);    
+        return liquidationHealthFactor;
     }
     
 }

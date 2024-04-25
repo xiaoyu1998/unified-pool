@@ -176,7 +176,7 @@ library BorrowUtils {
         );
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        IDebtToken debtToken   = IDebtToken(poolCache.poolToken);
+        IDebtToken debtToken   = IDebtToken(poolCache.debtToken);
         uint256 collateralAmount = poolToken.balanceOfCollateral(account);
         uint256 debtAmount = debtToken.balanceOf(account);
         PositionUtils.validateCollateralRateHealthFactor(

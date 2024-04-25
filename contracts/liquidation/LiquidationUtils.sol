@@ -55,6 +55,7 @@ library LiquidationUtils {
 
         LiquidationEventUtils.emitLiquidation(
             params.eventEmitter, 
+            liquidator,
             params.account,
             healthFactor, 
             healthFactorLiquidationThreshold,
@@ -125,6 +126,7 @@ library LiquidationUtils {
 
             LiquidationEventUtils.emitPositionLiquidation(
                 params.eventEmitter, 
+                liquidator,
                 position.underlyingAsset, 
                 params.account, 
                 collateralAmount,

@@ -82,33 +82,6 @@ library PositionUtils {
 
     }
 
-    // function calculateUserTotalCollateralAndDebt(
-    //     address account,
-    //     address dataStore
-    // ) internal view returns (uint256, uint256) {
-    //     Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
-    //     // Printer.log("account", account);
-    //     uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-    //     if(positionCount == 0) return (0, 0);
-
-    //     bytes32[] memory positionKeys = 
-    //         PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
-    //     uint256 userTotalCollateralUsd;
-    //     uint256 userTotalDebtUsd;        
-    //     for (uint256 i = 0; i < positionKeys.length; i++) {
-    //         Position.Props memory position = PositionStoreUtils.get(dataStore, positionKeys[i]);
-    //         (   uint256 userCollateralUsd, 
-    //             uint256 userDebtUsd) = 
-    //             calculateUserCollateralAndDebtInPosition(dataStore, position);
-
-    //         userTotalCollateralUsd += userCollateralUsd;
-    //         userTotalDebtUsd += userDebtUsd;            
-    //     }
-
-    //     return (userTotalCollateralUsd, userTotalDebtUsd);
-
-    // }
-
     function calculateUserCollateralAndDebtInPosition(
         address dataStore,
         Position.Props memory position
@@ -166,7 +139,7 @@ library PositionUtils {
         address underlyingAsset,
         uint256 amount
     ) internal view {
-
+        Printer.log("-------------------------validateLiquidationHealthFactor--------------------------");
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
@@ -179,12 +152,11 @@ library PositionUtils {
 
         uint256 amountUsd = OracleUtils.getPrice(dataStore, underlyingAsset)
                                             .rayMul(amount);
-
         Printer.log("amount",  amount);
         Printer.log("amountUsd",   amountUsd);
 
         uint256 healthFactor = 
-            userTotalCollateralUsd.rayDiv(userTotalDebtUsd + amountUsd);
+            (userTotalCollateralUsd + amountUsd).rayDiv(userTotalDebtUsd + amountUsd);
 
         uint256 healthFactorLiquidationThreshold =
             ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
@@ -205,14 +177,20 @@ library PositionUtils {
         address underlyingAsset,
         uint256 collateralAmount,
         uint256 debtAmount,
-        uint256 amountAddToDebt
+        uint256 amount
     ) internal view {
+        Printer.log("-------------------------validateCollateralRateHealthFactor--------------------------");
         uint256 healthFactor = 
-            collateralAmount.rayDiv(debtAmount + amountAddToDebt);
+            (collateralAmount + amount).rayDiv(debtAmount + amount);
 
         uint256 healthFactorCollateralRateThreshold =
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);        
+            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);  
 
+        Printer.log("collateralAmount", collateralAmount );
+        Printer.log("debtAmount", debtAmount); 
+        Printer.log("amount", amount); 
+        Printer.log("healthFactor", healthFactor );
+        Printer.log("healthFactorCollateralRateThreshold", healthFactorCollateralRateThreshold);      
         if (healthFactor < healthFactorCollateralRateThreshold) {
             revert Errors.HealthFactorLowerThanCollateralRateThreshold(
                 healthFactor, 

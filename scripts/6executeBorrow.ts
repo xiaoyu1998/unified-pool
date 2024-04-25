@@ -38,7 +38,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
-    console.log("liquidationHealthFactor",await getLiquidationHealthFactor(dataStore, reader, owner.address)); 
+    console.log("liquidationHealthFactor",await getLiquidationHealthFactor( owner.address)); 
     console.log("userUSDT",await usdt.balanceOf(owner.address)); 
     console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
     // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 

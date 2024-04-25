@@ -54,6 +54,7 @@ interface IEventEmitter {
     ) external;
 
     function emitPositionLiquidation(
+        address liquidator,
         address underlyingAsset,
         address account,
         uint256 collateral,
@@ -62,6 +63,7 @@ interface IEventEmitter {
     ) external;
 
     function emitLiquidation(
+        address liquidator,
         address account,
         uint256 healthFactor,
         uint256 healthFactorLiquidationThreshold,
