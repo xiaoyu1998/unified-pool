@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
 
@@ -95,14 +96,23 @@ library PositionUtils {
         uint256 userCollateralUsd;
         uint256 userDebtUsd;
 
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, position.underlyingAsset);
+        uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
+
         if (position.hasCollateral){
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, position.underlyingAsset);
-            userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account).rayMul(assetPrice);
+             //userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account).rayMul(assetPrice);
+            uint256 collateral = IPoolToken(poolToken).balanceOfCollateral(position.account);
+            uint256 adjustCollateral = Math.mulDiv(collateral, WadRayMath.RAY, 10**decimals);//align to Ray
+            userCollateralUsd = adjustCollateral.rayMul(assetPrice);
         }
 
         if (position.hasDebt){
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, position.underlyingAsset);
-            userDebtUsd = IDebtToken(debtToken).balanceOf(position.account).rayMul(assetPrice);               
+            // userDebtUsd = IDebtToken(debtToken).balanceOf(position.account).rayMul(assetPrice);  
+            uint256 debt = IDebtToken(debtToken).balanceOf(position.account);
+            uint256 adjustDebt = Math.mulDiv(debt, WadRayMath.RAY, 10**decimals);//align to Ray
+            userDebtUsd = adjustDebt.rayMul(assetPrice);
         }
         return (userCollateralUsd, userDebtUsd);
     }
@@ -137,7 +147,8 @@ library PositionUtils {
         address account,
         address dataStore,
         address underlyingAsset,
-        uint256 amount
+        uint256 amount,
+        uint256 decimals
     ) internal view {
         Printer.log("-------------------------validateLiquidationHealthFactor--------------------------");
         (   uint256 userTotalCollateralUsd,
@@ -149,9 +160,10 @@ library PositionUtils {
         if (userTotalCollateralUsd == 0) { 
             revert Errors.CollateralBalanceIsZero();
         }
-
+        
+        uint256 adjustAmount = Math.mulDiv(amount, WadRayMath.RAY, 10**decimals);//align to Ray
         uint256 amountUsd = OracleUtils.getPrice(dataStore, underlyingAsset)
-                                            .rayMul(amount);
+                                            .rayMul(adjustAmount);
         Printer.log("amount",  amount);
         Printer.log("amountUsd",   amountUsd);
 
@@ -244,9 +256,13 @@ library PositionUtils {
       uint256 price,
       uint256 amount
     ) internal pure {
-
+        //1st deposit/repay/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
-            revert Errors.UsdDoNotHaveLongOperation();
+            //revert Errors.UsdDoNotHaveLongOperation();
+            position.positionType = Position.PositionTypeLong;
+            position.accLongAmount = amount;
+            position.accLongAmount = price;
+
         }
 
         if (position.positionType == Position.PositionTypeLong) {
@@ -278,9 +294,12 @@ library PositionUtils {
       uint256 price,
       uint256 amount
     ) internal pure {
-
+        //1st borrow/redeem/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
-            revert Errors.UsdDoNotHaveShortOperation();
+            //revert Errors.UsdDoNotHaveShortOperation();
+            position.positionType = Position.PositionTypeShort;
+            position.accShortAmount = amount;
+            position.accShortAmount = price;
         }
 
         if (position.positionType == Position.PositionTypeShort) {

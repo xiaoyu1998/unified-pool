@@ -64,7 +64,7 @@ async function main() {
     while(true){
         const account = owner.address;
         const factor = await getLiquidationHealthFactor(account);
-        //console.log("factor", factor);
+        console.log("factor", factor);
         if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
             await liquidation(account);
         }

@@ -168,11 +168,14 @@ library BorrowUtils {
             Printer.log("totalDebt",  totalDebt);
         }
 
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, poolCache.underlyingAsset);
+        uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
         PositionUtils.validateLiquidationHealthFactor(
             account, 
             dataStore, 
             poolCache.underlyingAsset, 
-            amountToBorrow
+            amountToBorrow,
+            decimals
         );
 
         // IPoolToken poolToken = IPoolToken(poolCache.poolToken);

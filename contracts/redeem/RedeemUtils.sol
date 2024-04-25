@@ -145,7 +145,15 @@ library RedeemUtils {
             revert Errors.EmptyRedeemAmount();
         }
 
-        PositionUtils.validateLiquidationHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, pool.underlyingAsset);
+        uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
+        PositionUtils.validateLiquidationHealthFactor(
+            account, 
+            dataStore, 
+            pool.underlyingAsset, 
+            amountToRedeem,
+            decimals
+        );
 
         // IPoolToken poolToken = IPoolToken(pool.poolToken);
         // IDebtToken debtToken   = IDebtToken(pool.debtToken);
