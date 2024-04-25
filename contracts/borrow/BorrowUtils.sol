@@ -175,17 +175,17 @@ library BorrowUtils {
             amountToBorrow
         );
 
-        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        IDebtToken debtToken   = IDebtToken(poolCache.debtToken);
-        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        uint256 debtAmount = debtToken.balanceOf(account);
-        PositionUtils.validateCollateralRateHealthFactor(
-            dataStore, 
-            poolCache.underlyingAsset, 
-            collateralAmount, 
-            debtAmount, 
-            amountToBorrow
-        );
+        // IPoolToken poolToken = IPoolToken(poolCache.poolToken);
+        // IDebtToken debtToken   = IDebtToken(poolCache.debtToken);
+        // uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+        // uint256 debtAmount = debtToken.balanceOf(account);
+        // PositionUtils.validateCollateralRateHealthFactor(
+        //     dataStore, 
+        //     poolCache.underlyingAsset, 
+        //     collateralAmount, 
+        //     debtAmount, 
+        //     amountToBorrow
+        // );
     }
     
 }

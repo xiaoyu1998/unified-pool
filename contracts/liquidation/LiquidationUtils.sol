@@ -92,6 +92,7 @@ library LiquidationUtils {
                 poolToken.removeCollateral(position.account, collateralAmount);
                 poolToken.transferOutUnderlyingAsset(liquidator, collateralAmount);
             }
+            Printer.log("collateralAmount", collateralAmount);
 
             if (position.hasDebt){
                 IDebtToken debtToken = IDebtToken(pool.debtToken);
@@ -106,6 +107,7 @@ library LiquidationUtils {
                 );
                 poolToken.syncUnderlyingAssetBalance();             
             }
+            Printer.log("debtAmount", debtAmount);
 
             PositionUtils.reset(position);
             PositionStoreUtils.set(params.dataStore, positionKey, position);

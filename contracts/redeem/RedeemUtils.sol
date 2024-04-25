@@ -147,11 +147,11 @@ library RedeemUtils {
 
         PositionUtils.validateLiquidationHealthFactor(account, dataStore, pool.underlyingAsset, amountToRedeem);
 
-        IPoolToken poolToken = IPoolToken(pool.poolToken);
-        IDebtToken debtToken   = IDebtToken(pool.debtToken);
-        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        uint256 debtAmount = debtToken.balanceOf(account);
-        PositionUtils.validateCollateralRateHealthFactor(dataStore, pool.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
+        // IPoolToken poolToken = IPoolToken(pool.poolToken);
+        // IDebtToken debtToken   = IDebtToken(pool.debtToken);
+        // uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+        // uint256 debtAmount = debtToken.balanceOf(account);
+        // PositionUtils.validateCollateralRateHealthFactor(dataStore, pool.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
 
     }
 }

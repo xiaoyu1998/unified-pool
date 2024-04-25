@@ -111,7 +111,7 @@ library PositionUtils {
         address account,
         address dataStore
     ) internal view returns(uint256, uint256, bool, uint256, uint256) {
-        Printer.log("-------------------------getLiquidationHealthFactor1--------------------------");
+        Printer.log("-------------------------getLiquidationHealthFactor--------------------------");
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
@@ -128,7 +128,7 @@ library PositionUtils {
 
         return (healthFactor,  
                 healthFactorLiquidationThreshold, 
-                healthFactor > healthFactorLiquidationThreshold,
+                (userTotalDebtUsd == 0) ? true : (healthFactor > healthFactorLiquidationThreshold),
                 userTotalCollateralUsd,
                 userTotalDebtUsd);
     }

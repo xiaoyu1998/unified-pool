@@ -34,18 +34,11 @@ async function main() {
     const [owner] = await ethers.getSigners();
 
     const eventEmitter = await getEventEmitter();  
-    // eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
-    //     console.log("eventEmitter Liquidation" , liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd);
-    // });
-    // eventEmitter.on("PositionLiquidation", (underlyingAsset, account, collateral, debt, price) => {
-    //     console.log("eventEmitter PositionLiquidation" , liquidator, underlyingAsset, account, collateral, debt, price);
-    // });
-
-    eventEmitter.on("Liquidation", liquidation => { 
-        console.log("eventEmitter Liquidation", liquidation);
+    eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
+        console.log("eventEmitter Liquidation" , liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd);
     });
-    eventEmitter.on("PositionLiquidation", positionLiquidation => {
-        console.log("eventEmitter PositionLiquidation", positionLiquidation);
+    eventEmitter.on("PositionLiquidation", (underlyingAsset, account, collateral, debt, price) => {
+        console.log("eventEmitter PositionLiquidation" , liquidator, underlyingAsset, account, collateral, debt, price);
     });
 
     const config = await getContract("Config");
@@ -54,7 +47,7 @@ async function main() {
     while(true){
         const account = owner.address;
         const factor = await getLiquidationHealthFactor(account);
-        console.log("factor", factor);
+        //console.log("factor", factor);
         if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
             await liquidation(account);
         }
