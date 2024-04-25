@@ -38,7 +38,7 @@ library PositionUtils {
         postion.accLongAmount = 0;
         postion.entryShortPrice = 0;
         postion.accShortAmount = 0;
-        postion.accShortAmount = Position.PositionTypeNone;
+        postion.positionType = Position.PositionTypeNone;
         postion.hasCollateral = false;
         postion.hasDebt = false;
         // postion.isLiquidated = false;

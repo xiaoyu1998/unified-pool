@@ -16,6 +16,9 @@ async function main() {
         console.log("eventEmitter Borrow" ,pool, borrower, to, amount);
     }); 
 
+    const config = await getContract("Config");
+    await config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25))//110%
+
     //execute borrows
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
