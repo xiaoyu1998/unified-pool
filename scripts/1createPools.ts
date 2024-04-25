@@ -26,7 +26,7 @@ async function main() {
     const multicallArgs = [
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
-        config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(110, 25)]),//110%
+        //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [usdt, false]),
         config.interface.encodeFunctionData("setPoolPause", [usdt, false]),
@@ -36,7 +36,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolUsd", [usdt, true]),
-        config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [uni, expandDecimals(120, 25)]),//120%
+        //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [uni, expandDecimals(120, 25)]),//120%
         config.interface.encodeFunctionData("setPoolActive", [uni, true]),
         config.interface.encodeFunctionData("setPoolFreeze", [uni, false]),
         config.interface.encodeFunctionData("setPoolPause", [uni, false]),
@@ -56,7 +56,6 @@ async function main() {
     for (const pool of pools) {
         console.log(parsePool(pool));
     }
-
 }
 
 main()

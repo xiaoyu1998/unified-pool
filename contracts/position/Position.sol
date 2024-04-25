@@ -24,9 +24,6 @@ library Position {
         uint256 positionType;//None 0 Long 1 Short 2
         bool hasCollateral;
         bool hasDebt;
-
-        // bool isLiquidated;
-        // uint256 liquidationPrice;
     }
     
 }

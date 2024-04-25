@@ -47,7 +47,6 @@ async function main() {
     // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 
 }
 
-
 main()
   .then(() => process.exit(0))
   .catch(error => {

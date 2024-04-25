@@ -121,31 +121,31 @@ export async function getLiquidityAndDebts(dataStore, reader, address) {
     return accountLiquidities;    
 }
 
-export type DebtPropsStruct = {
-    underlyingAsset: AddressLike;
-    scaledTotalDebt: BigNumberish;
-    totalDebt: BigNumberish;
+// export type DebtPropsStruct = {
+//     underlyingAsset: AddressLike;
+//     scaledTotalDebt: BigNumberish;
+//     totalDebt: BigNumberish;
 
-    account: AddressLike;
-    scaledDebt: BigNumberish;
-    debt: BigNumberish;
-};
+//     account: AddressLike;
+//     scaledDebt: BigNumberish;
+//     debt: BigNumberish;
+// };
 
-export async function getDebt(debtToken, address) {
-    const l: DebtPropsStruct = {
-        underlyingAsset: await debtToken.underlyingAsset(),
-        scaledTotalDebt: await debtToken.scaledTotalSupply(),
-        totalDebt:await debtToken.totalSupply(),
-    };
+// export async function getDebt(debtToken, address) {
+//     const l: DebtPropsStruct = {
+//         underlyingAsset: await debtToken.underlyingAsset(),
+//         scaledTotalDebt: await debtToken.scaledTotalSupply(),
+//         totalDebt:await debtToken.totalSupply(),
+//     };
 
-    if (address) {
-        l.account = address;
-        l.scaledDebt = await debtToken.scaledBalanceOf(address);
-        l.debt  = await debtToken.balanceOf(address);
-    }
+//     if (address) {
+//         l.account = address;
+//         l.scaledDebt = await debtToken.scaledBalanceOf(address);
+//         l.debt  = await debtToken.balanceOf(address);
+//     }
 
-    return l;
-}
+//     return l;
+// }
 
 export async function getMaxAmountToRedeem(dataStore, reader, address, underlyingAsset) {
     return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
