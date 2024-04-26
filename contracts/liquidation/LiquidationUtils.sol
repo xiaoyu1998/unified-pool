@@ -80,7 +80,7 @@ library LiquidationUtils {
 
             (   Pool.Props memory pool,
                 PoolCache.Props memory poolCache,
-                address poolKey
+                address poolKey,
             ) = PoolUtils.updatePoolAndCache(params.dataStore, position.underlyingAsset);
             LiquidationUtils.validatePool(position.underlyingAsset, pool.configuration);
 

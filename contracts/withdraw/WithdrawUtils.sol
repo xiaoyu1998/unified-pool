@@ -43,11 +43,10 @@ library WithdrawUtils {
     // @param account the withdrawing account
     // @param params ExecuteWithdrawParams
     function executeWithdraw(address account, ExecuteWithdrawParams calldata params) external {
-        address poolKey = Keys.poolKey(params.underlyingAsset);
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
-        PoolUtils.validateEnabledPool(pool, poolKey);
-        PoolCache.Props memory poolCache =  PoolUtils.cache(pool);
-        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        (   Pool.Props memory pool,
+            PoolCache.Props memory poolCache,
+            address poolKey,
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         uint256 userBalance = poolToken.scaledBalanceOf(account).rayMul(poolCache.nextLiquidityIndex);
@@ -72,7 +71,7 @@ library WithdrawUtils {
 
         PoolStoreUtils.set(
             params.dataStore, 
-            params.underlyingAsset, 
+            poolKey, 
             pool
         );
 

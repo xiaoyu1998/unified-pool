@@ -49,11 +49,11 @@ library RepayUtils {
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
         Printer.log("-------------------------executeRepay--------------------------");
-        address poolKey = Keys.poolKey(params.underlyingAsset);
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
-        PoolUtils.validateEnabledPool(pool, poolKey);
-        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        (   Pool.Props memory pool,
+            PoolCache.Props memory poolCache,
+            address poolKey,
+            bool poolIsUsd
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
         uint256 repayAmount;
         uint256 collateralAmount;
@@ -100,7 +100,6 @@ library RepayUtils {
             }
         }
 
-        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         if (!poolIsUsd){
             PositionUtils.longPosition(position, 0, repayAmount);
         }

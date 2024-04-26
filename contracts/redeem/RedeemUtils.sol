@@ -57,11 +57,11 @@ library RedeemUtils {
     ) external {
         Printer.log("-------------------------executeRedeem--------------------------");
         //TODO:should be just get the pooltoken and pool configuration only
-        address poolKey = Keys.poolKey(params.underlyingAsset);
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
-        PoolUtils.validateEnabledPool(pool, poolKey);
-        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
+        (   Pool.Props memory pool,
+            PoolCache.Props memory poolCache,
+            address poolKey,
+            bool poolIsUsd
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
@@ -85,7 +85,7 @@ library RedeemUtils {
 
         PoolStoreUtils.set(
             params.dataStore, 
-            params.underlyingAsset, 
+            poolKey, 
             pool
         );
 
@@ -95,7 +95,6 @@ library RedeemUtils {
             position.hasCollateral = false;
         }
 
-        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
         if (!poolIsUsd){
             PositionUtils.shortPosition(position, 0, redeemAmount);
         }

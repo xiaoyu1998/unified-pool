@@ -93,7 +93,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
                   .rayDiv(OPTIMAL_USAGE_RATIO);
       	}
 
-        // Printer.log("currentBorrowRate", vars.currentBorrowRate);
+        Printer.log("currentBorrowRate", vars.currentBorrowRate);
 
         //calculate Liquidity Rate
         if (vars.totalDebt != 0) {

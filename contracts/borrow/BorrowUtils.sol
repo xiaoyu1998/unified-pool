@@ -48,15 +48,12 @@ library BorrowUtils {
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
         Printer.log("-------------------------executeBorrow--------------------------");  
-        address poolKey = Keys.poolKey(params.underlyingAsset);
-        Pool.Props memory pool = PoolStoreUtils.get(params.dataStore, poolKey);
-        PoolUtils.validateEnabledPool(pool, poolKey);
-        PoolCache.Props memory poolCache = PoolUtils.cache(pool);
-        PoolUtils.updateStateBetweenTransactions(pool, poolCache);
-        // Printer.log("totalFee", pool.totalFee);   
-        // Printer.log("unclaimedFee", pool.unclaimedFee);  
-        
-        bool poolIsUsd = PoolConfigurationUtils.getUsd(pool.configuration);
+        (   Pool.Props memory pool,
+            PoolCache.Props memory poolCache,
+            address poolKey,
+            bool poolIsUsd
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
+
         bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
         if(position.account == address(0)){
@@ -148,6 +145,7 @@ library BorrowUtils {
             revert Errors.EmptyBorrowAmounts(); 
         }
 
+        //validate liquidity
         uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
         if(amountToBorrow > availableLiquidity) {
             revert Errors.InsufficientLiquidityForBorrow(amountToBorrow, availableLiquidity);
