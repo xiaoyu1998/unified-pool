@@ -148,6 +148,11 @@ library BorrowUtils {
             revert Errors.EmptyBorrowAmounts(); 
         }
 
+        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
+        if(amountToBorrow > availableLiquidity) {
+            revert Errors.InsufficientLiquidityForBorrow(amountToBorrow, availableLiquidity);
+        }
+
         //validate pool borrow capacity
         uint256 poolDecimals   = PoolConfigurationUtils.getDecimals(poolCache.configuration);
         uint256 borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.configuration) 
@@ -160,10 +165,8 @@ library BorrowUtils {
             uint256 totalDebt =
                 poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
                 amountToBorrow;
-            unchecked {
-                if (totalDebt > borrowCapacity) {
-                    revert Errors.BorrowCapacityExceeded(totalDebt, borrowCapacity);
-                }
+            if (totalDebt > borrowCapacity) {
+                revert Errors.BorrowCapacityExceeded(totalDebt, borrowCapacity);
             }
             Printer.log("totalDebt",  totalDebt);
         }

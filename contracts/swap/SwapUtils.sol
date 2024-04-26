@@ -102,14 +102,11 @@ library SwapUtils {
             dex
         );
 
-        Printer.log("-------------------------executeSwap2--------------------------");
+        Printer.log("-------------------------swapStart--------------------------");
         //swap
         IPoolToken poolTokenIn  = IPoolToken(poolIn.poolToken);
-        // Printer.log("-------------------------executeSwap5--------------------------");
         IPoolToken poolTokenOut  = IPoolToken(poolOut.poolToken);
-        // Printer.log("-------------------------executeSwap6--------------------------");
         poolTokenIn.approveLiquidity(dex, params.amountIn);
-        // Printer.log("-------------------------executeSwap4--------------------------");
         IDex(dex).swap(
             address(poolTokenIn), 
             params.underlyingAssetIn, 
@@ -117,7 +114,7 @@ library SwapUtils {
             address(poolTokenOut), 
             uint160(params.sqrtPriceLimitX96)
         );
-        Printer.log("-------------------------executeSwap3--------------------------");
+        Printer.log("-------------------------swapEnd--------------------------");
         //TODO:should check the amountIn has been exactly swapped in, and remove allowance
 
         //update collateral

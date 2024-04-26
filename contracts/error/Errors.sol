@@ -24,21 +24,21 @@ library Errors {
     // PoolInterestRateStrategy errors
     error InvalidOptimalUsageRate(uint256 optimalUsageRatio);
 
-    //PoolConfigurationUtils errors
+    // PoolConfigurationUtils errors
     error InvalidDecimals(uint256 decimals, uint256 MaxValidDecimals);
     error InvalidFeeFactor(uint256 feeFactor, uint256 MaxValidFeeFactor);
     error InvalidBorrowCapacity(uint256 borrowCapacity, uint256 MaxValidBorrowCapacity);
     error InvalidSupplyCapacity(uint256 supplyCapacity, uint256 MaxValidSupplyCapacity);
 
-    //Oracle erros
+    // Oracle erros
     error EmptyOracle(address underlyingAsset);
     error InvalidOraclePrice(address underlyingAsset, int256 price);
 
-    //Position errors
+    // Position errors
     error InvalidPoolIndex(uint256 poolKeyId);
     error PositionNotFound(bytes32 key);
 
-    //PositionUtils errors
+    // PositionUtils errors
     error EmptyPosition();
     //error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
     error UsdDoNotHaveLongOperation();
@@ -56,6 +56,7 @@ library Errors {
     // error CollateralCanNotCoverNewBorrow(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountToBorrowUsd, uint256 healthFactorCollateralRateThreshold);
     error EmptyBorrowAmounts();
     error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);
+    error InsufficientLiquidityForBorrow(uint256 amountToBorrow, uint256 availableLiquidity);
 
     // DepositUtils errors
     error EmptyDepositAmounts();
