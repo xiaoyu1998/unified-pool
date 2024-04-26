@@ -26,6 +26,29 @@ library PositionUtils {
     using WadRayMath for uint256;
     //using PoolConfigurationUtils for uint256;
 
+    function getOrInit(
+        address account,
+        address dataStore, 
+        address underlyingAsset,
+        uint256 positionType,
+        bool poolIsUsd
+    ) internal view returns (Position.Props memory, bytes32) {
+        bytes32 positionKey = Keys.accountPositionKey(underlyingAsset, account);
+        Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
+        if(position.account == address(0)){
+            position.account = account;
+            position.underlyingAsset = underlyingAsset;
+            position.positionType = Position.PositionTypeNone;
+            position.hasCollateral = true;
+            position.hasDebt = false;
+            if (!poolIsUsd) {
+                position.positionType = positionType;
+            }
+        }
+
+        return (position, positionKey);
+    }
+
     function validateEnabledPosition(Position.Props memory postion) internal pure {
         if (postion.account == address(0)) {
             revert Errors.EmptyPosition();

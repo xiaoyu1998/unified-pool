@@ -158,7 +158,7 @@ library LiquidationUtils {
                 healthFactorLiquidationThreshold
             );
         }
-
+        
         return (healthFactor,
                 healthFactorLiquidationThreshold,
                 userTotalCollateralUsd,

@@ -58,8 +58,8 @@ library RepayUtils {
         uint256 repayAmount;
         uint256 collateralAmount;
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        bool useCollateral = (params.amount > 0) ? true:false;
-        if (useCollateral) { // reduce collateral to repay
+        bool useCollateralToRepay = (params.amount > 0) ? true:false;
+        if (useCollateralToRepay) { 
             repayAmount = params.amount;
             collateralAmount = poolToken.balanceOfCollateral(account);
         } else {//transferin to repay
@@ -93,7 +93,7 @@ library RepayUtils {
         if (debtToken.scaledBalanceOf(account) == 0) {
             position.hasDebt = false; 
         }
-        if (useCollateral) {//reduce collateral to repay
+        if (useCollateralToRepay) {//reduce collateral to repay
             poolToken.removeCollateral(account, repayAmount);
             if(poolToken.balanceOfCollateral(account) == 0) {
                 position.hasCollateral = false;
@@ -124,7 +124,7 @@ library RepayUtils {
             pool
         );  
 
-        if(extraAmountToRefund > 0 && !useCollateral) {//Refund extra
+        if(extraAmountToRefund > 0 && !useCollateralToRepay) {//Refund extra
             poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
             poolToken.syncUnderlyingAssetBalance();
         }
@@ -134,7 +134,7 @@ library RepayUtils {
             params.underlyingAsset, 
             account, 
             repayAmount,
-            useCollateral
+            useCollateralToRepay
         );
 
     }

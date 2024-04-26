@@ -54,16 +54,16 @@ library BorrowUtils {
             bool poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
-        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
-        if(position.account == address(0)){
-            position.account = account;
-            position.underlyingAsset = params.underlyingAsset;
-            position.positionType = Position.PositionTypeNone;
-            if (!poolIsUsd) {
-                position.positionType = Position.PositionTypeShort;
-            }
-        }
+        (   Position.Props memory position,
+            bytes32 positionKey
+        ) = PositionUtils.getOrInit(
+            account,
+            params.dataStore, 
+            params.underlyingAsset, 
+            Position.PositionTypeShort,
+            poolIsUsd
+        );
+
         BorrowUtils.validateBorrow( 
             account, 
             params.dataStore, 
@@ -81,8 +81,6 @@ library BorrowUtils {
         );
         position.hasCollateral = true;
         position.hasDebt = true; 
-        //TODO:should change to short?      
-        IDebtToken debtToken   = IDebtToken(pool.poolToken);
 
         if (!poolIsUsd){
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);

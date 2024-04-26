@@ -51,21 +51,17 @@ library DepositUtils {
             bool poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
-        Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
-        if(position.account == address(0)){
-            position.account = account;
-            position.underlyingAsset = params.underlyingAsset;
-            position.positionType = Position.PositionTypeNone;
-            position.hasCollateral = true;
-            position.hasDebt = false;
-            if (!poolIsUsd) {
-                position.positionType = Position.PositionTypeLong;
-            }
-        }
+        (   Position.Props memory position,
+            bytes32 positionKey
+        ) = PositionUtils.getOrInit(
+            account,
+            params.dataStore, 
+            params.underlyingAsset, 
+            Position.PositionTypeLong,
+            poolIsUsd
+        );
 
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
-        IDebtToken debtToken   = IDebtToken(pool.poolToken);
         uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
