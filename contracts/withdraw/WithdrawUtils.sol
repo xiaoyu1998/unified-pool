@@ -61,7 +61,7 @@ library WithdrawUtils {
             userBalance
         );
 
-        poolToken.burn(
+        poolToken.burn(//amountToWithdraw liquidity will be reduced
             account, 
             params.to, 
             amountToWithdraw, 
@@ -72,9 +72,7 @@ library WithdrawUtils {
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
-            params.underlyingAsset, 
-            0, 
-            amountToWithdraw
+            params.underlyingAsset
         );
 
         PoolStoreUtils.set(

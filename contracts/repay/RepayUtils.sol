@@ -116,9 +116,7 @@ library RepayUtils {
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
-            params.underlyingAsset, 
-            0, //balanceOf underlyingAsset has been added repayAmount, or Collateral has been removed repayAmount
-            0
+            params.underlyingAsset
         );
         PoolStoreUtils.set(
             params.dataStore, 

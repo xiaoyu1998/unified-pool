@@ -11,6 +11,8 @@ import "../pool/PoolUtils.sol";
 import "../utils/WadRayMath.sol";
 import "./ScaledToken.sol";
 
+import "../utils/Printer.sol";
+
 // @title PoolToken
 // @dev The pool token for a pool, stores funds for the pool and keeps track
 // of the liquidity owners
@@ -146,6 +148,8 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	}
 
 	function availableLiquidity() public view returns (uint256) {
+		Printer.log("totalCollateral", totalCollateral());
+		Printer.log("balanceOf", IERC20(_underlyingAsset).balanceOf(address(this)));
 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
 	}
 

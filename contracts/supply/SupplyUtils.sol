@@ -52,7 +52,7 @@ library SupplyUtils {
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);
+        uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);// supplyAmount liquidity has beed added
 
         SupplyUtils.validateSupply(
             poolCache, 
@@ -68,9 +68,7 @@ library SupplyUtils {
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
-            params.underlyingAsset, 
-            supplyAmount, 
-            0
+            params.underlyingAsset
         );
 
         PoolStoreUtils.set(

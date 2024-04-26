@@ -115,9 +115,7 @@ library LiquidationUtils {
             PoolUtils.updateInterestRates(
                 pool,
                 poolCache, 
-                position.underlyingAsset, 
-                0, 
-                0
+                position.underlyingAsset
             );
 
             PoolStoreUtils.set(

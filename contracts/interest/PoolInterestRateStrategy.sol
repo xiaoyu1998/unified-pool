@@ -46,7 +46,7 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
 
 
     struct CalcInterestRatesLocalVars {
-        uint256 availableLiquidity;
+        uint256 totalAvailableLiquidity;
         uint256 totalDebt;
         uint256 currentBorrowRate;
         uint256 currentLiquidityRate;
@@ -71,11 +71,9 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
        
        //calculate Borrow Rate
       	if (vars.totalDebt != 0){
-              vars.availableLiquidity = IPoolToken(params.poolToken).availableLiquidity() //TODO:should sub unclaimed fee
-                + params.liquidityIn 
-                - params.liquidityOut;
-              Printer.log("availableLiquidity", vars.availableLiquidity);
-        	  vars.availableLiquidityAddTotalDebt = vars.availableLiquidity + vars.totalDebt;
+              vars.totalAvailableLiquidity = params.totalAvailableLiquidity;
+              Printer.log("totalAvailableLiquidity", vars.totalAvailableLiquidity);
+        	  vars.availableLiquidityAddTotalDebt = vars.totalAvailableLiquidity + vars.totalDebt;
               Printer.log("availableLiquidityAddTotalDebt", vars.availableLiquidityAddTotalDebt);
         	  vars.borrowUsageRatio = vars.totalDebt.rayDiv(vars.availableLiquidityAddTotalDebt);
       	}

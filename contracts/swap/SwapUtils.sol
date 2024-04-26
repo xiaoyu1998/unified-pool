@@ -66,17 +66,19 @@ library SwapUtils {
         PoolUtils.validateEnabledPool(poolIn, poolKeyIn);
         // PoolCache.Props memory poolCacheIn = PoolUtils.cache(poolIn);
         // PoolUtils.updateStateBetweenTransactions(poolIn, poolCacheIn);
+        bool poolInIsUsd = PoolConfigurationUtils.getUsd(poolIn.configuration);
+
+
         bytes32 positionKeyIn = Keys.accountPositionKey(params.underlyingAssetIn, account);
         Position.Props memory positionIn  = PositionStoreUtils.get(params.dataStore, positionKeyIn);
 
         address poolKeyOut = Keys.poolKey(params.underlyingAssetOut);
         Pool.Props memory poolOut = PoolStoreUtils.get(params.dataStore, poolKeyOut);
         PoolUtils.validateEnabledPool(poolOut, poolKeyOut);
-
-        bool poolInIsUsd = PoolConfigurationUtils.getUsd(poolIn.configuration);
         bool poolOutIsUsd = PoolConfigurationUtils.getUsd(poolOut.configuration);
         // PoolCache.Props memory poolCacheOut = PoolUtils.cache(poolOut);
         // PoolUtils.updateStateBetweenTransactions(poolOut, poolCacheOut);
+
         bytes32 positionKeyOut = Keys.accountPositionKey(params.underlyingAssetOut, account);
         Position.Props memory positionOut  = PositionStoreUtils.get(params.dataStore, positionKeyOut);
         if(positionOut.account == address(0)){
@@ -156,9 +158,7 @@ library SwapUtils {
         // PoolUtils.updateInterestRates(
         //     poolIn,
         //     poolCacheIn, 
-        //     params.underlyingAssetIn, 
-        //     0, 
-        //     0 
+        //     params.underlyingAssetIn
         // );
         // PoolStoreUtils.set(
         //     params.dataStore, 
@@ -169,9 +169,7 @@ library SwapUtils {
         // PoolUtils.updateInterestRates(
         //     poolOut,
         //     poolCacheOut, 
-        //     params.underlyingAssetOut, 
-        //     0, 
-        //     0 
+        //     params.underlyingAssetOut
         // );
         // PoolStoreUtils.set(
         //     params.dataStore, 

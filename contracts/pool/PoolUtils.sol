@@ -54,19 +54,26 @@ library PoolUtils {
     function updateInterestRates(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,
-        address underlyingAsset,
-        uint256 liquidityIn,
-        uint256 liquidityOut
+        address underlyingAsset
     ) internal {
         Printer.log("--------------------updateInterestRates---------------------");
         uint256 totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
+        uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
+            poolCache.nextBorrowIndex
+        );
+        Printer.log("unclaimedFee", unclaimedFee);
 
-        Printer.log("liquidityIn", liquidityIn);
-        Printer.log("liquidityOut", liquidityOut);
+        uint256 totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
+        Printer.log("totalAvailableLiquidity", totalAvailableLiquidity);
+
+        totalAvailableLiquidity -= unclaimedFee;
+        
+        Printer.log("unclaimedFee", unclaimedFee);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
+        Printer.log("totalAvailableLiquidity", totalAvailableLiquidity);
         Printer.log("totalDebt", totalDebt);
         Printer.log("feeFactor", poolCache.feeFactor); 
 
@@ -74,8 +81,9 @@ library PoolUtils {
             uint256 nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
             InterestUtils.CalculateInterestRatesParams(
-                liquidityIn,
-                liquidityOut,
+                // liquidityIn,
+                // liquidityOut,
+                totalAvailableLiquidity,
                 totalDebt,
                 poolCache.feeFactor,
                 underlyingAsset,

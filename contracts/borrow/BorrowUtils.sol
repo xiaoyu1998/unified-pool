@@ -97,9 +97,7 @@ library BorrowUtils {
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
-            params.underlyingAsset, 
-            0, 
-            0 //liquidity has been added while move to collateral
+            params.underlyingAsset
         );   
 
         PoolStoreUtils.set(
