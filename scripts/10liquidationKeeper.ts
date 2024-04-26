@@ -7,8 +7,6 @@ import { LiquidationEvent } from "../typechain-types/contracts/event/EventEmitte
 import { PositionLiquidationEvent } from "../typechain-types/contracts/event/EventEmitter";
 
 async function liquidation(account){
-    const [owner] = await ethers.getSigners();
-
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
