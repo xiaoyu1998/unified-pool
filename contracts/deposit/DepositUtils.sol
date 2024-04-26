@@ -65,14 +65,8 @@ library DepositUtils {
         uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
-            pool, 
+            poolCache, 
             depositAmount
-        );
-
-        PoolStoreUtils.set(
-            params.dataStore, 
-            poolKey, 
-            pool
         );
 
         poolToken.addCollateral(account, depositAmount);
@@ -82,11 +76,16 @@ library DepositUtils {
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
             PositionUtils.longPosition(position, price, depositAmount);
         }
-
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
             position
+        );
+
+        PoolStoreUtils.set(
+            params.dataStore, 
+            poolKey, 
+            pool
         );
 
         DepositEventUtils.emitDeposit(
@@ -104,18 +103,17 @@ library DepositUtils {
     // @param amount The amount to be deposit
     //
     function validateDeposit(
-//        Position.Props memory position,
-        Pool.Props memory pool,
+        PoolCache.Props memory poolCache,
         uint256 amount
     ) internal pure {
         (   bool isActive,
             bool isFrozen, 
             ,
             bool isPaused
-        ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }   
+        ) = poolCache.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }   
 
         if (amount == 0) { 
             revert Errors.EmptyDepositAmounts(); 

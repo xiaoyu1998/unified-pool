@@ -79,6 +79,8 @@ library BorrowUtils {
             params.amount, 
             poolCache.nextBorrowIndex
         );
+        
+
         position.hasCollateral = true;
         position.hasDebt = true; 
 
@@ -86,13 +88,12 @@ library BorrowUtils {
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
             PositionUtils.shortPosition(position, price, params.amount);
         }
-
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
             position
         );
-        
+
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 

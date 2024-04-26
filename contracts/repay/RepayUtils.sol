@@ -82,8 +82,8 @@ library RepayUtils {
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
         RepayUtils.validateRepay(
             account, 
+            poolCache,
             position, 
-            pool, 
             repayAmount, 
             debtAmount, 
             collateralAmount
@@ -99,16 +99,19 @@ library RepayUtils {
                 position.hasCollateral = false;
             }
         }
+        if(extraAmountToRefund > 0 && !useCollateralToRepay) {//Refund extra
+            poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
+            poolToken.syncUnderlyingAssetBalance();
+        } 
 
         if (!poolIsUsd){
             PositionUtils.longPosition(position, 0, repayAmount);
         }
-
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
             position
-        );
+        ); 
 
         PoolUtils.updateInterestRates(
             pool,
@@ -117,17 +120,11 @@ library RepayUtils {
             0, //balanceOf underlyingAsset has been added repayAmount, or Collateral has been removed repayAmount
             0
         );
-
         PoolStoreUtils.set(
             params.dataStore, 
             poolKey, 
             pool
-        );  
-
-        if(extraAmountToRefund > 0 && !useCollateralToRepay) {//Refund extra
-            poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
-            poolToken.syncUnderlyingAssetBalance();
-        }
+        );
 
         RepayEventUtils.emitRepay(
             params.eventEmitter, 
@@ -144,8 +141,8 @@ library RepayUtils {
     // @param repayAmount The amount to be repay
     function validateRepay(
         address account,
+        PoolCache.Props memory poolCache,
         Position.Props memory position,
-        Pool.Props memory pool,
         uint256 repayAmount,
         uint256 debtAmount,
         uint256 collateralAmount
@@ -154,15 +151,15 @@ library RepayUtils {
             bool isFrozen, 
             ,
             bool isPaused
-        ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   }  
+        ) = poolCache.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }  
 
         PositionUtils.validateEnabledPosition(position);
 
         if(debtAmount == 0) {
-            revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset);
+            revert Errors.UserDoNotHaveDebtInPool(account, poolCache.underlyingAsset);
         }
         
         if(repayAmount == 0) {

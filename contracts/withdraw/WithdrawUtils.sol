@@ -61,6 +61,14 @@ library WithdrawUtils {
             userBalance
         );
 
+        poolToken.burn(
+            account, 
+            params.to, 
+            amountToWithdraw, 
+            poolCache.nextLiquidityIndex
+        );
+        poolToken.syncUnderlyingAssetBalance();
+
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
@@ -74,14 +82,6 @@ library WithdrawUtils {
             poolKey, 
             pool
         );
-
-        poolToken.burn(
-            account, 
-            params.to, 
-            amountToWithdraw, 
-            poolCache.nextLiquidityIndex
-        );
-        poolToken.syncUnderlyingAssetBalance();
 
         WithdrawEventUtils.emitWithdraw(
             params.eventEmitter, 

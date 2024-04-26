@@ -59,6 +59,12 @@ library SupplyUtils {
             supplyAmount
         );
 
+        poolToken.mint(
+            params.to, 
+            supplyAmount, 
+            poolCache.nextLiquidityIndex
+        );
+
         PoolUtils.updateInterestRates(
             pool,
             poolCache, 
@@ -71,12 +77,6 @@ library SupplyUtils {
             params.dataStore, 
             poolKey, 
             pool
-        );
-
-        poolToken.mint(
-            params.to, 
-            supplyAmount, 
-            poolCache.nextLiquidityIndex
         );
 
         SupplyEventUtils.emitSupply(
