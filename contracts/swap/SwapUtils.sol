@@ -82,6 +82,14 @@ library SwapUtils {
             Position.PositionTypeLong,
             poolOutIsUsd
         );
+
+        IPoolToken poolTokenIn  = IPoolToken(poolIn.poolToken);
+        IPoolToken poolTokenOut  = IPoolToken(poolOut.poolToken);
+        uint256 amountIn = params.amountIn;
+        uint256 collateralAmount = poolTokenIn.balanceOfCollateral(account);
+        if( amountIn > collateralAmount){
+            amountIn = collateralAmount;
+        }
         
         address dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
         SwapUtils.validateSwap( 
@@ -91,19 +99,17 @@ library SwapUtils {
             positionOut, 
             poolIn, 
             poolOut,
-            params.amountIn,
+            amountIn,
             dex
         );
 
         Printer.log("-------------------------swapStart--------------------------");
         //swap
-        IPoolToken poolTokenIn  = IPoolToken(poolIn.poolToken);
-        IPoolToken poolTokenOut  = IPoolToken(poolOut.poolToken);
-        poolTokenIn.approveLiquidity(dex, params.amountIn);
+        poolTokenIn.approveLiquidity(dex, amountIn);
         IDex(dex).swap(
             address(poolTokenIn), 
             params.underlyingAssetIn, 
-            params.amountIn, 
+            amountIn, 
             address(poolTokenOut), 
             uint160(params.sqrtPriceLimitX96)
         );
@@ -113,13 +119,13 @@ library SwapUtils {
 
         //update collateral
         uint256 amountOut = poolTokenOut.recordTransferIn(params.underlyingAssetOut);
-        poolTokenIn.removeCollateral(account, params.amountIn);//this line will assert if account InsufficientCollateralAmount
+        poolTokenIn.removeCollateral(account, amountIn);//this line will assert if account InsufficientCollateralAmount
         poolTokenOut.addCollateral(account, amountOut);
         
         //update position price
         if (poolInIsUsd || poolOutIsUsd) {
             uint256 price = OracleUtils.calcPrice(
-                params.amountIn,
+                amountIn,
                 PoolConfigurationUtils.getDecimals(poolIn.configuration), 
                 amountOut,
                 PoolConfigurationUtils.getDecimals(poolOut.configuration),
@@ -131,7 +137,7 @@ library SwapUtils {
             }
 
             if (!poolInIsUsd && poolOutIsUsd) { //Short in
-                PositionUtils.shortPosition(positionIn,  price, params.amountIn);
+                PositionUtils.shortPosition(positionIn,  price, amountIn);
             } 
         }
 
@@ -174,7 +180,7 @@ library SwapUtils {
             params.underlyingAssetIn, 
             params.underlyingAssetOut, 
             account, 
-            params.amountIn,
+            amountIn,
             amountOut
         );
 

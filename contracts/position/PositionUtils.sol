@@ -39,7 +39,7 @@ library PositionUtils {
             position.account = account;
             position.underlyingAsset = underlyingAsset;
             position.positionType = Position.PositionTypeNone;
-            position.hasCollateral = true;
+            position.hasCollateral = false;
             position.hasDebt = false;
             if (!poolIsUsd) {
                 position.positionType = positionType;
@@ -64,7 +64,6 @@ library PositionUtils {
         postion.positionType = Position.PositionTypeNone;
         postion.hasCollateral = false;
         postion.hasDebt = false;
-        // postion.isLiquidated = false;
     }
 
     function getPositions(address account, address dataStore) internal view returns (Position.Props[] memory) {
@@ -110,10 +109,6 @@ library PositionUtils {
         address dataStore,
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
-
-        // uint256 assetPrice = 
-        //     IPriceOracleGetter(OracleStoreUtils.get(dataStore)).getPrice(position.underlyingAsset);
-
         uint256 assetPrice = OracleUtils.getPrice(dataStore, position.underlyingAsset);
 
         uint256 userCollateralUsd;
@@ -124,7 +119,6 @@ library PositionUtils {
 
         if (position.hasCollateral){
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, position.underlyingAsset);
-             //userCollateralUsd = IPoolToken(poolToken).balanceOfCollateral(position.account).rayMul(assetPrice);
             uint256 collateral = IPoolToken(poolToken).balanceOfCollateral(position.account);
             uint256 adjustCollateral = Math.mulDiv(collateral, WadRayMath.RAY, 10**decimals);//align to Ray
             userCollateralUsd = adjustCollateral.rayMul(assetPrice);
@@ -132,7 +126,6 @@ library PositionUtils {
 
         if (position.hasDebt){
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, position.underlyingAsset);
-            // userDebtUsd = IDebtToken(debtToken).balanceOf(position.account).rayMul(assetPrice);  
             uint256 debt = IDebtToken(debtToken).balanceOf(position.account);
             uint256 adjustDebt = Math.mulDiv(debt, WadRayMath.RAY, 10**decimals);//align to Ray
             userDebtUsd = adjustDebt.rayMul(assetPrice);
@@ -342,7 +335,7 @@ library PositionUtils {
                 position.accShortAmount = amount - position.accLongAmount;
                 position.accLongAmount = 0;
                 position.entryLongPrice = 0;
-                if (price != 0){//TODO:redeem should close postion, no longer need price
+                if (price != 0){//TODO:redeem should close position, no longer need price
                     position.entryShortPrice = price;
                 }
             }

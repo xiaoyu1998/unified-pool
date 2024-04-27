@@ -10,6 +10,7 @@ import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
 import "../exchange/ISwapHandler.sol";
 import "../exchange/ILiquidationHandler.sol";
+//import "../exchange/ICloseHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -31,6 +32,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     IRedeemHandler public immutable redeemHandler;
     ISwapHandler public immutable swapHandler;
     ILiquidationHandler public immutable liquidationHandler;
+    //ICloseHandler public immutable closeHandler;
 
     // @dev Constructor that initializes the contract with the provided Router, RoleStore, DataStore,
     // ISupplyHandler, IWithdrawHandler, IDepositHandler, IBorrowHandler, IRepayHandler, IRedeemHandler,

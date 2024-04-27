@@ -71,7 +71,6 @@ library DepositUtils {
 
         poolToken.addCollateral(account, depositAmount);
         position.hasCollateral = true;
-
         if (!poolIsUsd){
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
             PositionUtils.longPosition(position, price, depositAmount);

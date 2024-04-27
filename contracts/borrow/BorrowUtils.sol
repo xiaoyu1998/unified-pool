@@ -80,10 +80,8 @@ library BorrowUtils {
             poolCache.nextBorrowIndex
         );
         
-
         position.hasCollateral = true;
         position.hasDebt = true; 
-
         if (!poolIsUsd){
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
             PositionUtils.shortPosition(position, price, params.amount);
