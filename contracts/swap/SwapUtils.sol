@@ -60,37 +60,28 @@ library SwapUtils {
         ExecuteSwapParams calldata params
     ) external {
         Printer.log("-------------------------executeSwap--------------------------");
-        //TODO:should be just get the pooltoken and pool configuration only
-        address poolKeyIn = Keys.poolKey(params.underlyingAssetIn);
-        Pool.Props memory poolIn = PoolStoreUtils.get(params.dataStore, poolKeyIn);
-        PoolUtils.validateEnabledPool(poolIn, poolKeyIn);
-        // PoolCache.Props memory poolCacheIn = PoolUtils.cache(poolIn);
-        // PoolUtils.updateStateBetweenTransactions(poolIn, poolCacheIn);
-        bool poolInIsUsd = PoolConfigurationUtils.getUsd(poolIn.configuration);
-
+        (   Pool.Props memory poolIn,
+            PoolCache.Props memory poolCacheIn,
+            address poolKeyIn,
+            bool poolInIsUsd
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAssetIn);
+        (   Pool.Props memory poolOut,
+            PoolCache.Props memory poolCacheOut,
+            address poolKeyOut,
+            bool poolOutIsUsd
+        ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAssetOut);
 
         bytes32 positionKeyIn = Keys.accountPositionKey(params.underlyingAssetIn, account);
         Position.Props memory positionIn  = PositionStoreUtils.get(params.dataStore, positionKeyIn);
-
-        address poolKeyOut = Keys.poolKey(params.underlyingAssetOut);
-        Pool.Props memory poolOut = PoolStoreUtils.get(params.dataStore, poolKeyOut);
-        PoolUtils.validateEnabledPool(poolOut, poolKeyOut);
-        bool poolOutIsUsd = PoolConfigurationUtils.getUsd(poolOut.configuration);
-        // PoolCache.Props memory poolCacheOut = PoolUtils.cache(poolOut);
-        // PoolUtils.updateStateBetweenTransactions(poolOut, poolCacheOut);
-
-        bytes32 positionKeyOut = Keys.accountPositionKey(params.underlyingAssetOut, account);
-        Position.Props memory positionOut  = PositionStoreUtils.get(params.dataStore, positionKeyOut);
-        if(positionOut.account == address(0)){
-            positionOut.account = account;
-            positionOut.underlyingAsset = params.underlyingAssetOut;
-            positionOut.positionType = Position.PositionTypeNone;
-            positionOut.hasCollateral = true;
-            positionOut.hasDebt = false;
-            if (!poolOutIsUsd) {
-                positionOut.positionType = Position.PositionTypeLong;
-            }
-        }
+        (   Position.Props memory positionOut,
+            bytes32 positionKeyOut
+        ) = PositionUtils.getOrInit(
+            account,
+            params.dataStore, 
+            params.underlyingAssetOut, 
+            Position.PositionTypeLong,
+            poolOutIsUsd
+        );
         
         address dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
         SwapUtils.validateSwap( 
@@ -118,6 +109,7 @@ library SwapUtils {
         );
         Printer.log("-------------------------swapEnd--------------------------");
         //TODO:should check the amountIn has been exactly swapped in, and remove allowance
+        poolTokenIn.syncUnderlyingAssetBalance();
 
         //update collateral
         uint256 amountOut = poolTokenOut.recordTransferIn(params.underlyingAssetOut);
@@ -160,22 +152,22 @@ library SwapUtils {
         //     poolCacheIn, 
         //     params.underlyingAssetIn
         // );
-        // PoolStoreUtils.set(
-        //     params.dataStore, 
-        //     params.underlyingAssetIn, 
-        //     poolIn
-        // );
+        PoolStoreUtils.set(
+            params.dataStore, 
+            poolKeyIn, 
+            poolIn
+        );
 
         // PoolUtils.updateInterestRates(
         //     poolOut,
         //     poolCacheOut, 
         //     params.underlyingAssetOut
         // );
-        // PoolStoreUtils.set(
-        //     params.dataStore, 
-        //     params.underlyingAssetOut, 
-        //     poolOut
-        // );
+        PoolStoreUtils.set(
+            params.dataStore, 
+            poolKeyOut, 
+            poolOut
+        );
 
         SwapEventUtils.emitSwap(
             params.eventEmitter, 
@@ -224,16 +216,11 @@ library SwapUtils {
         if (isPausedOut)  { revert Errors.PoolIsPaused(poolOut.underlyingAsset);   }  
         if (isFrozenOut)  { revert Errors.PoolIsFrozen(poolOut.underlyingAsset);   } 
 
-
-        //  bool poolOutIsUsd = PoolConfigurationUtils.getUsd(poolOut.configuration);
-        //  bool poolInIsUsd = PoolConfigurationUtils.getUsd(poolIn.configuration);
-        // if ((poolOutIsUsd && poolInIsUsd) || (!poolOutIsUsd && !poolInIsUsd) ) {
-        //     revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);
-        // }
-
         if(amountIn == 0) {
             revert Errors.EmptySwapAmount();
-        }        
+        } 
+
+        //TODO:healthFactor should be validated        
 
     }
 }

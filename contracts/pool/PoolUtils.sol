@@ -63,12 +63,9 @@ library PoolUtils {
         uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
             poolCache.nextBorrowIndex
         );
-        Printer.log("unclaimedFee", unclaimedFee);
 
-        uint256 totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
-        Printer.log("totalAvailableLiquidity", totalAvailableLiquidity);
-
-        totalAvailableLiquidity -= unclaimedFee;
+        uint256 totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity() 
+                                          - unclaimedFee;
         
         Printer.log("unclaimedFee", unclaimedFee);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
