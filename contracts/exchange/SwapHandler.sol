@@ -37,7 +37,7 @@ contract SwapHandler is ISwapHandler, GlobalReentrancyGuard, RoleModule {
            //swapParams.to
         );
 
-        return SwapUtils.executeSwap(account, params);
+        SwapUtils.executeSwap(account, params);
     }
 
 }

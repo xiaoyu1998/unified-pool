@@ -52,13 +52,17 @@ library SwapUtils {
         uint256 sqrtPriceLimitX96;
     }
 
+    // // @dev executes a swap
+    // // @param account the swap account
+    // // @param params ExecuteSwapParams
+    // function executeSwap(address account, ExecuteSwapParams calldata params) external {
+    //     _executeSwap(account, params);
+    // }
+
     // @dev executes a swap
     // @param account the swap account
     // @param params ExecuteSwapParams
-    function executeSwap(
-        address account, 
-        ExecuteSwapParams calldata params
-    ) external {
+    function executeSwap(address account, ExecuteSwapParams calldata params) external returns(uint256) {
         Printer.log("-------------------------executeSwap--------------------------");
         (   Pool.Props memory poolIn,
             PoolCache.Props memory poolCacheIn,

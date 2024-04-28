@@ -181,6 +181,35 @@ export async function getContract(name) {
         });
     }
 
+    if (name == "RepayUtils") {
+        const repayEventUtils = await getContract("RepayEventUtils");
+        const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
+        return await contractAtOptions("RepayUtils", repayUtilsAddress, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+                RepayEventUtils: repayEventUtils,
+//                FeeUtils: feeUtils,
+            },        
+        });      
+    }
+
+    if (name == "SwapUtils") {
+        const swapEventUtils = await getContract("SwapEventUtils");
+        const oracleUtils = await getContract("OracleUtils");
+        const swapUtilsAddress = getDeployedContractAddresses("SwapUtils");
+        return await contractAtOptions("SwapUtils", swapUtilsAddress, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+               // ConfigStoreUtils: configStoreUtils,
+                OracleUtils: oracleUtils,
+                DexStoreUtils: dexStoreUtils,
+                SwapEventUtils: swapEventUtils,
+            },        
+        });       
+    }
+
     if (name == "SupplyHandler") {
         const supplyEventUtils = await getContract("SupplyEventUtils");
         const supplyUtilsAddress = getDeployedContractAddresses("SupplyUtils");
@@ -343,6 +372,28 @@ export async function getContract(name) {
         });       
     }
 
+    if (name == "CloseHandler") {
+        //const closeEventUtils = await getContract("CloseEventUtils");
+        const repayUtils = await getContract("RepayUtils");
+        const swapUtils = await getContract("SwapUtils");
+        const closeUtilsAddress = getDeployedContractAddresses("CloseUtils");
+        const closeUtils = await contractAtOptions("CloseUtils", closeUtilsAddress, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
+                RepayUtils: repayUtils,
+                SwapUtils: swapUtils,
+                //CloseEventUtils: closeEventUtils,
+            },        
+        });
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address,  {
+            libraries: {
+                CloseUtils: closeUtils,
+            },        
+        });       
+    }
+
     if (name == "ExchangeRouter") {
         const supplyHandler = await getContract("SupplyHandler");
         const withdrawHandler = await getContract("WithdrawHandler");
@@ -352,6 +403,7 @@ export async function getContract(name) {
         const redeemHandler = await getContract("RedeemHandler");
         const swapHandler = await getContract("SwapHandler");
         const liquidationHandler = await getContract("LiquidationHandler");
+        const closeHandler = await getContract("CloseHandler");
         //const router = await getContract("Router");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, [
@@ -365,7 +417,8 @@ export async function getContract(name) {
             repayHandler, 
             redeemHandler,  
             swapHandler, 
-            liquidationHandler       
+            liquidationHandler, 
+            closeHandler      
         ]);       
     }
 

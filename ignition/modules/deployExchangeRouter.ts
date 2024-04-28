@@ -10,6 +10,7 @@ import { repayHandlerModule } from "./deployRepayHandler"
 import { redeemHandlerModule } from "./deployRedeemHandler"
 import { swapHandlerModule } from "./deploySwapHandler"
 import { liquidationHandlerModule } from "./deployLiquidationHandler"
+import { closeHandlerModule } from "./deployCloseHandler"
 
 import { configModule } from "./deployConfig"
 import { poolFactoryModule } from "./deployPoolFactory"
@@ -33,6 +34,7 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { redeemHandler } = m.useModule(redeemHandlerModule);
     const { swapHandler } = m.useModule(swapHandlerModule);
     const { liquidationHandler } = m.useModule(liquidationHandlerModule);
+    const { closeHandler } = m.useModule(closeHandlerModule);
     const { config } = m.useModule(configModule);
     const { poolFactory } = m.useModule(poolFactoryModule); 
     const { poolInterestRateStrategy } = m.useModule(poolInterestRateStrategyModule) ;  
@@ -51,7 +53,8 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         repayHandler, 
         redeemHandler,
         swapHandler,
-        liquidationHandler
+        liquidationHandler,
+        closeHandler
     ]);
 
     m.call(roleStore, "grantRole",  [supplyHandler, keys.CONTROLLER], {id:"grantRole1" });
@@ -62,10 +65,10 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     m.call(roleStore, "grantRole",  [redeemHandler, keys.CONTROLLER], {id:"grantRole6"});
     m.call(roleStore, "grantRole",  [swapHandler, keys.CONTROLLER], {id:"grantRole7"});
     m.call(roleStore, "grantRole",  [liquidationHandler, keys.CONTROLLER], {id:"grantRole8"});
-    m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER], {id:"grantRole9"});
-    m.call(roleStore, "grantRole",  [config, keys.CONTROLLER], {id:"grantRole910"});
-
-    m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole11"});
+    m.call(roleStore, "grantRole",  [closeHandler, keys.CONTROLLER], {id:"grantRole9"});
+    m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER], {id:"grantRole10"});
+    m.call(roleStore, "grantRole",  [config, keys.CONTROLLER], {id:"grantRole11"});
+    m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole12"});
     return { exchangeRouter };
 });
 

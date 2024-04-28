@@ -10,6 +10,7 @@ import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
 import "../exchange/ISwapHandler.sol";
 import "../exchange/ILiquidationHandler.sol";
+import "../exchange/ICloseHandler.sol";
 
 interface IExchangeRouter {
     function executeSupply(
@@ -42,5 +43,9 @@ interface IExchangeRouter {
 
     function executeLiquidation(
         LiquidationUtils.LiquidationParams calldata params
+    ) external payable;
+
+    function executeClosePosition(
+        CloseUtils.ClosePositionParams calldata params
     ) external payable;
 }

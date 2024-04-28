@@ -87,6 +87,8 @@ library Errors {
     error SwapPoolsNotMatch(address pool0, address pool1);
     error EmptySwapAmount();
 
+    // CloseUtils errors
+    error CollateralCanNotCoverDebt(uint256 collateralAmount, uint256 debtAmount);
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

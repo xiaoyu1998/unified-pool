@@ -10,7 +10,7 @@ import "../exchange/IRepayHandler.sol";
 import "../exchange/IRedeemHandler.sol";
 import "../exchange/ISwapHandler.sol";
 import "../exchange/ILiquidationHandler.sol";
-//import "../exchange/ICloseHandler.sol";
+import "../exchange/ICloseHandler.sol";
 
 import "./BaseRouter.sol";
 import "./IExchangeRouter.sol";
@@ -32,11 +32,11 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     IRedeemHandler public immutable redeemHandler;
     ISwapHandler public immutable swapHandler;
     ILiquidationHandler public immutable liquidationHandler;
-    //ICloseHandler public immutable closeHandler;
+    ICloseHandler public immutable closeHandler;
 
     // @dev Constructor that initializes the contract with the provided Router, RoleStore, DataStore,
     // ISupplyHandler, IWithdrawHandler, IDepositHandler, IBorrowHandler, IRepayHandler, IRedeemHandler,
-    // ISwapHandler and ILiquidationHandler instances
+    // ISwapHandler, ILiquidationHandler and ICloseHandler instances
     constructor(
         Router _router,
         RoleStore _roleStore,
@@ -48,7 +48,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         IRepayHandler _repayHandler,
         IRedeemHandler _redeemHandler,
         ISwapHandler _swapHandler,
-        ILiquidationHandler _liquidationHandler
+        ILiquidationHandler _liquidationHandler,
+        ICloseHandler _closeHandler
     ) BaseRouter(_router, _roleStore, _dataStore) {
         supplyHandler      = _supplyHandler;
         withdrawHandler    = _withdrawHandler;
@@ -58,6 +59,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         redeemHandler      = _redeemHandler;
         swapHandler        = _swapHandler;
         liquidationHandler = _liquidationHandler;
+        closeHandler = _closeHandler;
     }
 
     /**
@@ -186,6 +188,31 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
 
         return liquidationHandler.executeLiquidation(
             liquidator,
+            params
+        );
+    }
+
+    // /**
+    //  * @dev execute a new Close with the given amount, Close parameters. The Close is
+    //  * execute by calling the `executeClose()` function on the Close handler contract. 
+    //  */
+    // function executeClose() external override payable nonReentrant {
+    //     address account = msg.sender;
+
+    //     return closeHandler.executeClose(account);
+    // }
+
+    /**
+     * @dev execute a new ClosePosition with the given amount, ClosePosition parameters. The ClosePosition is
+     * execute by calling the `executeClosePosition()` function on the ClosePosition handler contract. 
+     */
+    function executeClosePosition(
+        CloseUtils.ClosePositionParams calldata params
+    ) external override payable nonReentrant {
+        address account = msg.sender;
+
+        return closeHandler.executeClosePosition(
+            account,
             params
         );
     }

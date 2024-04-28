@@ -44,6 +44,14 @@ library RepayUtils {
         uint256 amount;
     }
 
+
+   // // @dev executes a repay
+   //  // @param account the repaying account
+   //  // @param params ExecuteRepayParams
+   //  function executeRepay(address account, ExecuteRepayParams calldata params) external {
+   //      _executeRepay(account, params);
+   //  }
+
     // @dev executes a repay
     // @param account the repaying account
     // @param params ExecuteRepayParams
@@ -65,7 +73,6 @@ library RepayUtils {
         } else {//transferin to repay
             repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
         }
-
         Printer.log("repayAmount", repayAmount);   
 
         uint256 extraAmountToRefund;
