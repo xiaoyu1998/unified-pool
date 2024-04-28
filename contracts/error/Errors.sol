@@ -86,6 +86,7 @@ library Errors {
     // SwapUtils errors
     error SwapPoolsNotMatch(address pool0, address pool1);
     error EmptySwapAmount();
+    error SwapExecutedAmountIsZero(uint256 amountIn, uint256 amountOut);
 
     // CloseUtils errors
     error CollateralCanNotCoverDebt(uint256 collateralAmount, uint256 debtAmount);

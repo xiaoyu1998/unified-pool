@@ -52,7 +52,7 @@ library OracleUtils {
         uint256 decimalsOut,
         bool poolOutIsUsd
     ) public pure returns (uint256) {
-
+        // Printer.log("-----------------------calcPrice------------------------");
         uint256 amountUsd = amountIn;
         uint256 decimalsUsd = decimalsIn;
         uint256 amountOthers = amountOut;
@@ -63,9 +63,10 @@ library OracleUtils {
             tmp = decimalsUsd; decimalsUsd = decimalsOthers; decimalsOthers = tmp;
         }
 
-        uint256 adjustAmountUsd = Math.mulDiv(amountUsd, WadRayMath.RAY, 10**decimalsIn);
+        uint256 adjustAmountUsd = Math.mulDiv(amountUsd, WadRayMath.RAY, 10**decimalsUsd);
         uint256 adjustAmountOthers = Math.mulDiv(amountOthers, WadRayMath.RAY, 10**decimalsOthers);
-
+        Printer.log("adjustAmountUsd", adjustAmountUsd);
+        Printer.log("adjustAmountOthers", adjustAmountOthers);
         return adjustAmountUsd.rayDiv(adjustAmountOthers);
 
     }

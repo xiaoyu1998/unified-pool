@@ -67,7 +67,7 @@ library WithdrawUtils {
             amountToWithdraw, 
             poolCache.nextLiquidityIndex
         );
-        poolToken.syncUnderlyingAssetBalance();
+        //poolToken.syncUnderlyingAssetBalance();
 
         PoolUtils.updateInterestRates(
             pool,

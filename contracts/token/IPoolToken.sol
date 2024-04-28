@@ -31,6 +31,7 @@ interface IPoolToken {
 
     function availableLiquidity() external view  returns (uint256);
     function recordTransferIn(address token) external returns (uint256);
+    function recordTransferOut(address token) external returns (uint256);
     function transferOutUnderlyingAsset(
         address receiver,
         uint256 amount

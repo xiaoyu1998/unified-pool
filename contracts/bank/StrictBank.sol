@@ -26,6 +26,14 @@ contract StrictBank is Bank {
 
     constructor(RoleStore _roleStore, DataStore _dataStore) Bank(_roleStore, _dataStore) {}
 
+    // @dev records a token transfer out from the contract
+    // @param token the token to record the transfer for
+    // @return the amount of tokens transferred out
+    function recordTransferOut(address token) external onlyController returns (uint256) {
+        return _recordTransferOut(token);
+    }
+
+
     // @dev records a token transfer into the contract
     // @param token the token to record the transfer for
     // @return the amount of tokens transferred in
@@ -66,6 +74,17 @@ contract StrictBank is Bank {
         tokenBalances[token] = nextBalance;
 
         return nextBalance - prevBalance;
+    }
+
+    // @dev records a token transfer out from the contract
+    // @param token the token to record the transfer for
+    // @return the amount of tokens transferred out
+    function _recordTransferOut(address token) internal returns (uint256) {
+        uint256 prevBalance = tokenBalances[token];
+        uint256 nextBalance = IERC20(token).balanceOf(address(this));
+        tokenBalances[token] = nextBalance;
+
+        return prevBalance - nextBalance;
     }
 
     // @dev update the internal balance after tokens have been transferred out

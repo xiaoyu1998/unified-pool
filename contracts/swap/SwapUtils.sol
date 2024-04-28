@@ -62,7 +62,7 @@ library SwapUtils {
     // @dev executes a swap
     // @param account the swap account
     // @param params ExecuteSwapParams
-    function executeSwap(address account, ExecuteSwapParams calldata params) external returns(uint256) {
+    function executeSwap(address account, ExecuteSwapParams calldata params) external returns (uint256) {
         Printer.log("-------------------------executeSwap--------------------------");
         (   Pool.Props memory poolIn,
             PoolCache.Props memory poolCacheIn,
@@ -119,10 +119,14 @@ library SwapUtils {
         );
         Printer.log("-------------------------swapEnd--------------------------");
         //TODO:should check the amountIn has been exactly swapped in, and remove allowance
-        poolTokenIn.syncUnderlyingAssetBalance();
 
-        //update collateral
+        amountIn = poolTokenIn.recordTransferOut(params.underlyingAssetIn);
         uint256 amountOut = poolTokenOut.recordTransferIn(params.underlyingAssetOut);
+        if (amountIn == 0 || amountOut == 0) {
+            revert Errors.SwapExecutedAmountIsZero(amountIn, amountOut);
+        }
+        
+        //update collateral
         poolTokenIn.removeCollateral(account, amountIn);//this line will assert if account InsufficientCollateralAmount
         poolTokenOut.addCollateral(account, amountOut);
         

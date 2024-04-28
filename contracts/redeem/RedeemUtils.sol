@@ -85,7 +85,7 @@ library RedeemUtils {
 
         poolToken.removeCollateral(account, redeemAmount);
         poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
-        poolToken.syncUnderlyingAssetBalance();
+        //poolToken.syncUnderlyingAssetBalance();
         uint256 remainCollateral = poolToken.balanceOfCollateral(account);
         if (remainCollateral == 0) {
             position.hasCollateral = false;

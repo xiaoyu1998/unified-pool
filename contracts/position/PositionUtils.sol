@@ -282,9 +282,10 @@ library PositionUtils {
         }
 
         if (position.positionType == Position.PositionTypeLong) {
+            uint256 preAccLongAmount = position.accLongAmount;
             position.accLongAmount += amount;
             if (price != 0){
-                uint256 totalValue = position.entryLongPrice.rayMul(position.accLongAmount) +
+                uint256 totalValue = position.entryLongPrice.rayMul(preAccLongAmount) +
                                      price.rayMul(amount);
                 position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
             }
@@ -319,9 +320,10 @@ library PositionUtils {
         }
 
         if (position.positionType == Position.PositionTypeShort) {
+            uint256 preAccShortAmount = position.accShortAmount;
             position.accShortAmount += amount;
             if (price != 0){//
-                uint256 totalValue = position.entryLongPrice.rayMul(position.accShortAmount) +
+                uint256 totalValue = position.entryLongPrice.rayMul(preAccShortAmount) +
                                      price.rayMul(amount);
                 position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
             }

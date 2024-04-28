@@ -20,18 +20,31 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const supplyAmmount = expandDecimals(8000, usdtDecimals);
-    await sendTxn(usdt.approve(router.target, supplyAmmount), `usdt.approve(${router.target})`)  
+    const supplyAmountUsdt = expandDecimals(8000, usdtDecimals);
+    await sendTxn(usdt.approve(router.target, supplyAmountUsdt), `usdt.approve(${router.target})`)  
+
+    const uniDecimals = getTokens("UNI")["decimals"];
+    const uniAddress = getTokens("UNI")["address"];
+    const uni = await contractAt("MintableToken", uniAddress);
+    const supplyAmountUni = expandDecimals(1000, uniDecimals);
+    await sendTxn(uni.approve(router.target, supplyAmountUni), `uni.approve(${router.target})`)  
 
     //execute supply
     const poolUsdt = await getPoolInfo(usdtAddress); 
-    const params: SupplyUtils.SupplyParamsStruct = {
+    const paramsUsdt: SupplyUtils.SupplyParamsStruct = {
         underlyingAsset: usdtAddress,
         to: owner.address,
     };
+    const poolUni = await getPoolInfo(uniAddress); 
+    const paramsUni: SupplyUtils.SupplyParamsStruct = {
+        underlyingAsset: uniAddress,
+        to: owner.address,
+    };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, supplyAmmount]),
-        exchangeRouter.interface.encodeFunctionData("executeSupply", [params]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, supplyAmountUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeSupply", [paramsUsdt]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, supplyAmountUni]),
+        exchangeRouter.interface.encodeFunctionData("executeSupply", [paramsUni]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);
 
