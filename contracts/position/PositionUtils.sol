@@ -38,9 +38,10 @@ library PositionUtils {
         if(position.account == address(0)){
             position.account = account;
             position.underlyingAsset = underlyingAsset;
-            position.positionType = Position.PositionTypeNone;
-            position.hasCollateral = false;
-            position.hasDebt = false;
+            // position.positionType = Position.PositionTypeNone;
+            // position.hasCollateral = false;
+            // position.hasDebt = false;
+            PositionUtils.reset(position);
             if (!poolIsUsd) {
                 position.positionType = positionType;
             }
@@ -277,11 +278,8 @@ library PositionUtils {
             //revert Errors.UsdDoNotHaveLongOperation();
             position.positionType = Position.PositionTypeLong;
             position.accLongAmount = amount;
-            position.accLongAmount = price;
-
-        }
-
-        if (position.positionType == Position.PositionTypeLong) {
+            position.entryLongPrice = price;
+        }else if (position.positionType == Position.PositionTypeLong) {
             uint256 preAccLongAmount = position.accLongAmount;
             position.accLongAmount += amount;
             if (price != 0){
@@ -289,9 +287,7 @@ library PositionUtils {
                                      price.rayMul(amount);
                 position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
             }
-        }
-
-        if (position.positionType == Position.PositionTypeShort) {
+        }else if(position.positionType == Position.PositionTypeShort) {
             if (position.accShortAmount - amount > 0){
                 position.accShortAmount -= amount;
             } else {
@@ -316,20 +312,21 @@ library PositionUtils {
             //revert Errors.UsdDoNotHaveShortOperation();
             position.positionType = Position.PositionTypeShort;
             position.accShortAmount = amount;
-            position.accShortAmount = price;
-        }
-
-        if (position.positionType == Position.PositionTypeShort) {
+            position.entryShortPrice = price;
+        }else if (position.positionType == Position.PositionTypeShort) {
             uint256 preAccShortAmount = position.accShortAmount;
             position.accShortAmount += amount;
             if (price != 0){//
-                uint256 totalValue = position.entryLongPrice.rayMul(preAccShortAmount) +
+                uint256 totalValue = position.entryShortPrice.rayMul(preAccShortAmount) +
                                      price.rayMul(amount);
                 position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
+                Printer.log("price", price);
+                Printer.log("amount", amount);
+                Printer.log("entryShortPrice", position.entryShortPrice);
+                Printer.log("totalValue", totalValue);
+                Printer.log("accShortAmount", position.accShortAmount);
             }
-        }
-
-        if (position.positionType == Position.PositionTypeLong) {
+        }else if (position.positionType == Position.PositionTypeLong) {
             if (position.accLongAmount - amount > 0){
                 position.accLongAmount -= amount;
             } else {
