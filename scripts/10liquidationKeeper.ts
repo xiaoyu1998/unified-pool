@@ -11,9 +11,7 @@ async function liquidation(account){
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const liquidationHandler = await getDeployedContractAddresses("LiquidationHandler");
-
     const liquidityAndDebts = await getLiquidityAndDebts(dataStore, reader, account);
-    //console.log("liquidityAndDebts", liquidityAndDebts);
     for(const l of liquidityAndDebts) {
         if (l.debt > 0) {
             console.log("liquidityAndDebt", l);
@@ -31,8 +29,6 @@ async function liquidation(account){
 
 async function main() {
     const [owner] = await ethers.getSigners();
-    // const dataStore = await getContract("DataStore");   
-    // const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
     eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
         const event: LiquidationEvent.OutputTuple = {
@@ -62,8 +58,6 @@ async function main() {
 
     while(true){
         const account = owner.address;
-        // const position = await getPositions(dataStore, reader, account);
-        // console.log("position", position);
         const factor = await getLiquidationHealthFactor(account);
         console.log("factor", factor);
         if(!factor.isHealthFactorHigherThanLiquidationThreshold) {

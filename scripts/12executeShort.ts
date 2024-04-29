@@ -34,13 +34,10 @@ async function main() {
     };
 
     //execute swap
-    const uniIsZero =  (uniAddress.toLowerCase() < usdtAddress.toLowerCase()) ? true:false;
-    // const sqrtPriceLimitX96 = uniIsZero? MIN_SQRT_RATIO + BigInt(1): MAX_SQRT_RATIO - BigInt(1);
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,
         amountIn: expandDecimals(100, uniDecimals),
-        // sqrtPriceLimitX96: sqrtPriceLimitX96
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),

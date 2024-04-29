@@ -31,4 +31,7 @@ npx hardhat run scripts/7executeRepay.ts --network localhost
 npx hardhat run scripts/8executeRedeem.ts --network localhost
 npx hardhat run scripts/9executeSwap.ts --network localhost
 npx hardhat run scripts/10liquidationKeeper.ts --network localhost
+npx hardhat run scripts/11executeLong.ts --network localhost
+npx hardhat run scripts/12executeShort.ts --network localhost
+npx hardhat run scripts/13executeClosePosition.ts --network localhost
 ```

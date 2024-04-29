@@ -83,18 +83,13 @@ async function main() {
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
-    //console.log(tickTrim, tickLower, tickUpper);
     await uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(100, 16));
     console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
 
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    // const sqrtPriceLimitX96 = uniIsZero?
-    //                    encodePriceSqrt(expandDecimals(8, usdtDecimals), expandDecimals(1, uniDecimals)):
-    //                    encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(8, usdtDecimals));
     await uni.approve(dex.target, MaxUint256);
-    //await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, sqrtPriceLimitX96);
     await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
