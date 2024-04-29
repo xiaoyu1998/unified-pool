@@ -12,6 +12,5 @@ interface IDex {
         uint160 sqrtPriceLimitX96
     ) external;
 
-    // function token1() external view  returns (address);
-
+    function getSqrtPriceLimitX96(address tokenIn) external view returns (uint256);
 }

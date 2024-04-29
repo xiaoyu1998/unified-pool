@@ -23,14 +23,25 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
+    const uniDecimals = getTokens("UNI")["decimals"];
+    const uniAddress = getTokens("UNI")["address"];
+    // const uni = await contractAt("MintableToken", uniAddress);
 
-    const borrowAmmount = expandDecimals(1000, usdtDecimals);
-    const params: BorrowUtils.BorrowParamsStruct = {
+    const borrowAmmountUsdt = expandDecimals(1000, usdtDecimals);
+    const paramsUsdt: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
-        amount: borrowAmmount,
+        amount: borrowAmmountUsdt,
     };
+
+    const borrowAmmountUni = expandDecimals(100, uniDecimals);
+    const paramsUni: BorrowUtils.BorrowParamsStruct = {
+        underlyingAsset: uniAddress,
+        amount: borrowAmmountUni,
+    };
+
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeBorrow", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
@@ -41,7 +52,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
-    console.log("liquidationHealthFactor",await getLiquidationHealthFactor( owner.address)); 
+    //console.log("liquidationHealthFactor",await getLiquidationHealthFactor( owner.address)); 
     console.log("userUSDT",await usdt.balanceOf(owner.address)); 
     console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
     // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 

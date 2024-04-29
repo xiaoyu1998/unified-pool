@@ -20,17 +20,17 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const depositAmmount = expandDecimals(8000, usdtDecimals);
-    await sendTxn(usdt.approve(router.target, depositAmmount), `usdt.approve(${router.target})`)
-
+    const depositAmmountUsdt = expandDecimals(8000, usdtDecimals);
+    await sendTxn(usdt.approve(router.target, depositAmmountUsdt), `usdt.approve(${router.target})`)
+    
     //execute deposit
     const poolUsdt = await getPoolInfo(usdtAddress); 
-    const params: DepositUtils.DepositParamsStruct = {
+    const paramsUsdt: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmount]),
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [params]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);  
 
@@ -43,7 +43,8 @@ async function main() {
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("userUSDT",await usdt.balanceOf(owner.address)); 
     console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
-
+    // console.log("userUni",await uni.balanceOf(owner.address)); 
+    // console.log("poolUni",await uni.balanceOf(poolToken.target)); 
 }
 
 

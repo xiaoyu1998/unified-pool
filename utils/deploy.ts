@@ -383,6 +383,7 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 RepayUtils: repayUtils,
                 SwapUtils: swapUtils,
+                DexStoreUtils: dexStoreUtils,
                 //CloseEventUtils: closeEventUtils,
             },        
         });

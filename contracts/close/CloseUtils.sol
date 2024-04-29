@@ -79,21 +79,21 @@ library CloseUtils {
             collateralAmount,
             debtAmount
         );
-
-        RepayUtils.ExecuteRepayParams memory repayParams = RepayUtils.ExecuteRepayParams(
-            params.dataStore,
-            params.eventEmitter,
-            params.underlyingAsset,
-            debtAmount
-        );
-        RepayUtils.executeRepay(account, repayParams);
+        if (debtAmount > 0) {
+            RepayUtils.ExecuteRepayParams memory repayParams = RepayUtils.ExecuteRepayParams(
+                params.dataStore,
+                params.eventEmitter,
+                params.underlyingAsset,
+                debtAmount
+            );
+            RepayUtils.executeRepay(account, repayParams);
+        }
 
         uint256 remainAmount = collateralAmount - debtAmount;
-        uint256 remainAmountUsd = remainAmount;
+        // uint256 remainAmountUsd = remainAmount;
         if(remainAmount > 0 && params.underlyingAsset != params.underlyingAssetUsd) {
-            // address dex = DexStoreUtils.get(params.dataStore, params.underlyingAsset, params.underlyingAssetUsd);
-            // uint256 sqrtPriceLimitX96 = IDex(dex).lowestPrice(params.underlyingAsset, params.underlyingAssetUsd); 
-            uint256 sqrtPriceLimitX96 = 0;
+            address dex = DexStoreUtils.get(params.dataStore, params.underlyingAsset, params.underlyingAssetUsd);
+            uint256 sqrtPriceLimitX96 = IDex(dex).getSqrtPriceLimitX96(params.underlyingAsset); 
             SwapUtils.ExecuteSwapParams memory swapParams = SwapUtils.ExecuteSwapParams(
                 params.dataStore,
                 params.eventEmitter,
@@ -102,7 +102,8 @@ library CloseUtils {
                 remainAmount,
                 sqrtPriceLimitX96
             );
-            remainAmountUsd = SwapUtils.executeSwap(account, swapParams);
+
+            SwapUtils.executeSwap(account, swapParams);
         }
 
         PositionUtils.reset(position);

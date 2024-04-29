@@ -77,7 +77,6 @@ library Errors {
     // RedeemUtils errors
     error EmptyRedeemAmount();
     // error CollateralCanNotCoverRedeem(uint256 userTotalCollateral, uint256 userTotalDebt, uint256 amountToRedeem, uint256 HealthFactorCollateralRateThreshold);
-    
 
     // DexUniswapV3 errors
     error TokenCanNotSwapWithSelf(address token);
@@ -86,7 +85,7 @@ library Errors {
     // SwapUtils errors
     error SwapPoolsNotMatch(address pool0, address pool1);
     error EmptySwapAmount();
-    error SwapExecutedAmountIsZero(uint256 amountIn, uint256 amountOut);
+    error InsufficientDexLiquidity(uint256 avaiableDexAmountIn, uint256 amountIn);
 
     // CloseUtils errors
     error CollateralCanNotCoverDebt(uint256 collateralAmount, uint256 debtAmount);

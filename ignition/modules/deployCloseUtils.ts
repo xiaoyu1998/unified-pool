@@ -4,6 +4,7 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 
 import { repayUtilsModule } from "./deployRepayUtils"
 import { swapUtilsModule } from "./deploySwapUtils"
+import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 //import { closeEventUtilsModule } from "./deployCloseEventUtils"
 
 export const closeUtilsModule = buildModule("CloseUtils", (m) => {
@@ -11,6 +12,7 @@ export const closeUtilsModule = buildModule("CloseUtils", (m) => {
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
     const { repayUtils } = m.useModule(repayUtilsModule)
     const { swapUtils } = m.useModule(swapUtilsModule);
+    const { dexStoreUtils } = m.useModule(dexStoreUtilsModule);
     // const { closeEventUtils } = m.useModule(closeEventUtilsModule)
 
     const closeUtils = m.library("CloseUtils", {
@@ -19,6 +21,7 @@ export const closeUtilsModule = buildModule("CloseUtils", (m) => {
             PositionStoreUtils: positionStoreUtils,
             RepayUtils: repayUtils,
             SwapUtils: swapUtils,
+            DexStoreUtils: dexStoreUtils,
  //           CloseEventUtils: closeEventUtils,
         },      
     });

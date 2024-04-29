@@ -14,6 +14,11 @@ import "../utils/Printer.sol";
 contract DexUniswapV3 is IUniswapV3SwapCallback {
     using SafeCast for uint256;
 
+    /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
+    uint160 internal constant MIN_SQRT_RATIO = 4295128739;
+    /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
+    uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
+
     address internal _token0;
     address internal _token1;
     uint24 internal _fee;
@@ -32,6 +37,22 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         (_token0, _token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         _fee = fee;
         _pool = pool;
+    } 
+
+    function swap2(
+        address from,
+        address tokenIn,
+        uint256 amountIn,
+        address to
+    ) external {
+        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        if (tokenIn == _token0) {
+            return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
+        } else if (tokenIn == _token1) {
+            return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
+        } 
+
+        revert Errors.TokenDoNotMatch(_pool, _token0, _token1, tokenIn);   
     }  
 
     function swap(
@@ -43,7 +64,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
     ) external {
         if (tokenIn == _token0) {
             return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
-        } else if(tokenIn == _token1) {
+        } else if (tokenIn == _token1) {
             return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
         } 
 
@@ -135,8 +156,14 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         }
     }
 
-    // function token1() public view returns (address) {
-    //     return _token1;
-    // }
+    function getSqrtPriceLimitX96(address tokenIn) public view returns (uint160) {
+        if (tokenIn == _token0) {
+            return MIN_SQRT_RATIO + 1;
+        } else if (tokenIn == _token1) {
+            return MAX_SQRT_RATIO - 1;
+        } else {
+            revert Errors.TokenDoNotMatch(_pool, _token0, _token1, tokenIn); 
+        }
+    }
 
 }

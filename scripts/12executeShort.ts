@@ -27,7 +27,7 @@ async function main() {
     console.log("uniAddress",  uniAddress);
 
     //execute borrow
-    const borrowAmmount = expandDecimals(1, uniDecimals);
+    const borrowAmmount = expandDecimals(100, uniDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmount,
@@ -39,7 +39,7 @@ async function main() {
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,
-        amountIn: expandDecimals(10, uniDecimals),
+        amountIn: expandDecimals(100, uniDecimals),
         sqrtPriceLimitX96: sqrtPriceLimitX96
     };
     const multicallArgs = [
