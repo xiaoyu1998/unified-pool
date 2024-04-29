@@ -20,7 +20,7 @@ library FeeUtils {
     function incrementFeeAmount(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
-    ) internal {
+    ) internal pure {
         if (poolCache.feeFactor == 0) {
           return;
         }

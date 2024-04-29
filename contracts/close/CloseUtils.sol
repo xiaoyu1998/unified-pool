@@ -25,7 +25,7 @@ import "../repay/RepayUtils.sol";
 import "../swap/SwapUtils.sol";
 
 import "../event/EventEmitter.sol";
-// import "./CloseEventUtils.sol";
+import "./CloseEventUtils.sol";
 
 // @title CloseUtils
 // @dev Library for close position functions, to help with the close of position
@@ -72,8 +72,6 @@ library CloseUtils {
         uint256 debtAmount = debtToken.balanceOf(account);
 
         CloseUtils.validateClosePosition( 
-            account, 
-            params.dataStore, 
             pool,
             position,
             collateralAmount,
@@ -90,7 +88,7 @@ library CloseUtils {
         }
 
         uint256 remainAmount = collateralAmount - debtAmount;
-        // uint256 remainAmountUsd = remainAmount;
+        uint256 remainAmountUsd = remainAmount;
         if(remainAmount > 0 && params.underlyingAsset != params.underlyingAssetUsd) {
             address dex = DexStoreUtils.get(params.dataStore, params.underlyingAsset, params.underlyingAssetUsd);
             uint256 sqrtPriceLimitX96 = IDex(dex).getSqrtPriceLimitX96(params.underlyingAsset); 
@@ -103,21 +101,21 @@ library CloseUtils {
                 sqrtPriceLimitX96
             );
 
-            SwapUtils.executeSwap(account, swapParams);
+            remainAmountUsd = SwapUtils.executeSwap(account, swapParams);
         }
 
         PositionUtils.reset(position);
         PositionStoreUtils.set(params.dataStore, positionKey, position);      
 
-        // ClosePositionEventUtils.emitClosePosition(
-        //     params.eventEmitter, 
-        //     params.underlyingAsset, 
-        //     params.underlyingAssetUsd,
-        //     account, 
-        //     collateralAmount, 
-        //     debtAmount,
-        //     remainAmountUsd
-        // );
+        CloseEventUtils.emitClosePosition(
+            params.eventEmitter, 
+            params.underlyingAsset, 
+            params.underlyingAssetUsd,
+            account, 
+            collateralAmount, 
+            debtAmount,
+            remainAmountUsd
+        );
     }
 
     // @notice Validates a close position action.
@@ -125,13 +123,11 @@ library CloseUtils {
     // @param collateralAmount The amount of collateral
     // @param debtAmount The amount of debt
     function validateClosePosition(
-        address account,
-        address dataStore,
         Pool.Props memory pool,
         Position.Props memory position,
         uint256 collateralAmount,
         uint256 debtAmount
-    ) internal view {
+    ) internal pure {
         Printer.log("-------------------------validateClosePosition--------------------------");
         (   bool isActive,
             bool isFrozen, 

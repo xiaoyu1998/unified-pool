@@ -55,7 +55,7 @@ contract Reader {
             address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKeys[i]);
             address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKeys[i]);
             accountLiquidities[i] = 
-                ReaderUtils._getLiquidityAndDebt(account, dataStore, poolToken, debtToken);
+                ReaderUtils._getLiquidityAndDebt(account, poolToken, debtToken);
         }
         //TODO:should delete empty items
         return accountLiquidities;
@@ -65,7 +65,7 @@ contract Reader {
         address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
         ReaderUtils.GetLiquidityAndDebt memory accountLiquidity = 
-            ReaderUtils._getLiquidityAndDebt(account, dataStore, poolToken, debtToken);
+            ReaderUtils._getLiquidityAndDebt(account, poolToken, debtToken);
         return accountLiquidity;
     }
 

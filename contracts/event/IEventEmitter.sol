@@ -71,4 +71,13 @@ interface IEventEmitter {
         uint256 totalDebtUsd 
     ) external;
 
+    function emitClosePosition(
+        address underlyingAsset,
+        address underlyingAssetUsd,
+        address account,
+        uint256 collateralAmount,
+        uint256 debtAmount,
+        uint256 remainAmountUsd
+    ) external;
+
 }

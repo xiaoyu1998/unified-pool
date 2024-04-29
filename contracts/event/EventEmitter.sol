@@ -79,6 +79,15 @@ contract EventEmitter is RoleModule {
         uint256 totalDebtUsd
     );
 
+    event ClosePosition(
+        address indexed underlyingAsset,
+        address underlyingAssetUsd,
+        address indexed account,
+        uint256 collateralAmount,
+        uint256 debtAmount,
+        uint256 remainAmountUsd
+    );
+
 
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
@@ -215,6 +224,24 @@ contract EventEmitter is RoleModule {
             healthFactorLiquidationThreshold,
             totalCollateralUsd,
             totalDebtUsd
+        );
+    }
+
+    function emitClosePosition(
+        address underlyingAsset,
+        address underlyingAssetUsd,
+        address account,
+        uint256 collateralAmount,
+        uint256 debtAmount,
+        uint256 remainAmountUsd
+    ) external onlyController {
+        emit ClosePosition(
+            underlyingAsset,
+            underlyingAssetUsd,
+            account,
+            collateralAmount,
+            debtAmount,
+            remainAmountUsd
         );
     }
 

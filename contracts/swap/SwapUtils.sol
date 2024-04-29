@@ -62,15 +62,15 @@ library SwapUtils {
     // @dev executes a swap
     // @param account the swap account
     // @param params ExecuteSwapParams
-    function executeSwap(address account, ExecuteSwapParams calldata params) external returns (uint256, uint256) {
+    function executeSwap(address account, ExecuteSwapParams calldata params) external returns (uint256) {
         Printer.log("-------------------------executeSwap--------------------------");
         (   Pool.Props memory poolIn,
-            PoolCache.Props memory poolCacheIn,
+            ,
             address poolKeyIn,
             bool poolInIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAssetIn);
         (   Pool.Props memory poolOut,
-            PoolCache.Props memory poolCacheOut,
+            ,
             address poolKeyOut,
             bool poolOutIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAssetOut);
@@ -97,10 +97,6 @@ library SwapUtils {
         
         address dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
         SwapUtils.validateSwap( 
-            account, 
-            params.dataStore, 
-            positionIn, 
-            positionOut, 
             poolIn, 
             poolOut,
             amountIn,
@@ -193,6 +189,7 @@ library SwapUtils {
         );
 
         //return (amountIn, amountOut);
+        return amountOut;
 
     }
 
@@ -200,10 +197,6 @@ library SwapUtils {
     // @notice Validates a swap action.
     // @param amountIn The amount to be swapped in
     function validateSwap(
-        address account,
-        address dataStore,
-        Position.Props memory positionIn,
-        Position.Props memory positionOut,
         Pool.Props memory poolIn,
         Pool.Props memory poolOut,
         uint256 amountIn,
@@ -235,7 +228,6 @@ library SwapUtils {
         if(amountIn == 0) {
             revert Errors.EmptySwapAmount();
         } 
-
         //TODO:healthFactor should be validated        
 
     }

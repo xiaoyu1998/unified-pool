@@ -107,6 +107,7 @@ export async function getContract(name) {
         name == "WithdrawEventUtils" ||
         name == "SwapEventUtils" ||
         name == "LiquidationEventUtils" ||
+        name == "CloseEventUtils" ||
         name == "EventEmitter"  || 
         name == "DexStoreUtils" 
     ) {
@@ -373,7 +374,7 @@ export async function getContract(name) {
     }
 
     if (name == "CloseHandler") {
-        //const closeEventUtils = await getContract("CloseEventUtils");
+        const closeEventUtils = await getContract("CloseEventUtils");
         const repayUtils = await getContract("RepayUtils");
         const swapUtils = await getContract("SwapUtils");
         const closeUtilsAddress = getDeployedContractAddresses("CloseUtils");
@@ -384,7 +385,7 @@ export async function getContract(name) {
                 RepayUtils: repayUtils,
                 SwapUtils: swapUtils,
                 DexStoreUtils: dexStoreUtils,
-                //CloseEventUtils: closeEventUtils,
+                CloseEventUtils: closeEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);

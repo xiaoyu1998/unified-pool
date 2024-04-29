@@ -55,7 +55,7 @@ library PoolUtils {
         Pool.Props memory pool,
         PoolCache.Props memory poolCache,
         address underlyingAsset
-    ) internal {
+    ) internal view {
         Printer.log("--------------------updateInterestRates---------------------");
         uint256 totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
@@ -144,7 +144,7 @@ library PoolUtils {
     function updateIndexes(
         Pool.Props memory pool,
         PoolCache.Props memory poolCache
-    ) internal {
+    ) internal view {
         Printer.log("-----------------------updateIndexes------------------------");
         if (poolCache.currLiquidityRate != 0) {
             uint256 cumulatedLiquidityInterest = InterestUtils.calculateInterest(

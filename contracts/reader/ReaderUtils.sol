@@ -79,7 +79,6 @@ library ReaderUtils {
 
     function _getLiquidityAndDebt(
         address account,
-        address dataStore, 
         address poolTokenAddress, 
         address debtTokenAddress
     ) internal view returns (GetLiquidityAndDebt memory) {
@@ -103,18 +102,6 @@ library ReaderUtils {
     }
 
     function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
-        // uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-        // bytes32[] memory positionKeys = 
-        //     PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
-        // Position.Props[] memory positions = 
-        //     new Position.Props[](positionKeys.length);
-        // for (uint256 i; i < positionKeys.length; i++) {
-        //     bytes32 positionKey = positionKeys[i];
-        //     Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
-        //     positions[i] = position;
-        // }
-
-        // return positions;
         return PositionUtils.getPositions(account, dataStore);
     }
 
