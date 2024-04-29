@@ -288,7 +288,7 @@ library PositionUtils {
                 position.entryLongPrice = totalValue.rayDiv(position.accLongAmount);
             }
         }else if(position.positionType == Position.PositionTypeShort) {
-            if (position.accShortAmount - amount > 0){
+            if (position.accShortAmount > amount){
                 position.accShortAmount -= amount;
             } else {
                 position.positionType = Position.PositionTypeLong;
@@ -327,7 +327,7 @@ library PositionUtils {
                 Printer.log("accShortAmount", position.accShortAmount);
             }
         }else if (position.positionType == Position.PositionTypeLong) {
-            if (position.accLongAmount - amount > 0){
+            if (position.accLongAmount > amount){
                 position.accLongAmount -= amount;
             } else {
                 position.positionType = Position.PositionTypeShort;

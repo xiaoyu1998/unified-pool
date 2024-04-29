@@ -74,17 +74,21 @@ library BorrowUtils {
         //TODO:Should have borrow "to"
         IPoolToken poolToken = IPoolToken(poolCache.poolToken);
         poolToken.addCollateral(account, params.amount);//this line will change Rate
+        Printer.log("amount", params.amount);
         (, poolCache.nextTotalScaledDebt) = IDebtToken(poolCache.debtToken).mint(
             account, 
             params.amount, 
             poolCache.nextBorrowIndex
         );
+        Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         
         position.hasCollateral = true;
         position.hasDebt = true; 
         if (!poolIsUsd){
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            Printer.log("price", price);
             PositionUtils.shortPosition(position, price, params.amount);
+            Printer.log("price", price);
         }
         PositionStoreUtils.set(
             params.dataStore, 
