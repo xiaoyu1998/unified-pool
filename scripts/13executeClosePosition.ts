@@ -10,10 +10,18 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
-    // const eventEmitter = await getEventEmitter();  
-    // eventEmitter.on("Swap", (underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut) =>{
-    //     console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut);
-    // });
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("ClosePosition", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd) => {
+        const event: ClosePositionEvent.OutputTuple = {
+            underlyingAsset: underlyingAsset,
+            underlyingAssetUsd: underlyingAssetUsd,
+            account: account,
+            collateralAmount: collateralAmount,
+            debtAmount: debtAmount,
+            remainAmountUsd: remainAmountUsd
+        };        
+        console.log("eventEmitter ClosePosition" ,event);
+    });
 
     const usdtAddress = getTokens("USDT")["address"];
     const uniAddress = getTokens("UNI")["address"];
