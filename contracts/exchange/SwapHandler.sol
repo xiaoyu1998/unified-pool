@@ -32,8 +32,8 @@ contract SwapHandler is ISwapHandler, GlobalReentrancyGuard, RoleModule {
            address(eventEmitter),
            swapParams.underlyingAssetIn,     
            swapParams.underlyingAssetOut,         
-           swapParams.amountIn,
-           swapParams.sqrtPriceLimitX96
+           swapParams.amountIn
+//           swapParams.sqrtPriceLimitX96
            //swapParams.to
         );
 

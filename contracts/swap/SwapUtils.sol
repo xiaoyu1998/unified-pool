@@ -40,7 +40,7 @@ library SwapUtils {
         address underlyingAssetIn;
         address underlyingAssetOut;
         uint256 amountIn;
-        uint256 sqrtPriceLimitX96;
+//        uint256 sqrtPriceLimitX96;
     }
 
     struct ExecuteSwapParams {
@@ -49,7 +49,7 @@ library SwapUtils {
         address underlyingAssetIn;
         address underlyingAssetOut;
         uint256 amountIn;
-        uint256 sqrtPriceLimitX96;
+//        uint256 sqrtPriceLimitX96;
     }
 
     // // @dev executes a swap
@@ -106,12 +106,18 @@ library SwapUtils {
         Printer.log("-------------------------swapStart--------------------------");
         //swap
         poolTokenIn.approveLiquidity(dex, amountIn);
+        // IDex(dex).swap(
+        //     address(poolTokenIn), 
+        //     params.underlyingAssetIn, 
+        //     amountIn, 
+        //     address(poolTokenOut), 
+        //     uint160(params.sqrtPriceLimitX96)
+        // );
         IDex(dex).swap(
             address(poolTokenIn), 
             params.underlyingAssetIn, 
             amountIn, 
-            address(poolTokenOut), 
-            uint160(params.sqrtPriceLimitX96)
+            address(poolTokenOut)
         );
         Printer.log("-------------------------swapEnd--------------------------");
         //TODO:should check the amountIn has been exactly swapped in, and remove allowance

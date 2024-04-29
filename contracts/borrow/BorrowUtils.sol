@@ -114,7 +114,7 @@ library BorrowUtils {
     }
 
     // 
-    // @notice Validates a withdraw action.
+    // @notice Validates a borrow action.
     // @param poolCache The cached data of the pool
     // @param amount The amount to be Borrow
     //

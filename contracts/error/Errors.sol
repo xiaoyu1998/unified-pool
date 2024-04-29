@@ -41,8 +41,8 @@ library Errors {
     // PositionUtils errors
     error EmptyPosition();
     //error CollateralCanNotCover(uint256 userTotalCollateralUsd, uint256 userTotalDebtUsd, uint256 amountUsd, uint256 healthFactorCollateralRateThreshold);
-    error UsdDoNotHaveLongOperation();
-    error UsdDoNotHaveShortOperation();
+    error UsdNotHaveLongOperation();
+    error UsdNotHaveShortOperation();
     error HealthFactorLowerThanLiquidationThreshold(uint256 healthFactor, uint256 healthFactorLiquidationThreshold);
     error HealthFactorHigherThanLiquidationThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
     error HealthFactorLowerThanCollateralRateThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
@@ -80,7 +80,7 @@ library Errors {
 
     // DexUniswapV3 errors
     error TokenCanNotSwapWithSelf(address token);
-    error TokenDoNotMatch(address pool, address token0, address token1, address token);
+    error TokenNotMatch(address pool, address token0, address token1, address token);
 
     // SwapUtils errors
     error SwapPoolsNotMatch(address pool0, address pool1);

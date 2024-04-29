@@ -90,11 +90,12 @@ async function main() {
 
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    const sqrtPriceLimitX96 = uniIsZero?
-                       encodePriceSqrt(expandDecimals(8, usdtDecimals), expandDecimals(1, uniDecimals)):
-                       encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(8, usdtDecimals));
+    // const sqrtPriceLimitX96 = uniIsZero?
+    //                    encodePriceSqrt(expandDecimals(8, usdtDecimals), expandDecimals(1, uniDecimals)):
+    //                    encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(8, usdtDecimals));
     await uni.approve(dex.target, MaxUint256);
-    await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, sqrtPriceLimitX96);
+    //await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, sqrtPriceLimitX96);
+    await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 

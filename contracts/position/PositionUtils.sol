@@ -275,7 +275,7 @@ library PositionUtils {
     ) internal pure {
         //1st deposit/repay/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
-            //revert Errors.UsdDoNotHaveLongOperation();
+            //revert Errors.UsdNotHaveLongOperation();
             position.positionType = Position.PositionTypeLong;
             position.accLongAmount = amount;
             position.entryLongPrice = price;
@@ -309,7 +309,7 @@ library PositionUtils {
     ) internal pure {
         //1st borrow/redeem/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
-            //revert Errors.UsdDoNotHaveShortOperation();
+            //revert Errors.UsdNotHaveShortOperation();
             position.positionType = Position.PositionTypeShort;
             position.accShortAmount = amount;
             position.entryShortPrice = price;

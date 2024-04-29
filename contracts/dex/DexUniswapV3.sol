@@ -39,7 +39,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         _pool = pool;
     } 
 
-    function swap2(
+    function swap(
         address from,
         address tokenIn,
         uint256 amountIn,
@@ -52,24 +52,24 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
             return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
         } 
 
-        revert Errors.TokenDoNotMatch(_pool, _token0, _token1, tokenIn);   
+        revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
     }  
 
-    function swap(
-        address from,
-        address tokenIn,
-        uint256 amountIn,
-        address to,
-        uint160 sqrtPriceLimitX96
-    ) external {
-        if (tokenIn == _token0) {
-            return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
-        } else if (tokenIn == _token1) {
-            return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
-        } 
+    // function swap(
+    //     address from,
+    //     address tokenIn,
+    //     uint256 amountIn,
+    //     address to,
+    //     uint160 sqrtPriceLimitX96
+    // ) external {
+    //     if (tokenIn == _token0) {
+    //         return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
+    //     } else if (tokenIn == _token1) {
+    //         return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
+    //     } 
 
-        revert Errors.TokenDoNotMatch(_pool, _token0, _token1, tokenIn);   
-    }    
+    //     revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
+    // }    
 
     function _swapExact0For1(
         address from,
@@ -162,7 +162,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         } else if (tokenIn == _token1) {
             return MAX_SQRT_RATIO - 1;
         } else {
-            revert Errors.TokenDoNotMatch(_pool, _token0, _token1, tokenIn); 
+            revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn); 
         }
     }
 

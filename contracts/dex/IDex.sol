@@ -8,9 +8,16 @@ interface IDex {
         address from,
         address underlyingAssetIn,
         uint256 amountIn, 
-        address to,
-        uint160 sqrtPriceLimitX96
+        address to
     ) external;
+
+    // function swap(
+    //     address from,
+    //     address underlyingAssetIn,
+    //     uint256 amountIn, 
+    //     address to,
+    //     uint160 sqrtPriceLimitX96
+    // ) external;
 
     function getSqrtPriceLimitX96(address tokenIn) external view returns (uint256);
 }
