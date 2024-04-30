@@ -82,10 +82,10 @@ library BorrowUtils {
         
         position.hasCollateral = true;
         position.hasDebt = true; 
-        if (!poolIsUsd){
-            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
-            PositionUtils.shortPosition(position, price, params.amount);
-        }
+        // if (!poolIsUsd){
+        //     uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+        //     PositionUtils.shortPosition(position, price, params.amount);
+        // }
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
