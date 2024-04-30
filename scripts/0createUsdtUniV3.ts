@@ -90,7 +90,7 @@ async function main() {
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
     await uni.approve(dex.target, MaxUint256);
-    await dex.swap(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
+    await dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 

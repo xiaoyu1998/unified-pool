@@ -75,7 +75,7 @@ library SwapUtils {
     // @dev executes a swap
     // @param account the swap account
     // @param params ExecuteSwapParams
-    function executeSwap(address account, ExecuteSwapParams calldata params) external returns (uint256) {
+    function executeSwapExactIn(address account, ExecuteSwapParams calldata params) external returns (uint256) {
         Printer.log("-------------------------executeSwap--------------------------");
         SwapLocalVars memory vars;
         (   vars.poolIn,
@@ -120,7 +120,7 @@ library SwapUtils {
         Printer.log("-------------------------swapStart--------------------------");
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.amountIn);
-        IDex(vars.dex).swap(
+        IDex(vars.dex).swapExactIn(
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
             vars.amountIn, 
@@ -251,7 +251,7 @@ library SwapUtils {
         Printer.log("-------------------------swapStart--------------------------");
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.collateralAmount);
-        IDex(vars.dex).swap(
+        IDex(vars.dex).swapExactOut(
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
             vars.amountOut, 

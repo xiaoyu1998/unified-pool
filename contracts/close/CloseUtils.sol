@@ -115,7 +115,7 @@ library CloseUtils {
                 vars.remainAmount
             );
 
-            vars.remainAmountUsd = SwapUtils.executeSwap(account, vars.swapParams);
+            vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
         }
 
         PositionUtils.reset(vars.position);
@@ -238,7 +238,7 @@ library CloseUtils {
                     params.underlyingAssetUsd,
                     vars.remainAmount
                 );
-                SwapUtils.executeSwap(account, vars.swapParams);
+                SwapUtils.executeSwapExactIn(account, vars.swapParams);
             }
         }
 

@@ -32,7 +32,7 @@ async function main() {
         amount: expandDecimals(100000, usdtDecimals),
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeSwapExactIn", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);
 

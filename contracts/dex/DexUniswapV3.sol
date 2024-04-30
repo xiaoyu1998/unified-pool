@@ -39,7 +39,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         _pool = pool;
     } 
 
-    function swap(
+    function swapExactIn(
         address from,
         address tokenIn,
         uint256 amountIn,

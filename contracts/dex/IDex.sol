@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 interface IDex {
 
-    function swap(
+    function swapExactIn(
         address from,
         address underlyingAssetIn,
         uint256 amountIn, 
