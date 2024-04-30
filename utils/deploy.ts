@@ -375,6 +375,7 @@ export async function getContract(name) {
 
     if (name == "CloseHandler") {
         const closeEventUtils = await getContract("CloseEventUtils");
+        const oracleUtils = await getContract("OracleUtils");
         const repayUtils = await getContract("RepayUtils");
         const swapUtils = await getContract("SwapUtils");
         const closeUtilsAddress = getDeployedContractAddresses("CloseUtils");
@@ -384,7 +385,8 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 RepayUtils: repayUtils,
                 SwapUtils: swapUtils,
-                // DexStoreUtils: dexStoreUtils,
+                ConfigStoreUtils: configStoreUtils,
+                OracleUtils: oracleUtils,
                 CloseEventUtils: closeEventUtils,
             },        
         });

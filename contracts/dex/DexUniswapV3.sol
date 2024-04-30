@@ -55,21 +55,21 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
     }  
 
-    // function swap(
-    //     address from,
-    //     address tokenIn,
-    //     uint256 amountIn,
-    //     address to,
-    //     uint160 sqrtPriceLimitX96
-    // ) external {
-    //     if (tokenIn == _token0) {
-    //         return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
-    //     } else if (tokenIn == _token1) {
-    //         return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
-    //     } 
+    function swapExactOut(
+        address from,
+        address tokenIn,
+        uint256 amountOut,
+        address to
+    ) external {
+        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        if (tokenIn == _token0) {
+            return _swap0ForExact1(from, _pool, amountOut, to, sqrtPriceLimitX96);
+        } else if (tokenIn == _token1) {
+            return _swap1ForExact0(from, _pool, amountOut, to, sqrtPriceLimitX96);
+        } 
 
-    //     revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
-    // }    
+        revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
+    }    
 
     function _swapExact0For1(
         address from,

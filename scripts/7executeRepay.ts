@@ -20,7 +20,7 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const repayAmmount = expandDecimals(1200, usdtDecimals);
+    const repayAmmount = expandDecimals(100000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, repayAmmount), `usdt.approve(${router.target})`)
 
     const poolUsdt = await getPoolInfo(usdtAddress); 

@@ -67,6 +67,13 @@ library PositionUtils {
         postion.hasDebt = false;
     }
 
+    function getPositionKeys(address account, address dataStore) internal view returns (uint256, bytes32[] memory) {
+        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+        bytes32[] memory positionKeys = 
+            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
+        return (positionCount, positionKeys);
+    }
+
     function getPositions(address account, address dataStore) internal view returns (Position.Props[] memory) {
         uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
         bytes32[] memory positionKeys = 

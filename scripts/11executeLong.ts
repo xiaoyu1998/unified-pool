@@ -22,11 +22,8 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
 
-    console.log("usdtAddress",  usdtAddress);
-    console.log("uniAddress",  uniAddress);
-
     //execute borrow
-    const borrowAmmount = expandDecimals(1000, usdtDecimals);
+    const borrowAmmount = expandDecimals(1000000, usdtDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: borrowAmmount,
@@ -36,7 +33,7 @@ async function main() {
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amountIn: expandDecimals(1000, usdtDecimals),
+        amount: borrowAmmount,
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),

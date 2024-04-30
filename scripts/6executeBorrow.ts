@@ -27,13 +27,13 @@ async function main() {
     const uniAddress = getTokens("UNI")["address"];
     // const uni = await contractAt("MintableToken", uniAddress);
 
-    const borrowAmmountUsdt = expandDecimals(1000, usdtDecimals);
+    const borrowAmmountUsdt = expandDecimals(2000000, usdtDecimals);
     const paramsUsdt: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: borrowAmmountUsdt,
     };
 
-    const borrowAmmountUni = expandDecimals(100, uniDecimals);
+    const borrowAmmountUni = expandDecimals(20000, uniDecimals);
     const paramsUni: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmountUni,

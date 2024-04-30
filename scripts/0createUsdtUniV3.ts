@@ -19,8 +19,8 @@ async function main() {
     //create underlyingAssets
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
     const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
-    await usdt.mint(owner.address, expandDecimals(10000000, usdtDecimals));
-    await uni.mint(owner.address, expandDecimals(100000, uniDecimals));
+    await usdt.mint(owner.address, expandDecimals(100000000, usdtDecimals));
+    await uni.mint(owner.address, expandDecimals(20000000, uniDecimals));
 
     //set oracle
     const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimal, expandDecimals(1, usdtOracleDecimal)]);
@@ -83,7 +83,7 @@ async function main() {
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
-    await uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(100, 16));
+    await uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 20));
     console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
 

@@ -20,13 +20,13 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const depositAmmountUsdt = expandDecimals(8000, usdtDecimals);
+    const depositAmmountUsdt = expandDecimals(1000000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, depositAmmountUsdt), `usdt.approve(${router.target})`)
 
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
-    const depositAmmountUni = expandDecimals(80, uniDecimals);
+    const depositAmmountUni = expandDecimals(100000, uniDecimals);
     await sendTxn(uni.approve(router.target, depositAmmountUni), `uni.approve(${router.target})`)
     
     //execute deposit
@@ -53,10 +53,10 @@ async function main() {
     console.log("poolUsdtAfterDeposit", poolUsdtAfterDeposit);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
-    console.log("userUSDT",await usdt.balanceOf(owner.address)); 
-    console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
-    // console.log("userUni",await uni.balanceOf(owner.address)); 
-    // console.log("poolUni",await uni.balanceOf(poolToken.target)); 
+    console.log("userUsdt",await usdt.balanceOf(owner.address)); 
+    console.log("poolUsdt",await usdt.balanceOf(poolToken.target)); 
+    console.log("userUni",await uni.balanceOf(owner.address)); 
+    console.log("poolUni",await uni.balanceOf(poolToken.target)); 
 }
 
 

@@ -27,6 +27,18 @@ library PoolUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using WadRayMath for uint256;
+    using PoolConfigurationUtils for uint256;
+
+    function validateConfigurationPool(Pool.Props memory pool) internal pure {
+        (   bool isActive,
+            bool isFrozen, 
+            ,
+            bool isPaused
+        ) = pool.configuration.getFlags();
+        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
+        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
+        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   } 
+    }
 
     function validateEnabledPool(
         Pool.Props memory pool,

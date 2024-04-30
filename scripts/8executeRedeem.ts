@@ -20,7 +20,7 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const redeemAmmount = expandDecimals(1000, usdtDecimals);
+    const redeemAmmount = expandDecimals(800000, usdtDecimals);
  
     const poolUsdt = await getPoolInfo(usdtAddress); 
     const params: DepositUtils.DepositParamsStruct = {

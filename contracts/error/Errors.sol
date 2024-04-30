@@ -85,10 +85,13 @@ library Errors {
     // SwapUtils errors
     error SwapPoolsNotMatch(address pool0, address pool1);
     error EmptySwapAmount();
-    error InsufficientDexLiquidity(uint256 avaiableDexAmountIn, uint256 amountIn);
+    error InsufficientDexLiquidity(uint256 avaiableDexAmount, uint256 amount);
+    error InsufficientCollateralForSwap(uint256 swapNeedamountIn, uint256 collateralAmount);
 
     // CloseUtils errors
     error CollateralCanNotCoverDebt(uint256 collateralAmount, uint256 debtAmount);
+    error EmptyPositions(address account);
+    error UsdCollateralCanNotCoverDebt(uint256 usdCollateralAmount, uint256 usdCollateralAmountNeeded, uint256 debtAmount, address underlyingAsset);
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);

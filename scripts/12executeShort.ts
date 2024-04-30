@@ -27,7 +27,7 @@ async function main() {
     console.log("uniAddress",  uniAddress);
 
     //execute borrow
-    const borrowAmmount = expandDecimals(100, uniDecimals);
+    const borrowAmmount = expandDecimals(80000, uniDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmount,
@@ -37,7 +37,7 @@ async function main() {
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,
-        amountIn: expandDecimals(100, uniDecimals),
+        amount: expandDecimals(100, uniDecimals),
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),

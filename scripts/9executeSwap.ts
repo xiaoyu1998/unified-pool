@@ -29,7 +29,7 @@ async function main() {
     const params: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amountIn: expandDecimals(1000, usdtDecimals),
+        amount: expandDecimals(100000, usdtDecimals),
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
