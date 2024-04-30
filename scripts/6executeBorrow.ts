@@ -33,7 +33,7 @@ async function main() {
         amount: borrowAmmountUsdt,
     };
 
-    const borrowAmmountUni = expandDecimals(20000, uniDecimals);
+    const borrowAmmountUni = expandDecimals(100000, uniDecimals);
     const paramsUni: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmountUni,

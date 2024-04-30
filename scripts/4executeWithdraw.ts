@@ -49,8 +49,6 @@ async function main() {
     console.log("account", await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("poolUSDT", await usdt.balanceOf(poolToken.target)); 
     console.log("userUSDT", await usdt.balanceOf(owner.address)); 
-    console.log("userUni", await uni.balanceOf(owner.address)); 
-    console.log("poolUni", await uni.balanceOf(poolToken.target)); 
 
 }
 
