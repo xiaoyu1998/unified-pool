@@ -181,6 +181,10 @@ library CloseUtils {
         uint256 collateralAmountUsd;
         uint256 CollateralAmountNeededUsd;
         uint256 i;
+
+        uint256 amountUsdStartClose;
+        uint256 amountUsdAfterRepayAndSellCollateral;
+        uint256 amountUsdAfterBuyCollateralAndRepay;
     }
     // @dev executes close an account all positions 
     // @param account the closing account's positions
@@ -196,6 +200,7 @@ library CloseUtils {
         vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolUsdKey);
         PoolUtils.validateEnabledPool(vars.poolUsd, vars.poolUsdKey);
         vars.poolTokenUsd = IPoolToken(vars.poolUsd.poolToken);
+        vars.amountUsdStartClose = vars.poolTokenUsd.balanceOfCollateral(account);
 
         (   vars.positionCount,
             vars.positionKeys 
@@ -209,6 +214,7 @@ library CloseUtils {
         
         Printer.log("-------------------------executeClose1st--------------------------");
         Printer.log("positionCount", vars.positionCount);
+        Printer.log("amountUsdStartClose", vars.amountUsdStartClose);
         // reapy and sell collateral
         for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
@@ -244,12 +250,14 @@ library CloseUtils {
             }
         }
 
+        vars.amountUsdAfterRepayAndSellCollateral = vars.poolTokenUsd.balanceOfCollateral(account);
         //pre-swap will create underlyingAssetUsd position
         (   vars.positionCount,
             vars.positionKeys 
         ) = PositionUtils.getPositionKeys(account, params.dataStore);
         Printer.log("-------------------------executeClose2nd--------------------------");
         Printer.log("positionCount", vars.positionCount);
+        Printer.log("amountUsdAfterRepayAndSellCollateral", vars.amountUsdAfterRepayAndSellCollateral);
 
         // buy and repay the left debt
         for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
@@ -295,8 +303,17 @@ library CloseUtils {
 
             PositionUtils.reset(vars.position);
             PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position);             
-        }     
-
+        }  
+        vars.amountUsdAfterBuyCollateralAndRepay = vars.poolTokenUsd.balanceOfCollateral(account); 
+        Printer.log("amountUsdAfterBuyCollateralAndRepay", vars.amountUsdAfterBuyCollateralAndRepay);
+        CloseEventUtils.emitClose(
+            params.eventEmitter, 
+            params.underlyingAssetUsd,
+            account, 
+            vars.amountUsdStartClose, 
+            vars.amountUsdAfterRepayAndSellCollateral,
+            vars.amountUsdAfterBuyCollateralAndRepay
+        );
     }
 
     // @notice Validates a close position action.

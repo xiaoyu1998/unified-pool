@@ -88,6 +88,14 @@ contract EventEmitter is RoleModule {
         uint256 remainAmountUsd
     );
 
+    event Close(
+        address indexed underlyingAssetUsd,
+        address indexed account,
+        uint256 amountUsdStartClose,
+        uint256 amountUsdAfterRepayAndSellCollateral,
+        uint256 amountUsdAfterBuyCollateralAndRepay
+    );
+
 
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
@@ -242,6 +250,22 @@ contract EventEmitter is RoleModule {
             collateralAmount,
             debtAmount,
             remainAmountUsd
+        );
+    }
+
+    function emitClose(
+        address underlyingAssetUsd,
+        address account,
+        uint256 amountUsdStartClose,
+        uint256 amountUsdAfterRepayAndSellCollateral,
+        uint256 amountUsdAfterBuyCollateralAndRepay
+    ) external onlyController {
+        emit Close(
+            underlyingAssetUsd,
+            account,
+            amountUsdStartClose,
+            amountUsdAfterRepayAndSellCollateral,
+            amountUsdAfterBuyCollateralAndRepay
         );
     }
 

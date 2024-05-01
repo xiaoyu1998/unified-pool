@@ -13,18 +13,17 @@ async function main() {
     const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
-    // const eventEmitter = await getEventEmitter();  
-    // eventEmitter.on("Close", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd) => {
-    //     const event: ClosePositionEvent.OutputTuple = {
-    //         underlyingAsset: underlyingAsset,
-    //         underlyingAssetUsd: underlyingAssetUsd,
-    //         account: account,
-    //         collateralAmount: collateralAmount,
-    //         debtAmount: debtAmount,
-    //         remainAmountUsd: remainAmountUsd
-    //     };        
-    //     console.log("eventEmitter ClosePosition" ,event);
-    // });
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Close", (underlyingAssetUsd, account, amountUsdStartClose, amountUsdAfterRepayAndSellCollateral, amountUsdAfterBuyCollateralAndRepay) => {
+        const event: CloseEvent.OutputTuple = {
+            underlyingAssetUsd: underlyingAssetUsd,
+            account: account,
+            amountUsdStartClose: amountUsdStartClose,
+            amountUsdAfterRepayAndSellCollateral: amountUsdAfterRepayAndSellCollateral,
+            amountUsdAfterBuyCollateralAndRepay: amountUsdAfterBuyCollateralAndRepay
+        };        
+        console.log("eventEmitter Close" ,event);
+    });
 
     const usdtDecimals = getTokens("USDT")["decimals"];
     const uniDecimals = getTokens("UNI")["decimals"];

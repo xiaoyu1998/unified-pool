@@ -80,4 +80,12 @@ interface IEventEmitter {
         uint256 remainAmountUsd
     ) external;
 
+    function emitClose(
+        address underlyingAssetUsd,
+        address account,
+        uint256 amountUsdStartClose,
+        uint256 amountUsdAfterRepayAndSellCollateral,
+        uint256 amountUsdAfterBuyCollateralAndRepay
+    ) external;
+
 }

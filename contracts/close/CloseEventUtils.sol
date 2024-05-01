@@ -25,4 +25,21 @@ library CloseEventUtils {
         );
     }
 
+    function emitClose(
+        address eventEmitter,
+        address underlyingAssetUsd,
+        address account,
+        uint256 amountUsdStartClose,
+        uint256 amountUsdAfterRepayAndSellCollateral,
+        uint256 amountUsdAfterBuyCollateralAndRepay
+    ) external {
+        IEventEmitter(eventEmitter).emitClose(
+            underlyingAssetUsd,
+            account,
+            amountUsdStartClose,
+            amountUsdAfterRepayAndSellCollateral,
+            amountUsdAfterBuyCollateralAndRepay
+        );
+    }
+
 }
