@@ -67,6 +67,7 @@ library BorrowUtils {
         BorrowUtils.validateBorrow( 
             account, 
             params.dataStore, 
+            pool,
             poolCache, 
             params.amount
         );
@@ -82,10 +83,6 @@ library BorrowUtils {
         
         position.hasCollateral = true;
         position.hasDebt = true; 
-        // if (!poolIsUsd){
-        //     uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
-        //     PositionUtils.shortPosition(position, price, params.amount);
-        // }
         PositionStoreUtils.set(
             params.dataStore, 
             positionKey, 
@@ -121,20 +118,13 @@ library BorrowUtils {
     function validateBorrow(
         address account,
         address dataStore,
+        Pool.Props memory pool,
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal view {
         Printer.log("-------------------------validateBorrow--------------------------");
         //validate pool configuration
-        (   bool isActive,
-            bool isFrozen,
-            bool borrowingEnabled,
-            bool isPaused
-        ) = PoolConfigurationUtils.getFlags(poolCache.configuration);  
-        if (!isActive)         { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)          { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
-        if (isFrozen)          { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }   
-        if (!borrowingEnabled) { revert Errors.PoolIsNotBorrowing(poolCache.underlyingAsset);   } 
+        PoolUtils.validateConfigurationPool(pool, true);   
 
         if (amountToBorrow == 0) { 
             revert Errors.EmptyBorrowAmounts(); 

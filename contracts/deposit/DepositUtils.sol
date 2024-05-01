@@ -46,7 +46,7 @@ library DepositUtils {
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
         Printer.log("-------------------------executeDeposit--------------------------");
         (   Pool.Props memory pool,
-            PoolCache.Props memory poolCache,
+            ,
             address poolKey,
             bool poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
@@ -65,7 +65,7 @@ library DepositUtils {
         uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
-            poolCache, 
+            pool, 
             depositAmount
         );
 
@@ -102,17 +102,10 @@ library DepositUtils {
     // @param amount The amount to be deposit
     //
     function validateDeposit(
-        PoolCache.Props memory poolCache,
+        Pool.Props memory pool,
         uint256 amount
     ) internal pure {
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
-        ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }   
+        PoolUtils.validateConfigurationPool(pool, false);   
 
         if (amount == 0) { 
             revert Errors.EmptyDepositAmounts(); 

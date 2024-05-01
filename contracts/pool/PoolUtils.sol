@@ -29,15 +29,25 @@ library PoolUtils {
     using WadRayMath for uint256;
     using PoolConfigurationUtils for uint256;
 
-    function validateConfigurationPool(Pool.Props memory pool) internal pure {
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
+    struct ValidateConfigurationPoolLocalVars {
+        bool isActive;
+        bool isFrozen; 
+        bool borrowingEnabled;
+        bool isPaused;
+    }
+    function validateConfigurationPool(Pool.Props memory pool, bool isBorrow) internal pure {
+        ValidateConfigurationPoolLocalVars memory vars;
+        (   vars.isActive,
+            vars.isFrozen, 
+            vars.borrowingEnabled,
+            vars.isPaused
         ) = pool.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   } 
+        if (!vars.isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
+        if (vars.isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
+        if (vars.isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   } 
+        if (isBorrow) {
+            if (!vars.borrowingEnabled) { revert Errors.PoolIsNotBorrowing(pool.underlyingAsset);   } 
+        }
     }
 
     function validateEnabledPool(

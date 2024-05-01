@@ -354,23 +354,8 @@ library SwapUtils {
              revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);
         }
 
-        (   bool isActiveIn,
-            bool isFrozenIn, 
-            ,
-            bool isPausedIn
-        ) = poolIn.configuration.getFlags();
-        if (!isActiveIn) { revert Errors.PoolIsInactive(poolIn.underlyingAsset); }  
-        if (isPausedIn)  { revert Errors.PoolIsPaused(poolIn.underlyingAsset);   }  
-        if (isFrozenIn)  { revert Errors.PoolIsFrozen(poolIn.underlyingAsset);   }  
-
-        (   bool isActiveOut,
-            bool isFrozenOut, 
-            ,
-            bool isPausedOut
-        ) = poolOut.configuration.getFlags();
-        if (!isActiveOut) { revert Errors.PoolIsInactive(poolOut.underlyingAsset); }  
-        if (isPausedOut)  { revert Errors.PoolIsPaused(poolOut.underlyingAsset);   }  
-        if (isFrozenOut)  { revert Errors.PoolIsFrozen(poolOut.underlyingAsset);   } 
+        PoolUtils.validateConfigurationPool(poolIn, false);
+        PoolUtils.validateConfigurationPool(poolOut, false);
 
         if(amount == 0) {
             revert Errors.EmptySwapAmount();

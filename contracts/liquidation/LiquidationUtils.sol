@@ -82,7 +82,8 @@ library LiquidationUtils {
                 PoolCache.Props memory poolCache,
                 address poolKey,
             ) = PoolUtils.updatePoolAndCache(params.dataStore, position.underlyingAsset);
-            LiquidationUtils.validatePool(position.underlyingAsset, pool.configuration);
+            // LiquidationUtils.validatePool(position.underlyingAsset, pool.configuration);
+            PoolUtils.validateConfigurationPool(pool, false);  
 
             IPoolToken poolToken = IPoolToken(pool.poolToken);
             uint256 collateralAmount;
@@ -163,18 +164,18 @@ library LiquidationUtils {
                 userTotalDebtUsd);
     }
 
-    function validatePool(
-        address underlyingAsset,
-        uint256 configuration
-    ) internal pure {
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
-        ) = configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(underlyingAsset);   }  
-    }
+    // function validatePool(
+    //     address underlyingAsset,
+    //     uint256 configuration
+    // ) internal pure {
+    //     (   bool isActive,
+    //         bool isFrozen, 
+    //         ,
+    //         bool isPaused
+    //     ) = configuration.getFlags();
+    //     if (!isActive) { revert Errors.PoolIsInactive(underlyingAsset); }  
+    //     if (isPaused)  { revert Errors.PoolIsPaused(underlyingAsset);   }  
+    //     if (isFrozen)  { revert Errors.PoolIsFrozen(underlyingAsset);   }  
+    // }
     
 }

@@ -44,14 +44,6 @@ library RepayUtils {
         uint256 amount;
     }
 
-
-   // // @dev executes a repay
-   //  // @param account the repaying account
-   //  // @param params ExecuteRepayParams
-   //  function executeRepay(address account, ExecuteRepayParams calldata params) external {
-   //      _executeRepay(account, params);
-   //  }
-
     // @dev executes a repay
     // @param account the repaying account
     // @param params ExecuteRepayParams
@@ -89,7 +81,7 @@ library RepayUtils {
         Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
         RepayUtils.validateRepay(
             account, 
-            poolCache,
+            pool,
             position, 
             repayAmount, 
             debtAmount, 
@@ -142,29 +134,21 @@ library RepayUtils {
     }
     
     // @notice Validates a repay action.
-    // @param poolCache The cached data of the pool
+    // @param pool The pool
     // @param repayAmount The amount to be repay
     function validateRepay(
         address account,
-        PoolCache.Props memory poolCache,
+        Pool.Props memory pool,
         Position.Props memory position,
         uint256 repayAmount,
         uint256 debtAmount,
         uint256 collateralAmount
     ) internal pure {
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
-        ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }  
-
+        PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
 
         if(debtAmount == 0) {
-            revert Errors.UserDoNotHaveDebtInPool(account, poolCache.underlyingAsset);
+            revert Errors.UserDoNotHaveDebtInPool(account, pool.underlyingAsset);
         }
         
         if(repayAmount == 0) {

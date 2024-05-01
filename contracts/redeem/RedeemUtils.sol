@@ -58,7 +58,7 @@ library RedeemUtils {
         Printer.log("-------------------------executeRedeem--------------------------");
         //TODO:should be just get the pooltoken and pool configuration only
         (   Pool.Props memory pool,
-            PoolCache.Props memory poolCache,
+            ,
             address poolKey,
             bool poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
@@ -78,7 +78,7 @@ library RedeemUtils {
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
-            poolCache, 
+            pool, 
             position, 
             redeemAmount
         );
@@ -115,47 +115,38 @@ library RedeemUtils {
     }
 
     // @notice Validates a redeem action.
-    // @param poolCache The cached data of the pool
+    // @param pool The pool
     // @param amountToRedeem The amount to be redeemn
     function validateRedeem(
         address account,
         address dataStore,
-        PoolCache.Props memory poolCache,
+        Pool.Props memory pool,
         Position.Props memory position,
         uint256 amountToRedeem
     ) internal view {
         Printer.log("-------------------------validateRedeem--------------------------");
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
-        ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   }  
-
-
+        PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
 
         if(amountToRedeem == 0) {
             revert Errors.EmptyRedeemAmount();
         }
 
-        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, poolCache.underlyingAsset);
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, pool.underlyingAsset);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
         PositionUtils.validateLiquidationHealthFactor(
             account, 
             dataStore, 
-            poolCache.underlyingAsset, 
+            pool.underlyingAsset, 
             amountToRedeem,
             decimals
         );
 
-        // IPoolToken poolCacheToken = IPoolToken(poolCache.poolToken);
-        // IDebtToken debtToken   = IDebtToken(poolCache.debtToken);
+        // IPoolToken poolCacheToken = IPoolToken(pool.poolToken);
+        // IDebtToken debtToken   = IDebtToken(pool.debtToken);
         // uint256 collateralAmount = poolCacheToken.balanceOfCollateral(account);
         // uint256 debtAmount = debtToken.balanceOf(account);
-        // PositionUtils.validateCollateralRateHealthFactor(dataStore, poolCache.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
+        // PositionUtils.validateCollateralRateHealthFactor(dataStore, pool.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
 
     }
 }

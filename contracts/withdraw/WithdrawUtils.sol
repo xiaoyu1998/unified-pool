@@ -60,7 +60,7 @@ library WithdrawUtils {
         );
 
         WithdrawUtils.validateWithdraw(
-            poolCache, 
+            pool, 
             amountToWithdraw, 
             userBalance,
             unclaimedFee
@@ -97,22 +97,16 @@ library WithdrawUtils {
     }
 
     // @notice Validates a withdraw action.
-    // @param poolCache The cached data of the pool
+    // @param pool The pool
     // @param amount The amount to be withdrawn
     // @param userBalance The supply balance of the user   
     function validateWithdraw(
-        PoolCache.Props memory poolCache,
+        Pool.Props memory pool,
         uint256 amount,
         uint256 userBalance,
         uint256 unclaimedFee
     ) internal view{
-        (   bool isActive,
-            , 
-            ,
-            bool isPaused
-        ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
+        PoolUtils.validateConfigurationPool(pool, false);    
 
         if (amount == 0) { 
             revert Errors.EmptyWithdrawAmounts(); 
@@ -122,7 +116,7 @@ library WithdrawUtils {
             revert Errors.InsufficientUserBalance(amount, userBalance);
         }
 
-        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(unclaimedFee);
+        uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
         if (amount > availableLiquidity) {
             revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
         } 

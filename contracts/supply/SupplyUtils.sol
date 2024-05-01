@@ -55,6 +55,7 @@ library SupplyUtils {
         uint256 supplyAmount = poolToken.recordTransferIn(params.underlyingAsset);// supplyAmount liquidity has beed added
 
         SupplyUtils.validateSupply(
+            pool,
             poolCache, 
             supplyAmount
         );
@@ -90,17 +91,11 @@ library SupplyUtils {
     // @param poolCache The cached data of the pool
     // @param amount The amount to be supply
     function validateSupply(
+        Pool.Props memory pool,
         PoolCache.Props memory poolCache,
         uint256 amount
     ) internal view {
-        (   bool isActive,
-            bool isFrozen, 
-            ,
-            bool isPaused
-        ) = poolCache.configuration.getFlags();
-        if (!isActive) { revert Errors.PoolIsInactive(poolCache.underlyingAsset); }  
-        if (isPaused)  { revert Errors.PoolIsPaused(poolCache.underlyingAsset);   }  
-        if (isFrozen)  { revert Errors.PoolIsFrozen(poolCache.underlyingAsset);   } 
+        PoolUtils.validateConfigurationPool(pool, false); 
 
         if (amount == 0) { 
             revert Errors.EmptySupplyAmounts(); 

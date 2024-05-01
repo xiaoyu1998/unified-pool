@@ -143,7 +143,7 @@ library CloseUtils {
         uint256 debtAmount
     ) internal pure {
         Printer.log("-------------------------validateClosePosition--------------------------");
-        PoolUtils.validateConfigurationPool(pool);
+        PoolUtils.validateConfigurationPool(pool, false);
         PositionUtils.validateEnabledPosition(position);
 
         if (collateralAmount <  debtAmount) {
@@ -221,7 +221,7 @@ library CloseUtils {
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
             PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
-            PoolUtils.validateConfigurationPool(vars.pool);
+            PoolUtils.validateConfigurationPool(vars.pool, false);
 
             vars.poolToken = IPoolToken(vars.pool.poolToken);
             vars.debtToken = IDebtToken(vars.pool.debtToken);
@@ -264,8 +264,8 @@ library CloseUtils {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
-            PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
-            PoolUtils.validateConfigurationPool(vars.pool);
+            // PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
+            // PoolUtils.validateConfigurationPool(vars.pool, false);
 
             if (vars.position.underlyingAsset == params.underlyingAssetUsd) {
                 continue;
