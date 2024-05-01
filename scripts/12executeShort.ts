@@ -1,8 +1,6 @@
 import { contractAt, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
-import { MIN_SQRT_RATIO, MAX_SQRT_RATIO} from "../utils/constants";
-
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";
 
 async function main() {
@@ -23,14 +21,14 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
 
-    //execute borrow
+    //borrow
     const borrowAmmount = expandDecimals(100000, uniDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmount,
     };
 
-    //execute swap
+    //swap
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,

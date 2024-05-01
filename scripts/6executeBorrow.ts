@@ -1,7 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions, getLiquidationHealthFactor} from "../utils/helper";
-
 import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler";
 
 async function main() {
@@ -19,20 +18,20 @@ async function main() {
     const config = await getContract("Config");
     await config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25))//110%
 
-    //execute borrows
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
-    // const uni = await contractAt("MintableToken", uniAddress);
 
+    //borrow usdt
     const borrowAmmountUsdt = expandDecimals(2000000, usdtDecimals);
     const paramsUsdt: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: borrowAmmountUsdt,
     };
-
+    
+    //borrow uni
     const borrowAmmountUni = expandDecimals(100000, uniDecimals);
     const paramsUni: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,

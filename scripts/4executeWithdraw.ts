@@ -1,7 +1,6 @@
 import { contractAt, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts } from "../utils/helper";
-
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
 async function main() {
@@ -15,7 +14,7 @@ async function main() {
         console.log("eventEmitter Withdraw" ,pool, withdrawer, to, amount);
     }); 
 
-    //execute withdraw
+    //withdraw usdt
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
@@ -26,6 +25,7 @@ async function main() {
         to: owner.address,
     };
 
+    //withdraw uni
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);

@@ -2,7 +2,6 @@ import { getContract, sendTxn, getTokens } from "../utils/deploy";
 import { bigNumberify, expandDecimals } from "../utils/math";
 import { parsePool } from "../utils/helper";
 
-
 async function main() {
     //create pools
     const usdtDecimals = getTokens("USDT")["decimals"];
