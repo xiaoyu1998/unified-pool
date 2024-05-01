@@ -244,7 +244,7 @@ library SwapUtils {
         SwapUtils.validateSwap( 
             vars.poolIn, 
             vars.poolOut,
-            vars.amountIn,
+            vars.amountOut,
             vars.dex
         );
 

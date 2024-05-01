@@ -182,8 +182,8 @@ library CloseUtils {
         uint256 CollateralAmountNeededUsd;
         uint256 i;
     }
-    // @dev executes an account all positions close
-    // @param account the closing account's position
+    // @dev executes close an account all positions 
+    // @param account the closing account's positions
     // @param params ExecuteCloseParams
     function executeClose(
         address account, 
@@ -206,9 +206,11 @@ library CloseUtils {
             params.dataStore,
             vars.positionCount
         );
-
+        
+        Printer.log("-------------------------executeClose1st--------------------------");
+        Printer.log("positionCount", vars.positionCount);
         // reapy and sell collateral
-        for (vars.i; vars.i < vars.positionCount; vars.i++) {
+        for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
@@ -229,7 +231,7 @@ library CloseUtils {
                 RepayUtils.executeRepay(account, vars.repayParams);
             }
 
-            if (vars.collateralAmount - vars.debtAmount > 0 && vars.position.underlyingAsset != params.underlyingAssetUsd) {
+            if (vars.collateralAmount > vars.debtAmount  && vars.position.underlyingAsset != params.underlyingAssetUsd) {
                 vars.remainAmount = vars.collateralAmount - vars.debtAmount;
                 vars.swapParams = SwapUtils.ExecuteSwapParams(
                     params.dataStore,
@@ -246,9 +248,11 @@ library CloseUtils {
         (   vars.positionCount,
             vars.positionKeys 
         ) = PositionUtils.getPositionKeys(account, params.dataStore);
+        Printer.log("-------------------------executeClose2nd--------------------------");
+        Printer.log("positionCount", vars.positionCount);
 
         // buy and repay the left debt
-        for (vars.i; vars.i < vars.positionCount; vars.i++) {
+        for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
