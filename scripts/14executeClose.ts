@@ -10,29 +10,28 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
-    const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("ClosePosition", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd) => {
-        const event: ClosePositionEvent.OutputTuple = {
-            underlyingAsset: underlyingAsset,
-            underlyingAssetUsd: underlyingAssetUsd,
-            account: account,
-            collateralAmount: collateralAmount,
-            debtAmount: debtAmount,
-            remainAmountUsd: remainAmountUsd
-        };        
-        console.log("eventEmitter ClosePosition" ,event);
-    });
+    // const eventEmitter = await getEventEmitter();  
+    // eventEmitter.on("Close", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd) => {
+    //     const event: ClosePositionEvent.OutputTuple = {
+    //         underlyingAsset: underlyingAsset,
+    //         underlyingAssetUsd: underlyingAssetUsd,
+    //         account: account,
+    //         collateralAmount: collateralAmount,
+    //         debtAmount: debtAmount,
+    //         remainAmountUsd: remainAmountUsd
+    //     };        
+    //     console.log("eventEmitter ClosePosition" ,event);
+    // });
 
     const usdtAddress = getTokens("USDT")["address"];
     const uniAddress = getTokens("UNI")["address"];
 
     //execute close Position
-    const params: CloseUtils.ClosePositionParamsStruct = {
-        underlyingAsset: uniAddress,
+    const params: CloseUtils.CloseParamsStruct = {
         underlyingAssetUsd: usdtAddress
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeClose", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);
 

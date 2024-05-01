@@ -141,7 +141,10 @@ library BorrowUtils {
         }
 
         //validate liquidity
-        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
+        uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
+            poolCache.nextBorrowIndex
+        );
+        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(unclaimedFee);
         if(amountToBorrow > availableLiquidity) {
             revert Errors.InsufficientLiquidityForBorrow(amountToBorrow, availableLiquidity);
         }

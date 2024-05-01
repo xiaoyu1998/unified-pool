@@ -23,9 +23,6 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
 
-    console.log("usdtAddress",  usdtAddress);
-    console.log("uniAddress",  uniAddress);
-
     //execute borrow
     const borrowAmmount = expandDecimals(100000, uniDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {

@@ -67,12 +67,13 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     	address from, 
     	address to, 
     	uint256 amount, 
-    	uint256 index
+    	uint256 index,
+    	uint256 unclaimedFee
     ) external virtual onlyController {
 		_burnScaled( from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 _availableLiquidity = availableLiquidity();
+	         uint256 _availableLiquidity = availableLiquidity(unclaimedFee);
 			 if (amount > _availableLiquidity){
 			 	 revert Errors.InsufficientAvailableLiquidity(amount, _availableLiquidity);
 			 }
@@ -147,10 +148,10 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		return _totalCollateral;
 	}
 
-	function availableLiquidity() public view returns (uint256) {
+	function availableLiquidity(uint256 unclaimedFee) public view returns (uint256) {
 		Printer.log("totalCollateral", totalCollateral());
 		Printer.log("balanceOf", IERC20(_underlyingAsset).balanceOf(address(this)));
-		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral();
+		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() - unclaimedFee;
 	}
 
     function approveLiquidity(address spender, uint256 value) public onlyController returns (bool) {

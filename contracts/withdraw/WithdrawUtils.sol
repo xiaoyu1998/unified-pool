@@ -55,17 +55,23 @@ library WithdrawUtils {
             amountToWithdraw = userBalance;
         }
 
+        uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
+            poolCache.nextBorrowIndex
+        );
+
         WithdrawUtils.validateWithdraw(
             poolCache, 
             amountToWithdraw, 
-            userBalance
+            userBalance,
+            unclaimedFee
         );
 
         poolToken.burn(//amountToWithdraw liquidity will be reduced
             account, 
             params.to, 
             amountToWithdraw, 
-            poolCache.nextLiquidityIndex
+            poolCache.nextLiquidityIndex,
+            unclaimedFee
         );
         //poolToken.syncUnderlyingAssetBalance();
 
@@ -97,7 +103,8 @@ library WithdrawUtils {
     function validateWithdraw(
         PoolCache.Props memory poolCache,
         uint256 amount,
-        uint256 userBalance
+        uint256 userBalance,
+        uint256 unclaimedFee
     ) internal view{
         (   bool isActive,
             , 
@@ -115,7 +122,7 @@ library WithdrawUtils {
             revert Errors.InsufficientUserBalance(amount, userBalance);
         }
 
-        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
+        uint256 availableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(unclaimedFee);
         if (amount > availableLiquidity) {
             revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
         } 

@@ -5,6 +5,6 @@ pragma solidity ^0.8.20;
 import "../close/CloseUtils.sol";
 
 interface ICloseHandler {
-    //function executeClose(address account) external;
     function executeClosePosition(address account, CloseUtils.ClosePositionParams calldata params) external;
+    function executeClose(address account, CloseUtils.CloseParams calldata params) external;
 }

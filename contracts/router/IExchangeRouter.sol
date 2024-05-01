@@ -48,4 +48,10 @@ interface IExchangeRouter {
     function executeClosePosition(
         CloseUtils.ClosePositionParams calldata params
     ) external payable;
+
+    function executeClose(
+        CloseUtils.CloseParams calldata params
+    ) external payable;
+    
+
 }

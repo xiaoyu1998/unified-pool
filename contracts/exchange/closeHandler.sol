@@ -22,16 +22,19 @@ contract CloseHandler is ICloseHandler, GlobalReentrancyGuard, RoleModule {
 
     // // @dev executes a close
     // // @param closeParams CloseUtils.CloseParams
-    // function executeClose(address account) external globalNonReentrant {
+    function executeClose(
+        address account,
+        CloseUtils.CloseParams calldata closeParams
+    ) external globalNonReentrant {
 
-    //     CloseUtils.ExecuteCloseParams memory params = CloseUtils.ExecuteCloseParams(
-    //        address(dataStore),
-    //        address(eventEmitter),
-    //        closeParams.account
-    //     );
+        CloseUtils.ExecuteCloseParams memory params = CloseUtils.ExecuteCloseParams(
+           address(dataStore),
+           address(eventEmitter),
+           closeParams.underlyingAssetUsd
+        );
 
-    //     return CloseUtils.executeClose(account, params);
-    // }
+        return CloseUtils.executeClose(account, params);
+    }
 
     // @dev executes a close position
     // @param closeParams ClosePositionUtils.ClosePositionParams

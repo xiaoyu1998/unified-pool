@@ -19,6 +19,7 @@ import "../oracle/OracleUtils.sol";
 
 // @title OracleUtils
 library ReaderUtils {
+    using WadRayMath for uint256;
 
     struct GetLiquidityAndDebt {
         address underlyingAsset;
@@ -157,12 +158,17 @@ library ReaderUtils {
         poolInfo.supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolInfo.configuration);
         poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
  
+
+         uint256 unclaimedFee = pool.unclaimedFee.rayMul(
+            pool.borrowIndex
+        );
+
         IPoolToken poolToken   = IPoolToken(pool.poolToken);
         IDebtToken debtToken   = IDebtToken(pool.debtToken);
         poolInfo.scaledTotalSupply = poolToken.scaledTotalSupply();
         poolInfo.totalSupply = poolToken.totalSupply();
         poolInfo.totalCollateral = poolToken.totalCollateral();
-        poolInfo.availableLiquidity = poolToken.availableLiquidity();
+        poolInfo.availableLiquidity = poolToken.availableLiquidity(unclaimedFee);
         poolInfo.scaledTotalDebt = debtToken.scaledTotalSupply();
         poolInfo.totalDebt = debtToken.totalSupply();
 

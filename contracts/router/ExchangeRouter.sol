@@ -81,8 +81,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev The withdraw is executed by transferring the specified amounts of pool tokens from the caller's 
-     * account to the pool, and execute a  withdraw with the given withdraw parameters. 
+     * @dev execute a new withdraw with the given withdraw parameters. 
      * The withdraw is execute by calling the `executeWithdrawal()` function on the withdraw 
      * handler contract.
      *
@@ -118,7 +117,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev execute a new Borrow with the given amount, Borrow parameters. The Borrow is
+     * @dev execute a new Borrow with the given Borrow parameters. The Borrow is
      * execute by calling the `executeBorrow()` function on the Borrow handler contract. 
      */
     function executeBorrow(
@@ -133,7 +132,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev execute a new Repay with the given amount, Repay parameters. The Repay is
+     * @dev execute a new Repay with the given Repay parameters. The Repay is
      * execute by calling the `executeRepay()` function on the Repay handler contract. 
      */
     function executeRepay(
@@ -148,7 +147,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev execute a new Redeem with the given amount, Redeem parameters. The Redeem is
+     * @dev execute a new Redeem with the given Redeem parameters. The Redeem is
      * execute by calling the `executeRedeem()` function on the Redeem handler contract. 
      */
     function executeRedeem(
@@ -163,7 +162,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev execute a new Swap with the given amount, Swap parameters. The Swap is
+     * @dev execute a new Swap with the given Swap parameters. The Swap is
      * execute by calling the `executeSwap()` function on the Swap handler contract. 
      */
     function executeSwap(
@@ -178,7 +177,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
-     * @dev execute a new Liquidation with the given amount, Liquidation parameters. The Liquidation is
+     * @dev execute a new Liquidation with the given Liquidation parameters. The Liquidation is
      * execute by calling the `executeLiquidation()` function on the Liquidation handler contract. 
      */
     function executeLiquidation(
@@ -192,18 +191,8 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         );
     }
 
-    // /**
-    //  * @dev execute a new Close with the given amount, Close parameters. The Close is
-    //  * execute by calling the `executeClose()` function on the Close handler contract. 
-    //  */
-    // function executeClose() external override payable nonReentrant {
-    //     address account = msg.sender;
-
-    //     return closeHandler.executeClose(account);
-    // }
-
     /**
-     * @dev execute a new ClosePosition with the given amount, ClosePosition parameters. The ClosePosition is
+     * @dev execute a new ClosePosition with the given ClosePosition parameters. The ClosePosition is
      * execute by calling the `executeClosePosition()` function on the ClosePosition handler contract. 
      */
     function executeClosePosition(
@@ -212,6 +201,21 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         address account = msg.sender;
 
         return closeHandler.executeClosePosition(
+            account,
+            params
+        );
+    }
+
+    /**
+     * @dev execute a new Close with the given Close parameters. The Close is
+     * execute by calling the `executeClose()` function on the Close handler contract. 
+     */
+    function executeClose(
+        CloseUtils.CloseParams calldata params
+    ) external override payable nonReentrant {
+        address account = msg.sender;
+
+        return closeHandler.executeClose(
             account,
             params
         );
