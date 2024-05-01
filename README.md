@@ -35,3 +35,12 @@ npx hardhat run scripts/11executeLong.ts --network localhost
 npx hardhat run scripts/12executeShort.ts --network localhost
 npx hardhat run scripts/13executeClosePosition.ts --network localhost
 ```
+
+Close
+```shell
+npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
+npx hardhat run scripts/1createPools.ts --network localhost
+npx hardhat run scripts/2oracleKeeper.ts --network localhost
+npx hardhat run scripts/3executeSupply.ts --network localhost
+npx hardhat run scripts/14executeClose.ts --network localhost
+```
