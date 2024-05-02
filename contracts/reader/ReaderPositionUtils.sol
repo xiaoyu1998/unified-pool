@@ -88,15 +88,14 @@ library ReaderPositionUtils {
             //short, the collateral should lower than debt
             //long, the collateral should higher than debt
             positionInfo.pnlUsd = (isPriceIncrease&&collateralHigherThanDebt) ? int256(pnlUsdAbs) : -int256(pnlUsdAbs);
+            
+            (   uint256 userTotalCollateralUsd,
+                uint256 userTotalDebtUsd
+            ) = PositionUtils.calculateUserTotalCollateralAndDebt(p.account, dataStore, p.underlyingAsset);
+            uint256 marginEquityUsd = userTotalCollateralUsd - userTotalDebtUsd;
+            positionInfo.liquidationPrice = marginEquityUsd.rayDiv(equityAbs);
+            positionInfo.presentageToLiquidationPrice = positionInfo.indexPrice.rayDiv(positionInfo.liquidationPrice);
         }
-
-        (   uint256 userTotalCollateralUsd,
-            uint256 userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(p.account, dataStore, p.underlyingAsset);
-
-        uint256 marginEquityUsd = userTotalCollateralUsd - userTotalDebtUsd;
-        positionInfo.liquidationPrice = marginEquityUsd.rayDiv(equityAbs);
-        positionInfo.presentageToLiquidationPrice = positionInfo.indexPrice.rayDiv(positionInfo.liquidationPrice);
 
         return positionInfo;
 
