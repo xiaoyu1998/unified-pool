@@ -91,7 +91,8 @@ library PositionUtils {
 
     function calculateUserTotalCollateralAndDebt(
         address account,
-        address dataStore
+        address dataStore,
+        address exceptUnderlyingAsset
     ) internal view returns (uint256, uint256) {
         Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
         // Printer.log("account", account);
@@ -101,6 +102,10 @@ library PositionUtils {
         uint256 userTotalDebtUsd;        
         for (uint256 i = 0; i < positions.length; i++) {
             Position.Props memory position = positions[i];
+            if (position.underlyingAsset == exceptUnderlyingAsset) {
+                continue;
+            }
+
             (   uint256 userCollateralUsd, 
                 uint256 userDebtUsd) = 
                 calculateUserCollateralAndDebtInPosition(dataStore, position);
@@ -148,7 +153,7 @@ library PositionUtils {
         Printer.log("-------------------------getLiquidationHealthFactor--------------------------");
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
 
         Printer.log("userTotalCollateralUsd", userTotalCollateralUsd);
         Printer.log("userTotalDebtUsd", userTotalDebtUsd);
@@ -177,7 +182,7 @@ library PositionUtils {
         Printer.log("-------------------------validateLiquidationHealthFactor--------------------------");
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
         Printer.log("userTotalCollateralUsd",  userTotalCollateralUsd);
         Printer.log("userTotalDebtUsd",  userTotalDebtUsd);
 
@@ -248,7 +253,7 @@ library PositionUtils {
 
         (   uint256 userTotalCollateralUsd,
             uint256 userTotalDebtUsd
-        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore);
+        ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
         Printer.log("userTotalCollateralUsd",  userTotalCollateralUsd);
         Printer.log("userTotalDebtUsd",  userTotalDebtUsd);
 

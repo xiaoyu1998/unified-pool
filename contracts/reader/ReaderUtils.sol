@@ -17,7 +17,7 @@ import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
 import "../oracle/OracleUtils.sol";
 
-// @title OracleUtils
+// @title ReaderUtils
 library ReaderUtils {
     using WadRayMath for uint256;
 

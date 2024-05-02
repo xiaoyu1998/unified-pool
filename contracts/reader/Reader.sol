@@ -10,6 +10,7 @@ import "../position/Position.sol";
 //import "../oracle/OracleUtils.sol";
 
 import "./ReaderUtils.sol";
+import "./ReaderPositionUtils.sol";
 
 
 // @title Reader
@@ -19,11 +20,16 @@ contract Reader {
     using Position for Position.Props;
 
    function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
-        return ReaderUtils._getPosition(dataStore, positionKey);
+        return ReaderPositionUtils._getPosition(dataStore, positionKey);
     }
 
     function getPositions(address dataStore, address account) external view returns (Position.Props[] memory) {
-        return ReaderUtils._getPositions(dataStore, account);
+        return ReaderPositionUtils._getPositions(dataStore, account);
+    }
+
+    function getPositionsInfo(address dataStore, address account) external view returns (ReaderPositionUtils.GetPositionInfo[] memory) {
+        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+        return ReaderPositionUtils._getPositionsInfo(dataStore, account, 0, positionCount);
     }
 
     function getPool(address dataStore, address poolKey) external view returns (Pool.Props memory) {

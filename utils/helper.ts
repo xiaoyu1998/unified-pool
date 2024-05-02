@@ -1,9 +1,9 @@
 
 const { getContract } = require("./deploy")
-import { Pool } from "../typechain-types/contracts/pool/PoolFactory";
-import { Position } from "../typechain-types/contracts/position/PositionStoreUtils";
-// import { ReaderUtils } from "../typechain-types/contracts/reader/ReaderUtils";
-import { ReaderUtils } from "../typechain-types/contracts/reader/Reader";
+// import { Pool } from "../typechain-types/contracts/pool/PoolFactory";
+// import { Position } from "../typechain-types/contracts/position/PositionStoreUtils";
+import { Pool, Position, ReaderUtils, ReaderPositionUtils } from "../typechain-types/contracts/reader/Reader";
+// import { ReaderPositionUtils } from "../typechain-types/contracts/reader/Reader";
 
 export function parsePool(pool) {
     const p: Pool.PropsStruct = {
@@ -95,6 +95,31 @@ export async function getPositions(dataStore, reader, address) {
     let ps = [];
     for (let i = 0; i < positions.length; i++) {
          ps[i] = parsePosition(positions[i]);
+    }
+    return ps;
+}
+
+export function parsePositionInfo(position) {
+    const p: ReaderPositionUtils.GetPositionInfoStruct = {
+        account: position[0],
+        underlyingAsset: position[1],
+        positionType: position[2],
+        equity: position[3],
+        equityUsd: position[4],
+        indexPrice: position[5],
+        entryPrice: position[6],
+        pnlUsd: position[7],
+        liquidationPrice: position[8],
+        presentageToLiquidationPrice: position[9],
+    };
+    return p;
+}
+
+export async function getPositionsInfo(dataStore, reader, address) {
+    const positions = await reader.getPositionsInfo(dataStore.target, address);
+    let ps = [];
+    for (let i = 0; i < positions.length; i++) {
+         ps[i] = parsePositionInfo(positions[i]);
     }
     return ps;
 }
