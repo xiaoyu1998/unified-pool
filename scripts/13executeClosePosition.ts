@@ -7,6 +7,7 @@ async function main() {
     const [owner] = await ethers.getSigners();
 
     const exchangeRouter = await getContract("ExchangeRouter"); 
+    const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
@@ -22,15 +23,41 @@ async function main() {
         console.log("eventEmitter ClosePosition" ,event);
     });
 
+    const uniDecimals = getTokens("UNI")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const uniAddress = getTokens("UNI")["address"];
+    const uni = await contractAt("MintableToken", uniAddress);
 
-    //execute close Position
+    // //deposit uni 200,000 
+    const depositAmmountUni = expandDecimals(200000, uniDecimals);
+    await uni.approve(router.target, depositAmmountUni);
+    const poolUni = await getPoolInfo(uniAddress); 
+    const paramsUni: DepositUtils.DepositParamsStruct = {
+        underlyingAsset: uniAddress,
+    };
+
+    //short uni 100,000
+    const borrowAmmount = expandDecimals(100000, uniDecimals);
+    const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
+        underlyingAsset: uniAddress,
+        amount: borrowAmmount,
+    };
+    const paramsSwap: SwapUtils.SwapParamsStruct = {
+        underlyingAssetIn: uniAddress,
+        underlyingAssetOut: usdtAddress,
+        amount: borrowAmmount,
+    };     
+
+    //close Position
     const params: CloseUtils.ClosePositionParamsStruct = {
         underlyingAsset: uniAddress,
         underlyingAssetUsd: usdtAddress
     };
     const multicallArgs = [
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),   
+        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
         exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
     ];
     const tx = await exchangeRouter.multicall(multicallArgs);
