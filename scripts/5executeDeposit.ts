@@ -47,14 +47,14 @@ async function main() {
 
     //print poolUsdt
     const poolUsdtAfterDeposit = await getPoolInfo(usdtAddress);
-    const poolToken = await getContractAt("PoolToken", poolUsdtAfterDeposit.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdtAfterDeposit.debtToken);
+    // const poolToken = await getContractAt("PoolToken", poolUsdtAfterDeposit.poolToken);
+    // const debtToken = await getContractAt("DebtToken", poolUsdtAfterDeposit.debtToken);
     console.log("poolUsdtAfterDeposit", poolUsdtAfterDeposit);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
-    console.log("userUsdt",await usdt.balanceOf(owner.address)); 
+    // console.log("userUsdt",await usdt.balanceOf(owner.address)); 
+    // console.log("userUni",await uni.balanceOf(owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
-    console.log("userUni",await uni.balanceOf(owner.address)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
 }
 
