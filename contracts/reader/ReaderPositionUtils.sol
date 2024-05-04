@@ -68,12 +68,11 @@ library ReaderPositionUtils {
         
         uint256 equityAbs = ReaderPositionUtils.abs(int256(collateralAmount - debtAmount));
         uint256 adjustEquityAbs = Math.mulDiv(equityAbs, WadRayMath.RAY, 10**decimals);
-        uint256 equityValueAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
+        uint256 equityUsdAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
 
-        //the collateralHigherThanDebt is same as the long
         bool collateralHigherThanDebt = (collateralAmount > debtAmount) ? true : false;
         positionInfo.equity = collateralHigherThanDebt ? int256(equityAbs): -int256(equityAbs);
-        positionInfo.equityUsd = collateralHigherThanDebt ? int256(equityValueAbs) : -int256(equityValueAbs);
+        positionInfo.equityUsd = collateralHigherThanDebt ? int256(equityUsdAbs) : -int256(equityUsdAbs);
 
         if (p.positionType == 0) {//short
             positionInfo.entryPrice = p.entryShortPrice;          
@@ -88,6 +87,7 @@ library ReaderPositionUtils {
 
             //short, the collateral should lower than debt
             //long, the collateral should higher than debt
+            //the collateralHigherThanDebt is same as the isLong
             positionInfo.pnlUsd = (isPriceIncrease&&collateralHigherThanDebt) ? int256(pnlUsdAbs) : -int256(pnlUsdAbs);
             
             (   uint256 userTotalCollateralUsd,
@@ -97,11 +97,15 @@ library ReaderPositionUtils {
             uint256 deltaPriceInWrongDirection = marginEquityUsd.rayDiv(equityAbs);
 
             if (p.positionType == 0) {//short
-                positionInfo.liquidationPrice = positionInfo.entryPrice + deltaPriceInWrongDirection;
-                positionInfo.presentageToLiquidationPrice = isPriceIncrease?deltaPriceAbs.rayDiv(deltaPriceInWrongDirection):0;
+                positionInfo.liquidationPrice = 
+                    positionInfo.entryPrice + deltaPriceInWrongDirection;
+                positionInfo.presentageToLiquidationPrice = 
+                    isPriceIncrease?deltaPriceAbs.rayDiv(deltaPriceInWrongDirection):0;
             } else if (p.positionType == 1) {//long{
-                positionInfo.liquidationPrice = (positionInfo.entryPrice>deltaPriceInWrongDirection)?(positionInfo.entryPrice-deltaPriceInWrongDirection):0;
-                positionInfo.presentageToLiquidationPrice = isPriceIncrease?0:deltaPriceAbs.rayDiv(deltaPriceInWrongDirection);
+                positionInfo.liquidationPrice = 
+                    (positionInfo.entryPrice>deltaPriceInWrongDirection)?(positionInfo.entryPrice-deltaPriceInWrongDirection):0;
+                positionInfo.presentageToLiquidationPrice = 
+                    isPriceIncrease?0:deltaPriceAbs.rayDiv(deltaPriceInWrongDirection);
             }
         }
 

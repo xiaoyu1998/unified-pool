@@ -69,6 +69,7 @@ async function main() {
     console.log("poolUniAfterClosePosition", poolUniAfterClosePosition);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
+
 }
 
 

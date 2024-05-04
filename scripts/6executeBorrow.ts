@@ -16,13 +16,14 @@ async function main() {
     }); 
 
     const config = await getContract("Config");
-    await config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25))//110%
+    //await config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25))//110%
 
+    const uniDecimals = getTokens("UNI")["decimals"];
+    const uniAddress = getTokens("UNI")["address"];
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const uniDecimals = getTokens("UNI")["decimals"];
-    const uniAddress = getTokens("UNI")["address"];
+    const uni = await contractAt("MintableToken", uniAddress);
 
     //borrow usdt
     const borrowAmmountUsdt = expandDecimals(2000000, usdtDecimals);
@@ -50,6 +51,7 @@ async function main() {
     // const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);
     // const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
     console.log("poolUsdt", poolUsdt);
+    console.log("poolUni", poolUni);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
