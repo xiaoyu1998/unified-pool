@@ -3,11 +3,19 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition-ethers";
 import { ethers, ignition } from "hardhat";
 
-const {
-  LOCALNETWORK_URL,
-  LOCALNETWORKT_DEPLOY_KEY
-} = require("./env.json")
+const getRpcUrl = (network) => {
+  const defaultRpcs = {
+    localNetwork: "http://192.168.2.106:8545",
+  };
 
+  let rpc = defaultRpcs[network];
+  return rpc;
+};
+
+const getEnvAccount = () => {
+  const { ACCOUNT_KEY } = process.env;
+  return [ACCOUNT_KEY];
+};
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -26,15 +34,9 @@ const config: HardhatUserConfig = {
   },
   networks:{
     localNetwork: {
-      url: LOCALNETWORK_URL,
+      url: getRpcUrl("localNetwork"),
       chainId: 100,
-      accounts: [LOCALNETWORKT_DEPLOY_KEY],
-      verify: {
-        etherscan: {
-          apiUrl: "https://api-testnet.snowtrace.io/",
-          apiKey: process.env.SNOWTRACE_API_KEY,
-        },
-      },
+      accounts: getEnvAccount(),
       blockGasLimit: 20_000_000,
       gas: 20_000_000,
     },
