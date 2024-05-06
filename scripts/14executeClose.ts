@@ -1,6 +1,6 @@
 import { contractAt, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
-import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
+import { getPoolInfo, getLiquidityAndDebts, getPositions, getPositionsInfo} from "../utils/helper";
 import { CloseUtils } from "../typechain-types/contracts/exchange/CloseHandler.sol/CloseHandler";
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";

@@ -1,10 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import parse from 'csv-parse';
-
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
-import deployed_address from "../ignition/deployments/chain-31337/deployed_addresses.json";
-import { WS_URL } from "./constants"
+import {deployAddresses, webSocketUrl} from "./network"
 
 export async function sendTxn(txnPromise, label) {
     console.info(`Processsing ${label}:`)
@@ -43,7 +41,10 @@ export async function contractAtOptions(name, address, options, provider) {
 }
 
 export function getDeployedContractAddresses(name){
-    return deployed_address[`${name}#${name}`];
+    // return deployed_address[`${name}#${name}`];
+    const jsonFile = path.join(__dirname, '..', deployAddresses[`${process.env.HARDHAT_NETWORK}`]);
+    const json = JSON.parse(fs.readFileSync(jsonFile))
+    return json[`${name}#${name}`];    
 }
 
 const tmpAddressesFilepath = path.join(__dirname, '..', '..', `.tmp-addresses-${process.env.HARDHAT_NETWORK}.json`)
@@ -56,10 +57,7 @@ export function readTokenAddresses() {
 }
 
 export function writeTokenAddresses(json) {
-
-    //console.log(json);
     const tmpAddresses = Object.assign(readTokenAddresses(), json)
-    //console.log(tmpAddresses);
     fs.writeFileSync(tmpAddressesFilepath, JSON.stringify(tmpAddresses))
 }
 
@@ -70,13 +68,13 @@ export function getTokens(name) {
 
 export async function getEventEmitter() {
     const address = getDeployedContractAddresses("EventEmitter");
-    const provider = new ethers.WebSocketProvider(WS_URL);
+    const provider = new ethers.WebSocketProvider(webSocketUrl[`${process.env.HARDHAT_NETWORK}`]);
     return contractAtOptions("EventEmitter", address, undefined, provider);
     // return getWebSocketContract("EventEmitter", address)
 }
 
 export async function getWebSocketContract(name, abi, bytecode, address) {
-    const provider = new ethers.WebSocketProvider(WS_URL);
+    const provider = new ethers.WebSocketProvider(webSocketUrl[`${process.env.HARDHAT_NETWORK}`]);
     if (name){
         address = getDeployedContractAddresses(name);
         return contractAtOptions(name, address, undefined, provider);       
