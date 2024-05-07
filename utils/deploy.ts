@@ -5,20 +5,33 @@ import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-depl
 import {deployAddresses, webSocketUrl} from "./network"
 
 export async function sendTxn(txnPromise, label) {
-    console.info(`Processsing ${label}:`)
     const txn = await txnPromise
-    console.info(`Sending ${label}...`)
     await txn.wait(1)
-    console.info(`... Sent! ${txn.hash}`)
+    //console.info(`Sent! ${label} ${txn.hash}`)
     return txn
 }
 
-export async function deployContract(name, args, contractOptions = {}) {
-    const contractFactory = await ethers.getContractFactory(name, contractOptions);
-    return await contractFactory.deploy(...args);
+export async function deployContractWithCode(abi, code, provider) {
+    const contractFactory = new ethers.ContractFactory(abi, code, provider);
+    const contract = await contractFactory.deploy();
+    await contract.waitForDeployment();
+    return contract;
 }
 
-export async function contractAt(name, address, options, provider) {
+export async function contractAtWithCode(abi, code, address, provider) {
+    const contractFactory = new ethers.ContractFactory(abi, code, provider);
+    const contract = await contractFactory.attach(address);
+    return contract;
+}
+
+export async function deployContract(name, args, contractOptions = {}) {
+    let contractFactory = await ethers.getContractFactory(name, contractOptions);
+    let contract = await contractFactory.deploy(...args);
+    await contract.waitForDeployment();
+    return contract;
+}
+
+export async function contractAt(name, address, provider) {
     let contractFactory = await ethers.getContractFactory(name);
     if (provider) {
         contractFactory = contractFactory.connect(provider);

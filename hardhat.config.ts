@@ -14,7 +14,10 @@ const getRpcUrl = (network) => {
 
 const getEnvAccount = () => {
   const { ACCOUNT_KEY } = process.env;
-  return [ACCOUNT_KEY];
+  if (ACCOUNT_KEY) {
+    return [ACCOUNT_KEY];
+  }
+  return [];
 };
 
 const config: HardhatUserConfig = {

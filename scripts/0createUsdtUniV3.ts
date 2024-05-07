@@ -1,4 +1,4 @@
-import { deployContract, sendTxn, writeTokenAddresses, readTokenAddresses, getTokens, getContract } from "../utils/deploy"
+import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
 import { bigNumberify, expandDecimals, encodePriceSqrt } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "../utils/constants";
@@ -19,8 +19,8 @@ async function main() {
     //create underlyingAssets
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
     const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
-    await usdt.mint(owner.address, expandDecimals(100000000, usdtDecimals));
-    await uni.mint(owner.address, expandDecimals(20000000, uniDecimals));
+    await sendTxn(usdt.mint(owner.address, expandDecimals(100000000, usdtDecimals)), "usdt.mint");
+    await sendTxn(uni.mint(owner.address, expandDecimals(20000000, uniDecimals)), "uni.mint");
 
     //set oracle
     const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimal, expandDecimals(1, usdtOracleDecimal)]);
@@ -32,7 +32,7 @@ async function main() {
         config.interface.encodeFunctionData("setOracle", [uni.target, uniOracle.target]),
         config.interface.encodeFunctionData("setOracleDecimals", [uni.target, uniOracleDecimal]),
     ];
-    const tx = await config.multicall(multicallArgs);
+    await sendTxn(config.multicall(multicallArgs), "config.multicall");
 
     //write address
     writeTokenAddresses({"USDT": {
@@ -57,40 +57,34 @@ async function main() {
     const usdtAddress = usdt.target;
     const uniAddress = uni.target;
     const uniIsZero =  (uniAddress.toLowerCase() < usdtAddress.toLowerCase()) ? true:false;
-    const contractFactory = new ethers.ContractFactory(FACTORY_ABI, FACTORY_BYTECODE, owner);
-    const factory = await contractFactory.deploy();
-    await factory.createPool(usdtAddress, uniAddress, FeeAmount.MEDIUM);
-    const uniswapPoolAddress = await factory.getPool(uniAddress, usdtAddress,  FeeAmount.MEDIUM);
-    const contractFactoryPool = new ethers.ContractFactory(POOL_ABI, POOL_BYTECODE, owner);
-    const uniswapPool = await contractFactoryPool.attach(uniswapPoolAddress);
+    const factory = await deployContractWithCode(FACTORY_ABI, FACTORY_BYTECODE, owner);
+    await sendTxn(await factory.createPool(usdtAddress, uniAddress, FeeAmount.MEDIUM), "factory.createPool");
 
-    //initialize and mint
-    //initialize pool
-    // const poolWebSocket = await getWebSocketContract(undefined, POOL_ABI, POOL_BYTECODE, uniswapPoolAddress);
-    // poolWebSocket.on("Initialize", (sqrtPriceX96, tick) =>{
-    //     console.log("Initialize" , sqrtPriceX96, tick);
-    // });
+    //initialize pool and mint
+    const uniswapPoolAddress = await factory.getPool(uniAddress, usdtAddress,  FeeAmount.MEDIUM);
+    const uniswapPool = await contractAtWithCode(POOL_ABI, POOL_BYTECODE, uniswapPoolAddress, owner);
     const sqrtPriceX96 = uniIsZero?
                          encodePriceSqrt(expandDecimals(10, usdtDecimals), expandDecimals(1, uniDecimals)):
                          encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(10, usdtDecimals));//1uni = 10usdt
-    await uniswapPool.initialize(sqrtPriceX96);
+    await sendTxn(uniswapPool.initialize(sqrtPriceX96), "uniswapPool.initialize");
+
     const slot0 = await uniswapPool.slot0();
     const currentTick = slot0[1];
     const uniswapV3MintCallee = await deployContract("UniswapV3MintCallee", []); 
-    await usdt.approve(uniswapV3MintCallee.target, MaxUint256);
-    await uni.approve(uniswapV3MintCallee.target, MaxUint256);
+    await sendTxn(usdt.approve(uniswapV3MintCallee.target, MaxUint256), "usdt.approve");
+    await sendTxn(uni.approve(uniswapV3MintCallee.target, MaxUint256), "uni.approve");
     const tickSpacing = BigInt(TICK_SPACINGS[FeeAmount.MEDIUM]);
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
-    await uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 20));
+    await sendTxn(uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 20)), "uniswapV3MintCallee.mint");
     console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
 
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    await uni.approve(dex.target, MaxUint256);
-    await dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
+    await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
+    await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address), "dex.swapExactIn");
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 
@@ -98,8 +92,7 @@ async function main() {
     const multicallArgs2 = [
         config.interface.encodeFunctionData("setDex", [usdt.target, uni.target, dex.target]),
     ];
-    const tx2 = await config.multicall(multicallArgs2);   
-
+    await sendTxn(config.multicall(multicallArgs2), "config.multicall");
 }
 
 
