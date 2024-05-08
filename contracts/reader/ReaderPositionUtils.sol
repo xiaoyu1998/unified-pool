@@ -5,6 +5,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "../data/DataStore.sol";
 import "../data/Keys.sol";
 
@@ -32,11 +33,6 @@ library ReaderPositionUtils {
         int256 pnlUsd; 
         uint256 liquidationPrice;
         uint256 presentageToLiquidationPrice;
-    }
-
-    function absSub(uint256 a, uint256 b) internal pure returns (uint256){
-        //return (value > 0) ? uint256(value) : uint256(-value);
-        return (a > b) ? (a - b) : (b - a);
     }
 
     function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
@@ -72,11 +68,11 @@ library ReaderPositionUtils {
         
         Printer.log("collateralAmount", collateralAmount);
         Printer.log("debtAmount", debtAmount);
-        uint256 equityAbs = ReaderPositionUtils.absSub(collateralAmount, debtAmount);
+        uint256 equityAbs = SignedMath.abs(int256(collateralAmount) - int256(debtAmount));
         Printer.log("equityAbs", equityAbs);
 
         //uint256 adjustEquityAbs = Math.mulDiv(equityAbs, WadRayMath.RAY, 10**decimals);
-        uint256 adjustEquityAbs = ReaderPositionUtils.absSub(adjustCollateralAmount, adjustDebtAmount);
+        uint256 adjustEquityAbs = SignedMath.abs(int256(adjustCollateralAmount) - int256(adjustDebtAmount));
         uint256 equityUsdAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
 
         bool collateralHigherThanDebt = (collateralAmount > debtAmount) ? true : false;
@@ -91,7 +87,7 @@ library ReaderPositionUtils {
         } 
 
         if (p.positionType != 2) {
-            uint256 deltaPriceAbs = ReaderPositionUtils.absSub(positionInfo.indexPrice, positionInfo.entryPrice);
+            uint256 deltaPriceAbs = SignedMath.abs(int256(positionInfo.indexPrice) - int256(positionInfo.entryPrice));
             uint256 pnlUsdAbs = adjustEquityAbs.rayMul(deltaPriceAbs);
             bool isPriceIncrease = (positionInfo.indexPrice > positionInfo.entryPrice) ? true : false;
 
@@ -119,20 +115,6 @@ library ReaderPositionUtils {
             positionInfo.liquidationPrice = liquidationPrice;
             positionInfo.presentageToLiquidationPrice = (liquidationPrice == 0)?0:positionInfo.indexPrice.rayDiv(liquidationPrice);
 
-
-            //uint256 netCollateralUsd = userTotalCollateralUsd - userTotalDebtUsd;
-            //uint256 deltaPriceInWrongDirection = (equityAbs == 0)?0:netCollateralUsd.rayDiv(equityAbs);
-            // if (p.positionType == 0) {//short
-            //     positionInfo.liquidationPrice = 
-            //         positionInfo.entryPrice + deltaPriceInWrongDirection;
-            //     positionInfo.presentageToLiquidationPrice = 
-            //         (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?deltaPriceAbs.rayDiv(deltaPriceInWrongDirection):0);
-            // } else if (p.positionType == 1) {//long{
-            //     positionInfo.liquidationPrice = 
-            //         (positionInfo.entryPrice>deltaPriceInWrongDirection)?(positionInfo.entryPrice-deltaPriceInWrongDirection):0;
-            //     positionInfo.presentageToLiquidationPrice = 
-            //         (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?0:deltaPriceAbs.rayDiv(deltaPriceInWrongDirection));
-            // }
         }
 
         return positionInfo;
