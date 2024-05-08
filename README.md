@@ -61,13 +61,14 @@ npx hardhat run scripts/3executeSupply.ts --network localhost
 npx hardhat run scripts/14executeClose.ts --network localhost
 ```
 
-local Network
+## Testnet
 ```shell
-1.localNetwork chainId 10086 
+1.testnet chainId 10086 
 2.webSocketUrl and defaultRpcs in utils/network.ts
+3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
 ```
 
 Deploy contracts
 ```shell
-npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localNetwork
+npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
 ```
