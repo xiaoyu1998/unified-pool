@@ -34,10 +34,6 @@ library ReaderPositionUtils {
         uint256 presentageToLiquidationPrice;
     }
 
-    function abs(int256 value) internal pure returns (uint256){
-        return (value > 0) ? uint256(value) : uint256(-value);
-    }
-
     function absSub(uint256 a, uint256 b) internal pure returns (uint256){
         //return (value > 0) ? uint256(value) : uint256(-value);
         return (a > b) ? (a - b) : (b - a);
@@ -71,14 +67,16 @@ library ReaderPositionUtils {
 
         uint256 collateralAmount = IPoolToken(poolToken).balanceOfCollateral(p.account);
         uint256 debtAmount = IDebtToken(debtToken).balanceOf(p.account);
+        uint256 adjustCollateralAmount = Math.mulDiv(collateralAmount, WadRayMath.RAY, 10**decimals);
+        uint256 adjustDebtAmount = Math.mulDiv(debtAmount, WadRayMath.RAY, 10**decimals);
         
-        //uint256 equityAbs = ReaderPositionUtils.abs(int256(collateralAmount - debtAmount));
         Printer.log("collateralAmount", collateralAmount);
         Printer.log("debtAmount", debtAmount);
         uint256 equityAbs = ReaderPositionUtils.absSub(collateralAmount, debtAmount);
         Printer.log("equityAbs", equityAbs);
 
-        uint256 adjustEquityAbs = Math.mulDiv(equityAbs, WadRayMath.RAY, 10**decimals);
+        //uint256 adjustEquityAbs = Math.mulDiv(equityAbs, WadRayMath.RAY, 10**decimals);
+        uint256 adjustEquityAbs = ReaderPositionUtils.absSub(adjustCollateralAmount, adjustDebtAmount);
         uint256 equityUsdAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
 
         bool collateralHigherThanDebt = (collateralAmount > debtAmount) ? true : false;
@@ -93,7 +91,6 @@ library ReaderPositionUtils {
         } 
 
         if (p.positionType != 2) {
-            //uint256 deltaPriceAbs = ReaderPositionUtils.abs(int256(positionInfo.indexPrice - positionInfo.entryPrice));
             uint256 deltaPriceAbs = ReaderPositionUtils.absSub(positionInfo.indexPrice, positionInfo.entryPrice);
             uint256 pnlUsdAbs = adjustEquityAbs.rayMul(deltaPriceAbs);
             bool isPriceIncrease = (positionInfo.indexPrice > positionInfo.entryPrice) ? true : false;
@@ -104,25 +101,38 @@ library ReaderPositionUtils {
             positionInfo.pnlUsd = (isPriceIncrease&&collateralHigherThanDebt) ? int256(pnlUsdAbs) : -int256(pnlUsdAbs);
             Printer.log("pnlUsd", positionInfo.pnlUsd);
             
-            (   uint256 userTotalCollateralUsd,
-                uint256 userTotalDebtUsd
+            (   uint256 userTotalCollateralExceptPositionUsd,
+                uint256 userTotalDebExceptPositiontUsd
             ) = PositionUtils.calculateUserTotalCollateralAndDebt(p.account, dataStore, p.underlyingAsset);
-            Printer.log("userTotalCollateralUsd", userTotalCollateralUsd);
-            Printer.log("userTotalDebtUsd", userTotalDebtUsd);
-            uint256 netCollateralUsd = userTotalCollateralUsd - userTotalDebtUsd;
-            uint256 deltaPriceInWrongDirection = (equityAbs == 0)?0:netCollateralUsd.rayDiv(equityAbs);
 
-            if (p.positionType == 0) {//short
-                positionInfo.liquidationPrice = 
-                    positionInfo.entryPrice + deltaPriceInWrongDirection;
-                positionInfo.presentageToLiquidationPrice = 
-                    (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?deltaPriceAbs.rayDiv(deltaPriceInWrongDirection):0);
-            } else if (p.positionType == 1) {//long{
-                positionInfo.liquidationPrice = 
-                    (positionInfo.entryPrice>deltaPriceInWrongDirection)?(positionInfo.entryPrice-deltaPriceInWrongDirection):0;
-                positionInfo.presentageToLiquidationPrice = 
-                    (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?0:deltaPriceAbs.rayDiv(deltaPriceInWrongDirection));
-            }
+            Printer.log("userTotalCollateralExceptPositionUsd", userTotalCollateralExceptPositionUsd);
+            Printer.log("userTotalDebExceptPositiontUsd", userTotalDebExceptPositiontUsd);
+
+            uint256 liquidationPrice = PositionUtils.getLiquidationPrice(
+                dataStore,
+                userTotalCollateralExceptPositionUsd,
+                userTotalDebExceptPositiontUsd,
+                adjustCollateralAmount,
+                adjustDebtAmount
+            );
+
+            positionInfo.liquidationPrice = liquidationPrice;
+            positionInfo.presentageToLiquidationPrice = (liquidationPrice == 0)?0:positionInfo.indexPrice.rayDiv(liquidationPrice);
+
+
+            //uint256 netCollateralUsd = userTotalCollateralUsd - userTotalDebtUsd;
+            //uint256 deltaPriceInWrongDirection = (equityAbs == 0)?0:netCollateralUsd.rayDiv(equityAbs);
+            // if (p.positionType == 0) {//short
+            //     positionInfo.liquidationPrice = 
+            //         positionInfo.entryPrice + deltaPriceInWrongDirection;
+            //     positionInfo.presentageToLiquidationPrice = 
+            //         (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?deltaPriceAbs.rayDiv(deltaPriceInWrongDirection):0);
+            // } else if (p.positionType == 1) {//long{
+            //     positionInfo.liquidationPrice = 
+            //         (positionInfo.entryPrice>deltaPriceInWrongDirection)?(positionInfo.entryPrice-deltaPriceInWrongDirection):0;
+            //     positionInfo.presentageToLiquidationPrice = 
+            //         (deltaPriceInWrongDirection == 0)?0:(isPriceIncrease?0:deltaPriceAbs.rayDiv(deltaPriceInWrongDirection));
+            // }
         }
 
         return positionInfo;

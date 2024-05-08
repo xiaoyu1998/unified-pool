@@ -3,6 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/math/SignedMath.sol";
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
 
@@ -144,6 +145,35 @@ library PositionUtils {
             userDebtUsd = adjustDebt.rayMul(assetPrice);
         }
         return (userCollateralUsd, userDebtUsd);
+    }
+    // T = (C + C1*P)/(D + D1*P)
+    // P = (T*D - C)/(C1 - T*D1)
+    function getLiquidationPrice(
+        address dataStore,
+        uint256 userTotalOtherCollateralslUsd,
+        uint256 userTotalOtherDebtsUsd,
+        uint256 collateralAmount,
+        uint256 debtAmount
+    ) internal view returns(uint256) {
+        Printer.log("-------------------------getLiquidationPrice--------------------------");
+        uint256 threshold =
+            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+
+        uint256 thresholdMulDebt = threshold.rayMul(userTotalOtherDebtsUsd);
+        int256 thresholdMulDebtSubCollateral = int256(thresholdMulDebt) - int256(userTotalOtherCollateralslUsd);
+        uint256 threasholdMulDebt1 = threshold.rayMul(debtAmount);
+        int256  Collatera1SubThreasholdMulDebt1 = int256(collateralAmount) - int256(threasholdMulDebt1);
+
+        uint256 thresholdMulDebtSubCollateralAbs = SignedMath.abs(thresholdMulDebtSubCollateral);
+        uint256 Collatera1SubThreasholdMulDebt1Abs = SignedMath.abs(Collatera1SubThreasholdMulDebt1);
+
+        //TODO:What will that happen
+        if (( thresholdMulDebtSubCollateral > 0 && Collatera1SubThreasholdMulDebt1 < 0) ||
+           ( thresholdMulDebtSubCollateral < 0 && Collatera1SubThreasholdMulDebt1 > 0)) {
+            return 0;
+        }
+
+        return (Collatera1SubThreasholdMulDebt1Abs == 0)?0:thresholdMulDebtSubCollateralAbs.rayDiv(Collatera1SubThreasholdMulDebt1Abs);
     }
 
     function getLiquidationHealthFactor(
