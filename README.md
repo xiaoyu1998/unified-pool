@@ -43,24 +43,6 @@ npx hardhat run scripts/11executeLong.ts --network localhost
 npx hardhat run scripts/12executeShort.ts --network localhost
 ```
 
-ClosePosition
-```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
-npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2oracleKeeper.ts --network localhost
-npx hardhat run scripts/3executeSupply.ts --network localhost
-npx hardhat run scripts/13executeClosePosition.ts --network localhost
-```
-
-Close
-```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
-npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2oracleKeeper.ts --network localhost
-npx hardhat run scripts/3executeSupply.ts --network localhost
-npx hardhat run scripts/14executeClose.ts --network localhost
-```
-
 ## Testnet
 ```shell
 1.testnet chainId 10086 
@@ -72,12 +54,21 @@ Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
 ```
-Long
+
+ClosePosition
 ```shell
 npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
 npx hardhat run scripts/1createPools.ts --network testnet
 npx hardhat run scripts/2oracleKeeper.ts --network testnet
 npx hardhat run scripts/3executeSupply.ts --network testnet
-npx hardhat run scripts/5executeDeposit.ts --network testnet
-npx hardhat run scripts/11executeLong.ts --network testnet
+npx hardhat run scripts/13executeClosePosition.ts --network testnet
+```
+
+Close
+```shell
+npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
+npx hardhat run scripts/1createPools.ts --network testnet
+npx hardhat run scripts/2oracleKeeper.ts --network testnet
+npx hardhat run scripts/3executeSupply.ts --network testnet
+npx hardhat run scripts/14executeClose.ts --network testnet
 ```
