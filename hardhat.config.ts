@@ -2,12 +2,9 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition-ethers";
 import { ethers, ignition } from "hardhat";
+import { defaultRpcs } from "./utils/network";
 
 const getRpcUrl = (network) => {
-  const defaultRpcs = {
-    localNetwork: "http://192.168.2.106:8545",
-  };
-
   let rpc = defaultRpcs[network];
   return rpc;
 };

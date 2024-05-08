@@ -8,3 +8,6 @@ export const webSocketUrl = {
 	localNetwork : "ws://192.168.2.106:8545",
 };
 
+export const defaultRpcs = {
+	localNetwork: "http://192.168.2.106:8545",
+};

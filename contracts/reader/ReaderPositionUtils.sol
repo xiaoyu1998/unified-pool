@@ -71,7 +71,6 @@ library ReaderPositionUtils {
         uint256 equityAbs = SignedMath.abs(int256(collateralAmount) - int256(debtAmount));
         Printer.log("equityAbs", equityAbs);
 
-        //uint256 adjustEquityAbs = Math.mulDiv(equityAbs, WadRayMath.RAY, 10**decimals);
         uint256 adjustEquityAbs = SignedMath.abs(int256(adjustCollateralAmount) - int256(adjustDebtAmount));
         uint256 equityUsdAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
 
@@ -97,17 +96,17 @@ library ReaderPositionUtils {
             positionInfo.pnlUsd = (isPriceIncrease&&collateralHigherThanDebt) ? int256(pnlUsdAbs) : -int256(pnlUsdAbs);
             Printer.log("pnlUsd", positionInfo.pnlUsd);
             
-            (   uint256 userTotalCollateralExceptPositionUsd,
-                uint256 userTotalDebExceptPositiontUsd
+            (   uint256 userTotalCollateralExceptThisPositionUsd,
+                uint256 userTotalDebExceptThisPositiontUsd
             ) = PositionUtils.calculateUserTotalCollateralAndDebt(p.account, dataStore, p.underlyingAsset);
 
-            Printer.log("userTotalCollateralExceptPositionUsd", userTotalCollateralExceptPositionUsd);
-            Printer.log("userTotalDebExceptPositiontUsd", userTotalDebExceptPositiontUsd);
+            Printer.log("userTotalCollateralExceptThisPositionUsd", userTotalCollateralExceptThisPositionUsd);
+            Printer.log("userTotalDebExceptThisPositiontUsd", userTotalDebExceptThisPositiontUsd);
 
             uint256 liquidationPrice = PositionUtils.getLiquidationPrice(
                 dataStore,
-                userTotalCollateralExceptPositionUsd,
-                userTotalDebExceptPositiontUsd,
+                userTotalCollateralExceptThisPositionUsd,
+                userTotalDebExceptThisPositiontUsd,
                 adjustCollateralAmount,
                 adjustDebtAmount
             );
