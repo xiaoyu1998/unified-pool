@@ -46,7 +46,11 @@ async function main() {
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolUsd", [uni, false]),
     ];
-    const tx = await config.multicall(multicallArgs);
+    //const tx = await config.multicall(multicallArgs);
+    await sendTxn(
+        config.multicall(multicallArgs),
+        "config.multicall"
+    );
 
     //print pools
     const dataStore = await getContract("DataStore");    

@@ -1,4 +1,4 @@
-import { contractAt, getTokens, getContract, getEventEmitter } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";
@@ -21,9 +21,6 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
 
-    console.log("usdtAddress",  usdtAddress);
-    console.log("uniAddress",  uniAddress);
-
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
@@ -33,7 +30,11 @@ async function main() {
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);
+    //const tx = await exchangeRouter.multicall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs),
+        "exchangeRouter.multicall"
+    );
 
     //print 
     const poolUsdtAfterSwap = await getPoolInfo(usdtAddress); 
@@ -42,6 +43,8 @@ async function main() {
     console.log("poolUniAfterSwap", poolUniAfterSwap);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
+    console.log("poolUsdt",await usdt.balanceOf(poolUsdtAfterSwap.poolToken)); 
+    console.log("poolUni",await uni.balanceOf(poolUniAfterSwap.poolToken));     
 
 }
 

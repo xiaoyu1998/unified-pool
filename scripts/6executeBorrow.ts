@@ -15,9 +15,11 @@ async function main() {
         console.log("eventEmitter Borrow" ,pool, borrower, to, amount);
     }); 
 
-    const config = await getContract("Config");
-    //await config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25))//110%
-
+    //const config = await getContract("Config");
+    // await sendTxn(
+    //     config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25)),//for liquidationTest
+    //     "config.setHealthFactorLiquidationThreshold"
+    // );
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const usdtDecimals = getTokens("USDT")["decimals"];
@@ -38,26 +40,24 @@ async function main() {
         underlyingAsset: uniAddress,
         amount: borrowAmmountUni,
     };
-
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);  
+    //const tx = await exchangeRouter.multicall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs),
+        "exchangeRouter.multicall"
+    );
 
     //print poolUsdt
     const poolUsdt = await getPoolInfo(usdtAddress); 
     const poolUni = await getPoolInfo(uniAddress); 
-    // const poolToken = await getContractAt("PoolToken", poolUsdt.poolToken);
-    // const debtToken = await getContractAt("DebtToken", poolUsdt.debtToken);
     console.log("poolUsdt", poolUsdt);
     console.log("poolUni", poolUni);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
-    //console.log("liquidationHealthFactor",await getLiquidationHealthFactor( owner.address)); 
-    // console.log("userUsdt",await usdt.balanceOf(owner.address)); 
-    // console.log("userUni",await uni.balanceOf(owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
     // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 

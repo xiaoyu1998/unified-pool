@@ -72,7 +72,11 @@ async function main() {
                 label: symbol,
             }); 
         };
-        await multicall.aggregate3(multicallArgs);
+        //await multicall.aggregate3(multicallArgs);
+        await sendTxn(
+            multicall.aggregate3(multicallArgs),
+            "multicall.aggregate3"
+        );
     }
 }
 

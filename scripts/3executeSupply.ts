@@ -47,16 +47,15 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, supplyAmountUni]),
         exchangeRouter.interface.encodeFunctionData("executeSupply", [paramsUni]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);
+    //const tx = await exchangeRouter.multicall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs),
+        "exchangeRouter.multicall"
+    );
 
-    //print poolUsdt
-    const poolUsdtAfterSupply = await getPoolInfo(usdtAddress); 
-    // const poolToken = await getContractAt("PoolToken", poolUsdtAfterSupply.poolToken);
-    // const debtToken = await getContractAt("DebtToken", poolUsdtAfterSupply.debtToken);
-    console.log("poolUsdtAfterSupply", poolUsdtAfterSupply);
+    //print
+    console.log("poolUsdtAfterSupply", await getPoolInfo(usdtAddress));
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
-    // console.log("userUsdt",await usdt.balanceOf(owner.address)); 
-    // console.log("userUni",await uni.balanceOf(owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
     //console.log("allowance", await usdt.allowance(owner.address, router.target));

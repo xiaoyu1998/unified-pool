@@ -1,4 +1,4 @@
-import { contractAt, getTokens, getContract, getEventEmitter } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions, getPositionsInfo} from "../utils/helper";
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";
@@ -38,10 +38,15 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs, {
-        gasLimit:2000000,
-    });
-    // const tx = await exchangeRouter.multicall(multicallArgs);
+    // const tx = await exchangeRouter.multicall(multicallArgs, {
+    //     gasLimit:2000000,
+    // });
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs, {
+            gasLimit:2000000,
+        }),
+        "exchangeRouter.multicall"
+    );
 
     //print 
     const poolUsdtAfterSwap = await getPoolInfo(usdtAddress); 

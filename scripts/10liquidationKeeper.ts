@@ -16,14 +16,22 @@ async function liquidation(account){
         if (l.debt > 0) {
             console.log("liquidityAndDebt", l);
             const underlyingAsset = await contractAt("MintableToken", l.underlyingAsset); 
-            await underlyingAsset.approve(liquidationHandler, MaxUint256);//allowance should be deleted after liquidation
+            //await underlyingAsset.approve(liquidationHandler, MaxUint256);//allowance should be deleted after liquidation
+            await sendTxn(
+                underlyingAsset.approve(liquidationHandler, MaxUint256),
+                "underlyingAsset.approve"
+            );
         }
     }
 
     const params: LiquidationUtils.LiquidationParamsStruct = {
         account: account
     };
-    await exchangeRouter.executeLiquidation(params);
+    //await exchangeRouter.executeLiquidation(params);
+    await sendTxn(
+        exchangeRouter.executeLiquidation(params),
+        "exchangeRouter.executeLiquidation"
+    );
 
 }
 
@@ -54,7 +62,11 @@ async function main() {
     });
 
     const config = await getContract("Config");
-    await config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25))//400%
+    //await config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25))//400%
+    await sendTxn(
+        config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
+        "config.setHealthFactorLiquidationThreshold"
+    );
 
     while(true){
         const account = owner.address;

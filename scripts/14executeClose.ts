@@ -33,9 +33,9 @@ async function main() {
 
     // //deposit usdt 1m and uni 10,000
     const depositAmmountUsdt = expandDecimals(1000000, usdtDecimals);
-    await usdt.approve(router.target, depositAmmountUsdt);
+    await sendTxn(usdt.approve(router.target, depositAmmountUsdt), "usdt.approve");
     const depositAmmountUni = expandDecimals(10000, uniDecimals);
-    await uni.approve(router.target, depositAmmountUni);
+    await sendTxn(uni.approve(router.target, depositAmmountUni), "uni.approve");    
     const poolUsdt = await getPoolInfo(usdtAddress); 
     const paramsUsdt: DepositUtils.DepositParamsStruct = {
         underlyingAsset: usdtAddress,
@@ -70,7 +70,11 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
         exchangeRouter.interface.encodeFunctionData("executeClose", [paramsClose]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);
+    //const tx = await exchangeRouter.multicall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs),
+        "exchangeRouter.multicall"
+    );
 
     //print 
     const poolUsdtAfterClosePosition = await getPoolInfo(usdtAddress); 

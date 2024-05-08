@@ -30,19 +30,22 @@ async function main() {
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeRedeem", [params]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);  
+    //const tx = await exchangeRouter.multicall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs, {
+            gasLimit:2000000,
+        }),
+        "exchangeRouter.multicall"
+    );
 
     //print 
     const poolUsdtAfterRedeem = await getPoolInfo(usdtAddress); 
-    const poolToken = await getContractAt("PoolToken", poolUsdtAfterRedeem.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdtAfterRedeem.debtToken);
+    console.log("poolUsdtBeforeRedeem", poolUsdt);
     console.log("poolUsdtAfterRedeem", poolUsdtAfterRedeem);
     console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address));
     console.log("maxAmountToRedeem",await getMaxAmountToRedeem(dataStore, reader, owner.address, usdtAddress)); 
-    console.log("userUSDT",await usdt.balanceOf(owner.address)); 
-    console.log("poolUSDT",await usdt.balanceOf(poolToken.target)); 
-    // console.log("price",await reader.getPrice(dataStore, usdtAddress)); 
+    console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
 }
 
 

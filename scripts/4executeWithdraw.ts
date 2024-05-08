@@ -1,4 +1,4 @@
-import { contractAt, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts } from "../utils/helper";
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
@@ -19,6 +19,7 @@ async function main() {
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const withdrawAmmountUsdt = expandDecimals(1000, usdtDecimals);
+    const poolUsdt = await getPoolInfo(usdtAddress); 
     const paramsUsdt: WithdrawUtils.WithdrawParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: withdrawAmmountUsdt,
@@ -30,6 +31,7 @@ async function main() {
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
     const withdrawAmmountUni = expandDecimals(1000, uniDecimals);
+    const poolUni = await getPoolInfo(uniAddress); 
     const paramsUni: WithdrawUtils.WithdrawParamsStruct = {
         underlyingAsset: uniAddress,
         amount: withdrawAmmountUni,
@@ -39,16 +41,17 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeWithdraw", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeWithdraw", [paramsUni]),
     ];
-    const tx = await exchangeRouter.multicall(multicallArgs);  
+    // const tx = await exchangeRouter.multicall(multicallArgs);  
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs),
+        "exchangeRouter.multicall"
+    );
 
     //print poolUsdt
-    const poolUsdtAfterWithdraw = await getPoolInfo(usdtAddress); 
-    const poolToken = await getContractAt("PoolToken", poolUsdtAfterWithdraw.poolToken);
-    const debtToken = await getContractAt("DebtToken", poolUsdtAfterWithdraw.debtToken);
-    console.log("poolUsdtAfterWithdraw", poolUsdtAfterWithdraw);
+    console.log("poolUsdtAfterWithdraw", getPoolInfo(usdtAddress));
     console.log("account", await getLiquidityAndDebts(dataStore, reader, owner.address));
-    console.log("poolUSDT", await usdt.balanceOf(poolToken.target)); 
-    console.log("userUSDT", await usdt.balanceOf(owner.address)); 
+    console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
+    console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
 
 }
 
