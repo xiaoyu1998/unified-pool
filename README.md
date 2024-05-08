@@ -72,3 +72,12 @@ Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
 ```
+Long
+```shell
+npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
+npx hardhat run scripts/1createPools.ts --network testnet
+npx hardhat run scripts/2oracleKeeper.ts --network testnet
+npx hardhat run scripts/3executeSupply.ts --network testnet
+npx hardhat run scripts/5executeDeposit.ts --network testnet
+npx hardhat run scripts/11executeLong.ts --network testnet
+```
