@@ -50,8 +50,7 @@ npx hardhat run scripts/3executeSupply.ts --network testnet
 npx hardhat run scripts/13executeClosePosition.ts --network testnet
 ```
 ## Testnet
-Run a geth node 
-https://github.com/xiaoyu1998/go-ethereum
+[Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
 
 Configuration 
 ```shell
