@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPoolInfo, getLiquidityAndDebts } from "../utils/helper";
+import { getPoolInfo, getMarginsAndSupplies } from "../utils/helper";
 import { SupplyUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
 
 async function main() {
@@ -55,7 +55,7 @@ async function main() {
 
     //print
     console.log("poolUsdtAfterSupply", await getPoolInfo(usdtAddress));
-    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("account",await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
     //console.log("allowance", await usdt.allowance(owner.address, router.target));

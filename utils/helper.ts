@@ -146,6 +146,29 @@ export async function getLiquidityAndDebts(dataStore, reader, address) {
     return accountLiquidities;    
 }
 
+export function parseMarginAndSupply(s) {
+    const m: ReaderUtils.GetMarginAndSupplyStruct = {
+        underlyingAsset: s[0],
+        account: s[1],
+        balanceAsset: s[2],
+        debt: s[3],
+        borrowApy: s[4],
+        maxWithdrawAmount: s[5],
+        balanceSupply: s[6],
+        supplyApy: s[7]
+    };
+    return m;
+}
+
+export async function getMarginsAndSupplies(dataStore, reader, address) {
+    const s = await reader.getMarginsAndSupplies(dataStore.target, address);
+    const accountMarginsAndSupplies = [];
+    for (let i = 0; i < s.length; i++) {
+         accountMarginsAndSupplies[i] = parseMarginAndSupply(s[i]);
+    }
+    return accountMarginsAndSupplies;    
+}
+
 // export type DebtPropsStruct = {
 //     underlyingAsset: AddressLike;
 //     scaledTotalDebt: BigNumberish;

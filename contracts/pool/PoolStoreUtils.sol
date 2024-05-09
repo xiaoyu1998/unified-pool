@@ -273,6 +273,20 @@ library PoolStoreUtils {
         );       
     }
 
+    function getLiquidatyRate(address dataStoreAddress, address key) external view returns (uint256){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
+        return dataStore.getUint(
+            keccak256(abi.encode(key, POOL_LIQUIDITY_RATE))
+        );       
+    }
+
+    function getBorrowRate(address dataStoreAddress, address key) external view returns (uint256){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
+        return dataStore.getUint(
+            keccak256(abi.encode(key, POOL_BORROW_RATE))
+        );       
+    }
+
     function setConfiguration(address dataStoreAddress, address key, uint256 poolConfigration) external {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         dataStore.setUint(

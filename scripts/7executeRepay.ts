@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPoolInfo, getLiquidityAndDebts,  getPositions} from "../utils/helper";
+import { getPoolInfo, getMarginsAndSupplies,  getPositions} from "../utils/helper";
 import { RepaytUtils } from "../typechain-types/contracts/exchange/RepaytHandler";
 
 async function main() {
@@ -41,7 +41,7 @@ async function main() {
     const poolUsdtAfterRepay = await getPoolInfo(usdtAddress); 
     console.log("poolUsdtBeforeRepay", poolUsdt);
     console.log("poolUsdtAfterRepay", poolUsdtAfterRepay);
-    console.log("account", await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("account", await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("positions", await getPositions(dataStore, reader, owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
 

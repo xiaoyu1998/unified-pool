@@ -98,6 +98,65 @@ library ReaderUtils {
         return l;
     }
 
+    struct GetMarginAndSupply {
+        address underlyingAsset;
+        address account;
+        uint256 balanceAsset;
+        uint256 debt; 
+        uint256 borrowApy;
+        uint256 maxWithdrawAmount;
+        uint256 balanceSupply;
+        uint256 supplyApy;
+    }
+
+    struct GetMarginAndSupplyVars {
+        address poolTokenAddress;
+        address debtTokenAddress;
+        IPoolToken poolToken;
+        IDebtToken debtToken;
+        address underlyingAsset;
+        uint256 collateralAmount;
+        uint256 maxWithdrawAmount;
+        uint256 borrowApy;
+        uint256 supplyApy;
+    } 
+
+    function _getMarginAndSupply (
+        address dataStore,
+        address account,
+        address poolKey
+    ) internal view returns (GetMarginAndSupply memory) {
+        GetMarginAndSupplyVars memory vars;
+        vars.poolTokenAddress = PoolStoreUtils.getPoolToken(dataStore, poolKey);
+        vars.debtTokenAddress = PoolStoreUtils.getDebtToken(dataStore, poolKey);
+        vars.supplyApy = PoolStoreUtils.getLiquidatyRate(dataStore, poolKey);
+        vars.borrowApy = PoolStoreUtils.getBorrowRate(dataStore, poolKey);
+        vars.poolToken   = IPoolToken(vars.poolTokenAddress);
+        vars.debtToken   = IDebtToken(vars.debtTokenAddress);
+
+        vars.underlyingAsset = vars.poolToken.underlyingAsset();
+        vars.collateralAmount = vars.poolToken.balanceOfCollateral(account);
+        vars.maxWithdrawAmount = PositionUtils.maxAmountToRedeem(
+            account, 
+            dataStore, 
+            vars.underlyingAsset, 
+            vars.collateralAmount
+        );
+
+        GetMarginAndSupply memory m = GetMarginAndSupply(
+            vars.underlyingAsset,
+            account,
+            vars.collateralAmount,
+            vars.debtToken.balanceOf(account),
+            vars.borrowApy,
+            vars.maxWithdrawAmount,
+            vars.poolToken.balanceOf(account),
+            vars.supplyApy
+        );
+
+        return m;
+    }
+
     function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
         return PositionStoreUtils.get(dataStore, positionKey);
     }

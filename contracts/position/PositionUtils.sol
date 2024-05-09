@@ -167,7 +167,7 @@ library PositionUtils {
         uint256 thresholdMulDebtSubCollateralAbs = SignedMath.abs(thresholdMulDebtSubCollateral);
         uint256 Collatera1SubThreasholdMulDebt1Abs = SignedMath.abs(Collatera1SubThreasholdMulDebt1);
 
-        //TODO:What will that happen
+        //negative price 
         if (( thresholdMulDebtSubCollateral > 0 && Collatera1SubThreasholdMulDebt1 < 0) ||
            ( thresholdMulDebtSubCollateral < 0 && Collatera1SubThreasholdMulDebt1 > 0)) {
             return 0;
@@ -276,7 +276,7 @@ library PositionUtils {
         address underlyingAsset,
         uint256 collateralAmount
     ) internal view returns (uint256) {
-
+        Printer.log("-------------------------maxAmountToRedeem--------------------------");
         if (collateralAmount == 0) {
             return 0;
         }

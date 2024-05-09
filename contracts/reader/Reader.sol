@@ -67,6 +67,20 @@ contract Reader {
         return accountLiquidities;
     }
 
+    function getMarginsAndSupplies(address dataStore, address account) external view returns (ReaderUtils.GetMarginAndSupply[] memory) {
+        uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
+        address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);
+
+        ReaderUtils.GetMarginAndSupply[] memory marginsAndSupplies = 
+            new ReaderUtils.GetMarginAndSupply[](poolKeys.length);
+        for (uint256 i; i < poolKeys.length; i++) {
+            marginsAndSupplies[i] = 
+                ReaderUtils._getMarginAndSupply(dataStore, account, poolKeys[i]);
+        }
+        //TODO:should delete empty items
+        return marginsAndSupplies;
+    }
+
     function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
         address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
