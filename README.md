@@ -51,9 +51,10 @@ npx hardhat run scripts/13executeClosePosition.ts --network testnet
 ```
 ## Testnet
 ```shell
-1.testnet chainId 1998 
-2.webSocketUrl and defaultRpcs in utils/network.ts
-3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
+1.run a geth node (https://github.com/xiaoyu1998/go-ethereum)
+2.testnet chainId 1998 
+3.webSocketUrl and defaultRpcs in utils/network.ts
+4.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
 ```
 Deploy contracts
 ```shell
