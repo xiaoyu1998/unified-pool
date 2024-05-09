@@ -41,7 +41,7 @@ async function main() {
     const poolUsdtAfterRepay = await getPoolInfo(usdtAddress); 
     console.log("poolUsdtBeforeRepay", poolUsdt);
     console.log("poolUsdtAfterRepay", poolUsdtAfterRepay);
-    console.log("account", await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("marginsAndSupplies", await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("positions", await getPositions(dataStore, reader, owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
 

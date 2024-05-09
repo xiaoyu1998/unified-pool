@@ -42,7 +42,7 @@ async function main() {
     const poolUsdtAfterRedeem = await getPoolInfo(usdtAddress); 
     console.log("poolUsdtBeforeRedeem", poolUsdt);
     console.log("poolUsdtAfterRedeem", poolUsdtAfterRedeem);
-    console.log("account",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("marginsAndSupplies",await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address));
     console.log("maxAmountToRedeem",await getMaxAmountToRedeem(dataStore, reader, owner.address, usdtAddress)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 

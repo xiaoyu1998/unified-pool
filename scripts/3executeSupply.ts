@@ -55,7 +55,7 @@ async function main() {
 
     //print
     console.log("poolUsdtAfterSupply", await getPoolInfo(usdtAddress));
-    console.log("account",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("marginsAndSupplies",await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
     //console.log("allowance", await usdt.allowance(owner.address, router.target));

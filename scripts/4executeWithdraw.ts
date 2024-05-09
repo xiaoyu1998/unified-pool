@@ -49,7 +49,7 @@ async function main() {
 
     //print poolUsdt
     console.log("poolUsdtAfterWithdraw", getPoolInfo(usdtAddress));
-    console.log("account", await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("marginsAndSupplies", await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
 
