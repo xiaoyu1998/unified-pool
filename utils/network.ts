@@ -1,6 +1,6 @@
 export const deployAddresses = {
 	localhost : "ignition/deployments/chain-31337/deployed_addresses.json",
-	testnet : "ignition/deployments/chain-10086/deployed_addresses.json",
+	testnet : "ignition/deployments/chain-1998/deployed_addresses.json",
 };
 
 export const webSocketUrl = {

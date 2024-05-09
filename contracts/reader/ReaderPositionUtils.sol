@@ -43,80 +43,105 @@ library ReaderPositionUtils {
         return PositionUtils.getPositions(account, dataStore);
     }
 
+    struct GetPositionInfoLocalVars {
+        GetPositionInfo positionInfo;
+        Position.Props pool;
+        address poolKey;
+        address poolToken;
+        address debtToken;
+        uint256 configuration;
+        uint256 decimals;
+        uint256 collateralAmount;
+        uint256 debtAmount;
+        uint256 adjustCollateralAmount;
+        uint256 adjustDebtAmount;
+        uint256 equityAbs;
+        uint256 adjustEquityAbs;
+        uint256 equityUsdAbs;
+        bool collateralHigherThanDebt;
+        uint256 deltaPriceAbs;
+        uint256 pnlUsdAbs;
+        bool isPriceIncrease;
+        uint256 userTotalCollateralExceptThisPositionUsd;
+        uint256 userTotalDebExceptThisPositiontUsd;
+        uint256 liquidationPrice;
+    }   
+
     function _getPositionInfo(address dataStore, bytes32 positionKey) internal view returns (GetPositionInfo memory) {
-        Position.Props memory p = PositionStoreUtils.get(dataStore, positionKey);
-        GetPositionInfo memory positionInfo = GetPositionInfo(
-            p.account,
-            p.underlyingAsset,
-            p.positionType,
+        GetPositionInfoLocalVars memory vars;
+        vars.pool = PositionStoreUtils.get(dataStore, positionKey);
+        vars.positionInfo = GetPositionInfo(
+            vars.pool.account,
+            vars.pool.underlyingAsset,
+            vars.pool.positionType,
             0,0,0,0,0,0,0
         );
 
-        positionInfo.indexPrice = OracleUtils.getPrice(dataStore, p.underlyingAsset);
-        Printer.log("indexPrice", positionInfo.indexPrice);
+        vars.positionInfo.indexPrice = OracleUtils.getPrice(dataStore, vars.pool.underlyingAsset);
+        Printer.log("indexPrice", vars.positionInfo.indexPrice);
         
-        address poolKey = Keys.poolKey(p.underlyingAsset);
-        address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
-        address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
-        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, poolKey);
-        uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
+        vars.poolKey = Keys.poolKey(vars.pool.underlyingAsset);
+        vars.poolToken = PoolStoreUtils.getPoolToken(dataStore, vars.poolKey);
+        vars.debtToken = PoolStoreUtils.getDebtToken(dataStore, vars.poolKey);
+        vars.configuration = PoolStoreUtils.getConfiguration(dataStore, vars.poolKey);
+        vars.decimals = PoolConfigurationUtils.getDecimals(vars.configuration);
 
-        uint256 collateralAmount = IPoolToken(poolToken).balanceOfCollateral(p.account);
-        uint256 debtAmount = IDebtToken(debtToken).balanceOf(p.account);
-        uint256 adjustCollateralAmount = Math.mulDiv(collateralAmount, WadRayMath.RAY, 10**decimals);
-        uint256 adjustDebtAmount = Math.mulDiv(debtAmount, WadRayMath.RAY, 10**decimals);
+        vars.collateralAmount = IPoolToken(vars.poolToken).balanceOfCollateral(vars.pool.account);
+        vars.debtAmount = IDebtToken(vars.debtToken).balanceOf(vars.pool.account);
+        vars.adjustCollateralAmount = Math.mulDiv(vars.collateralAmount, WadRayMath.RAY, 10**vars.decimals);
+        vars.adjustDebtAmount = Math.mulDiv(vars.debtAmount, WadRayMath.RAY, 10**vars.decimals);
         
-        Printer.log("collateralAmount", collateralAmount);
-        Printer.log("debtAmount", debtAmount);
-        uint256 equityAbs = SignedMath.abs(int256(collateralAmount) - int256(debtAmount));
-        Printer.log("equityAbs", equityAbs);
+        Printer.log("collateralAmount", vars.collateralAmount);
+        Printer.log("debtAmount", vars.debtAmount);
+        vars.equityAbs = SignedMath.abs(int256(vars.collateralAmount) - int256(vars.debtAmount));
+        Printer.log("equityAbs", vars.equityAbs);
 
-        uint256 adjustEquityAbs = SignedMath.abs(int256(adjustCollateralAmount) - int256(adjustDebtAmount));
-        uint256 equityUsdAbs = adjustEquityAbs.rayMul(positionInfo.indexPrice);
+        vars.adjustEquityAbs = SignedMath.abs(int256(vars.adjustCollateralAmount) - int256(vars.adjustDebtAmount));
+        vars.equityUsdAbs = vars.adjustEquityAbs.rayMul(vars.positionInfo.indexPrice);
 
-        bool collateralHigherThanDebt = (collateralAmount > debtAmount) ? true : false;
-        positionInfo.equity = collateralHigherThanDebt ? int256(equityAbs): -int256(equityAbs);
-        positionInfo.equityUsd = collateralHigherThanDebt ? int256(equityUsdAbs) : -int256(equityUsdAbs);
-        Printer.log("equitequityUsdyAbs", positionInfo.equityUsd);
+        vars.collateralHigherThanDebt = (vars.collateralAmount > vars.debtAmount) ? true : false;
+        vars.positionInfo.equity = vars.collateralHigherThanDebt ? int256(vars.equityAbs): -int256(vars.equityAbs);
+        vars.positionInfo.equityUsd = vars.collateralHigherThanDebt ? int256(vars.equityUsdAbs) : -int256(vars.equityUsdAbs);
+        Printer.log("equitequityUsdyAbs", vars.positionInfo.equityUsd);
 
-        if (p.positionType == 0) {//short
-            positionInfo.entryPrice = p.entryShortPrice;          
-        } else if (p.positionType == 1) {//long
-            positionInfo.entryPrice = p.entryLongPrice;
+        if (vars.pool.positionType == 0) {//short
+            vars.positionInfo.entryPrice = vars.pool.entryShortPrice;          
+        } else if (vars.pool.positionType == 1) {//long
+            vars.positionInfo.entryPrice = vars.pool.entryLongPrice;
         } 
 
-        if (p.positionType != 2) {
-            uint256 deltaPriceAbs = SignedMath.abs(int256(positionInfo.indexPrice) - int256(positionInfo.entryPrice));
-            uint256 pnlUsdAbs = adjustEquityAbs.rayMul(deltaPriceAbs);
-            bool isPriceIncrease = (positionInfo.indexPrice > positionInfo.entryPrice) ? true : false;
+        if (vars.pool.positionType != 2) {
+            vars.deltaPriceAbs = SignedMath.abs(int256(vars.positionInfo.indexPrice) - int256(vars.positionInfo.entryPrice));
+            vars.pnlUsdAbs = vars.adjustEquityAbs.rayMul(vars.deltaPriceAbs);
+            vars.isPriceIncrease = (vars.positionInfo.indexPrice > vars.positionInfo.entryPrice) ? true : false;
 
             //short, the collateral should lower than debt
             //long, the collateral should higher than debt
             //the collateralHigherThanDebt is same as the isLong
-            positionInfo.pnlUsd = (isPriceIncrease&&collateralHigherThanDebt) ? int256(pnlUsdAbs) : -int256(pnlUsdAbs);
-            Printer.log("pnlUsd", positionInfo.pnlUsd);
+            vars.positionInfo.pnlUsd = (vars.isPriceIncrease&&vars.collateralHigherThanDebt) ? int256(vars.pnlUsdAbs) : -int256(vars.pnlUsdAbs);
+            Printer.log("pnlUsd", vars.positionInfo.pnlUsd);
             
-            (   uint256 userTotalCollateralExceptThisPositionUsd,
-                uint256 userTotalDebExceptThisPositiontUsd
-            ) = PositionUtils.calculateUserTotalCollateralAndDebt(p.account, dataStore, p.underlyingAsset);
+            (   vars.userTotalCollateralExceptThisPositionUsd,
+                vars.userTotalDebExceptThisPositiontUsd
+            ) = PositionUtils.calculateUserTotalCollateralAndDebt(vars.pool.account, dataStore, vars.pool.underlyingAsset);
 
-            Printer.log("userTotalCollateralExceptThisPositionUsd", userTotalCollateralExceptThisPositionUsd);
-            Printer.log("userTotalDebExceptThisPositiontUsd", userTotalDebExceptThisPositiontUsd);
+            Printer.log("userTotalCollateralExceptThisPositionUsd", vars.userTotalCollateralExceptThisPositionUsd);
+            Printer.log("userTotalDebExceptThisPositiontUsd", vars.userTotalDebExceptThisPositiontUsd);
 
-            uint256 liquidationPrice = PositionUtils.getLiquidationPrice(
+            vars.liquidationPrice = PositionUtils.getLiquidationPrice(
                 dataStore,
-                userTotalCollateralExceptThisPositionUsd,
-                userTotalDebExceptThisPositiontUsd,
-                adjustCollateralAmount,
-                adjustDebtAmount
+                vars.userTotalCollateralExceptThisPositionUsd,
+                vars.userTotalDebExceptThisPositiontUsd,
+                vars.adjustCollateralAmount,
+                vars.adjustDebtAmount
             );
 
-            positionInfo.liquidationPrice = liquidationPrice;
-            positionInfo.presentageToLiquidationPrice = (liquidationPrice == 0)?0:positionInfo.indexPrice.rayDiv(liquidationPrice);
+            vars.positionInfo.liquidationPrice = vars.liquidationPrice;
+            vars.positionInfo.presentageToLiquidationPrice = (vars.liquidationPrice == 0)?0:vars.positionInfo.indexPrice.rayDiv(vars.liquidationPrice);
 
         }
 
-        return positionInfo;
+        return vars.positionInfo;
 
     }
 

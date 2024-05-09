@@ -40,14 +40,34 @@ library LiquidationUtils {
         address account;
     }
 
+    struct LiquidationLocalVars {
+        uint256 healthFactor;
+        uint256 healthFactorLiquidationThreshold;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
+        uint256 positionCount;
+        bytes32[] positionKeys;
+        bytes32 positionKey;
+        Position.Props position;
+        Pool.Props pool;
+        PoolCache.Props poolCache;
+        address poolKey;
+        IPoolToken poolToken;
+        IDebtToken debtToken;
+        uint256 collateralAmount;
+        uint256 debtAmount;
+        uint256 i;
+    }
+
     // @dev executes a liquidation
     // @param params ExecuteLiquidationParams
     function executeLiquidation(address liquidator, ExecuteLiquidationParams calldata params) external {
         Printer.log("-------------------------executeLiquidation--------------------------");
-        (   uint256 healthFactor,
-            uint256 healthFactorLiquidationThreshold,
-            uint256 userTotalCollateralUsd,
-            uint256 userTotalDebtUsd
+        LiquidationLocalVars memory vars;
+        (   vars.healthFactor,
+            vars.healthFactorLiquidationThreshold,
+            vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         ) = LiquidationUtils.validateLiquidation(
             params.account, 
             params.dataStore
@@ -57,84 +77,91 @@ library LiquidationUtils {
             params.eventEmitter, 
             liquidator,
             params.account,
-            healthFactor, 
-            healthFactorLiquidationThreshold,
-            userTotalCollateralUsd,
-            userTotalDebtUsd
+            vars.healthFactor, 
+            vars.healthFactorLiquidationThreshold,
+            vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         );
 
-        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(
+        vars.positionCount = PositionStoreUtils.getAccountPositionCount(
             params.dataStore, 
             params.account
         );
-        bytes32[] memory positionKeys = 
+        vars.positionKeys = 
             PositionStoreUtils.getAccountPositionKeys(
                 params.dataStore, 
                 params.account, 
                 0, 
-                positionCount
+                vars.positionCount
             );
-        for (uint256 i; i < positionKeys.length; i++) {
-            bytes32 positionKey = positionKeys[i];
-            Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
+        for (vars.i = 0; vars.i < vars.positionKeys.length; vars.i++) {
+            vars.positionKey = vars.positionKeys[vars.i];
+            vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
 
-            (   Pool.Props memory pool,
-                PoolCache.Props memory poolCache,
-                address poolKey,
-            ) = PoolUtils.updatePoolAndCache(params.dataStore, position.underlyingAsset);
-            // LiquidationUtils.validatePool(position.underlyingAsset, pool.configuration);
-            PoolUtils.validateConfigurationPool(pool, false);  
+            (   vars.pool,
+                vars.poolCache,
+                vars.poolKey,
+            ) = PoolUtils.updatePoolAndCache(params.dataStore, vars.position.underlyingAsset);
+            PoolUtils.validateConfigurationPool(vars.pool, false);  
 
-            IPoolToken poolToken = IPoolToken(pool.poolToken);
-            uint256 collateralAmount;
-            uint256 debtAmount;
-            if (position.hasCollateral){
-                collateralAmount = poolToken.balanceOfCollateral(position.account);
-                poolToken.removeCollateral(position.account, collateralAmount);
-                poolToken.transferOutUnderlyingAsset(liquidator, collateralAmount);
+            vars.poolToken = IPoolToken(vars.pool.poolToken);
+            vars.collateralAmount = 0;
+            vars.debtAmount = 0;
+            if (vars.position.hasCollateral){
+                vars.collateralAmount = vars.poolToken.balanceOfCollateral(vars.position.account);
+                vars.poolToken.removeCollateral(vars.position.account, vars.collateralAmount);
+                vars.poolToken.transferOutUnderlyingAsset(liquidator, vars.collateralAmount);
             }
-            Printer.log("collateralAmount", collateralAmount);
+            Printer.log("collateralAmount", vars.collateralAmount);
 
-            if (position.hasDebt){
-                IDebtToken debtToken = IDebtToken(pool.debtToken);
-                debtAmount = debtToken.balanceOf(position.account);
-                debtToken.burnAll(position.account);
+            if (vars.position.hasDebt){
+                vars.debtToken = IDebtToken(vars.pool.debtToken);
+                vars.debtAmount = vars.debtToken.balanceOf(vars.position.account);
+                vars.debtToken.burnAll(vars.position.account);
 
                 //TODO:should be move to Router
-                IERC20(position.underlyingAsset).safeTransferFrom(
+                IERC20(vars.position.underlyingAsset).safeTransferFrom(
                     liquidator, 
-                    address(poolToken), 
-                    debtAmount
+                    address(vars.poolToken), 
+                    vars.debtAmount
                 );
-                poolToken.syncUnderlyingAssetBalance();             
+                vars.poolToken.syncUnderlyingAssetBalance();             
             }
-            Printer.log("debtAmount", debtAmount);
+            Printer.log("debtAmount", vars.debtAmount);
 
-            PositionUtils.reset(position);
-            PositionStoreUtils.set(params.dataStore, positionKey, position);
+            PositionUtils.reset(vars.position);
+            PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);
 
             PoolUtils.updateInterestRates(
-                pool,
-                poolCache, 
-                position.underlyingAsset
+                vars.pool,
+                vars.poolCache, 
+                vars.position.underlyingAsset
             );
 
             PoolStoreUtils.set(
                 params.dataStore, 
-                poolKey, 
-                pool
+                vars.poolKey, 
+                vars.pool
             );
 
             LiquidationEventUtils.emitPositionLiquidation(
                 params.eventEmitter, 
                 liquidator,
-                position.underlyingAsset, 
+                vars.position.underlyingAsset, 
                 params.account, 
-                collateralAmount,
-                debtAmount,
-                OracleUtils.getPrice(params.dataStore, position.underlyingAsset)
+                vars.collateralAmount,
+                vars.debtAmount,
+                OracleUtils.getPrice(params.dataStore, vars.position.underlyingAsset)
             );
         }
+    }
+
+    struct ValidateLiquidationLocalVars {
+        uint256 healthFactor;
+        uint256 healthFactorLiquidationThreshold;
+        bool isHealtherFactorHigherThanLiquidationThreshold;
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
     }
 
     //
@@ -144,38 +171,25 @@ library LiquidationUtils {
         address account,
         address dataStore
     ) internal view returns(uint256, uint256, uint256, uint256) {
-        (   uint256 healthFactor,
-            uint256 healthFactorLiquidationThreshold,
-            bool isHealtherFactorHigherThanLiquidationThreshold,
-            uint256 userTotalCollateralUsd,
-            uint256 userTotalDebtUsd
+        ValidateLiquidationLocalVars memory vars;
+        (   vars.healthFactor,
+            vars.healthFactorLiquidationThreshold,
+            vars.isHealtherFactorHigherThanLiquidationThreshold,
+            vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);
 
-        if (isHealtherFactorHigherThanLiquidationThreshold) {
+        if (vars.isHealtherFactorHigherThanLiquidationThreshold) {
             revert Errors.HealthFactorHigherThanLiquidationThreshold(
-                healthFactor, 
-                healthFactorLiquidationThreshold
+                vars.healthFactor, 
+                vars.healthFactorLiquidationThreshold
             );
         }
         
-        return (healthFactor,
-                healthFactorLiquidationThreshold,
-                userTotalCollateralUsd,
-                userTotalDebtUsd);
+        return (vars.healthFactor,
+                vars.healthFactorLiquidationThreshold,
+                vars.userTotalCollateralUsd,
+                vars.userTotalDebtUsd);
     }
-
-    // function validatePool(
-    //     address underlyingAsset,
-    //     uint256 configuration
-    // ) internal pure {
-    //     (   bool isActive,
-    //         bool isFrozen, 
-    //         ,
-    //         bool isPaused
-    //     ) = configuration.getFlags();
-    //     if (!isActive) { revert Errors.PoolIsInactive(underlyingAsset); }  
-    //     if (isPaused)  { revert Errors.PoolIsPaused(underlyingAsset);   }  
-    //     if (isFrozen)  { revert Errors.PoolIsFrozen(underlyingAsset);   }  
-    // }
     
 }

@@ -20,12 +20,7 @@ const getEnvAccount = () => {
 const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.20",
-    warnings: {
-      'Ignored.sol': 'off',
-      'ethers.js': 'off',
-    },
     settings: {
-       viaIR: true,
        optimizer: {
          enabled: true,
          runs: 200
@@ -35,7 +30,7 @@ const config: HardhatUserConfig = {
   networks:{
     testnet: {
       url: getRpcUrl("testnet"),
-      chainId: 10086,
+      chainId: 1998,
       accounts: getEnvAccount(),
       blockGasLimit: 20_000_000,
       gas: 20_000_000,

@@ -173,7 +173,6 @@ library ReaderUtils {
         poolInfo.totalDebt = debtToken.totalSupply();
 
         poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
-        //this price is not at lastUpdateTimestamp
         poolInfo.price = OracleUtils.getPrice(dataStore, poolInfo.underlyingAsset);
 
         return poolInfo;

@@ -44,91 +44,108 @@ library RepayUtils {
         uint256 amount;
     }
 
+    struct RepayLocalVars {
+        Pool.Props pool;
+        PoolCache.Props poolCache;
+        address poolKey;
+        bool poolIsUsd;
+        IPoolToken poolToken;
+        IDebtToken debtToken;
+        bytes32 positionKey;
+        Position.Props position;
+        uint256 repayAmount;
+        uint256 collateralAmount;
+        uint256 debtAmount;
+        bool useCollateralToRepay;
+        uint256 extraAmountToRefund;
+    }
+
     // @dev executes a repay
     // @param account the repaying account
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
         Printer.log("-------------------------executeRepay--------------------------");
-        (   Pool.Props memory pool,
-            PoolCache.Props memory poolCache,
-            address poolKey,
-            bool poolIsUsd
+        RepayLocalVars memory vars;
+        (   vars.pool,
+            vars.poolCache,
+            vars.poolKey,
+            vars.poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        uint256 repayAmount;
-        uint256 collateralAmount;
-        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        bool useCollateralToRepay = (params.amount > 0) ? true:false;
-        if (useCollateralToRepay) { 
-            repayAmount = params.amount;
-            collateralAmount = poolToken.balanceOfCollateral(account);
+        // uint256 repayAmount;
+        // uint256 collateralAmount;
+        vars.poolToken = IPoolToken(vars.poolCache.poolToken);
+        vars.useCollateralToRepay = (params.amount > 0) ? true:false;
+        if (vars.useCollateralToRepay) { 
+            vars.repayAmount = params.amount;
+            vars.collateralAmount = vars.poolToken.balanceOfCollateral(account);
         } else {//transferin to repay
-            repayAmount = poolToken.recordTransferIn(params.underlyingAsset);
+            vars.repayAmount = vars.poolToken.recordTransferIn(params.underlyingAsset);
         }
-        Printer.log("repayAmount", repayAmount);   
+        Printer.log("repayAmount", vars.repayAmount);   
 
-        uint256 extraAmountToRefund;
-        IDebtToken debtToken = IDebtToken(poolCache.debtToken);
-        uint256 debtAmount = debtToken.balanceOf(account);
-        if (repayAmount > debtAmount) {
-            extraAmountToRefund = repayAmount - debtAmount;
-            repayAmount         = debtAmount;      
+        vars.extraAmountToRefund;
+        vars.debtToken = IDebtToken(vars.poolCache.debtToken);
+        vars.debtAmount = vars.debtToken.balanceOf(account);
+        if (vars.repayAmount > vars.debtAmount) {
+            vars.extraAmountToRefund = vars.repayAmount - vars.debtAmount;
+            vars.repayAmount         = vars.debtAmount;      
         }
-        Printer.log("debtAmount", debtAmount); 
-        Printer.log("extraAmountToRefund", extraAmountToRefund); 
+        Printer.log("debtAmount", vars.debtAmount); 
+        Printer.log("extraAmountToRefund", vars.extraAmountToRefund); 
 
-        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
-        Position.Props memory position  = PositionStoreUtils.get(params.dataStore, positionKey);
+        vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+        vars.position  = PositionStoreUtils.get(params.dataStore, vars.positionKey);
         RepayUtils.validateRepay(
             account, 
-            pool,
-            position, 
-            repayAmount, 
-            debtAmount, 
-            collateralAmount
+            vars.pool,
+            vars.position, 
+            vars.repayAmount, 
+            vars.debtAmount, 
+            vars.collateralAmount
         );
 
-        poolCache.nextTotalScaledDebt = debtToken.burn(account, repayAmount, poolCache.nextBorrowIndex);
-        if (debtToken.scaledBalanceOf(account) == 0) {
-            position.hasDebt = false; 
+        vars.poolCache.nextTotalScaledDebt = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
+        if (vars.debtToken.scaledBalanceOf(account) == 0) {
+            vars.position.hasDebt = false; 
         }
-        if (useCollateralToRepay) {//reduce collateral to repay
-            poolToken.removeCollateral(account, repayAmount);
-            if(poolToken.balanceOfCollateral(account) == 0) {
-                position.hasCollateral = false;
+        if (vars.useCollateralToRepay) {//reduce collateral to repay
+            vars.poolToken.removeCollateral(account, vars.repayAmount);
+            if(vars.poolToken.balanceOfCollateral(account) == 0) {
+                vars.position.hasCollateral = false;
             }
         }
-        if(extraAmountToRefund > 0 && !useCollateralToRepay) {//Refund extra
-            poolToken.transferOutUnderlyingAsset(account, extraAmountToRefund);
-            poolToken.syncUnderlyingAssetBalance();
+        if(vars.extraAmountToRefund > 0 && !vars.useCollateralToRepay) {//Refund extra
+            vars.poolToken.transferOutUnderlyingAsset(account, vars.extraAmountToRefund);
+            vars.poolToken.syncUnderlyingAssetBalance();
         } 
 
-        if (!poolIsUsd){
-            PositionUtils.longPosition(position, 0, repayAmount);
+        if (!vars.poolIsUsd){
+            PositionUtils.longPosition(vars.position, 0, vars.repayAmount);
         }
         PositionStoreUtils.set(
             params.dataStore, 
-            positionKey, 
-            position
+            vars.positionKey, 
+            vars.position
         ); 
 
         PoolUtils.updateInterestRates(
-            pool,
-            poolCache, 
+            vars.pool,
+            vars.poolCache, 
             params.underlyingAsset
         );
         PoolStoreUtils.set(
             params.dataStore, 
-            poolKey, 
-            pool
+            vars.poolKey, 
+            vars.pool
         );
 
         RepayEventUtils.emitRepay(
             params.eventEmitter, 
             params.underlyingAsset, 
             account, 
-            repayAmount,
-            useCollateralToRepay
+            vars.repayAmount,
+            vars.useCollateralToRepay
         );
 
     }

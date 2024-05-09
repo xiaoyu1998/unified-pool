@@ -51,7 +51,7 @@ npx hardhat run scripts/13executeClosePosition.ts --network testnet
 ```
 ## Testnet
 ```shell
-1.testnet chainId 10086 
+1.testnet chainId 1998 
 2.webSocketUrl and defaultRpcs in utils/network.ts
 3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
 ```
