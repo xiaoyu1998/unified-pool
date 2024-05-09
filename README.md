@@ -1,24 +1,24 @@
 ## Unified Pool Contracts
 
-Download
+#### Download
 
 ```shell
 git clone git@github.com:xiaoyu1998/up-contracts.git --recursive
 ```
-Installation
+#### Installation
 
 ```shell
 npm install
 ```
-Run local node
+#### Run local node
 ```shell
 npx hardhat node
 ```
-Deploy contracts
+#### Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```
-Execute contract terms
+#### Execute contract terms
 ```shell
 npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
 npx hardhat run scripts/1createPools.ts --network localhost
@@ -31,7 +31,7 @@ npx hardhat run scripts/7executeRepay.ts --network localhost
 npx hardhat run scripts/8executeRedeem.ts --network localhost
 npx hardhat run scripts/9executeSwap.ts --network localhost
 ```
-Long and Short
+#### Long and Short
 ```shell
 npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
 npx hardhat run scripts/1createPools.ts --network localhost
@@ -41,7 +41,7 @@ npx hardhat run scripts/5executeDeposit.ts --network localhost
 npx hardhat run scripts/11executeLong.ts --network localhost
 npx hardhat run scripts/12executeShort.ts --network localhost
 ```
-ClosePosition
+#### ClosePosition
 ```shell
 npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
 npx hardhat run scripts/1createPools.ts --network testnet
@@ -50,19 +50,19 @@ npx hardhat run scripts/3executeSupply.ts --network testnet
 npx hardhat run scripts/13executeClosePosition.ts --network testnet
 ```
 ## Testnet
-[Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
+#### [Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
 
-Configuration 
+#### Configuration 
 ```shell
 1.testnet chainId 1998 
 2.modify IP address and PORT in webSocketUrl and defaultRpcs in utils/network.ts
 3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
 ```
-Deploy contracts
+#### Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
 ```
-Close
+#### Close
 ```shell
 npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
 npx hardhat run scripts/1createPools.ts --network testnet
