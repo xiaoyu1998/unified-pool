@@ -11,7 +11,7 @@ contract EventEmitter is RoleModule {
 
     event Supply(
         address indexed pool,
-        address supplier,
+        address indexed supplier,
         address indexed to,
         uint256 amount
     );
@@ -25,7 +25,7 @@ contract EventEmitter is RoleModule {
 
     event Deposit(
         address indexed pool,
-        address depositer,
+        address indexed depositer,
         //address indexed to,
         uint256 amount
     );
@@ -39,7 +39,7 @@ contract EventEmitter is RoleModule {
 
     event Borrow(
         address indexed pool,
-        address borrower,
+        address indexed borrower,
         //address indexed to,
         uint256 amount,
         uint256 borrowRate
@@ -63,7 +63,7 @@ contract EventEmitter is RoleModule {
 
     event PositionLiquidation(
         address indexed liquidator,
-        address indexed underlyingAsset,
+        address indexed pool,
         address indexed account,
         uint256 collateral,
         uint256 debt,
@@ -80,16 +80,16 @@ contract EventEmitter is RoleModule {
     );
 
     event ClosePosition(
-        address indexed underlyingAsset,
-        address underlyingAssetUsd,
+        address indexed pool,
+        address indexed poolUsd,
         address indexed account,
-        uint256 collateralAmount,
-        uint256 debtAmount,
-        uint256 remainAmountUsd
+        uint256 collateral,
+        uint256 debt,
+        uint256 remainUsd
     );
 
     event Close(
-        address indexed underlyingAssetUsd,
+        address indexed poolUsd,
         address indexed account,
         uint256 amountUsdStartClose,
         uint256 amountUsdAfterRepayAndSellCollateral,

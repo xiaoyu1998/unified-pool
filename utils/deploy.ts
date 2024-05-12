@@ -55,6 +55,10 @@ export async function contractAtOptions(name, address, options, provider) {
 
 export function getDeployedContractAddresses(name){
     // return deployed_address[`${name}#${name}`];
+    //console.log("HARDHAT_NETWORK", process.env.HARDHAT_NETWORK);
+    if (!process.env.HARDHAT_NETWORK){
+        process.env.HARDHAT_NETWORK = 'localhost';
+    }
     const jsonFile = path.join(__dirname, '..', deployAddresses[`${process.env.HARDHAT_NETWORK}`]);
     const json = JSON.parse(fs.readFileSync(jsonFile))
     return json[`${name}#${name}`];    
