@@ -28,4 +28,4 @@ export const redeemUtilsModule = buildModule("RedeemUtils", (m) => {
     return { redeemUtils };
 });
 
-// export default redeemHandlerModule;
+export default redeemUtilsModule;

@@ -6,4 +6,4 @@ export const feeUtilsModule = buildModule("FeeUtils", (m) => {
     return { feeUtils };
 });
 
-//export default roleStoreModule;
+export default feeUtilsModule;

@@ -26,4 +26,4 @@ export const liquidationUtilsModule = buildModule("LiquidationUtils", (m) => {
     return { liquidationUtils };
 });
 
-// export default liquidationHandlerModule;
+export default liquidationUtilsModule;

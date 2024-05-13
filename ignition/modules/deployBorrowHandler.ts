@@ -21,4 +21,4 @@ export const borrowHandlerModule = buildModule("BorrowHandler", (m) => {
     return { borrowHandler };
 });
 
-//export default borrowHandlerModule;
+export default borrowHandlerModule;

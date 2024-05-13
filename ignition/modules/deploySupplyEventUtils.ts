@@ -6,4 +6,4 @@ export const supplyEventUtilsModule = buildModule("SupplyEventUtils", (m) => {
     return { supplyEventUtils };
 });
 
-//export default poolUtilsModule;
+export default supplyEventUtilsModule;

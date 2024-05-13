@@ -16,4 +16,4 @@ export const poolInterestRateStrategyModule = buildModule("PoolInterestRateStrat
     return { poolInterestRateStrategy };
 });
 
-//export default poolInterestRateStrategyModule;
+export default poolInterestRateStrategyModule;

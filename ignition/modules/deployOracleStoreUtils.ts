@@ -6,4 +6,4 @@ export const oracleStoreUtilsModule = buildModule("OracleStoreUtils", (m) => {
     return { oracleStoreUtils };
 });
 
-//export default roleStoreModule;
+export default oracleStoreUtilsModule;

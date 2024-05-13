@@ -20,4 +20,4 @@ export const readerUtilsModule = buildModule("ReaderUtils", (m) => {
     return { readerUtils };
 });
 
-//export default readerUtilsModule;
+export default readerUtilsModule;

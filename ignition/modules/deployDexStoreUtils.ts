@@ -6,4 +6,4 @@ export const dexStoreUtilsModule = buildModule("DexStoreUtils", (m) => {
     return { dexStoreUtils };
 });
 
-//export default roleStoreModule;
+export default dexStoreUtilsModule;

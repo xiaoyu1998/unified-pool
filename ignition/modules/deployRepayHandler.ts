@@ -22,4 +22,4 @@ export const repayHandlerModule = buildModule("RepayHandler", (m) => {
     return { repayHandler };
 });
 
-//export default repayHandlerModule;
+export default repayHandlerModule;

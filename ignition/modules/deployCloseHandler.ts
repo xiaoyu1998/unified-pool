@@ -20,4 +20,4 @@ export const closeHandlerModule = buildModule("CloseHandler", (m) => {
     return { closeHandler };
 });
 
-//export default closeHandlerModule;
+export default closeHandlerModule;

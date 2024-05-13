@@ -18,4 +18,4 @@ export const withdrawUtilsModule = buildModule("WithdrawUtils", (m) => {
     return { withdrawUtils };
 });
 
-// export default withdrawHandlerModule;
+export default withdrawUtilsModule;

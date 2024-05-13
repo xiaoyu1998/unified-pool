@@ -18,11 +18,12 @@ import { poolInterestRateStrategyModule } from "./deployPoolInterestRateStrategy
 import { readerModule } from "./deployReader"
 import { multicallModule } from "./deployMulticall"
 import { bankModule } from "./deployBank"
+import { eventEmitterModule } from "./deployEventEmitter"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
 
-const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
+export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { router } = m.useModule(routerModule);
     const { roleStore } = m.useModule(roleStoreModule);
     const { dataStore } = m.useModule(dataStoreModule);
@@ -41,6 +42,7 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { reader } = m.useModule(readerModule);
     const { multicall } = m.useModule(multicallModule);
     const { bank } = m.useModule(bankModule);
+    const { eventEmitter } = m.useModule(eventEmitterModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,
@@ -69,7 +71,17 @@ const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER], {id:"grantRole10"});
     m.call(roleStore, "grantRole",  [config, keys.CONTROLLER], {id:"grantRole11"});
     m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole12"});
-    return { exchangeRouter };
+    return { 
+        roleStore, 
+        dataStore, 
+        router, 
+        exchangeRouter, 
+        reader, 
+        eventEmitter, 
+        config,
+        poolFactory,
+        poolInterestRateStrategy
+    };
 });
 
 export default exchangeRouterModule;

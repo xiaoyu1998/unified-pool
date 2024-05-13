@@ -6,4 +6,4 @@ export const closeEventUtilsModule = buildModule("CloseEventUtils", (m) => {
     return { closeEventUtils };
 });
 
-//export default poolUtilsModule;
+export default closeEventUtilsModule;

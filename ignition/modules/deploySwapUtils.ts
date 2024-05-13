@@ -31,4 +31,4 @@ export const swapUtilsModule = buildModule("SwapUtils", (m) => {
     return { swapUtils };
 });
 
-// export default swapHandlerModule;
+export default swapUtilsModule;

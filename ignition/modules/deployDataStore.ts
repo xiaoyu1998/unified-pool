@@ -8,4 +8,4 @@ export const dataStoreModule = buildModule("DataStore", (m) => {
     return { dataStore };
 });
 
-//export default dataStoreModule;
+export default dataStoreModule;

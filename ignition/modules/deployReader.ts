@@ -25,4 +25,4 @@ export const readerModule = buildModule("Reader", (m) => {
     return { reader };
 });
 
-// export default readerModule;
+export default readerModule;

@@ -20,4 +20,4 @@ export const swapHandlerModule = buildModule("SwapHandler", (m) => {
     return { swapHandler };
 });
 
-//export default swapHandlerModule;
+export default swapHandlerModule;

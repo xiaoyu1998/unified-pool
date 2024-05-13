@@ -6,4 +6,4 @@ export const depositEventUtilsModule = buildModule("DepositEventUtils", (m) => {
     return { depositEventUtils };
 });
 
-//export default poolUtilsModule;
+export default depositEventUtilsModule;

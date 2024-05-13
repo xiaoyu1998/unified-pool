@@ -18,4 +18,4 @@ export const supplyUtilsModule = buildModule("SupplyUtils", (m) => {
     return { supplyUtils };
 });
 
-// export default supplyHandlerModule;
+export default supplyUtilsModule;

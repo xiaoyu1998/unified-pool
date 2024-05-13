@@ -6,4 +6,4 @@ export const poolStoreUtilsModule = buildModule("PoolStoreUtils", (m) => {
     return { poolStoreUtils };
 });
 
-//export default roleStoreModule;
+export default poolStoreUtilsModule;

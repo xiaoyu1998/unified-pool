@@ -12,4 +12,4 @@ export const oracleUtilsModule = buildModule("OracleUtils", (m) => {
     return { oracleUtils };
 });
 
-//export default roleModule;
+export default oracleUtilsModule;

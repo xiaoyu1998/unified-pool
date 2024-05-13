@@ -6,4 +6,4 @@ export const repayEventUtilsModule = buildModule("RepayEventUtils", (m) => {
     return { repayEventUtils };
 });
 
-//export default poolUtilsModule;
+export default repayEventUtilsModule;

@@ -7,7 +7,7 @@ import {deployAddresses, webSocketUrl} from "./network"
 export async function sendTxn(txnPromise, label) {
     const txn = await txnPromise
     await txn.wait(1)
-    console.info(`Sent! ${label} ${txn.hash}`)
+    //console.info(`Sent! ${label} ${txn.hash}`)
     return txn
 }
 

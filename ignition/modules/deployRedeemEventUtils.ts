@@ -6,4 +6,4 @@ export const redeemEventUtilsModule = buildModule("RedeemEventUtils", (m) => {
     return { redeemEventUtils };
 });
 
-//export default poolUtilsModule;
+export default redeemEventUtilsModule;

@@ -18,4 +18,4 @@ export const poolFactoryModule = buildModule("PoolFactory", (m) => {
     return { poolFactory };
 });
 
-// export default poolFactoryModule;
+export default poolFactoryModule;

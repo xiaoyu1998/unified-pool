@@ -15,4 +15,4 @@ export const roleStoreModule = buildModule("RoleStore", (m) => {
     return { roleStore };
 });
 
-// export default roleStoreModule;
+export default roleStoreModule;

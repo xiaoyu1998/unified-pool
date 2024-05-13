@@ -6,4 +6,4 @@ export const liquidationEventUtilsModule = buildModule("LiquidationEventUtils", 
     return { liquidationEventUtils };
 });
 
-//export default poolUtilsModule;
+export default liquidationEventUtilsModule;

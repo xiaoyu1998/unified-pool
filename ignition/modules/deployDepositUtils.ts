@@ -24,4 +24,4 @@ export const depositUtilsModule = buildModule("DepositUtils", (m) => {
     return { depositUtils };
 });
 
-// export default depositHandlerModule;
+export default depositUtilsModule;

@@ -6,4 +6,4 @@ export const positionStoreUtilsModule = buildModule("PositionStoreUtils", (m) =>
     return { positionStoreUtils };
 });
 
-//export default roleStoreModule;
+export default positionStoreUtilsModule;

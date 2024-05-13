@@ -23,4 +23,4 @@ export const depositHandlerModule = buildModule("DepositHandler", (m) => {
     return { depositHandler };
 });
 
-//export default depositHandlerModule;
+export default depositHandlerModule;

@@ -10,4 +10,4 @@ export const bankModule = buildModule("Bank", (m) => {
     return { bank };
 });
 
-//export default routerModule;
+export default bankModule;

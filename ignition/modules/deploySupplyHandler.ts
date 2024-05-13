@@ -22,4 +22,4 @@ export const supplyHandlerModule = buildModule("SupplyHandler", (m) => {
     return { supplyHandler };
 });
 
-//export default supplyHandlerModule;
+export default supplyHandlerModule;

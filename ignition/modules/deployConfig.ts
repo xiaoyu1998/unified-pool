@@ -24,4 +24,4 @@ export const configModule = buildModule("Config", (m) => {
     return { config };
 });
 
-//export default configModule;
+export default configModule;

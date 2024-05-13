@@ -6,4 +6,4 @@ export const poolUtilsModule = buildModule("PoolUtils", (m) => {
     return { poolUtils };
 });
 
-//export default poolUtilsModule;
+export default poolUtilsModule;

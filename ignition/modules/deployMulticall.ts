@@ -6,4 +6,4 @@ export const multicallModule = buildModule("Multicall3", (m) => {
     return { multicall };
 });
 
-//export default roleStoreModule;
+export default multicallModule;

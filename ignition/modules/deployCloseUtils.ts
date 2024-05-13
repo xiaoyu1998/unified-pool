@@ -31,4 +31,4 @@ export const closeUtilsModule = buildModule("CloseUtils", (m) => {
     return { closeUtils };
 });
 
-// export default closeHandlerModule;
+export default closeUtilsModule;

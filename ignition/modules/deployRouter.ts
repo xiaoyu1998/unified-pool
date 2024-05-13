@@ -8,4 +8,4 @@ export const routerModule = buildModule("Router", (m) => {
     return { router };
 });
 
-//export default routerModule;
+export default routerModule;

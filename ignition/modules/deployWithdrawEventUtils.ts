@@ -6,4 +6,4 @@ export const withdrawEventUtilsModule = buildModule("WithdrawEventUtils", (m) =>
     return { withdrawEventUtils };
 });
 
-//export default poolUtilsModule;
+export default withdrawEventUtilsModule;

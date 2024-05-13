@@ -28,4 +28,4 @@ export const repayUtilsModule = buildModule("RepayUtils", (m) => {
     return { repayUtils };
 });
 
-// export default repayHandlerModule;
+export default repayUtilsModule;

@@ -6,4 +6,4 @@ export const borrowEventUtilsModule = buildModule("BorrowEventUtils", (m) => {
     return { borrowEventUtils };
 });
 
-//export default poolUtilsModule;
+export default borrowEventUtilsModule;

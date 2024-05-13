@@ -22,4 +22,4 @@ export const redeemHandlerModule = buildModule("RedeemHandler", (m) => {
     return { redeemHandler };
 });
 
-//export default redeemHandlerModule;
+export default redeemHandlerModule;

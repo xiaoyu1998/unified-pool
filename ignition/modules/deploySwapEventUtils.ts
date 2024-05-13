@@ -6,4 +6,4 @@ export const swapEventUtilsModule = buildModule("SwapEventUtils", (m) => {
     return { swapEventUtils };
 });
 
-//export default poolUtilsModule;
+export default swapEventUtilsModule;

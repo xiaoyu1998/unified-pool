@@ -8,4 +8,4 @@ export const eventEmitterModule = buildModule("EventEmitter", (m) => {
     return { eventEmitter };
 });
 
-//export default dataStoreModule;
+export default eventEmitterModule;

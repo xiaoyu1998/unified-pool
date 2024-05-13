@@ -28,4 +28,4 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
     return { borrowUtils };
 });
 
-// export default borrowHandlerModule;
+export default borrowUtilsModule;
