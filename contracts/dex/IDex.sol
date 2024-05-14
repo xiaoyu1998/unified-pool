@@ -19,4 +19,5 @@ interface IDex {
     ) external;
 
     function getSqrtPriceLimitX96(address tokenIn) external view returns (uint256);
+    function getPool() external view returns(address);
 }

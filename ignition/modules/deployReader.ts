@@ -4,13 +4,15 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { readerUtilsModule } from "./deployReaderUtils"
 import { configStoreUtilsModule } from "./deployConfigStoreUtils"
+import { readerDexUtilsModule } from "./deployReaderDexUtils"
 
 export const readerModule = buildModule("Reader", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule);
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule);
     const { oracleUtils } = m.useModule(oracleUtilsModule);
     const { readerUtils } = m.useModule(readerUtilsModule);
-    const { configStoreUtils } = m.useModule(configStoreUtilsModule)
+    const { configStoreUtils } = m.useModule(configStoreUtilsModule);
+    const { readerDexUtils } = m.useModule(readerDexUtilsModule);
 
     const reader = m.contract("Reader", [], {
         libraries: {
@@ -19,6 +21,7 @@ export const readerModule = buildModule("Reader", (m) => {
             OracleUtils: oracleUtils,
             ReaderUtils: readerUtils,
             ConfigStoreUtils: configStoreUtils,
+            ReaderDexUtils: readerDexUtils,
         }, 
     });
 

@@ -166,4 +166,21 @@ contract DexUniswapV3 is IUniswapV3SwapCallback {
         }
     }
 
+    // function getPrice() public view returns (uint160) {
+    //    (    uint160 surtPriceX96,
+    //         ,
+    //         ,
+    //         ,
+    //         ,
+    //         ,
+    //         ,
+    //    ) = IUniswapV3Pool(pool).slot0();
+
+    // }
+
+    function getPool() public view returns(address) {
+        return _pool;
+    }
+
+
 }

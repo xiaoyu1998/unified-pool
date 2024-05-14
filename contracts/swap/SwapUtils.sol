@@ -27,8 +27,8 @@ import "../event/EventEmitter.sol";
 import "./SwapEventUtils.sol";
 
 // @title SwapUtils
-// @dev Library for swap functions, to help with the swaping of liquidity
-// into a market in return for market tokens
+// @dev Library for swap functions, to help with the swaping of underlyinAssetIn
+// into a dex pool in return for underlyinAssetOut
 library SwapUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -361,6 +361,11 @@ library SwapUtils {
             revert Errors.EmptySwapAmount();
         } 
         //TODO:healthFactor should be validated        
-
     }
+
+    // function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
+    //     address dex = DexStoreUtils.get(dataStore, underlyingAssetA, underlyingAssetB);
+    //     return IDex(dex).getPool();
+
+    // }  
 }

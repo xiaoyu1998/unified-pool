@@ -140,6 +140,14 @@ export async function getContract(name) {
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
 
+    if (name == "ReaderDexUtils") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                DexStoreUtils: dexStoreUtils,
+            },         
+        });
+    }
 
     if (name == "ConfigStoreUtils") {
         const address = getDeployedContractAddresses(name);
@@ -149,7 +157,7 @@ export async function getContract(name) {
             },         
         });
     }
-    
+
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
@@ -158,11 +166,11 @@ export async function getContract(name) {
             },         
         });
     }
-
     const configStoreUtils = await getContract("ConfigStoreUtils");
+    const oracleUtils = await getContract("OracleUtils");
 
     if (name == "ReaderUtils") {
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
@@ -195,8 +203,9 @@ export async function getContract(name) {
     }
 
     if (name == "Reader") {
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const readerUtils = await getContract("ReaderUtils");
+        const readerDexUtils = await getContract("ReaderDexUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
@@ -205,6 +214,7 @@ export async function getContract(name) {
                 OracleUtils: oracleUtils,
                 ConfigStoreUtils: configStoreUtils,
                 ReaderUtils: readerUtils,
+                ReaderDexUtils: readerDexUtils,
             },         
         });
     }
@@ -224,7 +234,7 @@ export async function getContract(name) {
 
     if (name == "SwapUtils") {
         const swapEventUtils = await getContract("SwapEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const swapUtilsAddress = getDeployedContractAddresses("SwapUtils");
         return await contractAtOptions("SwapUtils", swapUtilsAddress, {
             libraries: {
@@ -277,7 +287,7 @@ export async function getContract(name) {
 
     if (name == "DepositHandler") {
         const depositEventUtils = await getContract("DepositEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const depositUtilsAddress = getDeployedContractAddresses("DepositUtils");
         const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
@@ -297,7 +307,7 @@ export async function getContract(name) {
 
     if (name == "BorrowHandler") {
         const borrowEventUtils = await getContract("BorrowEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const borrowUtilsAddress = getDeployedContractAddresses("BorrowUtils");
         const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
             libraries: {
@@ -338,7 +348,7 @@ export async function getContract(name) {
 
     if (name == "RedeemHandler") {
         const redeemEventUtils = await getContract("RedeemEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const redeemUtilsAddress = getDeployedContractAddresses("RedeemUtils");
         const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
             libraries: {
@@ -359,7 +369,7 @@ export async function getContract(name) {
 
     if (name == "SwapHandler") {
         const swapEventUtils = await getContract("SwapEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const swapUtilsAddress = getDeployedContractAddresses("SwapUtils");
         const swapUtils = await contractAtOptions("SwapUtils", swapUtilsAddress, {
             libraries: {
@@ -381,7 +391,7 @@ export async function getContract(name) {
 
     if (name == "LiquidationHandler") {
         const liquidationEventUtils = await getContract("LiquidationEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const liquidationUtilsAddress = getDeployedContractAddresses("LiquidationUtils");
         const liquidationUtils = await contractAtOptions("LiquidationUtils", liquidationUtilsAddress, {
             libraries: {
@@ -402,7 +412,7 @@ export async function getContract(name) {
 
     if (name == "CloseHandler") {
         const closeEventUtils = await getContract("CloseEventUtils");
-        const oracleUtils = await getContract("OracleUtils");
+        //const oracleUtils = await getContract("OracleUtils");
         const repayUtils = await getContract("RepayUtils");
         const swapUtils = await getContract("SwapUtils");
         const closeUtilsAddress = getDeployedContractAddresses("CloseUtils");

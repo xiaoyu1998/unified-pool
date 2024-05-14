@@ -11,6 +11,7 @@ import "../position/Position.sol";
 
 import "./ReaderUtils.sol";
 import "./ReaderPositionUtils.sol";
+import "./ReaderDexUtils.sol";
 
 
 // @title Reader
@@ -108,5 +109,10 @@ contract Reader {
     function getLiquidationHealthFactor(address dataStore, address account) external view returns (ReaderUtils.GetLiquidationHealthFactor memory) {
         return ReaderUtils._getLiquidationHealthFactor(dataStore, account);
     }
+
+    function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
+        return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
+    }
+
 
 }

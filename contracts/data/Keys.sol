@@ -62,8 +62,8 @@ library Keys {
 
     // @dev key for the dex key
     // @param underlyingAsset the underlyingAsset for the dex key
-    function dexKey(address underlyingAssetIn, address underlyingAssetOut) internal pure returns (bytes32) {
-        (address token0, address token1) = underlyingAssetIn < underlyingAssetOut ? (underlyingAssetIn, underlyingAssetOut) : (underlyingAssetOut, underlyingAssetIn);
+    function dexKey(address underlyingAssetA, address underlyingAssetB) internal pure returns (bytes32) {
+        (address token0, address token1) = underlyingAssetA < underlyingAssetB ? (underlyingAssetA, underlyingAssetB) : (underlyingAssetB, underlyingAssetA);
         return keccak256(abi.encode(DEX, token0, token1));
     }
 
