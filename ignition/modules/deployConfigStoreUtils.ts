@@ -1,7 +1,13 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
+import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 
 export const configStoreUtilsModule = buildModule("ConfigStoreUtils", (m) => {
-    const configStoreUtils = m.contract("ConfigStoreUtils", []);
+    const { poolStoreUtils } = m.useModule(poolStoreUtilsModule);
+    const configStoreUtils = m.contract("ConfigStoreUtils", [], {
+        libraries: {
+            PoolStoreUtils: poolStoreUtils
+        }, 
+    });
 
     return { configStoreUtils };
 });

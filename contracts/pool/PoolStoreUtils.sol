@@ -21,7 +21,7 @@ library PoolStoreUtils {
     bytes32 public constant POOL_INTEREST_RATE_STRATEGY = keccak256(abi.encode("POOL_INTEREST_RATE_STRATEGY"));
     bytes32 public constant POOL_TOKEN                  = keccak256(abi.encode("POOL_TOKEN"));
     bytes32 public constant POOL_DEBT_TOKEN             = keccak256(abi.encode("POOL_DEBT_TOKEN"));
-    bytes32 public constant POOL_CONFIGRATION   = keccak256(abi.encode("POOL_CONFIGRATION"));
+    bytes32 public constant POOL_CONFIGURATION   = keccak256(abi.encode("POOL_CONFIGURATION"));
     bytes32 public constant POOL_FEE_FACTOR     = keccak256(abi.encode("POOL_FEE_FACTOR"));
     bytes32 public constant POOL_TOTAL_FEE = keccak256(abi.encode("POOL_TOTAL_FEE"));
     bytes32 public constant POOL_UNCLAIMED_FEE = keccak256(abi.encode("POOL_UNCLAIMED_FEE"));
@@ -72,7 +72,7 @@ library PoolStoreUtils {
         );
 
         pool.configuration = dataStore.getUint(
-            keccak256(abi.encode(key, POOL_CONFIGRATION))
+            keccak256(abi.encode(key, POOL_CONFIGURATION))
         );
 
         // pool.feeFactor = dataStore.getUint(
@@ -165,7 +165,7 @@ library PoolStoreUtils {
         );
 
         dataStore.setUint(
-            keccak256(abi.encode(key, POOL_CONFIGRATION)),
+            keccak256(abi.encode(key, POOL_CONFIGURATION)),
             pool.configuration
         );
 
@@ -239,7 +239,7 @@ library PoolStoreUtils {
         );
 
         dataStore.removeUint(
-            keccak256(abi.encode(key, POOL_CONFIGRATION))
+            keccak256(abi.encode(key, POOL_CONFIGURATION))
         );
 
         // dataStore.removeUint(
@@ -305,7 +305,7 @@ library PoolStoreUtils {
             revert Errors.PoolNotFound(key);
         } 
         dataStore.setUint(
-            keccak256(abi.encode(key, POOL_CONFIGRATION)),
+            keccak256(abi.encode(key, POOL_CONFIGURATION)),
             poolConfigration
         );        
     }
@@ -316,7 +316,7 @@ library PoolStoreUtils {
             revert Errors.PoolNotFound(key);
         }        
         return dataStore.getUint(
-            keccak256(abi.encode(key, POOL_CONFIGRATION))
+            keccak256(abi.encode(key, POOL_CONFIGURATION))
         );       
     }
 

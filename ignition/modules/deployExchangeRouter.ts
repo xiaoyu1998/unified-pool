@@ -19,6 +19,7 @@ import { readerModule } from "./deployReader"
 import { multicallModule } from "./deployMulticall"
 import { bankModule } from "./deployBank"
 import { eventEmitterModule } from "./deployEventEmitter"
+import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
@@ -43,6 +44,7 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { multicall } = m.useModule(multicallModule);
     const { bank } = m.useModule(bankModule);
     const { eventEmitter } = m.useModule(eventEmitterModule)
+    const { configStoreUtils } = m.useModule(configStoreUtilsModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,
@@ -80,7 +82,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         eventEmitter, 
         config,
         poolFactory,
-        poolInterestRateStrategy
+        poolInterestRateStrategy,
+        configStoreUtils
     };
 });
 

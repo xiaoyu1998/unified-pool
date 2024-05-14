@@ -109,7 +109,7 @@ export async function getContract(name) {
         name == "PoolStoreUtils" ||
         name == "PositionStoreUtils" ||
         name == "FeeUtils" ||
-        name == "ConfigStoreUtils" ||     
+//        name == "ConfigStoreUtils" ||     
         name == "OracleStoreUtils"  ||
         name == "Router" ||
         name == "PoolInterestRateStrategy" ||
@@ -135,11 +135,21 @@ export async function getContract(name) {
     const poolStoreUtils = await getContract("PoolStoreUtils");
     const positionStoreUtils = await getContract("PositionStoreUtils");
 //    const feeUtils = await getContract("FeeUtils");
-    const configStoreUtils = await getContract("ConfigStoreUtils");
+//    const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
 
+
+    if (name == "ConfigStoreUtils") {
+        const address = getDeployedContractAddresses(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+            },         
+        });
+    }
+    
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
@@ -148,6 +158,8 @@ export async function getContract(name) {
             },         
         });
     }
+
+    const configStoreUtils = await getContract("ConfigStoreUtils");
 
     if (name == "ReaderUtils") {
         const oracleUtils = await getContract("OracleUtils");
