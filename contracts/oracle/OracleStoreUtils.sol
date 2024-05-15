@@ -4,15 +4,26 @@ pragma solidity ^0.8.20;
 
 import "../data/IDataStore.sol";
 import "../data/Keys.sol";
+import "../error/Errors.sol";
 
 // @title OracleStoreUtils
 library OracleStoreUtils {
+    // Maximum OracleDecimals
+    uint256 internal constant MAX_ORACLE_DECIMALS = 1e30;
 
     function get(address dataStore, address underlyingAsset) public view returns (address) {
         return IDataStore(dataStore).getAddress(Keys.oracleKey(underlyingAsset));
     }
 
     function set(address dataStore, address underlyingAsset, address oracle) external {
+        if (underlyingAsset == address(0)) {
+            revert Errors.UnderlyAssetEmpty();
+        }
+
+        if (oracle == address(0)) {
+            revert Errors.OracleEmpty();
+        }
+
         IDataStore(dataStore).setAddress(
             Keys.oracleKey(underlyingAsset),
             oracle
@@ -23,10 +34,18 @@ library OracleStoreUtils {
         return IDataStore(dataStore).getUint(Keys.oracleDecimalsKey(underlyingAsset));
     }
 
-    function setOracleDecimals(address dataStore, address underlyingAsset, uint256 oracle) external {
-         IDataStore(dataStore).setUint(
+    function setOracleDecimals(address dataStore, address underlyingAsset, uint256 oracleDecimals) external {
+        if (underlyingAsset == address(0)) {
+            revert Errors.UnderlyAssetEmpty();
+        }
+
+        if (oracleDecimals > MAX_ORACLE_DECIMALS) {
+            revert Errors.InvalidOracleDecimals(oracleDecimals, MAX_ORACLE_DECIMALS);
+        }
+
+        IDataStore(dataStore).setUint(
             Keys.oracleDecimalsKey(underlyingAsset),
-            oracle
+            oracleDecimals
         );
     }
     

@@ -115,6 +115,14 @@ library Errors {
     error EmptyAccount();
     error EmptyReceiver();
 
+    // OracleStoreUtils
+    error UnderlyAssetEmpty();
+    error OracleEmpty();
+    error InvalidOracleDecimals(uint256 oracleDecimals, uint256 MaxOracleDecimals);
+
+    // DexStoreUtils
+    error DexEmpty();
+
     // Array errors
     error CompactedArrayOutOfBounds(
         uint256[] compactedValues,

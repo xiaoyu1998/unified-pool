@@ -21,8 +21,6 @@ export function encodePriceSqrt(amount1: BigInt, amount0: BigInt): BigInt {
         .integerValue(3)
         .toString()
     )
-
-     //return BigInt(Math.sqrt((amount1/amount0).toString())) << BigInt(96);
 }
 
 export function decodePriceSqrt(sqrtPriceX96: BigInt): BigInt {

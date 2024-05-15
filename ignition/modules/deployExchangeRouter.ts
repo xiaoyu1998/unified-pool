@@ -22,6 +22,8 @@ import { bankModule } from "./deployBank"
 import { eventEmitterModule } from "./deployEventEmitter"
 
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
+import { oracleStoreUtilsModule } from "./deployOracleStoreUtils"
+import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
@@ -48,6 +50,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { eventEmitter } = m.useModule(eventEmitterModule)
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
+    const { oracleStoreUtils } = m.useModule(oracleStoreUtilsModule)
+    const { dexStoreUtils } = m.useModule(dexStoreUtilsModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,
@@ -87,7 +91,9 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         poolFactory,
         poolInterestRateStrategy,
         poolStoreUtils,
-        positionStoreUtils
+        positionStoreUtils,
+        oracleStoreUtils,
+        dexStoreUtils
     };
 });
 

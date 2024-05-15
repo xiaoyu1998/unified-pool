@@ -40,10 +40,12 @@ export async function deployFixture() {
         poolFactory,
         poolInterestRateStrategy,
         poolStoreUtils,
-        positionStoreUtils
+        positionStoreUtils,
+        oracleStoreUtils,
+        dexStoreUtils
     } = await ignition.deploy(exchangeRouterModule);
 
-    const usdt = await createAsset(
+    const [usdt, usdtOracle] = await createAsset(
         user0,
         config, 
         "Tether", 
@@ -53,7 +55,8 @@ export async function deployFixture() {
         usdtOracleDecimal, 
         1
     );
-    const uni = await createAsset(
+
+    const [uni, uniOracle] = await createAsset(
         user0, 
         config, 
         "UNI", 
@@ -63,7 +66,8 @@ export async function deployFixture() {
         uniOracleDecimal, 
         8
     );
-    await createUniswapV3(
+
+    const dex = await createUniswapV3(
         user0, 
         config, 
         usdt, 
@@ -119,15 +123,23 @@ export async function deployFixture() {
           eventEmitter,
           config,
           poolFactory,
-          configStoreUtils
+          poolStoreUtils,
+          positionStoreUtils,
+          oracleStoreUtils,
+          dexStoreUtils
       },
       assets: {
           usdt,
-          uni
+          uni,
+          usdtOracle,
+          uniOracle
       },
       pools: {
           usdtPool,
           uniPool
+      },
+      dexes: {
+          dex
       },
       //props: { signerIndexes: [0, 1, 2, 3, 4, 5, 6], executionFee: "1000000000000000" },
     };

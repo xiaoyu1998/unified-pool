@@ -25,7 +25,7 @@ export async function createAsset(account, config, name, symbol, amount, decimal
     ];
     await sendTxn(config.multicall(multicallArgs), "config.multicall");
 
-    return token;
+    return [token, oracle];
 }
 
 export async function createUniswapV3(account, config, token0, token0Decimals, token1, token1Decimals, price) {
