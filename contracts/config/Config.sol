@@ -79,14 +79,14 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
-    function setPoolFreeze(address underlyingAsset, bool freeze) external onlyConfigKeeper nonReentrant {
+    function setPoolFrozen(address underlyingAsset, bool freeze) external onlyConfigKeeper nonReentrant {
         address poolKey = Keys.poolKey(underlyingAsset);
         uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setFrozen(freeze);
         PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
 
-    function setPoolPause(address underlyingAsset, bool paused) external onlyConfigKeeper nonReentrant {
+    function setPoolPaused(address underlyingAsset, bool paused) external onlyConfigKeeper nonReentrant {
         address poolKey = Keys.poolKey(underlyingAsset);
         uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
         configuration = configuration.setPaused(paused);

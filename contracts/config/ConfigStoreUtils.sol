@@ -45,5 +45,30 @@ library ConfigStoreUtils {
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
         return PoolConfigurationUtils.getSupplyCapacity(configuration);
     }
+
+    function getPoolActive(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getActive(configuration);
+    }
+
+    function getPoolFrozen(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getFrozen(configuration);
+    }
+
+    function getPoolPaused(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getPaused(configuration);
+    }
+
+    function getPoolUsd(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getUsd(configuration);
+    }
+
+    function getPoolBorrowingEnabled(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getBorrowingEnabled(configuration);
+    }
     
 }
