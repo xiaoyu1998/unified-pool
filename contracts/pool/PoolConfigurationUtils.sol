@@ -242,7 +242,7 @@ library PoolConfigurationUtils {
         uint256 supplyCapacity
     ) internal pure returns (uint256) {
         if (supplyCapacity > MAX_VALID_SUPPLY_CAP) {
-            revert Errors.InvalidBorrowCapacity(supplyCapacity, MAX_VALID_SUPPLY_CAP);
+            revert Errors.InvalidSupplyCapacity(supplyCapacity, MAX_VALID_SUPPLY_CAP);
         }
         return (poolConfigration & SUPPLY_CAP_MASK) | (supplyCapacity << SUPPLY_CAP_START_BIT_POSITION);
     }
