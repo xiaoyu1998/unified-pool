@@ -12,6 +12,7 @@ import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolUtils.sol";
 import "../oracle/OracleStoreUtils.sol";
 import "../dex/DexStoreUtils.sol";
+import "../position/PositionStoreUtils.sol";
 
 import "../utils/Printer.sol";
 
@@ -56,20 +57,23 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     function setHealthFactorLiquidationThreshold(
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
-        dataStore.setUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD, threshold);
+        // dataStore.setUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD, threshold);
+        PositionStoreUtils.setHealthFactorLiquidationThreshold(address(dataStore), threshold);
     }
 
     function setDebtMultiplierFactorForRedeem(
         uint256 multiplierFactor
     ) external onlyConfigKeeper nonReentrant {
-        dataStore.setUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM, multiplierFactor);
+        // dataStore.setUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM, multiplierFactor);
+        PositionStoreUtils.setDebtMultiplierFactorForRedeem(address(dataStore), multiplierFactor);
     }
 
     function setHealthFactorCollateralRateThreshold(
         address underlyingAsset,
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
-        dataStore.setUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset), threshold);
+        // dataStore.setUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset), threshold);
+        PositionStoreUtils.setHealthFactorCollateralRateThreshold(address(dataStore), underlyingAsset, threshold);
     } 
     
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {

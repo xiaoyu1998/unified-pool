@@ -195,26 +195,49 @@ library PositionStoreUtils {
         // dataStore.removeBool(
         //     keccak256(abi.encode(key, IS_LIQUIDATED))
         // );
-
     }
 
-    function getPositionCount(address dataStoreAddress) internal view returns (uint256) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getAddressCount(Keys.POSITION_LIST);
+    function setHealthFactorLiquidationThreshold(address dataStore, uint256 threshold) external  {
+        IDataStore(dataStore).setUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD, threshold);
     }
 
-    function getPositionKeys(address dataStoreAddress, uint256 start, uint256 end) internal view returns (address[] memory) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getAddressValuesAt(Keys.POSITION_LIST, start, end);
+    function setDebtMultiplierFactorForRedeem(address dataStore, uint256 multiplierFactor) external  {
+        IDataStore(dataStore).setUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM, multiplierFactor);
     }
 
-    function getAccountPositionCount(address dataStoreAddress, address account) internal view returns (uint256) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getBytes32Count(Keys.accountPositionListKey(account));
+    function setHealthFactorCollateralRateThreshold(address dataStore, address underlyingAsset, uint256 threshold) external  {
+        IDataStore(dataStore).setUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset), threshold);
     }
 
-    function getAccountPositionKeys(address dataStoreAddress, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
+    function getHealthFactorCollateralRateThreshold(address dataStore, address underlyingAsset) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset));
+    }
+
+    function getDebtMultiplierFactorForRedeem(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM);
+    }
+
+    function getHealthFactorLiquidationThreshold(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD);
+    }
+
+    function getPositionCount(address dataStore) internal view returns (uint256) {
+        //IDataStore dataStore = IDataStore(dataStoreAddress);
+        return IDataStore(dataStore).getAddressCount(Keys.POSITION_LIST);
+    }
+
+    function getPositionKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
+        //IDataStore dataStore = IDataStore(dataStoreAddress);
+        return IDataStore(dataStore).getAddressValuesAt(Keys.POSITION_LIST, start, end);
+    }
+
+    function getAccountPositionCount(address dataStore, address account) internal view returns (uint256) {
+        //IDataStore dataStore = IDataStore(dataStoreAddress);
+        return IDataStore(dataStore).getBytes32Count(Keys.accountPositionListKey(account));
+    }
+
+    function getAccountPositionKeys(address dataStore, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
+        //IDataStore dataStore = IDataStore(dataStoreAddress);
+        return IDataStore(dataStore).getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
     }
 }

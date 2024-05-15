@@ -4,6 +4,8 @@ import { dataStoreModule } from "./deployDataStore"
 import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { oracleStoreUtilsModule } from "./deployOracleStoreUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
+import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
+
 
 export const configModule = buildModule("Config", (m) => {
     const { roleStore } = m.useModule(roleStoreModule);
@@ -11,12 +13,15 @@ export const configModule = buildModule("Config", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule);
     const { oracleStoreUtils } = m.useModule(oracleStoreUtilsModule);
     const { dexStoreUtils } = m.useModule(dexStoreUtilsModule);
+    const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
+
 
     const config = m.contract("Config", [roleStore, dataStore], {
         libraries: {
             PoolStoreUtils: poolStoreUtils,
             OracleStoreUtils: oracleStoreUtils,
             DexStoreUtils: dexStoreUtils,
+            PositionStoreUtils: positionStoreUtils,
         },
     });
     // m.call(roleStore, "grantRole",  [config, keys.CONTROLLER]);

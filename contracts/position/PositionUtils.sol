@@ -17,7 +17,7 @@ import "./PositionStoreUtils.sol";
 
 import "../oracle/IPriceFeed.sol";
 import "../oracle/OracleUtils.sol";
-import "../config/ConfigStoreUtils.sol";
+//import "../config/ConfigStoreUtils.sol";
 
 // @title PositionUtils
 // @dev Library for Position functions
@@ -157,7 +157,7 @@ library PositionUtils {
     ) internal view returns(uint256) {
         Printer.log("-------------------------getLiquidationPrice--------------------------");
         uint256 threshold =
-            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+            PositionStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
 
         uint256 thresholdMulDebt = threshold.rayMul(userTotalOtherDebtsUsd);
         int256 thresholdMulDebtSubCollateral = int256(thresholdMulDebt) - int256(userTotalOtherCollateralslUsd);
@@ -192,7 +192,7 @@ library PositionUtils {
             healthFactor = userTotalCollateralUsd.rayDiv(userTotalDebtUsd);
 
         uint256 healthFactorLiquidationThreshold =
-            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+            PositionStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
         Printer.log("healthFactorLiquidationThreshold", healthFactorLiquidationThreshold);
 
         return (healthFactor,  
@@ -230,7 +230,7 @@ library PositionUtils {
             (userTotalCollateralUsd + amountUsd).rayDiv(userTotalDebtUsd + amountUsd);
 
         uint256 healthFactorLiquidationThreshold =
-            ConfigStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+            PositionStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
 
         Printer.log("healthFactor", healthFactor );
         Printer.log("healthFactorLiquidationThreshold", healthFactorLiquidationThreshold);
@@ -255,7 +255,7 @@ library PositionUtils {
             (collateralAmount + amount).rayDiv(debtAmount + amount);
 
         uint256 healthFactorCollateralRateThreshold =
-            ConfigStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);  
+            PositionStoreUtils.getHealthFactorCollateralRateThreshold(dataStore, underlyingAsset);  
 
         Printer.log("collateralAmount", collateralAmount );
         Printer.log("debtAmount", debtAmount); 
@@ -291,7 +291,7 @@ library PositionUtils {
             revert Errors.CollateralBalanceIsZero();
         }
 
-        uint256 multiplierFactor = ConfigStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
+        uint256 multiplierFactor = PositionStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
         uint256 timesTotalDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
         if (userTotalCollateralUsd < timesTotalDebtUsd) {
             return 0;

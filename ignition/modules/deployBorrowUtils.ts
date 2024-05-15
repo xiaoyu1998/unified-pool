@@ -2,7 +2,7 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 //import { feeUtilsModule } from "./deployFeeUtils"
-import { configStoreUtilsModule } from "./deployConfigStoreUtils"
+//import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { borrowEventUtilsModule } from "./deployBorrowEventUtils"
 
@@ -10,7 +10,7 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
  //   const { feeUtils } = m.useModule(feeUtilsModule)
-    const { configStoreUtils } = m.useModule(configStoreUtilsModule)
+ //   const { configStoreUtils } = m.useModule(configStoreUtilsModule)
     const { oracleUtils } = m.useModule(oracleUtilsModule)
     const { borrowEventUtils } = m.useModule(borrowEventUtilsModule)
 
@@ -19,7 +19,7 @@ export const borrowUtilsModule = buildModule("BorrowUtils", (m) => {
             PoolStoreUtils: poolStoreUtils,
             PositionStoreUtils: positionStoreUtils,
  //           FeeUtils: feeUtils,
-            ConfigStoreUtils: configStoreUtils,
+ //           ConfigStoreUtils: configStoreUtils,
             OracleUtils: oracleUtils,
             BorrowEventUtils: borrowEventUtils,
         },      

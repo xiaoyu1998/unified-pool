@@ -2,7 +2,7 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 //import { feeUtilsModule } from "./deployFeeUtils"
-import { configStoreUtilsModule } from "./deployConfigStoreUtils"
+//import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 import { swapEventUtilsModule } from "./deploySwapEventUtils"

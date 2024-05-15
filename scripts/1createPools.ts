@@ -27,7 +27,7 @@ async function main() {
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
         //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
-        config.interface.encodeFunctionData("setPoolFreezen", [usdt, false]),
+        config.interface.encodeFunctionData("setPoolFrozen", [usdt, false]),
         config.interface.encodeFunctionData("setPoolPaused", [usdt, false]),
         config.interface.encodeFunctionData("setPoolBorrowingEnabled", [usdt, true]),
         config.interface.encodeFunctionData("setPoolDecimals", [usdt, usdtDecimals]),
@@ -37,7 +37,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolUsd", [usdt, true]),
         //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [uni, expandDecimals(120, 25)]),//120%
         config.interface.encodeFunctionData("setPoolActive", [uni, true]),
-        config.interface.encodeFunctionData("setPoolFreezen", [uni, false]),
+        config.interface.encodeFunctionData("setPoolFrozen", [uni, false]),
         config.interface.encodeFunctionData("setPoolPaused", [uni, false]),
         config.interface.encodeFunctionData("setPoolBorrowingEnabled", [uni, true]),
         config.interface.encodeFunctionData("setPoolDecimals", [uni, uniDecimals]),

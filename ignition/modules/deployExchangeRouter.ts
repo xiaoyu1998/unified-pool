@@ -15,11 +15,13 @@ import { closeHandlerModule } from "./deployCloseHandler"
 import { configModule } from "./deployConfig"
 import { poolFactoryModule } from "./deployPoolFactory"
 import { poolInterestRateStrategyModule } from "./deployPoolInterestRateStrategy"
+import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { readerModule } from "./deployReader"
 import { multicallModule } from "./deployMulticall"
 import { bankModule } from "./deployBank"
 import { eventEmitterModule } from "./deployEventEmitter"
-import { configStoreUtilsModule } from "./deployConfigStoreUtils"
+
+import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
@@ -44,7 +46,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { multicall } = m.useModule(multicallModule);
     const { bank } = m.useModule(bankModule);
     const { eventEmitter } = m.useModule(eventEmitterModule)
-    const { configStoreUtils } = m.useModule(configStoreUtilsModule)
+    const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
+    const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,
@@ -83,7 +86,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         config,
         poolFactory,
         poolInterestRateStrategy,
-        configStoreUtils
+        poolStoreUtils,
+        positionStoreUtils
     };
 });
 

@@ -3,7 +3,7 @@ import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { readerUtilsModule } from "./deployReaderUtils"
-import { configStoreUtilsModule } from "./deployConfigStoreUtils"
+//import { configStoreUtilsModule } from "./deployConfigStoreUtils"
 import { readerDexUtilsModule } from "./deployReaderDexUtils"
 
 export const readerModule = buildModule("Reader", (m) => {
@@ -11,7 +11,7 @@ export const readerModule = buildModule("Reader", (m) => {
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule);
     const { oracleUtils } = m.useModule(oracleUtilsModule);
     const { readerUtils } = m.useModule(readerUtilsModule);
-    const { configStoreUtils } = m.useModule(configStoreUtilsModule);
+//    const { configStoreUtils } = m.useModule(configStoreUtilsModule);
     const { readerDexUtils } = m.useModule(readerDexUtilsModule);
 
     const reader = m.contract("Reader", [], {
@@ -20,7 +20,7 @@ export const readerModule = buildModule("Reader", (m) => {
             PositionStoreUtils: positionStoreUtils,
             OracleUtils: oracleUtils,
             ReaderUtils: readerUtils,
-            ConfigStoreUtils: configStoreUtils,
+ //           ConfigStoreUtils: configStoreUtils,
             ReaderDexUtils: readerDexUtils,
         }, 
     });

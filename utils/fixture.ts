@@ -39,7 +39,8 @@ export async function deployFixture() {
         config,
         poolFactory,
         poolInterestRateStrategy,
-        configStoreUtils
+        poolStoreUtils,
+        positionStoreUtils
     } = await ignition.deploy(exchangeRouterModule);
 
     const usdt = await createAsset(

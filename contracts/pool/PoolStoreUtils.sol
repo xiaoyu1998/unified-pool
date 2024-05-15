@@ -6,6 +6,7 @@ import "../data/Keys.sol";
 import "../data/IDataStore.sol";
 import "../error/Errors.sol";
 import "./Pool.sol";
+import "./PoolConfigurationUtils.sol";
 
 // @title PoolStoreUtils
 // @dev Library for Pool Storage functions
@@ -311,6 +312,17 @@ library PoolStoreUtils {
     }
 
     function getConfiguration(address dataStoreAddress, address key) external view returns (uint256){
+        // IDataStore dataStore = IDataStore(dataStoreAddress);
+        // if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
+        //     revert Errors.PoolNotFound(key);
+        // }        
+        // return dataStore.getUint(
+        //     keccak256(abi.encode(key, POOL_CONFIGURATION))
+        // );  
+        return _getConfiguration(dataStoreAddress, key) ;
+    }
+
+    function _getConfiguration(address dataStoreAddress, address key) internal view returns (uint256){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
             revert Errors.PoolNotFound(key);
@@ -320,14 +332,59 @@ library PoolStoreUtils {
         );       
     }
 
-    function getPoolCount(address dataStoreAddress) internal view returns (uint256) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getAddressCount(Keys.POOL_LIST);
+    function getPoolDecimals(address dataStore, address underlyingAsset ) public view returns (uint256) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getDecimals(configuration);
     }
 
-    function getPoolKeys(address dataStoreAddress, uint256 start, uint256 end) internal view returns (address[] memory) {
-        IDataStore dataStore = IDataStore(dataStoreAddress);
-        return dataStore.getAddressValuesAt(Keys.POOL_LIST, start, end);
+    function getPoolFeeFactor(address dataStore, address underlyingAsset ) public view returns (uint256) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getFeeFactor(configuration);
+    }
+
+    function getPoolBorrowCapacity(address dataStore, address underlyingAsset ) public view returns (uint256) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getBorrowCapacity(configuration);
+    }
+
+    function getPoolSupplyCapacity(address dataStore, address underlyingAsset ) public view returns (uint256) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getSupplyCapacity(configuration);
+    }
+
+    function getPoolActive(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getActive(configuration);
+    }
+
+    function getPoolFrozen(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getFrozen(configuration);
+    }
+
+    function getPoolPaused(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getPaused(configuration);
+    }
+
+    function getPoolUsd(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getUsd(configuration);
+    }
+
+    function getPoolBorrowingEnabled(address dataStore, address underlyingAsset ) public view returns (bool) {
+        uint256 configuration = PoolStoreUtils._getConfiguration(dataStore, underlyingAsset);
+        return PoolConfigurationUtils.getBorrowingEnabled(configuration);
+    }
+
+    function getPoolCount(address dataStore) internal view returns (uint256) {
+        //IDataStore dataStore = IDataStore(dataStore);
+        return IDataStore(dataStore).getAddressCount(Keys.POOL_LIST);
+    }
+
+    function getPoolKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
+        //IDataStore dataStore = IDataStore(dataStore);
+        return IDataStore(dataStore).getAddressValuesAt(Keys.POOL_LIST, start, end);
     }
 
 

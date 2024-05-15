@@ -7,17 +7,38 @@ import { parsePoolInfo} from "../../utils/helper";
 describe("Config", () => {
     let fixture;
     let user0, user1, user2;
-    let config, dataStore, roleStore, reader, configStoreUtils;
+    let config, dataStore, roleStore, reader, poolStoreUtils, positionStoreUtils;
     let usdt, uni;
     let usdtPool, uniPool;
 
     beforeEach(async () => {
         fixture = await deployFixture();
-        ({ config, dataStore, roleStore, reader, configStoreUtils } = fixture.contracts);
+        ({ config, dataStore, roleStore, reader, poolStoreUtils, positionStoreUtils } = fixture.contracts);
         ({ user0, user1, user2 } = fixture.accounts);
         ({ usdt, uni } = fixture.assets);
         ({ usdtPool, uniPool } = fixture.pools);
     });
+
+    // it("setOracleThresholdMultiplier", async () => {
+    //     // setOracle
+    //     await expect(
+    //         config.connect(user1).setPoolActive(usdtPool.underlyingAsset, true)
+    //     ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
+
+    //     await expect(
+    //         await configStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
+    //     ).eq(false);
+
+    //     await expect(
+    //         config.connect(user0).setPoolActive(ethers.ZeroAddress, true)
+    //     ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+
+    //     await config.connect(user0).setPoolActive(usdtPool.underlyingAsset, true);     
+    //     await expect(
+    //         await configStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
+    //     ).eq(true);
+
+    // });
 
     it("setPoolBooleans", async () => {
         // setPoolActive
@@ -26,7 +47,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
         ).eq(false);
 
         await expect(
@@ -35,7 +56,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolActive(usdtPool.underlyingAsset, true);     
         await expect(
-            await configStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
 
 
@@ -45,7 +66,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolFrozen(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolFrozen(dataStore.target, usdtPool.underlyingAsset)
         ).eq(false);
 
         await expect(
@@ -54,7 +75,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolFrozen(usdtPool.underlyingAsset, true);     
         await expect(
-            await configStoreUtils.getPoolFrozen(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolFrozen(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
 
         // setPoolPaused
@@ -63,7 +84,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolPaused(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolPaused(dataStore.target, usdtPool.underlyingAsset)
         ).eq(false);
 
         await expect(
@@ -72,7 +93,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolPaused(usdtPool.underlyingAsset, true);     
         await expect(
-            await configStoreUtils.getPoolPaused(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolPaused(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
 
         // setPoolUsd
@@ -81,7 +102,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolUsd(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolUsd(dataStore.target, usdtPool.underlyingAsset)
         ).eq(false);
 
         await expect(
@@ -90,7 +111,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolUsd(usdtPool.underlyingAsset, true);     
         await expect(
-            await configStoreUtils.getPoolUsd(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolUsd(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
 
         // setPoolBorrowingEnabled
@@ -99,7 +120,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
         ).eq(false);
 
         await expect(
@@ -108,7 +129,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolBorrowingEnabled(usdtPool.underlyingAsset, true);     
         await expect(
-            await configStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
     });
 
@@ -119,7 +140,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolDecimals(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolDecimals(dataStore.target, usdtPool.underlyingAsset)
         ).eq(0);
 
         await expect(
@@ -132,7 +153,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolDecimals(usdtPool.underlyingAsset, 10);     
         await expect(
-            await configStoreUtils.getPoolDecimals(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolDecimals(dataStore.target, usdtPool.underlyingAsset)
         ).eq(10);
 
         // setPoolFeeFactor
@@ -141,7 +162,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolFeeFactor(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolFeeFactor(dataStore.target, usdtPool.underlyingAsset)
         ).eq(0);
 
         await expect(
@@ -154,7 +175,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolFeeFactor(usdtPool.underlyingAsset, 10);     
         await expect(
-            await configStoreUtils.getPoolFeeFactor(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolFeeFactor(dataStore.target, usdtPool.underlyingAsset)
         ).eq(10);
         
         // setPoolBorrowCapacity
@@ -163,7 +184,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolBorrowCapacity(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolBorrowCapacity(dataStore.target, usdtPool.underlyingAsset)
         ).eq(0);
 
         await expect(
@@ -176,7 +197,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolBorrowCapacity(usdtPool.underlyingAsset, 100000000);     
         await expect(
-            await configStoreUtils.getPoolBorrowCapacity(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolBorrowCapacity(dataStore.target, usdtPool.underlyingAsset)
         ).eq(100000000);
 
         // setPoolSupplyCapacity
@@ -185,7 +206,7 @@ describe("Config", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            await configStoreUtils.getPoolSupplyCapacity(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolSupplyCapacity(dataStore.target, usdtPool.underlyingAsset)
         ).eq(0);
 
         await expect(
@@ -198,7 +219,7 @@ describe("Config", () => {
 
         await config.connect(user0).setPoolSupplyCapacity(usdtPool.underlyingAsset, 100000000);     
         await expect(
-            await configStoreUtils.getPoolSupplyCapacity(dataStore.target, usdtPool.underlyingAsset)
+            await poolStoreUtils.getPoolSupplyCapacity(dataStore.target, usdtPool.underlyingAsset)
         ).eq(100000000);
      });
 

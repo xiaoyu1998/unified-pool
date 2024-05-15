@@ -149,14 +149,14 @@ export async function getContract(name) {
         });
     }
 
-    if (name == "ConfigStoreUtils") {
-        const address = getDeployedContractAddresses(name);
-        return await contractAtOptions(name, address, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
-    }
+    // if (name == "ConfigStoreUtils") {
+    //     const address = getDeployedContractAddresses(name);
+    //     return await contractAtOptions(name, address, {
+    //         libraries: {
+    //             PoolStoreUtils: poolStoreUtils,
+    //         },         
+    //     });
+    // }
 
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
@@ -166,7 +166,7 @@ export async function getContract(name) {
             },         
         });
     }
-    const configStoreUtils = await getContract("ConfigStoreUtils");
+    //const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleUtils = await getContract("OracleUtils");
 
     if (name == "ReaderUtils") {
@@ -176,8 +176,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                OracleUtils: oracleUtils,
-                ConfigStoreUtils: configStoreUtils,
+                OracleUtils: oracleUtils
             },         
         });
     }
@@ -197,7 +196,8 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 OracleStoreUtils: oracleStoreUtils,
-                DexStoreUtils: dexStoreUtils
+                DexStoreUtils: dexStoreUtils,
+                PositionStoreUtils: positionStoreUtils
             },         
         });
     }
@@ -212,9 +212,10 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
-                ConfigStoreUtils: configStoreUtils,
+                //ConfigStoreUtils: configStoreUtils,
                 ReaderUtils: readerUtils,
                 ReaderDexUtils: readerDexUtils,
+                PositionStoreUtils: positionStoreUtils,
             },         
         });
     }
@@ -314,7 +315,7 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
 //                FeeUtils: feeUtils,
-                ConfigStoreUtils: configStoreUtils,
+                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 BorrowEventUtils: borrowEventUtils,
             },        
@@ -354,7 +355,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                ConfigStoreUtils: configStoreUtils,
+                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 RedeemEventUtils: redeemEventUtils,
             },        
@@ -397,7 +398,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                ConfigStoreUtils: configStoreUtils,
+                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 LiquidationEventUtils: liquidationEventUtils,
             },        
@@ -422,7 +423,7 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 RepayUtils: repayUtils,
                 SwapUtils: swapUtils,
-                ConfigStoreUtils: configStoreUtils,
+                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 CloseEventUtils: closeEventUtils,
             },        
