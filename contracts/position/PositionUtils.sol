@@ -270,6 +270,18 @@ library PositionUtils {
         }
     }
 
+    struct MaxAmountToRedeemLocalVars {
+        uint256 userTotalCollateralUsd;
+        uint256 userTotalDebtUsd;
+        uint256 multiplierFactor;
+        uint256 timesTotalDebtUsd;
+        uint256 price;
+        uint256 totalAvailable;
+        uint256 configuration;
+        uint256 decimals;
+        uint256 adjustTotalAvailable;
+    }
+
     function maxAmountToRedeem(
         address account,
         address dataStore,
@@ -277,37 +289,44 @@ library PositionUtils {
         uint256 collateralAmount
     ) internal view returns (uint256) {
         Printer.log("-------------------------maxAmountToRedeem--------------------------");
+        MaxAmountToRedeemLocalVars memory vars;
+
         if (collateralAmount == 0) {
             return 0;
         }
 
-        (   uint256 userTotalCollateralUsd,
-            uint256 userTotalDebtUsd
+        (   vars.userTotalCollateralUsd,
+            vars.userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
-        Printer.log("userTotalCollateralUsd",  userTotalCollateralUsd);
-        Printer.log("userTotalDebtUsd",  userTotalDebtUsd);
+        Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
+        Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
 
-        if (userTotalCollateralUsd == 0) { 
-            revert Errors.CollateralBalanceIsZero();
-        }
-
-        uint256 multiplierFactor = PositionStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
-        uint256 timesTotalDebtUsd = userTotalDebtUsd.rayMul(multiplierFactor);
-        if (userTotalCollateralUsd < timesTotalDebtUsd) {
+        if (vars.userTotalCollateralUsd == 0) { 
+            //revert Errors.CollateralBalanceIsZero();
             return 0;
         }
-        uint256 price = OracleUtils.getPrice(dataStore, underlyingAsset);
-        uint256 totalAvailable = (userTotalCollateralUsd - timesTotalDebtUsd).rayDiv(price);
+
+        vars.multiplierFactor = PositionStoreUtils.getDebtMultiplierFactorForRedeem(dataStore);
+        vars.timesTotalDebtUsd = vars.userTotalDebtUsd.rayMul(vars.multiplierFactor);
+        if (vars.userTotalCollateralUsd < vars.timesTotalDebtUsd) {
+            return 0;
+        }
+        vars.price = OracleUtils.getPrice(dataStore, underlyingAsset);
+        vars.totalAvailable = (vars.userTotalCollateralUsd - vars.timesTotalDebtUsd).rayDiv(vars.price);
+
+        vars.configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);
+        vars.decimals = PoolConfigurationUtils.getDecimals(vars.configuration);  
+        vars.adjustTotalAvailable = Math.mulDiv(vars.totalAvailable, 10**vars.decimals, WadRayMath.RAY);      
 
         Printer.log("collateralAmount",  collateralAmount);
-        Printer.log("multiplierFactor",   multiplierFactor);
-        Printer.log("totalAvailable",   totalAvailable);
+        Printer.log("multiplierFactor",   vars.multiplierFactor);
+        Printer.log("totalAvailable",   vars.adjustTotalAvailable);
 
-        if (totalAvailable > collateralAmount) {
+        if (vars.adjustTotalAvailable > collateralAmount) {
             return collateralAmount;
         }
 
-        return totalAvailable;
+        return vars.adjustTotalAvailable;
     }
 
     function longPosition(

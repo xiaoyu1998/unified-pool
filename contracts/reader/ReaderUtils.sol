@@ -109,7 +109,7 @@ library ReaderUtils {
         uint256 supplyApy;
     }
 
-    struct GetMarginAndSupplyVars {
+    struct GetMarginAndSupplyLocalVars {
         address poolTokenAddress;
         address debtTokenAddress;
         IPoolToken poolToken;
@@ -126,7 +126,7 @@ library ReaderUtils {
         address account,
         address poolKey
     ) internal view returns (GetMarginAndSupply memory) {
-        GetMarginAndSupplyVars memory vars;
+        GetMarginAndSupplyLocalVars memory vars;
         vars.poolTokenAddress = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         vars.debtTokenAddress = PoolStoreUtils.getDebtToken(dataStore, poolKey);
         vars.supplyApy = PoolStoreUtils.getLiquidatyRate(dataStore, poolKey);

@@ -118,8 +118,10 @@ library CloseUtils {
             vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
         }
 
-        PositionUtils.reset(vars.position);
-        PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);      
+        if(vars.position.underlyingAsset != params.underlyingAssetUsd){
+            PositionUtils.reset(vars.position);
+            PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position); 
+        }    
 
         CloseEventUtils.emitClosePosition(
             params.eventEmitter, 
@@ -300,9 +302,9 @@ library CloseUtils {
                 );
                 RepayUtils.executeRepay(account, vars.repayParams);
             }
-
+            
             PositionUtils.reset(vars.position);
-            PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position);             
+            PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position);          
         }  
         vars.amountUsdAfterBuyCollateralAndRepay = vars.poolTokenUsd.balanceOfCollateral(account); 
         Printer.log("amountUsdAfterBuyCollateralAndRepay", vars.amountUsdAfterBuyCollateralAndRepay);
