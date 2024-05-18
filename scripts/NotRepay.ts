@@ -27,7 +27,7 @@ async function main() {
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
 
-    // //deposit uni 200,000 
+    // //deposit usdt 200,000 
     const depositAmmountUsdt = expandDecimals(200000, usdtDecimals);
     await sendTxn(
         usdt.approve(router.target, depositAmmountUsdt),
@@ -39,14 +39,13 @@ async function main() {
         underlyingAsset: usdtAddress,
     };
 
-    //short usdt 100,000
+    //borrow usdt 100,000
     const borrowAmmount = expandDecimals(100000, usdtDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: borrowAmmount,
     };   
 
-    //close Position
     const params: CloseUtils.ClosePositionParamsStruct = {
         underlyingAsset: usdtAddress,
         underlyingAssetUsd: usdtAddress
@@ -56,7 +55,6 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),        
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"
@@ -64,18 +62,17 @@ async function main() {
 
     console.log("account",await getMarginsAndSupplies(dataStore, reader, owner.address));
 
-
+    //close Position
     multicallArgs = [      
         exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"
     );
 
     //print 
-    console.log("account",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("Assets",await getMarginsAndSupplies(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
 
 }

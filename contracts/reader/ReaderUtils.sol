@@ -217,7 +217,6 @@ library ReaderUtils {
         poolInfo.supplyCapacity = PoolConfigurationUtils.getSupplyCapacity(poolInfo.configuration);
         poolInfo.feeFactor = PoolConfigurationUtils.getFeeFactor(poolInfo.configuration);
  
-
          uint256 unclaimedFee = pool.unclaimedFee.rayMul(
             pool.borrowIndex
         );

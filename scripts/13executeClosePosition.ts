@@ -76,7 +76,7 @@ async function main() {
     const poolUniAfterClosePosition = await getPoolInfo(uniAddress); 
     console.log("poolUsdtAfterClosePosition", poolUsdtAfterClosePosition);
     console.log("poolUniAfterClosePosition", poolUniAfterClosePosition);
-    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("Assets",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
 
 }
