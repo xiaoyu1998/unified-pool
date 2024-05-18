@@ -88,4 +88,12 @@ interface IEventEmitter {
         uint256 amountUsdAfterBuyCollateralAndRepay
     ) external;
 
+    function emitPoolUpdated(
+        address underlyingAsset,
+        uint256 liquidityRate,
+        uint256 borrowRate,
+        uint256 liquidityIndex,
+        uint256 borrowIndex
+    ) external;
+
 }

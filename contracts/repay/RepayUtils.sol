@@ -130,9 +130,9 @@ library RepayUtils {
         ); 
 
         PoolUtils.updateInterestRates(
+            params.eventEmitter,
             vars.pool,
-            vars.poolCache, 
-            params.underlyingAsset
+            vars.poolCache
         );
         PoolStoreUtils.set(
             params.dataStore, 

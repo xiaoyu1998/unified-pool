@@ -1,5 +1,5 @@
 import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
-import { bigNumberify, expandDecimals, encodePriceSqrt } from "../utils/math"
+import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "../utils/constants";
 
@@ -78,8 +78,20 @@ async function main() {
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
     await sendTxn(uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 20)), "uniswapV3MintCallee.mint");
-    console.log("userUsdtAfterMint",await usdt.balanceOf(owner.address)); 
-    console.log("userUniAfterMint",await uni.balanceOf(owner.address)); 
+    console.log("userUsdtAfterMint", await usdt.balanceOf(owner.address)); 
+    console.log("userUniAfterMint", await uni.balanceOf(owner.address)); 
+
+    //swap 
+    const quoter = await deployContract("Quoter", [factory.target]);
+    const uniAmountIn = expandDecimals(10000, uniDecimals);
+    const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
+        uniAddress, 
+        usdtAddress,
+        FeeAmount.MEDIUM,
+        uniAmountIn,
+        0 //the max sqrtPriceLimitX96 
+    );
+    console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
 
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);

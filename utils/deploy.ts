@@ -124,7 +124,8 @@ export async function getContract(name) {
         name == "LiquidationEventUtils" ||
         name == "CloseEventUtils" ||
         name == "EventEmitter"  || 
-        name == "DexStoreUtils" 
+        name == "DexStoreUtils" ||
+        name == "PoolEventUtils"
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -135,7 +136,7 @@ export async function getContract(name) {
     const poolStoreUtils = await getContract("PoolStoreUtils");
     const positionStoreUtils = await getContract("PositionStoreUtils");
 //    const feeUtils = await getContract("FeeUtils");
-//    const configStoreUtils = await getContract("ConfigStoreUtils");
+    const poolEventUtils = await getContract("PoolEventUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
@@ -228,6 +229,7 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 RepayEventUtils: repayEventUtils,
+                PoolEventUtils: poolEventUtils,
 //                FeeUtils: feeUtils,
             },        
         });      
@@ -256,6 +258,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 SupplyEventUtils: supplyEventUtils,
+                PoolEventUtils: poolEventUtils,
  //               FeeUtils: feeUtils,
             },        
         });
@@ -275,6 +278,7 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 WithdrawEventUtils: withdrawEventUtils,
+                PoolEventUtils: poolEventUtils,
  //               FeeUtils: feeUtils,
             },        
         });
@@ -318,6 +322,7 @@ export async function getContract(name) {
                 // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 BorrowEventUtils: borrowEventUtils,
+                PoolEventUtils: poolEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -330,15 +335,17 @@ export async function getContract(name) {
 
     if (name == "RepayHandler") {
         const repayEventUtils = await getContract("RepayEventUtils");
-        const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
-        const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-                PositionStoreUtils: positionStoreUtils,
-                RepayEventUtils: repayEventUtils,
-//                FeeUtils: feeUtils,
-            },        
-        });
+//         const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
+//         const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
+//             libraries: {
+//                 PoolStoreUtils: poolStoreUtils,
+//                 PositionStoreUtils: positionStoreUtils,
+//                 RepayEventUtils: repayEventUtils,
+//                 PoolEventUtils: poolEventUtils,
+// //                FeeUtils: feeUtils,
+//             },        
+//         });
+        const repayUtils = await getContract("RepayUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address,  {
             libraries: {
@@ -401,6 +408,7 @@ export async function getContract(name) {
                 // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 LiquidationEventUtils: liquidationEventUtils,
+                PoolEventUtils: poolEventUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);

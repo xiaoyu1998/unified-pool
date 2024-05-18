@@ -76,9 +76,9 @@ library WithdrawUtils {
         //poolToken.syncUnderlyingAssetBalance();
 
         PoolUtils.updateInterestRates(
+            params.eventEmitter,
             pool,
-            poolCache, 
-            params.underlyingAsset
+            poolCache
         );
 
         PoolStoreUtils.set(

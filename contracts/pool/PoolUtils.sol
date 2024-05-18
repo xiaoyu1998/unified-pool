@@ -9,6 +9,7 @@ import "./Pool.sol";
 import "./PoolCache.sol";
 import "./PoolConfigurationUtils.sol";
 import "./PoolStoreUtils.sol";
+import "./PoolEventUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
 
@@ -72,49 +73,67 @@ library PoolUtils {
         bool poolIsUsd = PoolConfigurationUtils.getUsd(poolCache.configuration);
         return (pool, poolCache, poolKey, poolIsUsd);
     }
+
+    struct UpdateInterestRatesLocalVars {
+        uint256 totalDebt;
+        uint256 unclaimedFee;
+        uint256 totalAvailableLiquidity;
+        uint256 nextLiquidityRate;
+        uint256 nextBorrowRate;
+    }
     
     function updateInterestRates(
+        address eventEmitter,
         Pool.Props memory pool,
-        PoolCache.Props memory poolCache,
-        address underlyingAsset
-    ) internal view {
+        PoolCache.Props memory poolCache
+    ) internal {
         Printer.log("--------------------updateInterestRates---------------------");
-        uint256 totalDebt = poolCache.nextTotalScaledDebt.rayMul(
+        UpdateInterestRatesLocalVars memory vars;
+        vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
-        uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
+        vars.unclaimedFee = poolCache.unclaimedFee.rayMul(
             poolCache.nextBorrowIndex
         );
 
-        uint256 totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(unclaimedFee);
+        vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(vars.unclaimedFee);
                                           //- unclaimedFee;
         
-        Printer.log("unclaimedFee", unclaimedFee);
+        Printer.log("unclaimedFee", vars.unclaimedFee);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);
-        Printer.log("totalAvailableLiquidity", totalAvailableLiquidity);
-        Printer.log("totalDebt", totalDebt);
+        Printer.log("totalAvailableLiquidity", vars.totalAvailableLiquidity);
+        Printer.log("totalDebt", vars.totalDebt);
         Printer.log("feeFactor", poolCache.feeFactor); 
 
-        (   uint256 nextLiquidityRate,
-            uint256 nextBorrowRate
+        (   vars.nextLiquidityRate,
+            vars.nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(
             InterestUtils.CalculateInterestRatesParams(
                 // liquidityIn,
                 // liquidityOut,
-                totalAvailableLiquidity,
-                totalDebt,
+                vars.totalAvailableLiquidity,
+                vars.totalDebt,
                 poolCache.feeFactor,
-                underlyingAsset,
+                poolCache.underlyingAsset,
                 poolCache.poolToken
             )
         );
 
-        pool.liquidityRate = nextLiquidityRate;
-        pool.borrowRate    = nextBorrowRate;
+        pool.liquidityRate = vars.nextLiquidityRate;
+        pool.borrowRate    = vars.nextBorrowRate;
   
         Printer.log("liquidityRate", pool.liquidityRate);   
-        Printer.log("borrowRate", pool.borrowRate);   
+        Printer.log("borrowRate", pool.borrowRate); 
+
+        PoolEventUtils.emitPoolUpdated(
+            eventEmitter, 
+            pool.underlyingAsset, 
+            pool.liquidityRate,
+            pool.borrowRate, 
+            pool.liquidityIndex, 
+            pool.borrowIndex
+        );  
 
     }
 

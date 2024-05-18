@@ -90,9 +90,9 @@ library BorrowUtils {
         );
 
         PoolUtils.updateInterestRates(
+            params.eventEmitter,
             pool,
-            poolCache, 
-            params.underlyingAsset
+            poolCache
         );   
 
         PoolStoreUtils.set(

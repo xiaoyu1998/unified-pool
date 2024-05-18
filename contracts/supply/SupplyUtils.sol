@@ -67,9 +67,9 @@ library SupplyUtils {
         );
 
         PoolUtils.updateInterestRates(
+            params.eventEmitter,
             pool,
-            poolCache, 
-            params.underlyingAsset
+            poolCache
         );
 
         PoolStoreUtils.set(

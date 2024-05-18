@@ -5,6 +5,7 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 import { liquidationEventUtilsModule } from "./deployLiquidationEventUtils"
+import { poolEventUtilsModule } from "./deployPoolEventUtils"
 
 export const liquidationUtilsModule = buildModule("LiquidationUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
@@ -12,6 +13,7 @@ export const liquidationUtilsModule = buildModule("LiquidationUtils", (m) => {
 //    const { configStoreUtils } = m.useModule(configStoreUtilsModule)
     const { oracleUtils } = m.useModule(oracleUtilsModule)
     const { liquidationEventUtils } = m.useModule(liquidationEventUtilsModule)
+    const { poolEventUtils } = m.useModule(poolEventUtilsModule)
 
     const liquidationUtils = m.library("LiquidationUtils", {
         libraries: {
@@ -20,6 +22,7 @@ export const liquidationUtilsModule = buildModule("LiquidationUtils", (m) => {
 //            ConfigStoreUtils: configStoreUtils,
             OracleUtils: oracleUtils,
             LiquidationEventUtils: liquidationEventUtils,
+            PoolEventUtils: poolEventUtils,
         },      
     });
 

@@ -96,6 +96,13 @@ contract EventEmitter is RoleModule {
         uint256 amountUsdAfterBuyCollateralAndRepay
     );
 
+    event PoolUpdated(
+        address indexed pool,
+        uint256 liquidityRate,
+        uint256 borrowRate,
+        uint256 liquidityIndex,
+        uint256 borrowIndex
+    );
 
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
@@ -269,4 +276,19 @@ contract EventEmitter is RoleModule {
         );
     }
 
+    function emitPoolUpdated(
+        address underlyingAsset,
+        uint256 liquidityRate,
+        uint256 borrowRate,
+        uint256 liquidityIndex,
+        uint256 borrowIndex
+    ) external onlyController {
+        emit PoolUpdated(
+            underlyingAsset,
+            liquidityRate,
+            borrowRate,
+            liquidityIndex,
+            borrowIndex
+        );
+    }
 }

@@ -132,10 +132,15 @@ library LiquidationUtils {
             PositionUtils.reset(vars.position);
             PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);
 
+            // PoolUtils.updateInterestRates(
+            //     vars.pool,
+            //     vars.poolCache, 
+            //     vars.position.underlyingAsset
+            // );
             PoolUtils.updateInterestRates(
+                params.eventEmitter,
                 vars.pool,
-                vars.poolCache, 
-                vars.position.underlyingAsset
+                vars.poolCache
             );
 
             PoolStoreUtils.set(
