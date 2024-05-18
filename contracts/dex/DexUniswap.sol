@@ -8,9 +8,12 @@ import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
 
 import "../error/Errors.sol";
 import "../utils/Printer.sol";
-import "./IDex.sol";
+import './uniswapV3/PeripheryImmutableState.sol';
+import './uniswapV3/PoolAddress.sol';
+import './uniswapV3/CallbackValidation.sol';
+import "./IDex2.sol";
 
-contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
+contract DexUniswap is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2 {
     using SafeCast for uint256;
 
     /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
@@ -18,58 +21,78 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
     /// @dev The maximum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MAX_TICK)
     uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
 
-    address internal _token0;
-    address internal _token1;
-    uint24 internal _fee;
-    address internal _pool;
+    constructor(address _factory) PeripheryImmutableState(_factory) {}
 
-    constructor(
-        address tokenA, 
+    function getPool(
+        address tokenA,
         address tokenB,
-        uint24 fee,
-        address  pool
-    ) {
-        if (tokenA == tokenB){
-            revert Errors.TokenCanNotSwapWithSelf(tokenA);
-        }
-
-        (_token0, _token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        _fee = fee;
-        _pool = pool;
+        uint24 fee
+    ) private view returns (address) {
+        return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, fee));
     } 
-    
-    /// @inheritdoc IDex
+
+    /// @inheritdoc IDex2
     function swapExactIn(
         address from,
-        address tokenIn,
-        uint256 amountIn,
+        SwapParams memory params,
         address to
     ) external override{
-        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
-        if (tokenIn == _token0) {
-            return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
-        } else if (tokenIn == _token1) {
-            return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
+        bool zeroForOne = params.tokenIn < params.tokenOut;
+        address pool = getPool(params.tokenIn, params.tokenOut, params.fee);
+        if (zeroForOne) {
+            return _swapExact0For1(
+                from, 
+                address(pool), 
+                params.amount, //amountIn 
+                to, 
+                params.sqrtPriceLimitX96 == 0
+                    ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
+                    : params.sqrtPriceLimitX96
+            );
+        } else {
+            return _swapExact1For0(
+                from, 
+                address(pool), 
+                params.amount, //amountIn 
+                to, 
+                params.sqrtPriceLimitX96 == 0
+                    ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
+                    : params.sqrtPriceLimitX96
+            );
         } 
-
-        revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
+ 
     }  
-
-    /// @inheritdoc IDex
+    
+    /// @inheritdoc IDex2
     function swapExactOut(
         address from,
-        address tokenIn,
-        uint256 amountOut,
+        SwapParams memory params,
         address to
     ) external override{
-        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
-        if (tokenIn == _token0) {
-            return _swap0ForExact1(from, _pool, amountOut, to, sqrtPriceLimitX96);
-        } else if (tokenIn == _token1) {
-            return _swap1ForExact0(from, _pool, amountOut, to, sqrtPriceLimitX96);
-        } 
-
-        revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
+        bool zeroForOne = params.tokenIn < params.tokenOut;
+        address pool = getPool(params.tokenIn, params.tokenOut, params.fee);
+        if (zeroForOne) {
+            return _swap0ForExact1(
+                from, 
+                address(pool), 
+                params.amount, //amountOut 
+                to, 
+                params.sqrtPriceLimitX96 == 0
+                    ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
+                    : params.sqrtPriceLimitX96
+            );
+        } else {
+            return _swap1ForExact0(
+                from, 
+                address(pool), 
+                params.amount, //amountInOut
+                to, 
+                params.sqrtPriceLimitX96 == 0
+                    ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
+                    : params.sqrtPriceLimitX96
+            );
+        }
+ 
     }    
 
     function _swapExact0For1(
@@ -156,24 +179,5 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
             assert(amount0Delta == 0 && amount1Delta == 0);
         }
     }
-
-    function getSqrtPriceLimitX96(address tokenIn) public view returns (uint160) {
-        if (tokenIn == _token0) {
-            return MIN_SQRT_RATIO + 1;
-        } else if (tokenIn == _token1) {
-            return MAX_SQRT_RATIO - 1;
-        } else {
-            revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn); 
-        }
-    }
-
-    function getPool() public view returns(address) {
-        return _pool;
-    }
-
-    function getFee() public view returns(uint24) {
-        return _fee;
-    }
-
 
 }
