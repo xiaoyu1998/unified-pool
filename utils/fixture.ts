@@ -56,7 +56,6 @@ export async function deployFixture() {
         usdtOracleDecimal, 
         1
     );
-
     const [uni, uniOracle] = await createAsset(
         user0, 
         config, 
@@ -67,6 +66,9 @@ export async function deployFixture() {
         uniOracleDecimal, 
         8
     );
+
+    await usdt.transfer(user1, expandDecimals(10000000, usdtDecimals));
+    await uni.transfer(user1, expandDecimals(1000000, uniDecimals));
 
     const dex = await createUniswapV3(
         user0, 
@@ -83,8 +85,7 @@ export async function deployFixture() {
     const usdtPool = await reader.getPool(dataStore.target, usdt.target);
     const uniPool = await reader.getPool(dataStore.target, uni.target);
     
-    console.log("xiaoyu1998");
-
+    //config pools
     const multicallArgs = [
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
@@ -108,6 +109,28 @@ export async function deployFixture() {
         config.interface.encodeFunctionData("setPoolUsd", [uni.target, false]),
     ];
     await config.multicall(multicallArgs);
+
+    //supply
+    const usdtSupplyAmount = expandDecimals(10000000, usdtDecimals);
+    await usdt.approve(router.target, usdtSupplyAmount);
+    const uniSupplyAmount = expandDecimals(1000000, uniDecimals);
+    await uni.approve(router.target, uniSupplyAmount);
+    const usdtParams: SupplyUtils.SupplyParamsStruct = {
+        underlyingAsset: usdt.target,
+        to: user0.address,
+    };
+    const uniParams: SupplyUtils.SupplyParamsStruct = {
+        underlyingAsset: uni.target,
+        to: user0.address,
+    };
+    const multicallArgs2 = [
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtSupplyAmount]),
+        exchangeRouter.interface.encodeFunctionData("executeSupply", [usdtParams]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniSupplyAmount]),
+        exchangeRouter.interface.encodeFunctionData("executeSupply", [uniParams]),
+    ];
+    await exchangeRouter.multicall(multicallArgs2);
+
 
     return {
       accountList,

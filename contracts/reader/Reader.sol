@@ -68,6 +68,10 @@ contract Reader {
         return accountLiquidities;
     }
 
+    function getMarginAndSupply(address dataStore, address account, address poolKey) external view returns (ReaderUtils.GetMarginAndSupply memory) {
+        return ReaderUtils._getMarginAndSupply(dataStore, account, poolKey);
+    }
+
     function getMarginsAndSupplies(address dataStore, address account) external view returns (ReaderUtils.GetMarginAndSupply[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);

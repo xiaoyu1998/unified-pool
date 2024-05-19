@@ -4,6 +4,7 @@ import { usdtDecimals, uniDecimals} from "../../utils/constants";
 import { expandDecimals, bigNumberify } from "../../utils/math"
 import { getMarginAndSupply } from "../../utils/helper"
 import { SupplyUtils } from "../../typechain-types/contracts/exchange/SupplyHandler";
+import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
 
 export async function getSupply(dataStore, reader, address, underlyingAsset) {
     const {balanceSupply } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
@@ -32,40 +33,71 @@ describe("Exchange", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    it("executeSupply", async () => {
-
+    it("executeSupplyAndWithdraw", async () => {
         const usdtBalanceBeforeUser1 = await usdt.balanceOf(user1.address);
         const uniBalanceBeforeUser1 = await uni.balanceOf(user1.address);
+        const usdtBalanceBeforePool = await usdt.balanceOf(usdtPool.poolToken);
+        const uniBalanceBeforePool = await uni.balanceOf(uniPool.poolToken);
 
+        //Supply
         const usdtSupplyAmount = expandDecimals(8000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtSupplyAmount);
         const uniSupplyAmount = expandDecimals(800000, uniDecimals);
         await uni.connect(user1).approve(router.target, uniSupplyAmount);
 
-        const usdtParams: SupplyUtils.SupplyParamsStruct = {
+        const usdtParamsSupply: SupplyUtils.SupplyParamsStruct = {
             underlyingAsset: usdt.target,
             to: user1.address,
         };
-        const uniParams: SupplyUtils.SupplyParamsStruct = {
+        const uniParamsSupply: SupplyUtils.SupplyParamsStruct = {
             underlyingAsset: uni.target,
             to: user1.address,
         };
 
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtSupplyAmount]),
-            exchangeRouter.interface.encodeFunctionData("executeSupply", [usdtParams]),
+            exchangeRouter.interface.encodeFunctionData("executeSupply", [usdtParamsSupply]),
             exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniSupplyAmount]),
-            exchangeRouter.interface.encodeFunctionData("executeSupply", [uniParams]),
+            exchangeRouter.interface.encodeFunctionData("executeSupply", [uniParamsSupply]),
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtSupplyAmount);
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforePool + usdtSupplyAmount);
         expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeUser1 - usdtSupplyAmount);
-        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniSupplyAmount);
-        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeUser1 - uniSupplyAmount);
-
         expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyAmount);
+        
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforePool + uniSupplyAmount);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeUser1 - uniSupplyAmount);
         expect(await getSupply(dataStore, reader, user1.address, uni.target)).eq(uniSupplyAmount);
+
+        //Withdraw
+        const usdtWithdrawAmount = expandDecimals(2000000, usdtDecimals);
+        const uniWithdrawAmount = expandDecimals(200000, uniDecimals);
+
+        const usdtParamsDeposit: WithdrawUtils.WithdrawParamsStruct = {
+            underlyingAsset: usdt.target,
+            amount: usdtWithdrawAmount,
+            to: user1.address,
+        };
+        const uniParamsDeposit: WithdrawUtils.WithdrawParamsStruct = {
+            underlyingAsset: uni.target,
+            amount: uniWithdrawAmount,
+            to: user1.address,
+        };
+
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeWithdraw", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeWithdraw", [uniParamsDeposit]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs2);
+
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforePool + usdtSupplyAmount - usdtWithdrawAmount);
+        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeUser1 - usdtSupplyAmount + usdtWithdrawAmount);
+        expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyAmount - usdtWithdrawAmount);
+
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforePool + uniSupplyAmount - uniWithdrawAmount);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeUser1 - uniSupplyAmount + uniWithdrawAmount);
+        expect(await getSupply(dataStore, reader, user1.address, uni.target)).eq(uniSupplyAmount - uniWithdrawAmount);
 
     });
 

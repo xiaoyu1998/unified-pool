@@ -6,7 +6,7 @@ import { Pool, Position, ReaderUtils, ReaderPositionUtils } from "../typechain-t
 // import { ReaderPositionUtils } from "../typechain-types/contracts/reader/Reader";
 
 export function parsePool(pool) {
-    const p: Pool.PropsStruct = {
+    const p: Pool.PropsStructOutput = {
         keyId: pool[0],
         liquidityIndex: pool[1],
         liquidityRate: pool[2],
@@ -33,7 +33,7 @@ export async function getPool(address) {
 }
 
 export function parsePoolInfo(pool) {
-    const p: ReaderUtils.GetPoolInfoStruct = {
+    const p: ReaderUtils.GetPoolInfoStructOutput = {
         keyId: pool[0],
         liquidityIndex: pool[1],
         liquidityRate: pool[2],
@@ -76,7 +76,7 @@ export async function getPoolInfo(address) {
 }
 
 export function parsePosition(position) {
-    const p: Position.PropsStruct = {
+    const p: Position.PropsStructOutput = {
         underlyingAsset: position[0],
         account: position[1],
         entryLongPrice: position[2],
@@ -100,7 +100,7 @@ export async function getPositions(dataStore, reader, address) {
 }
 
 export function parsePositionInfo(position) {
-    const p: ReaderPositionUtils.GetPositionInfoStruct = {
+    const p: ReaderPositionUtils.GetPositionInfoStructOutput = {
         account: position[0],
         underlyingAsset: position[1],
         positionType: position[2],
@@ -125,7 +125,7 @@ export async function getPositionsInfo(dataStore, reader, address) {
 }
 
 export function parseLiquidityAndDebt(liquidity) {
-    const l: ReaderUtils.GetLiquidityAndDebtStruct = {
+    const l: ReaderUtils.GetLiquidityAndDebtStructOutput = {
         underlyingAsset: liquidity[0],
         account: liquidity[1],
         balance: liquidity[2],
@@ -147,7 +147,7 @@ export async function getLiquidityAndDebts(dataStore, reader, address) {
 }
 
 export function parseMarginAndSupply(s) {
-    const m: ReaderUtils.GetMarginAndSupplyStruct = {
+    const m: ReaderUtils.GetMarginAndSupplyStructOutput = {
         underlyingAsset: s[0],
         account: s[1],
         balanceAsset: s[2],
@@ -169,12 +169,17 @@ export async function getMarginsAndSupplies(dataStore, reader, address) {
     return accountMarginsAndSupplies;    
 }
 
+export async function getMarginAndSupply(dataStore, reader, address, underlyingAsset) {
+    return parseMarginAndSupply(await reader.getMarginAndSupply(dataStore.target, address, underlyingAsset));
+
+}
+
 export async function getMaxAmountToRedeem(dataStore, reader, address, underlyingAsset) {
     return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
 }
 
 export function parseLiquidationHealthFactor(Factor) {
-    const f: ReaderUtils.GetLiquidationHealthFactor = {
+    const f: ReaderUtils.GetLiquidationHealthFactorStructOutput = {
         healthFactor: Factor[0],
         healthFactorLiquidationThreshold: Factor[1],
         isHealthFactorHigherThanLiquidationThreshold: Factor[2],

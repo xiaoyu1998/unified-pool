@@ -1,7 +1,7 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getMarginsAndSupplies } from "../utils/helper";
-import { WithdrawUtils } from "../typechain-types/contracts/exchange/SupplyHandler";
+import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
 
 async function main() {
     const [owner] = await ethers.getSigners();
