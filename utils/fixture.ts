@@ -2,6 +2,7 @@
 import { getContract, sendTxn } from "./deploy";
 import { exchangeRouterModule } from "../ignition/modules/deployExchangeRouter"
 import { createAsset, createUniswapV3 } from "./assetsDex";
+import { expandDecimals } from "./math"
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "./constants";
 
 export async function deployFixture() {
@@ -77,17 +78,36 @@ export async function deployFixture() {
         8
     );
 
-    await sendTxn(
-        poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0),
-        "poolFactory.createPool(usdt)"
-    );
-    await sendTxn(
-        poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0),
-        "poolFactory.createPool(uni)"
-    ); 
-
+    await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0);
+    await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0);
     const usdtPool = await reader.getPool(dataStore.target, usdt.target);
     const uniPool = await reader.getPool(dataStore.target, uni.target);
+    
+    console.log("xiaoyu1998");
+
+    const multicallArgs = [
+        config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
+        config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
+        config.interface.encodeFunctionData("setPoolActive", [usdt.target, true]),
+        config.interface.encodeFunctionData("setPoolFrozen", [usdt.target, false]),
+        config.interface.encodeFunctionData("setPoolPaused", [usdt.target, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [usdt.target, true]),
+        config.interface.encodeFunctionData("setPoolDecimals", [usdt.target, usdtDecimals]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [usdt.target, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt.target, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt.target, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [usdt.target, true]),
+        config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
+        config.interface.encodeFunctionData("setPoolFrozen", [uni.target, false]),
+        config.interface.encodeFunctionData("setPoolPaused", [uni.target, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [uni.target, true]),
+        config.interface.encodeFunctionData("setPoolDecimals", [uni.target, uniDecimals]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [uni.target, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni.target, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni.target, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [uni.target, false]),
+    ];
+    await config.multicall(multicallArgs);
 
     return {
       accountList,

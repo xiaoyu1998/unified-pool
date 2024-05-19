@@ -15,7 +15,7 @@ export async function createAsset(account, config, name, symbol, amount, decimal
 
     //create underlyingAssets
     const token = await deployContract("MintableToken", [name, symbol, decimals])
-    await sendTxn(token.mint(account.address, expandDecimals(amount, decimals)), "token.mint");
+    await token.mint(account.address, expandDecimals(amount, decimals));
 
     //set oracle
     const oracle = await deployContract("MockAggregator", [oracleDecimal, expandDecimals(price, oracleDecimal)]);
@@ -23,7 +23,7 @@ export async function createAsset(account, config, name, symbol, amount, decimal
         config.interface.encodeFunctionData("setOracle", [token.target, oracle.target]),
         config.interface.encodeFunctionData("setOracleDecimals", [token.target, oracleDecimal]),
     ];
-    await sendTxn(config.multicall(multicallArgs), "config.multicall");
+    await config.multicall(multicallArgs);
 
     return [token, oracle];
 }
@@ -34,7 +34,7 @@ export async function createUniswapV3(account, config, token0, token0Decimals, t
     const token1Address = token1.target;
     const token1IsZero =  (token1Address.toLowerCase() < token0Address.toLowerCase()) ? true:false;
     const factory = await deployContractWithCode(FACTORY_ABI, FACTORY_BYTECODE, account);
-    await sendTxn(await factory.createPool(token0Address, token1Address, FeeAmount.MEDIUM), "factory.createPool");
+    await factory.createPool(token0Address, token1Address, FeeAmount.MEDIUM);
 
     //initialize pool and mint
     const poolAddress = await factory.getPool(token1Address, token0Address, FeeAmount.MEDIUM);
@@ -42,7 +42,7 @@ export async function createUniswapV3(account, config, token0, token0Decimals, t
     const sqrtPriceX96 = token1IsZero?
                          encodePriceSqrt(expandDecimals(price, token0Decimals), expandDecimals(1, token1Decimals)):
                          encodePriceSqrt(expandDecimals(1, token1Decimals), expandDecimals(price, token0Decimals));//1token1 = 10token0
-    await sendTxn(pool.initialize(sqrtPriceX96), "pool.initialize");
+    await pool.initialize(sqrtPriceX96);
 
     const dex = await deployContract("DexUniswapV3", [token0Address, token1Address, FeeAmount.MEDIUM, pool.target]);
 
@@ -50,7 +50,7 @@ export async function createUniswapV3(account, config, token0, token0Decimals, t
     const multicallArgs2 = [
         config.interface.encodeFunctionData("setDex", [token0.target, token1.target, dex.target]),
     ];
-    await sendTxn(config.multicall(multicallArgs2), "config.multicall");
+    config.multicall(multicallArgs2);
 
     return dex;
 }
