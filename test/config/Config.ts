@@ -4,7 +4,6 @@ import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from ".
 import { errorsContract} from "../../utils/error";
 import { parsePoolInfo} from "../../utils/helper";
 import { expandDecimals, bigNumberify } from "../../utils/math"
-import { usdtDecimals, usdtOracleDecimal} from "../../utils/constants";
 
 describe("Config", () => {
     let fixture;
