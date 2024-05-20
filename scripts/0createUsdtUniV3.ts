@@ -24,7 +24,7 @@ async function main() {
 
     //set oracle
     const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimal, expandDecimals(1, usdtOracleDecimal)]);
-    const uniOracle = await deployContract("MockAggregator", [uniOracleDecimal, expandDecimals(10, uniOracleDecimal)]);
+    const uniOracle = await deployContract("MockAggregator", [uniOracleDecimal, expandDecimals(8, uniOracleDecimal)]);
     const config = await getContract("Config");
     const multicallArgs = [
         config.interface.encodeFunctionData("setOracle", [usdt.target, usdtOracle.target]),

@@ -99,6 +99,11 @@ export async function getPositions(dataStore, reader, address) {
     return ps;
 }
 
+export async function getPosition(dataStore, reader, address, underlyingAsset) {
+    return parsePosition(await reader.getPosition(dataStore.target, address, underlyingAsset));
+
+}
+
 export function parsePositionInfo(position) {
     const p: ReaderPositionUtils.GetPositionInfoStructOutput = {
         account: position[0],
@@ -122,6 +127,11 @@ export async function getPositionsInfo(dataStore, reader, address) {
          ps[i] = parsePositionInfo(positions[i]);
     }
     return ps;
+}
+
+export async function getPositionInfo(dataStore, reader, address, underlyingAsset) {
+    return parsePositionInfo(await reader.getPositionInfo(dataStore.target, address, underlyingAsset));
+
 }
 
 export function parseLiquidityAndDebt(liquidity) {
@@ -195,5 +205,80 @@ export async function getLiquidationHealthFactor(address) {
     const f = await reader.getLiquidationHealthFactor(dataStore.target, address);
     return parseLiquidationHealthFactor(f);
 }
+
+//Margin And Supply
+export async function getSupply(dataStore, reader, address, underlyingAsset) {
+    const { balanceSupply } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return balanceSupply;
+}
+
+export async function getCollateral(dataStore, reader, address, underlyingAsset) {
+    const { balanceAsset } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return balanceAsset;
+}
+
+export async function getDebt(dataStore, reader, address, underlyingAsset) {
+    const { debt } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return debt;
+}
+
+export async function getMaxWithdrawAmount(dataStore, reader, address, underlyingAsset) {
+    const { maxWithdrawAmount } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return maxWithdrawAmount;
+}
+
+export async function getSupplyApy(dataStore, reader, address, underlyingAsset) {
+    const { supplyApy } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return supplyApy;
+}
+
+export async function getBorrowApy(dataStore, reader, address, underlyingAsset) {
+    const { borrowApy } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
+    return borrowApy;
+}
+
+export async function getEquity(dataStore, reader, address, underlyingAsset) {
+    const { equity } = await getPositionInfo(dataStore, reader, address, underlyingAsset);
+    return equity;
+}
+
+//PositionInfo
+export async function getEquityUsd(dataStore, reader, address, underlyingAsset) {
+    const { equityUsd } = await getPositionInfo(dataStore, reader, address, underlyingAsset);
+    return equityUsd;
+}
+
+export async function getEntryPrice(dataStore, reader, address, underlyingAsset) {
+    const {entryPrice } = await getPositionInfo(dataStore, reader, address, underlyingAsset);
+    return entryPrice;
+}
+
+//Position
+export async function getPositionType(dataStore, reader, address, underlyingAsset) {
+    const { positionType } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return positionType;
+}
+
+export async function getEntryLongPrice(dataStore, reader, address, underlyingAsset) {
+    const { entryLongPrice } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return entryLongPrice;
+}
+
+export async function getAccLongAmount(dataStore, reader, address, underlyingAsset) {
+    const { accLongAmount } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return accLongAmount;
+}
+
+export async function getEntryShortPrice(dataStore, reader, address, underlyingAsset) {
+    const { entryShortPrice } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return entryShortPrice;
+}
+
+export async function getAccShortAmount(dataStore, reader, address, underlyingAsset) {
+    const { accShortAmount } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return accShortAmount;
+}
+
+
 
 

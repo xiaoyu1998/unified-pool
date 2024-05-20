@@ -157,13 +157,13 @@ library ReaderUtils {
         return m;
     }
 
-    function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
-        return PositionStoreUtils.get(dataStore, positionKey);
-    }
+    // function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
+    //     return PositionStoreUtils.get(dataStore, positionKey);
+    // }
 
-    function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
-        return PositionUtils.getPositions(account, dataStore);
-    }
+    // function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
+    //     return PositionUtils.getPositions(account, dataStore);
+    // }
 
     function _getPool(address dataStore, address poolKey) internal view returns (Pool.Props memory) {
         return PoolStoreUtils.get(dataStore, poolKey);

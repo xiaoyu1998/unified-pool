@@ -20,12 +20,22 @@ contract Reader {
     using SafeCast for uint256;
     using Position for Position.Props;
 
-   function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
+    function getPosition(address dataStore, address account, address poolKey) external view returns (Position.Props memory) {
+        bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
         return ReaderPositionUtils._getPosition(dataStore, positionKey);
     }
 
+    // function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
+    //     return ReaderPositionUtils._getPosition(dataStore, positionKey);
+    // }
+
     function getPositions(address dataStore, address account) external view returns (Position.Props[] memory) {
         return ReaderPositionUtils._getPositions(dataStore, account);
+    }
+
+    function getPositionInfo(address dataStore, address account, address poolKey) external view returns (ReaderPositionUtils.GetPositionInfo memory) {
+        bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
+        return ReaderPositionUtils._getPositionInfo(dataStore, positionKey);
     }
 
     function getPositionsInfo(address dataStore, address account) external view returns (ReaderPositionUtils.GetPositionInfo[] memory) {

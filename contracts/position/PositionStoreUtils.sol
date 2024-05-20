@@ -6,6 +6,7 @@ import "../data/Keys.sol";
 import "../data/IDataStore.sol";
 
 import "./Position.sol";
+import "../utils/Printer.sol";
 
 /**
  * @title PositionStoreUtils
@@ -27,6 +28,10 @@ library PositionStoreUtils {
     //bytes32 public constant IS_LIQUIDATED = keccak256(abi.encode("IS_LIQUIDATED"));
 
     function get(address dataStoreAddress, bytes32 key) external view returns (Position.Props memory) {
+        return _get(dataStoreAddress, key);
+    }
+
+    function _get(address dataStoreAddress, bytes32 key) internal view returns (Position.Props memory) {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         Position.Props memory position;
         if (!dataStore.containsBytes32(Keys.POSITION_LIST, key)) {
@@ -221,7 +226,6 @@ library PositionStoreUtils {
         return IDataStore(dataStore).getUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset));
     }
 
-
     function getPositionCount(address dataStore) internal view returns (uint256) {
         //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getAddressCount(Keys.POSITION_LIST);
@@ -230,6 +234,13 @@ library PositionStoreUtils {
     function getPositionKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
         //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getAddressValuesAt(Keys.POSITION_LIST, start, end);
+    }
+
+    function getPositionKeys(address account, address dataStore) internal view returns (uint256, bytes32[] memory) {
+        uint256 positionCount = getAccountPositionCount(dataStore, account);
+        bytes32[] memory positionKeys = 
+            getAccountPositionKeys(dataStore, account, 0, positionCount);
+        return (positionCount, positionKeys);
     }
 
     function getAccountPositionCount(address dataStore, address account) internal view returns (uint256) {
@@ -241,4 +252,38 @@ library PositionStoreUtils {
         //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
     }
+
+    function getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
+        //Printer.log("-------------------------getPositions--------------------------");
+        uint256 positionCount = getAccountPositionCount(dataStore, account);
+        //Printer.log("positionCount", positionCount);
+        bytes32[] memory positionKeys = getAccountPositionKeys(dataStore, account, 0, positionCount);
+        Position.Props[] memory positions = new Position.Props[](positionKeys.length);
+        for (uint256 i; i < positionKeys.length; i++) {
+            //bytes32 positionKey = positionKeys[i];
+            //Printer.log("i", i);
+            positions[i] = PositionStoreUtils._get(dataStore, positionKeys[i]);
+        }
+
+        return positions;
+    }
+
+    // function getPositions(address dataStore, address account, uint256 start, uint256 end) internal view returns (Position.Props[] memory) {
+    //     // return PositionUtils.getPositions(account, dataStore);
+    //     bytes32[] memory positionKeys = getAccountPositionKeys(dataStore, account, start, end);
+    //     Position.Props[] memory positions = new Position.Props[](positionKeys.length);
+    //     for (uint256 i; i < positionKeys.length; i++) {
+    //         bytes32 positionKey = positionKeys[i];
+    //         positions[i] = get(dataStore, positionKey);
+    //     }
+
+    //     return positions;
+    // }
+
+    // function getPositions(address dataStore, address account) external view returns (Position.Props[] memory) {
+    //     uint256 positionCount = getAccountPositionCount(dataStore, account);
+    //     return getPositions(dataStore, account, 0, positionCount);
+    // }
+
+
 }

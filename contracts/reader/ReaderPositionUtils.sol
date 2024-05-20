@@ -22,6 +22,33 @@ import "../oracle/OracleUtils.sol";
 library ReaderPositionUtils {
     using WadRayMath for uint256;
 
+    function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
+        //bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
+        return PositionStoreUtils.get(dataStore, positionKey);
+    }
+
+    // function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
+    //     return PositionStoreUtils.get(dataStore, positionKey);
+    // }
+
+    // function _getPositions(address dataStore, address account, uint256 start, uint256 end) internal view returns (Position.Props[] memory) {
+    //     // return PositionUtils.getPositions(account, dataStore);
+    //     bytes32[] memory positionKeys = 
+    //         PositionStoreUtils.getAccountPositionKeys(dataStore, account, start, end);
+    //     Position.Props[] memory positions = new Position.Props[](positionKeys.length);
+    //     for (uint256 i; i < positionKeys.length; i++) {
+    //         bytes32 positionKey = positionKeys[i];
+    //         positions[i] = _getPosition(dataStore, positionKey);
+    //     }
+
+    //     return positions;
+
+    // }
+
+    function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
+        return PositionStoreUtils.getPositions(dataStore, account);
+    }
+    
     struct GetPositionInfo {
         address account;
         address underlyingAsset;
@@ -33,14 +60,6 @@ library ReaderPositionUtils {
         int256 pnlUsd; 
         uint256 liquidationPrice;
         uint256 presentageToLiquidationPrice;
-    }
-
-    function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
-        return PositionStoreUtils.get(dataStore, positionKey);
-    }
-
-    function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
-        return PositionUtils.getPositions(account, dataStore);
     }
 
     struct GetPositionInfoLocalVars {

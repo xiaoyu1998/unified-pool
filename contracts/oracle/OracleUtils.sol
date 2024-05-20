@@ -38,10 +38,10 @@ library OracleUtils {
         uint256 price = SafeCast.toUint256(_price);
         uint256 decimals = OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
         uint256 adjustPrice = Math.mulDiv(price, WadRayMath.RAY, 10**decimals);
-        // Printer.log("-----------------------getPrice------------------------");
-        // Printer.log("price", price);
-        // Printer.log("decimals", decimals);
-        // Printer.log("adjustPrice", adjustPrice);
+        Printer.log("-----------------------getPrice------------------------");
+        Printer.log("price", price);
+        Printer.log("decimals", decimals);
+        Printer.log("adjustPrice", adjustPrice);
         return adjustPrice;
     }
 

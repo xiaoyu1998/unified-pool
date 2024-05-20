@@ -68,27 +68,27 @@ library PositionUtils {
         postion.hasDebt = false;
     }
 
-    function getPositionKeys(address account, address dataStore) internal view returns (uint256, bytes32[] memory) {
-        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-        bytes32[] memory positionKeys = 
-            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
-        return (positionCount, positionKeys);
-    }
+    // function getPositionKeys(address account, address dataStore) internal view returns (uint256, bytes32[] memory) {
+    //     uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+    //     bytes32[] memory positionKeys = 
+    //         PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
+    //     return (positionCount, positionKeys);
+    // }
 
-    function getPositions(address account, address dataStore) internal view returns (Position.Props[] memory) {
-        uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
-        bytes32[] memory positionKeys = 
-            PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
-        Position.Props[] memory positions = 
-            new Position.Props[](positionKeys.length);
-        for (uint256 i; i < positionKeys.length; i++) {
-            bytes32 positionKey = positionKeys[i];
-            Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
-            positions[i] = position;
-        }
+    // function getPositions(address account, address dataStore) internal view returns (Position.Props[] memory) {
+    //     uint256 positionCount = PositionStoreUtils.getAccountPositionCount(dataStore, account);
+    //     bytes32[] memory positionKeys = 
+    //         PositionStoreUtils.getAccountPositionKeys(dataStore, account, 0, positionCount);
+    //     Position.Props[] memory positions = 
+    //         new Position.Props[](positionKeys.length);
+    //     for (uint256 i; i < positionKeys.length; i++) {
+    //         bytes32 positionKey = positionKeys[i];
+    //         Position.Props memory position = PositionStoreUtils.get(dataStore, positionKey);
+    //         positions[i] = position;
+    //     }
 
-        return positions;
-    }
+    //     return positions;
+    // }
 
     function calculateUserTotalCollateralAndDebt(
         address account,
@@ -97,7 +97,8 @@ library PositionUtils {
     ) internal view returns (uint256, uint256) {
         Printer.log("-------------------------calculateUserTotalCollateralAndDebt--------------------------");
         // Printer.log("account", account);
-        Position.Props[] memory positions = PositionUtils.getPositions(account, dataStore);
+        Position.Props[] memory positions = PositionStoreUtils.getPositions(dataStore, account);
+        //Printer.log("positions.length", positions.length);
 
         uint256 userTotalCollateralUsd;
         uint256 userTotalDebtUsd;        
@@ -123,8 +124,10 @@ library PositionUtils {
         address dataStore,
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
+        Printer.log("-------------------------calculateUserCollateralAndDebtInPosition--------------------------");
         uint256 assetPrice = OracleUtils.getPrice(dataStore, position.underlyingAsset);
-
+        Printer.log("assetPrice", assetPrice);
+        
         uint256 userCollateralUsd;
         uint256 userDebtUsd;
 

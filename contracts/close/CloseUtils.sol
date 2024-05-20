@@ -206,7 +206,7 @@ library CloseUtils {
 
         (   vars.positionCount,
             vars.positionKeys 
-        ) = PositionUtils.getPositionKeys(account, params.dataStore);
+        ) = PositionStoreUtils.getPositionKeys(account, params.dataStore);
 
         CloseUtils.validateClose( 
             account,
@@ -256,7 +256,7 @@ library CloseUtils {
         //pre-swap will create underlyingAssetUsd position
         (   vars.positionCount,
             vars.positionKeys 
-        ) = PositionUtils.getPositionKeys(account, params.dataStore);
+        ) = PositionStoreUtils.getPositionKeys(account, params.dataStore);
         Printer.log("-------------------------executeClose2nd--------------------------");
         Printer.log("positionCount", vars.positionCount);
         Printer.log("amountUsdAfterRepayAndSellCollateral", vars.amountUsdAfterRepayAndSellCollateral);
