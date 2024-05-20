@@ -34,10 +34,10 @@ describe("Exchange", () => {
     });
 
     it("executeSupplyAndWithdraw", async () => {
-        const usdtBalanceBeforeTxnPool = await usdt.balanceOf(usdtPool.poolToken);
-        const uniBalanceBeforeTxnPool = await uni.balanceOf(uniPool.poolToken);
-        const usdtBalanceBeforeTxnUser1 = await usdt.balanceOf(user1.address);
-        const uniBalanceBeforeTxnUser1 = await uni.balanceOf(user1.address);
+        const usdtBalanceBeforeSupplyPool = await usdt.balanceOf(usdtPool.poolToken);
+        const uniBalanceBeforeSupplyPool = await uni.balanceOf(uniPool.poolToken);
+        const usdtBalanceBeforeSupplyUser1 = await usdt.balanceOf(user1.address);
+        const uniBalanceBeforeSupplyUser1 = await uni.balanceOf(user1.address);
 
         //Supply
         const usdtSupplyAmount = expandDecimals(8000000, usdtDecimals);
@@ -54,23 +54,30 @@ describe("Exchange", () => {
             to: user1.address,
         };
 
-        const multicallArgs = [
+        const multicallArgsSupply = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtSupplyAmount]),
             exchangeRouter.interface.encodeFunctionData("executeSupply", [usdtParamsSupply]),
             exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniSupplyAmount]),
             exchangeRouter.interface.encodeFunctionData("executeSupply", [uniParamsSupply]),
         ];
-        await exchangeRouter.connect(user1).multicall(multicallArgs);
+        await exchangeRouter.connect(user1).multicall(multicallArgsSupply);
 
-        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeTxnPool + usdtSupplyAmount);
-        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeTxnUser1 - usdtSupplyAmount);
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeSupplyPool + usdtSupplyAmount);
+        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeSupplyUser1 - usdtSupplyAmount);
         expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyAmount);
         
-        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeTxnPool + uniSupplyAmount);
-        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeTxnUser1 - uniSupplyAmount);
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeSupplyPool + uniSupplyAmount);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeSupplyUser1 - uniSupplyAmount);
         expect(await getSupply(dataStore, reader, user1.address, uni.target)).eq(uniSupplyAmount);
 
         //Withdraw
+        const usdtBalanceBeforeWithdrawPool = await usdt.balanceOf(usdtPool.poolToken);
+        const uniBalanceBeforeWithdrawPool = await uni.balanceOf(uniPool.poolToken);
+        const usdtBalanceBeforeWithdrawUser1 = await usdt.balanceOf(user1.address);
+        const uniBalanceBeforeWithdrawUser1 = await uni.balanceOf(user1.address);
+        const usdtSupplyBeforeWithdrawUser1 = await getSupply(dataStore, reader, user1.address, usdt.target);
+        const uniSupplyBeforeWithdrawUser1 = await getSupply(dataStore, reader, user1.address, uni.target);
+
         const usdtWithdrawAmount = expandDecimals(2000000, usdtDecimals);
         const uniWithdrawAmount = expandDecimals(200000, uniDecimals);
 
@@ -85,19 +92,19 @@ describe("Exchange", () => {
             to: user1.address,
         };
 
-        const multicallArgs2 = [
+        const multicallArgsWithdraw = [
             exchangeRouter.interface.encodeFunctionData("executeWithdraw", [usdtParamsDeposit]),
             exchangeRouter.interface.encodeFunctionData("executeWithdraw", [uniParamsDeposit]),
         ];
-        await exchangeRouter.connect(user1).multicall(multicallArgs2);
+        await exchangeRouter.connect(user1).multicall(multicallArgsWithdraw);
 
-        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeTxnPool + usdtSupplyAmount - usdtWithdrawAmount);
-        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeTxnUser1 - usdtSupplyAmount + usdtWithdrawAmount);
-        expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyAmount - usdtWithdrawAmount);
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeWithdrawPool - usdtWithdrawAmount);
+        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeWithdrawUser1 + usdtWithdrawAmount);
+        expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyBeforeWithdrawUser1 - usdtWithdrawAmount);
 
-        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeTxnPool + uniSupplyAmount - uniWithdrawAmount);
-        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeTxnUser1 - uniSupplyAmount + uniWithdrawAmount);
-        expect(await getSupply(dataStore, reader, user1.address, uni.target)).eq(uniSupplyAmount - uniWithdrawAmount);
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeWithdrawPool - uniWithdrawAmount);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeWithdrawUser1 + uniWithdrawAmount);
+        expect(await getSupply(dataStore, reader, user1.address, uni.target)).eq(uniSupplyBeforeWithdrawUser1 - uniWithdrawAmount);
 
     });
 

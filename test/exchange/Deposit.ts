@@ -2,7 +2,15 @@ import { expect } from "chai";
 import { deployFixture } from "../../utils/fixture";
 import { usdtDecimals, uniDecimals, usdtOracleDecimal, uniOracleDecimal} from "../../utils/constants";
 import { expandDecimals, bigNumberify } from "../../utils/math"
-import { getCollateral, getPositionType, getEntryLongPrice, getAccLongAmount, getEntryShortPrice, getAccShortAmount } from "../../utils/helper"
+import { 
+    getCollateral, 
+    getPositionType, 
+    getEntryLongPrice, 
+    getAccLongAmount, 
+    getEntryShortPrice, 
+    getAccShortAmount,
+    getDebt
+} from "../../utils/helper"
 import { SupplyUtils } from "../../typechain-types/contracts/exchange/SupplyHandler";
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
 
@@ -46,13 +54,13 @@ describe("Exchange", () => {
             underlyingAsset: uni.target,
         };
 
-        const multicallArgs = [
+        const multicallArgsDeposit = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
             exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
             exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniDepositAmount]),
             exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
         ];
-        await exchangeRouter.connect(user1).multicall(multicallArgs);
+        await exchangeRouter.connect(user1).multicall(multicallArgsDeposit);
 
         expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeTxnPool + usdtDepositAmount);
         expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeTxnUser1 - usdtDepositAmount);
@@ -71,6 +79,33 @@ describe("Exchange", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniDepositAmount);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+
+
+        //borrow 
+        const usdtCollateralBeforeBorrowUser1 = await getCollateral(dataStore, reader, user1.address, usdt.target);
+        const uniCollateralBeforeBorrowUser1 = await getCollateral(dataStore, reader, user1.address, uni.target);
+
+        const usdtBorrowAmmount = expandDecimals(1000000, usdtDecimals);
+        const paramsUsdt: BorrowUtils.BorrowParamsStruct = {
+            underlyingAsset: usdt.target,
+            amount: usdtBorrowAmmount,
+        };
+        const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
+        const paramsUni: BorrowUtils.BorrowParamsStruct = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        };
+        const multicallArgsBorrow = [
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgsBorrow);
+
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtCollateralBeforeBorrowUser1 + usdtBorrowAmmount);
+        expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(usdtBorrowAmmount);
+
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniCollateralBeforeBorrowUser1 + uniBorrowAmmount);
+        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
 
     });
 
