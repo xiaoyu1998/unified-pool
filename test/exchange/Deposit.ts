@@ -9,7 +9,9 @@ import {
     getAccLongAmount, 
     getEntryShortPrice, 
     getAccShortAmount,
-    getDebt
+    getDebt,
+    getSupplyApy,
+    getBorrowApy
 } from "../../utils/helper"
 import { SupplyUtils } from "../../typechain-types/contracts/exchange/SupplyHandler";
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
@@ -36,7 +38,7 @@ describe("Exchange", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    it("executeDeposit", async () => {
+    it("executeDepositBorrow", async () => {
         const usdtBalanceBeforeTxnPool = await usdt.balanceOf(usdtPool.poolToken);
         const uniBalanceBeforeTxnPool = await uni.balanceOf(uniPool.poolToken);
         const usdtBalanceBeforeTxnUser1 = await usdt.balanceOf(user1.address);
@@ -103,9 +105,13 @@ describe("Exchange", () => {
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtCollateralBeforeBorrowUser1 + usdtBorrowAmmount);
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(usdtBorrowAmmount);
+        expect(await getSupplyApy(dataStore, reader, user1.address, usdt.target)).eq("6243750000000000000000000");
+        expect(await getBorrowApy(dataStore, reader, user1.address, usdt.target)).eq("62500000000000000000000000");
 
         expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniCollateralBeforeBorrowUser1 + uniBorrowAmmount);
         expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
+        expect(await getSupplyApy(dataStore, reader, user1.address, uni.target)).eq("6243750000000000000000000");
+        expect(await getBorrowApy(dataStore, reader, user1.address, uni.target)).eq("62500000000000000000000000");
 
     });
 

@@ -33,7 +33,7 @@ describe("Exchange", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    it("executeSupplyAndWithdraw", async () => {
+    it("executeSupplyWithdraw", async () => {
         const usdtBalanceBeforeSupplyPool = await usdt.balanceOf(usdtPool.poolToken);
         const uniBalanceBeforeSupplyPool = await uni.balanceOf(uniPool.poolToken);
         const usdtBalanceBeforeSupplyUser1 = await usdt.balanceOf(user1.address);

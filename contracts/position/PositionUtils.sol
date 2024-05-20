@@ -124,9 +124,9 @@ library PositionUtils {
         address dataStore,
         Position.Props memory position
     ) internal view returns (uint256, uint256) {
-        Printer.log("-------------------------calculateUserCollateralAndDebtInPosition--------------------------");
+        //Printer.log("-------------------------calculateUserCollateralAndDebtInPosition--------------------------");
         uint256 assetPrice = OracleUtils.getPrice(dataStore, position.underlyingAsset);
-        Printer.log("assetPrice", assetPrice);
+        //Printer.log("assetPrice", assetPrice);
         
         uint256 userCollateralUsd;
         uint256 userDebtUsd;
@@ -301,8 +301,8 @@ library PositionUtils {
         (   vars.userTotalCollateralUsd,
             vars.userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
-        Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
-        Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
+        // Printer.log("userTotalCollateralUsd",  vars.userTotalCollateralUsd);
+        // Printer.log("userTotalDebtUsd",  vars.userTotalDebtUsd);
 
         if (vars.userTotalCollateralUsd == 0) { 
             //revert Errors.CollateralBalanceIsZero();
@@ -321,9 +321,9 @@ library PositionUtils {
         vars.decimals = PoolConfigurationUtils.getDecimals(vars.configuration);  
         vars.adjustTotalAvailable = Math.mulDiv(vars.totalAvailable, 10**vars.decimals, WadRayMath.RAY);      
 
-        Printer.log("collateralAmount",  collateralAmount);
-        Printer.log("multiplierFactor",   vars.multiplierFactor);
-        Printer.log("totalAvailable",   vars.adjustTotalAvailable);
+        // Printer.log("collateralAmount",  collateralAmount);
+        // Printer.log("multiplierFactor",   vars.multiplierFactor);
+        // Printer.log("totalAvailable",   vars.adjustTotalAvailable);
 
         if (vars.adjustTotalAvailable > collateralAmount) {
             return collateralAmount;
