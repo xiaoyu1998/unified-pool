@@ -45,9 +45,9 @@ describe("Exchange", () => {
         const uniBalanceBeforeTxnUser1 = await uni.balanceOf(user1.address);
 
         //Deposit
-        const usdtDepositAmount = expandDecimals(1000000, usdtDecimals);
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
-        const uniDepositAmount = expandDecimals(100000, uniDecimals);
+        const uniDepositAmount = expandDecimals(200000, uniDecimals);
         await uni.connect(user1).approve(router.target, uniDepositAmount);
         const usdtParamsDeposit: DepositUtils.DepositParamsStruct = {
             underlyingAsset: usdt.target,
@@ -71,8 +71,7 @@ describe("Exchange", () => {
         expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
-        
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0);  
         expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeTxnPool + uniDepositAmount);
         expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeTxnUser1 - uniDepositAmount);
         expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniDepositAmount);
@@ -81,7 +80,6 @@ describe("Exchange", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniDepositAmount);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-
 
         //borrow 
         const usdtCollateralBeforeBorrowUser1 = await getCollateral(dataStore, reader, user1.address, usdt.target);
@@ -92,7 +90,7 @@ describe("Exchange", () => {
             underlyingAsset: usdt.target,
             amount: usdtBorrowAmmount,
         };
-        const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
+        const uniBorrowAmmount = expandDecimals(900000, uniDecimals);
         const paramsUni: BorrowUtils.BorrowParamsStruct = {
             underlyingAsset: uni.target,
             amount: uniBorrowAmmount,
@@ -107,11 +105,10 @@ describe("Exchange", () => {
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(usdtBorrowAmmount);
         expect(await getSupplyApy(dataStore, reader, user1.address, usdt.target)).eq("6243750000000000000000000");
         expect(await getBorrowApy(dataStore, reader, user1.address, usdt.target)).eq("62500000000000000000000000");
-
         expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniCollateralBeforeBorrowUser1 + uniBorrowAmmount);
         expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
-        expect(await getSupplyApy(dataStore, reader, user1.address, uni.target)).eq("6243750000000000000000000");
-        expect(await getBorrowApy(dataStore, reader, user1.address, uni.target)).eq("62500000000000000000000000");
+        expect(await getSupplyApy(dataStore, reader, user1.address, uni.target)).eq("674325000000000000000000000");
+        expect(await getBorrowApy(dataStore, reader, user1.address, uni.target)).eq("750000000000000000000000000");
 
     });
 
