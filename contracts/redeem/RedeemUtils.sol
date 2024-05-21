@@ -74,7 +74,6 @@ library RedeemUtils {
             redeemAmount = maxAmountToRedeem;
         }
         //Printer.log("repayAmount", redeemAmount);  
-
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
@@ -85,7 +84,6 @@ library RedeemUtils {
 
         poolToken.removeCollateral(account, redeemAmount);
         poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
-        //poolToken.syncUnderlyingAssetBalance();
         uint256 remainCollateral = poolToken.balanceOfCollateral(account);
         if (remainCollateral == 0) {
             position.hasCollateral = false;

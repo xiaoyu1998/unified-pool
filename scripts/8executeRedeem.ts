@@ -1,7 +1,7 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getMarginsAndSupplies, getPositions, getMaxAmountToRedeem} from "../utils/helper";
-import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
+import { RedeemUtils } from "../typechain-types/contracts/exchange/RedeemHandler";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -22,7 +22,7 @@ async function main() {
     const redeemAmmount = expandDecimals(800000, usdtDecimals);
  
     const poolUsdt = await getPoolInfo(usdtAddress); 
-    const params: DepositUtils.DepositParamsStruct = {
+    const params: RedeemUtils.RedeemParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: redeemAmmount,
         to:owner.address
