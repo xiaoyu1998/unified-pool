@@ -89,7 +89,8 @@ library RedeemUtils {
             position.hasCollateral = false;
         }
         if (!poolIsUsd){
-            PositionUtils.shortPosition(position, 0, redeemAmount);
+            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.shortPosition(position, price, redeemAmount, false);
         }
         PositionStoreUtils.set(
             params.dataStore, 

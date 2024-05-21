@@ -3,12 +3,14 @@ import { poolStoreUtilsModule } from "./deployPoolStoreUtils"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { repayEventUtilsModule } from "./deployRepayEventUtils"
 import { poolEventUtilsModule } from "./deployPoolEventUtils"
+import { oracleUtilsModule } from "./deployOracleUtils"
 
 export const repayUtilsModule = buildModule("RepayUtils", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule)
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
     const { repayEventUtils } = m.useModule(repayEventUtilsModule)
     const { poolEventUtils } = m.useModule(poolEventUtilsModule)
+    const { oracleUtils } = m.useModule(oracleUtilsModule)
 
     const repayUtils = m.library("RepayUtils", {
         libraries: {
@@ -16,6 +18,7 @@ export const repayUtilsModule = buildModule("RepayUtils", (m) => {
             PositionStoreUtils: positionStoreUtils,
             RepayEventUtils: repayEventUtils,
             PoolEventUtils: poolEventUtils,
+            OracleUtils: oracleUtils,
         },      
     });
 

@@ -103,14 +103,27 @@ describe("Exchange", () => {
             exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgsRedeem);
-        
+    
         //redeemAmount <= collateralAmount
         expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeRedeemPool - usdtAmountRedeem);
         expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeRedeemUser1 + usdtAmountRedeem);
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtDepositAmount + usdtBorrowAmmount - usdtAmountRedeem);
+        expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
 
         //redeemAmount > collateralAmount
         expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeRedeemPool - uniCollateralBeforeBorrowUser1);
         expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeRedeemUser1 + uniCollateralBeforeBorrowUser1);
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        //shortPosition Long to Short
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
 
     });
 

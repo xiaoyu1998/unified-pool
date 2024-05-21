@@ -121,7 +121,8 @@ library RepayUtils {
         } 
 
         if (!vars.poolIsUsd){
-            PositionUtils.longPosition(vars.position, 0, vars.repayAmount);
+            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.longPosition(vars.position, price, vars.repayAmount, false);
         }
         PositionStoreUtils.set(
             params.dataStore, 

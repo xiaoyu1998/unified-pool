@@ -150,11 +150,11 @@ library SwapUtils {
             );
             
             if (vars.poolInIsUsd && !vars.poolOutIsUsd) { //long out
-                PositionUtils.longPosition(vars.positionOut, vars.price, vars.amountOut);
+                PositionUtils.longPosition(vars.positionOut, vars.price, vars.amountOut, true);
             }
 
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
-                PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn);
+                PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
         }
 
@@ -284,11 +284,11 @@ library SwapUtils {
             );
             
             if (vars.poolInIsUsd && !vars.poolOutIsUsd) { //long out
-                PositionUtils.longPosition(vars.positionOut, vars.price, vars.amountOut);
+                PositionUtils.longPosition(vars.positionOut, vars.price, vars.amountOut, true);
             }
 
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
-                PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn);
+                PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
         }
 

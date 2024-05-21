@@ -230,6 +230,7 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 RepayEventUtils: repayEventUtils,
                 PoolEventUtils: poolEventUtils,
+                OracleUtils: oracleUtils,
 //                FeeUtils: feeUtils,
             },        
         });      
@@ -335,16 +336,6 @@ export async function getContract(name) {
 
     if (name == "RepayHandler") {
         const repayEventUtils = await getContract("RepayEventUtils");
-//         const repayUtilsAddress = getDeployedContractAddresses("RepayUtils");
-//         const repayUtils = await contractAtOptions("RepayUtils", repayUtilsAddress, {
-//             libraries: {
-//                 PoolStoreUtils: poolStoreUtils,
-//                 PositionStoreUtils: positionStoreUtils,
-//                 RepayEventUtils: repayEventUtils,
-//                 PoolEventUtils: poolEventUtils,
-// //                FeeUtils: feeUtils,
-//             },        
-//         });
         const repayUtils = await getContract("RepayUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address,  {
