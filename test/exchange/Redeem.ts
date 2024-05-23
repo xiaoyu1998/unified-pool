@@ -39,11 +39,6 @@ describe("Exchange", () => {
     });
 
     it("executeRedeem", async () => {
-        // const usdtBalanceBeforeDepositPool = await usdt.balanceOf(usdtPool.poolToken);
-        // const uniBalanceBeforeDepositPool = await uni.balanceOf(uniPool.poolToken);
-        // const usdtBalanceBeforeDepositUser1 = await usdt.balanceOf(user1.address);
-        // const uniBalanceBeforeDepositUser1 = await uni.balanceOf(user1.address);
-
         //Deposit
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);

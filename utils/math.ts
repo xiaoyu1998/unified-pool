@@ -33,7 +33,6 @@ export function calcSilppage(
     sqrtPriceX96: BigInt,
     isZeroForOne:bool 
 ): BigInt {
-
   const currentPrice = bn(amount1.toString())
                        .div(amount0.toString());
   let startPrice = decodePriceSqrt(sqrtPriceX96);

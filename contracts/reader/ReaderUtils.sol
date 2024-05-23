@@ -65,6 +65,11 @@ library ReaderUtils {
         uint256 scaledTotalDebt;
         uint256 totalDebt;
 
+        uint256 borrowUsageRatio;
+        uint256 optimalUsageRatio;
+        uint256 rateSlope1;
+        uint256 rateSlope2;
+
         string symbol;
         uint256 price;
         bool isUsd;
@@ -200,6 +205,7 @@ library ReaderUtils {
             false,false,false,false,
             0,0,0,0,
             0,0,0,0,0,0,
+            0,0,0,0,
             "",
             0,
             false    
@@ -229,6 +235,13 @@ library ReaderUtils {
         poolInfo.availableLiquidity = poolToken.availableLiquidity(unclaimedFee);
         poolInfo.scaledTotalDebt = debtToken.scaledTotalSupply();
         poolInfo.totalDebt = debtToken.totalSupply();
+        
+        poolInfo.borrowUsageRatio = (poolInfo.totalDebt == 0)? 0:poolInfo.totalDebt.rayDiv(poolInfo.availableLiquidity + poolInfo.totalDebt);
+
+        IPoolInterestRateStrategy strategy = IPoolInterestRateStrategy(poolInfo.interestRateStrategy);
+        poolInfo.optimalUsageRatio = strategy.getOptimalUsageRatio();
+        poolInfo.rateSlope1 = strategy.getRateSlope1();
+        poolInfo.rateSlope2 = strategy.getRateSlope2();
 
         poolInfo.symbol = IERC20Metadata(poolInfo.underlyingAsset).symbol();
         poolInfo.price = OracleUtils.getPrice(dataStore, poolInfo.underlyingAsset);

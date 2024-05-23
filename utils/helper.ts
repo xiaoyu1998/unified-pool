@@ -60,10 +60,14 @@ export function parsePoolInfo(pool) {
         totalCollateral: pool[23], 
         availableLiquidity: pool[24],
         scaledTotalDebt: pool[25],  
-        totalDebt: pool[26],         
-        symbol: pool[27],
-        price: pool[28],
-        isUsd: pool[29]
+        totalDebt: pool[26],   
+        borrowUsageRatio: pool[27],
+        optimalUsageRatio: pool[28],
+        rateSlope1: pool[29],
+        rateSlope2: pool[30],                   
+        symbol: pool[31],
+        price: pool[32],
+        isUsd: pool[33]
     };
     return p;
 }

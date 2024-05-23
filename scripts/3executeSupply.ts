@@ -19,9 +19,11 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
+
+    console.log(usdtAddress);
     const supplyAmountUsdt = expandDecimals(8000000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmountUsdt), `usdt.approve(${router.target})`)  
-    console.log("userUsdt",await usdt.balanceOf(owner.address), supplyAmountUsdt); 
+    console.log("userUsdt", await usdt.balanceOf(owner.address), supplyAmountUsdt); 
 
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];

@@ -34,13 +34,19 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         _rateSlope1 = rateSlope1;
         _rateSlope2 = rateSlope2;
     }
-
-     
-    function getRateSlope1() public view returns (uint256) {
-        return _rateSlope1;
+    
+    /// @inheritdoc IPoolInterestRateStrategy
+    function getOptimalUsageRatio() public view  override returns (uint256) {
+        return OPTIMAL_USAGE_RATIO;
     }
 
-    function getRateSlope2() public view returns (uint256) {
+    /// @inheritdoc IPoolInterestRateStrategy
+    function getRateSlope1() public view  override returns (uint256) {
+        return _rateSlope1;
+    }
+    
+    /// @inheritdoc IPoolInterestRateStrategy
+    function getRateSlope2() public view  override returns (uint256) {
         return _rateSlope2;
     }   
 

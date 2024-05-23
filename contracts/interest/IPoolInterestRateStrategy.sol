@@ -9,4 +9,8 @@ interface IPoolInterestRateStrategy {
         InterestUtils.CalculateInterestRatesParams memory params
     ) external view returns (uint256, uint256);
 
+    function getOptimalUsageRatio() external view returns (uint256);
+    function getRateSlope1() external view returns (uint256);
+    function getRateSlope2() external view returns (uint256);
+
 }

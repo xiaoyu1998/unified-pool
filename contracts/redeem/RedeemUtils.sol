@@ -73,7 +73,7 @@ library RedeemUtils {
         if( redeemAmount > maxAmountToRedeem) {
             redeemAmount = maxAmountToRedeem;
         }
-        //Printer.log("repayAmount", redeemAmount);  
+        //Printer.log("redeemAmount", redeemAmount);  
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 

@@ -36,7 +36,7 @@ library PoolUtils {
         bool borrowingEnabled;
         bool isPaused;
     }
-    function validateConfigurationPool(Pool.Props memory pool, bool isBorrow) internal pure {
+    function validateConfigurationPool(Pool.Props memory pool, bool checkBorrowing) internal pure {
         ValidateConfigurationPoolLocalVars memory vars;
         (   vars.isActive,
             vars.isFrozen, 
@@ -46,7 +46,7 @@ library PoolUtils {
         if (!vars.isActive) { revert Errors.PoolIsInactive(pool.underlyingAsset); }  
         if (vars.isPaused)  { revert Errors.PoolIsPaused(pool.underlyingAsset);   }  
         if (vars.isFrozen)  { revert Errors.PoolIsFrozen(pool.underlyingAsset);   } 
-        if (isBorrow) {
+        if (checkBorrowing) {
             if (!vars.borrowingEnabled) { revert Errors.PoolIsNotBorrowing(pool.underlyingAsset);   } 
         }
     }

@@ -72,10 +72,12 @@ describe("Exchange", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0);  
+
         expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeTxnPool + uniAmountDeposit);
         expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeTxnUser1 - uniAmountDeposit);
         expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniAmountDeposit);
         expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(1);
+        //longPosition none to long
         expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
         expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniAmountDeposit);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
