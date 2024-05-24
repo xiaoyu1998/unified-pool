@@ -40,6 +40,7 @@ library SwapUtils {
         address underlyingAssetIn;
         address underlyingAssetOut;
         uint256 amount;
+        uint256 sqrtPriceLimitX96;
     }
 
     struct ExecuteSwapParams {
@@ -48,6 +49,7 @@ library SwapUtils {
         address underlyingAssetIn;
         address underlyingAssetOut;
         uint256 amount;
+        uint256 sqrtPriceLimitX96;
     }
 
     struct SwapLocalVars {
@@ -124,7 +126,8 @@ library SwapUtils {
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
             vars.amountIn, 
-            address(vars.poolTokenOut)
+            address(vars.poolTokenOut),
+            params.sqrtPriceLimitX96
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
         Printer.log("-------------------------swapEnd--------------------------");
@@ -255,7 +258,8 @@ library SwapUtils {
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
             vars.amountOut, 
-            address(vars.poolTokenOut)
+            address(vars.poolTokenOut),
+            params.sqrtPriceLimitX96
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
         Printer.log("-------------------------swapEnd--------------------------");

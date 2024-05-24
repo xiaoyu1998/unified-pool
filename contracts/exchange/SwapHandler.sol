@@ -32,7 +32,8 @@ contract SwapHandler is ISwapHandler, GlobalReentrancyGuard, RoleModule {
            address(eventEmitter),
            swapParams.underlyingAssetIn,     
            swapParams.underlyingAssetOut,         
-           swapParams.amount
+           swapParams.amount,
+           swapParams.sqrtPriceLimitX96
         );
 
         SwapUtils.executeSwapExactIn(account, params);

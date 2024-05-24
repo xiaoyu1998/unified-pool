@@ -51,6 +51,7 @@ async function main() {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,
         amount: borrowAmmount,
+        sqrtPriceLimitX96: 0
     };     
 
     //close Position

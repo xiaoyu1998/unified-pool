@@ -84,7 +84,7 @@ async function main() {
     //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
     await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
-    await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address), "dex.swapExactIn");
+    await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 
@@ -104,7 +104,7 @@ async function main() {
     console.log("fee", calcFee(uniAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the uni price to calc values in usd
 
     //estimateGas
-    const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
+    const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0);
     console.log("estimatedGas", estimatedGas);
 
     //set dex

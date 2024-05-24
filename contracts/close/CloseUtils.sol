@@ -112,7 +112,8 @@ library CloseUtils {
                 params.eventEmitter,
                 params.underlyingAsset,
                 params.underlyingAssetUsd,
-                vars.remainAmount
+                vars.remainAmount,
+                0
             );
 
             vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
@@ -246,7 +247,8 @@ library CloseUtils {
                     params.eventEmitter,
                     vars.position.underlyingAsset,
                     params.underlyingAssetUsd,
-                    vars.remainAmount
+                    vars.remainAmount,
+                    0//should be have a sqrtPriceLimitX96
                 );
                 SwapUtils.executeSwapExactIn(account, vars.swapParams);
             }
@@ -282,7 +284,8 @@ library CloseUtils {
                     params.eventEmitter,
                     params.underlyingAssetUsd,
                     vars.position.underlyingAsset,
-                    vars.debtAmount
+                    vars.debtAmount,
+                    0//should be have a sqrtPriceLimitX96
                 );
                 vars.CollateralAmountNeededUsd = SwapUtils.executeSwapExactOut(account, vars.swapParams);
                 if (vars.CollateralAmountNeededUsd > vars.collateralAmountUsd) {

@@ -26,6 +26,7 @@ async function main() {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
         amount: expandDecimals(100000, usdtDecimals),
+        0
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),

@@ -33,6 +33,7 @@ async function main() {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
         amount: borrowAmmount,
+        sqrtPriceLimitX96: 0
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),

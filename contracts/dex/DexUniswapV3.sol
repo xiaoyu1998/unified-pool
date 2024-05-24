@@ -43,13 +43,15 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         address from,
         address tokenIn,
         uint256 amountIn,
-        address to
+        address to,
+        uint256 sqrtPriceLimitX96
     ) external override{
-        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        //uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
-            return _swapExact0For1(from, _pool, amountIn, to, sqrtPriceLimitX96);
+            return _swapExact0For1(from, _pool, amountIn, to, priceLimit);
         } else if (tokenIn == _token1) {
-            return _swapExact1For0(from, _pool, amountIn, to, sqrtPriceLimitX96);
+            return _swapExact1For0(from, _pool, amountIn, to, priceLimit);
         } 
 
         revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
@@ -60,13 +62,15 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         address from,
         address tokenIn,
         uint256 amountOut,
-        address to
+        address to,
+        uint256 sqrtPriceLimitX96
     ) external override{
-        uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        //uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
+        uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
-            return _swap0ForExact1(from, _pool, amountOut, to, sqrtPriceLimitX96);
+            return _swap0ForExact1(from, _pool, amountOut, to, priceLimit);
         } else if (tokenIn == _token1) {
-            return _swap1ForExact0(from, _pool, amountOut, to, sqrtPriceLimitX96);
+            return _swap1ForExact0(from, _pool, amountOut, to, priceLimit);
         } 
 
         revert Errors.TokenNotMatch(_pool, _token0, _token1, tokenIn);   
