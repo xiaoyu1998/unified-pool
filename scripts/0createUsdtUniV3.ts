@@ -100,6 +100,10 @@ async function main() {
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 
+    //estimateGas
+    const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
+    console.log("estimatedGas", estimatedGas);
+
     //set dex
     const multicallArgs2 = [
         config.interface.encodeFunctionData("setDex", [usdt.target, uni.target, dex.target]),
