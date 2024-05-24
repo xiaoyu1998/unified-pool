@@ -49,6 +49,17 @@ export function calcPriceImpact(
 ): BigInt {
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
     startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
-    const quoteOutputAmount = startPrice.times(bn(amountIn.toString()));
-    return (quoteOutputAmount.minus(bn(amountOut.toString()))).div(quoteOutputAmount);
+    const quoteOutputAmount = startPrice.times(amountIn.toString());
+    return (quoteOutputAmount.minus(amountOut.toString())).div(quoteOutputAmount);
+}
+
+export function calcFee(
+    amount: BigInt, 
+    feeAmount: BigInt, 
+    feePercentageFactor: BigInt
+): BigInt {
+    return bn(amount.toString())
+            .times(feeAmount.toString())
+            .div(feePercentageFactor.toString());
+            //TODO:should be feePercentageFactor - feeAmount in line95 /v3-core/contracts/libraries/SwapMath.sol
 }

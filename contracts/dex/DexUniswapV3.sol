@@ -20,7 +20,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
 
     address internal _token0;
     address internal _token1;
-    uint24 internal _fee;
+    uint24 internal _feeAmount;
     address internal _pool;
 
     constructor(
@@ -34,7 +34,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         }
 
         (_token0, _token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
-        _fee = fee;
+        _feeAmount = fee;
         _pool = pool;
     } 
     
@@ -171,8 +171,8 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         return _pool;
     }
 
-    function getFee() public view returns(uint24) {
-        return _fee;
+    function getFeeAmount() public view returns(uint24) {
+        return _feeAmount;
     }
 
 

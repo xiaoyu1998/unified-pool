@@ -1,6 +1,6 @@
 import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
-import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact } from "../utils/math"
-import { MaxUint256, FeeAmount, TICK_SPACINGS} from "../utils/constants";
+import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcFee } from "../utils/math"
+import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "../utils/constants";
 
 import {
@@ -82,24 +82,26 @@ async function main() {
     console.log("userUniAfterMint", await uni.balanceOf(owner.address)); 
 
     //swap 
-    const quoter = await deployContract("Quoter", [factory.target]);
-    const uniAmountIn = expandDecimals(10000, uniDecimals);
-    const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
-        uniAddress, 
-        usdtAddress,
-        FeeAmount.MEDIUM,
-        uniAmountIn,
-        0 //the max sqrtPriceLimitX96 
-    );
-    console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
-    console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
-
-    //swap 
     const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
     await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
     await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address), "dex.swapExactIn");
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
+
+    //quoter 
+    const feeAmount = await dex.getFeeAmount();
+    const quoter = await deployContract("Quoter", [factory.target]);
+    const uniAmountIn = expandDecimals(10000, uniDecimals);
+    const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
+        uniAddress, 
+        usdtAddress,
+        feeAmount,
+        uniAmountIn,
+        0 //the max sqrtPriceLimitX96 
+    );
+    console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
+    console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
+    console.log("fee", calcFee(uniAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the uni price to calc values in usd
 
     //estimateGas
     const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address);
