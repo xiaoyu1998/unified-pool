@@ -99,9 +99,9 @@ async function main() {
         uniAmountIn,
         0 //the max sqrtPriceLimitX96 
     );
-    console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
-    console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
     console.log("fee", calcFee(uniAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the uni price to calc values in usd
+    console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
+    console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); //delete feeAmount in amountIn to get the silppage without fee
 
     //estimateGas
     const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0);

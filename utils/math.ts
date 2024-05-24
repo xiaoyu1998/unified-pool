@@ -38,7 +38,7 @@ export function calcSilppage(
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
     startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
     const deltaAbs = currentPrice.minus(startPrice).abs();
-    return deltaAbs.div(startPrice);
+    return deltaAbs.div(currentPrice);
 }
 
 export function calcPriceImpact(
