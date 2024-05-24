@@ -18,9 +18,10 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     uint256 public immutable MAX_EXCESS_USAGE_RATIO;
     uint256 internal immutable _rateSlope1;
     uint256 internal immutable _rateSlope2;
-
+    uint256 internal immutable _rateBase;
     constructor(
         uint256 optimalUsageRatio,
+        uint256 rateBase,
         uint256 rateSlope1,
         uint256 rateSlope2
     ) {
@@ -31,8 +32,14 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         OPTIMAL_USAGE_RATIO    = optimalUsageRatio;
         MAX_EXCESS_USAGE_RATIO = WadRayMath.RAY - optimalUsageRatio;
 
+        _rateBase = rateBase;
         _rateSlope1 = rateSlope1;
         _rateSlope2 = rateSlope2;
+    }
+
+    /// @inheritdoc IPoolInterestRateStrategy
+    function getRatebase() public view  override returns (uint256) {
+        return _rateBase;
     }
     
     /// @inheritdoc IPoolInterestRateStrategy
@@ -49,7 +56,6 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
     function getRateSlope2() public view  override returns (uint256) {
         return _rateSlope2;
     }   
-
 
     struct CalcInterestRatesLocalVars {
         uint256 totalAvailableLiquidity;
@@ -71,8 +77,8 @@ contract PoolInterestRateStrategy is IPoolInterestRateStrategy {
         Printer.log("rateSlope2", _rateSlope2);
 
       	CalcInterestRatesLocalVars memory vars;
-
       	vars.totalDebt = params.totalDebt;
+        vars.currentBorrowRate = _rateBase;
         Printer.log("totalDebt", vars.totalDebt);
        
        //calculate Borrow Rate

@@ -1,5 +1,5 @@
 import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
-import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage } from "../utils/math"
+import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "../utils/constants";
 
@@ -91,6 +91,7 @@ async function main() {
         uniAmountIn,
         0 //the max sqrtPriceLimitX96 
     );
+    console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
     console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
 
     //swap 

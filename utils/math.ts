@@ -28,15 +28,27 @@ export function decodePriceSqrt(sqrtPriceX96: BigInt): bn {
 }
 
 export function calcSilppage(
-    amount1: BigInt, 
-    amount0: BigInt, 
+    amountOut: BigInt, 
+    amountIn: BigInt, 
     sqrtPriceX96: BigInt,
     isZeroForOne:bool 
 ): BigInt {
-  const currentPrice = bn(amount1.toString())
-                       .div(amount0.toString());
-  let startPrice = decodePriceSqrt(sqrtPriceX96);
+  const currentPrice = bn(amountOut.toString())
+                       .div(amountIn.toString());
+  let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
   startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
   const deltaAbs = currentPrice.minus(startPrice).abs();
   return deltaAbs.div(startPrice);
+}
+
+export function calcPriceImpact(
+    amountOut: BigInt, 
+    amountIn: BigInt, 
+    sqrtPriceX96: BigInt,
+    isZeroForOne:bool 
+): BigInt {
+  let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
+  startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
+  const quoteOutputAmount = startPrice*bn(amountIn.toString());
+  return (quoteOutputAmount-bn(amountOut.toString()))/quoteOutputAmount;
 }

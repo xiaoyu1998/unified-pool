@@ -10,6 +10,7 @@ interface IPoolInterestRateStrategy {
     ) external view returns (uint256, uint256);
 
     function getOptimalUsageRatio() external view returns (uint256);
+    function getRatebase() external view returns (uint256);
     function getRateSlope1() external view returns (uint256);
     function getRateSlope2() external view returns (uint256);
 
