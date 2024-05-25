@@ -141,15 +141,11 @@ library RedeemUtils {
         Printer.log("-------------------------validateRedeem--------------------------");
         PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
-        Printer.log("amountToRedeem", amountToRedeem);
         if (amountToRedeem == 0) {
             revert Errors.EmptyRedeemAmount();
         }
-        Printer.log("amountToRedeem2", amountToRedeem);
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, pool.underlyingAsset);
-        Printer.log("configuration", configuration);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
-        Printer.log("decimals", decimals);
 
         PositionUtils.validateLiquidationHealthFactor(
             account, 

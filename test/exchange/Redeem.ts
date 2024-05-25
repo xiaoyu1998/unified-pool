@@ -40,103 +40,103 @@ describe("Exchange", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    // it("executeRedeem redeemAmount <= collateralAmount", async () => {
-    //     //Deposit
-    //     const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
-    //     await usdt.connect(user1).approve(router.target, usdtDepositAmount);
-    //     const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
-    //         underlyingAsset: usdt.target,
-    //     };
-    //     const usdtBorrowAmmount = expandDecimals(1000000, usdtDecimals);
-    //     const usdtParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
-    //         underlyingAsset: usdt.target,
-    //         amount: usdtBorrowAmmount,
-    //     };
-    //     const multicallArgsDeposit = [
-    //         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
-    //         exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
-    //         exchangeRouter.interface.encodeFunctionData("executeBorrow", [usdtParamsBorrow]),
-    //     ];
-    //     await exchangeRouter.connect(user1).multicall(multicallArgsDeposit);
+    it("executeRedeem redeemAmount <= maxAmountToRedeem", async () => {
+        //Deposit
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const usdtBorrowAmmount = expandDecimals(1000000, usdtDecimals);
+        const usdtParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: usdt.target,
+            amount: usdtBorrowAmmount,
+        };
+        const multicallArgsDeposit = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [usdtParamsBorrow]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgsDeposit);
 
-    //     const usdtBalanceBeforeRedeemPool = await usdt.balanceOf(usdtPool.poolToken);
-    //     const usdtBalanceBeforeRedeemUser1 = await usdt.balanceOf(user1.address);
-    //     const usdtAmountRedeem = expandDecimals(1000000, usdtDecimals);
-    //     const usdtParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
-    //         underlyingAsset: usdt.target,
-    //         amount: usdtAmountRedeem,
-    //         to:user1.address
-    //     };
+        const usdtBalanceBeforeRedeemPool = await usdt.balanceOf(usdtPool.poolToken);
+        const usdtBalanceBeforeRedeemUser1 = await usdt.balanceOf(user1.address);
+        const usdtAmountRedeem = expandDecimals(1000000, usdtDecimals);
+        const usdtParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: usdt.target,
+            amount: usdtAmountRedeem,
+            to:user1.address
+        };
 
-    //     const multicallArgsRedeem = [
-    //         exchangeRouter.interface.encodeFunctionData("executeRedeem", [usdtParamsRedeem]),
-    //     ];
-    //     await exchangeRouter.connect(user1).multicall(multicallArgsRedeem);
+        const multicallArgsRedeem = [
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [usdtParamsRedeem]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgsRedeem);
     
-    //     //redeemAmount <= collateralAmount
-    //     expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeRedeemPool - usdtAmountRedeem);
-    //     expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeRedeemUser1 + usdtAmountRedeem);
-    //     expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtDepositAmount + usdtBorrowAmmount - usdtAmountRedeem);
-    //     expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
-    //     expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
-    //     expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
-    //     expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
-    //     expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
-    // });
+        //redeemAmount <= collateralAmount
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtBalanceBeforeRedeemPool - usdtAmountRedeem);
+        expect(await usdt.balanceOf(user1.address)).eq(usdtBalanceBeforeRedeemUser1 + usdtAmountRedeem);
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtDepositAmount + usdtBorrowAmmount - usdtAmountRedeem);
+        expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
+    });
 
-    // it("executeRedeem redeemAmount > collateralAmount", async () => {
-    //     const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
-    //     await usdt.connect(user1).approve(router.target, usdtDepositAmount);
-    //     const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
-    //         underlyingAsset: usdt.target,
-    //     };
+    it("executeRedeem redeemAmount > maxAmountToRedeem", async () => {
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
 
-    //     const uniDepositAmount = expandDecimals(200000, uniDecimals);
-    //     await uni.connect(user1).approve(router.target, uniDepositAmount);
-    //     const uniParamsDeposit: DepositUtils.DepositParamsStructOutput = {
-    //         underlyingAsset: uni.target,
-    //     };
-    //     const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
-    //     const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
-    //         underlyingAsset: uni.target,
-    //         amount: uniBorrowAmmount,
-    //     };
-    //     const multicallArgsDeposit = [
-    //         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
-    //         exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
-    //         exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniDepositAmount]),
-    //         exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
-    //         exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
-    //     ];
-    //     await exchangeRouter.connect(user1).multicall(multicallArgsDeposit);
-    //     const uniBalanceBeforeRedeemPool = await uni.balanceOf(uniPool.poolToken);
-    //     const uniBalanceBeforeRedeemUser1 = await uni.balanceOf(user1.address);
-    //     const uniCollateralBeforeBorrowUser1 = uniDepositAmount + uniBorrowAmmount;
+        const uniDepositAmount = expandDecimals(200000, uniDecimals);
+        await uni.connect(user1).approve(router.target, uniDepositAmount);
+        const uniParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: uni.target,
+        };
+        const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
+        const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        };
+        const multicallArgsDeposit = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgsDeposit);
+        const uniBalanceBeforeRedeemPool = await uni.balanceOf(uniPool.poolToken);
+        const uniBalanceBeforeRedeemUser1 = await uni.balanceOf(user1.address);
+        const uniCollateralBeforeBorrowUser1 = uniDepositAmount + uniBorrowAmmount;
 
-    //     //Redeem
-    //     const uniAmountRedeem = expandDecimals(400000, uniDecimals);
-    //     const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
-    //         underlyingAsset: uni.target,
-    //         amount: uniAmountRedeem,
-    //         to:user1.address
-    //     };
+        //Redeem
+        const uniAmountRedeem = expandDecimals(400000, uniDecimals);
+        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniAmountRedeem,
+            to:user1.address
+        };
 
-    //     const multicallArgsRedeem = [
-    //         exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
-    //     ];
-    //     await exchangeRouter.connect(user1).multicall(multicallArgsRedeem);
+        const multicallArgsRedeem = [
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgsRedeem);
     
-    //     //redeemAmount > collateralAmount
-    //     expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeRedeemPool - uniCollateralBeforeBorrowUser1);
-    //     expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeRedeemUser1 + uniCollateralBeforeBorrowUser1);
-    //     expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-    //     //shortPosition Long to Short
-    //     expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(0);
-    //     expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-    //     expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-    //     expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
-    //     expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
-    // });
+        //redeemAmount > collateralAmount
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforeRedeemPool - uniCollateralBeforeBorrowUser1);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeRedeemUser1 + uniCollateralBeforeBorrowUser1);
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        //shortPosition Long to Short
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
+    });
 
     it("executeRedeem validateRedeem", async () => {
 
@@ -206,6 +206,54 @@ describe("Exchange", () => {
             exchangeRouter.connect(user1).multicall(multicallArgsRedeem3)
         ).to.be.revertedWithCustomError(errorsContract, "HealthFactorLowerThanLiquidationThreshold");        
     
+    });
+
+    it("executeRedeem validateRedeem poolConfiguration", async () => {
+
+        //PoolIsInactive
+        const uniAmountRedeem = expandDecimals(400000, uniDecimals);
+        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniAmountRedeem,
+            to:user1.address
+        };
+
+        const multicallArgsConfig = [
+            config.interface.encodeFunctionData("setPoolActive", [uni.target, false]),
+            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, false]),
+            config.interface.encodeFunctionData("setPoolPaused", [uni.target, false]),
+        ];
+        await config.multicall(multicallArgsConfig);
+
+        const multicallArgsRedeem = [
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolIsInactive");  
+
+        //PoolIsFrozen
+        const multicallArgsConfig2 = [
+            config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
+            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, true]),
+            config.interface.encodeFunctionData("setPoolPaused", [uni.target, false]),
+        ];
+        await config.multicall(multicallArgsConfig2);   
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolIsFrozen");  
+
+
+        //PoolIsPaused
+        const multicallArgsConfig3 = [
+            config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
+            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, false]),
+            config.interface.encodeFunctionData("setPoolPaused", [uni.target, true]),
+        ];
+        await config.multicall(multicallArgsConfig3);   
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolIsPaused");     
     });
 
 }); 
