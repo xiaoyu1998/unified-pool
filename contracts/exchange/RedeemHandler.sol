@@ -26,7 +26,7 @@ contract RedeemHandler is IRedeemHandler, GlobalReentrancyGuard, RoleModule {
         address account,
         RedeemUtils.RedeemParams calldata redeemParams
     ) external globalNonReentrant {
-
+        //Printer.log("redeemParams.amount", redeemParams.amount); 
         RedeemUtils.ExecuteRedeemParams memory params = RedeemUtils.ExecuteRedeemParams(
            address(dataStore),
            address(eventEmitter),

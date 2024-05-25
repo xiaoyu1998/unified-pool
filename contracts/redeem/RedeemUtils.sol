@@ -48,6 +48,20 @@ library RedeemUtils {
         address to;
     }
 
+    struct ExecuteRedeemLocalVars {
+        Pool.Props pool;
+        address poolKey;
+        bool poolIsUsd;
+        Position.Props position;
+        bytes32 positionKey;
+        uint256 redeemAmount;
+        IPoolToken poolToken;
+        uint256 collateralAmount;
+        uint256 maxAmountToRedeem;
+        uint256 remainCollateral;
+        uint256 price;
+    }
+
     // @dev executes a redeem
     // @param account the redeemng account
     // @param params ExecuteRedeemParams
@@ -56,52 +70,53 @@ library RedeemUtils {
         ExecuteRedeemParams calldata params
     ) external {
         Printer.log("-------------------------executeRedeem--------------------------");
+        ExecuteRedeemLocalVars memory vars;
         //TODO:should be just get the pooltoken and pool configuration only
-        (   Pool.Props memory pool,
+        (   vars.pool,
             ,
-            address poolKey,
-            bool poolIsUsd
+            vars.poolKey,
+            vars.poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        bytes32 positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
-        Position.Props memory position = PositionStoreUtils.get(params.dataStore, positionKey);
+        vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+        vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
         
-        uint256 redeemAmount = params.amount;
-        IPoolToken poolToken = IPoolToken(pool.poolToken);
-        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        uint256 maxAmountToRedeem = PositionUtils.maxAmountToRedeem(account, params.dataStore, params.underlyingAsset, collateralAmount);
-        if( redeemAmount > maxAmountToRedeem) {
-            redeemAmount = maxAmountToRedeem;
+        vars.redeemAmount = params.amount;
+        vars.poolToken = IPoolToken(vars.pool.poolToken);
+        vars.collateralAmount = vars.poolToken.balanceOfCollateral(account); 
+        vars.maxAmountToRedeem = PositionUtils.maxAmountToRedeem(account, params.dataStore, params.underlyingAsset, vars.collateralAmount);  
+        if (vars.redeemAmount > vars.maxAmountToRedeem) {
+            vars.redeemAmount = vars.maxAmountToRedeem;
         }
-        //Printer.log("redeemAmount", redeemAmount);  
+        // Printer.log("redeemAmount", vars.redeemAmount);  
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
-            pool, 
-            position, 
-            redeemAmount
+            vars.pool, 
+            vars.position, 
+            vars.redeemAmount
         );
 
-        poolToken.removeCollateral(account, redeemAmount);
-        poolToken.transferOutUnderlyingAsset(params.to, redeemAmount);
-        uint256 remainCollateral = poolToken.balanceOfCollateral(account);
-        if (remainCollateral == 0) {
-            position.hasCollateral = false;
+        vars.poolToken.removeCollateral(account, vars.redeemAmount);
+        vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);
+        vars.remainCollateral = vars.poolToken.balanceOfCollateral(account);
+        if (vars.remainCollateral == 0) {
+            vars.position.hasCollateral = false;
         }
-        if (!poolIsUsd){
-            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
-            PositionUtils.shortPosition(position, price, redeemAmount, false);
+        if (!vars.poolIsUsd){
+            vars.price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.shortPosition(vars.position, vars.price, vars.redeemAmount, false);
         }
         PositionStoreUtils.set(
             params.dataStore, 
-            positionKey, 
-            position
+            vars.positionKey, 
+            vars.position
         );
 
         PoolStoreUtils.set(
             params.dataStore, 
-            poolKey, 
-            pool
+            vars.poolKey, 
+            vars.pool
         );
 
         RedeemEventUtils.emitRedeem(
@@ -109,7 +124,7 @@ library RedeemUtils {
             params.underlyingAsset, 
             account, 
             params.to, 
-            redeemAmount
+            vars.redeemAmount
         );
     }
 
@@ -126,13 +141,16 @@ library RedeemUtils {
         Printer.log("-------------------------validateRedeem--------------------------");
         PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
-
-        if(amountToRedeem == 0) {
+        Printer.log("amountToRedeem", amountToRedeem);
+        if (amountToRedeem == 0) {
             revert Errors.EmptyRedeemAmount();
         }
-
+        Printer.log("amountToRedeem2", amountToRedeem);
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, pool.underlyingAsset);
+        Printer.log("configuration", configuration);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
+        Printer.log("decimals", decimals);
+
         PositionUtils.validateLiquidationHealthFactor(
             account, 
             dataStore, 
