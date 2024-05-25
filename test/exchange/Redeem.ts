@@ -243,7 +243,6 @@ describe("Exchange", () => {
             exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
         ).to.be.revertedWithCustomError(errorsContract, "PoolIsFrozen");  
 
-
         //PoolIsPaused
         const multicallArgsConfig3 = [
             config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
