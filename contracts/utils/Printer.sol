@@ -11,6 +11,8 @@ import "hardhat/console.sol";
  */
 library Printer {
     using SafeCast for int256;
+    bool internal constant disablePrinter = true;
+
     function toString(bytes memory data) public pure returns(string memory) {
         bytes memory alphabet = "0123456789abcdef";
 
@@ -37,6 +39,7 @@ library Printer {
     }
 
     function log(string memory label) internal pure {
+        if (disablePrinter) { return; }
         console.log(
             "%s",
             label
@@ -44,6 +47,7 @@ library Printer {
     }
 
     function log(string memory label, address account) internal pure {
+        if (disablePrinter) { return; }
         console.log(
             "%s -%s",
             label,
@@ -52,6 +56,7 @@ library Printer {
     }
 
     function log(string memory label, bytes32 value) internal pure {
+        if (disablePrinter) { return; }
         console.log(
             "%s -%s",
             label,
@@ -60,6 +65,7 @@ library Printer {
     }
 
     function log(string memory label, string memory value) internal pure {
+        if (disablePrinter) { return; }
         console.log(
             "%s -%s",
             label,
@@ -76,6 +82,7 @@ library Printer {
     // }
     
     function log(string memory label, uint256 value) internal pure {
+        if (disablePrinter) { return; }
         console.log(
             "%s -%s",
             label,
@@ -85,6 +92,7 @@ library Printer {
 
 
     function log(string memory label, int256 value) internal pure {
+        if (disablePrinter) { return; }
         if (value < 0) {
             console.log(
                 "%s -%s",

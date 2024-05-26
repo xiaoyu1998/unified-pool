@@ -17,6 +17,7 @@ import {
 import { DepositUtils } from "../../typechain-types/contracts/exchange/DepositHandler";
 import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
 import { RedeemUtils } from "../typechain-types/contracts/exchange/RedeemHandler";
+import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
 describe("Exchange", () => {
     let fixture;
@@ -138,6 +139,22 @@ describe("Exchange", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
     });
 
+    it("executeRedeem PoolNotFound", async () => {
+        const uniAmountRedeem = expandDecimals(400000, uniDecimals);
+        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: ethers.ZeroAddress,
+            amount: uniAmountRedeem,
+            to: user1.address
+        };
+        const multicallArgsRedeem = [
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+
+    });
+
     it("executeRedeem validateRedeem", async () => {
 
         //EmptyPosition
@@ -210,7 +227,6 @@ describe("Exchange", () => {
 
     it("executeRedeem validateRedeem poolConfiguration", async () => {
 
-        //PoolIsInactive
         const uniAmountRedeem = expandDecimals(400000, uniDecimals);
         const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
             underlyingAsset: uni.target,
@@ -218,41 +234,8 @@ describe("Exchange", () => {
             to:user1.address
         };
 
-        const multicallArgsConfig = [
-            config.interface.encodeFunctionData("setPoolActive", [uni.target, false]),
-            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, false]),
-            config.interface.encodeFunctionData("setPoolPaused", [uni.target, false]),
-        ];
-        await config.multicall(multicallArgsConfig);
-
-        const multicallArgsRedeem = [
-            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
-        ];
-        await expect(
-            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolIsInactive");  
-
-        //PoolIsFrozen
-        const multicallArgsConfig2 = [
-            config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
-            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, true]),
-            config.interface.encodeFunctionData("setPoolPaused", [uni.target, false]),
-        ];
-        await config.multicall(multicallArgsConfig2);   
-        await expect(
-            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolIsFrozen");  
-
-        //PoolIsPaused
-        const multicallArgsConfig3 = [
-            config.interface.encodeFunctionData("setPoolActive", [uni.target, true]),
-            config.interface.encodeFunctionData("setPoolFrozen", [uni.target, false]),
-            config.interface.encodeFunctionData("setPoolPaused", [uni.target, true]),
-        ];
-        await config.multicall(multicallArgsConfig3);   
-        await expect(
-            exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolIsPaused");     
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", uni, uniParamsRedeem)
+ 
     });
 
 }); 
