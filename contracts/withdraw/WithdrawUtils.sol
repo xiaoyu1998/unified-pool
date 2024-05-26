@@ -111,7 +111,8 @@ library WithdrawUtils {
         if (amount == 0) { 
             revert Errors.EmptyWithdrawAmounts(); 
         }
-
+        
+        //TODO:This should be never happen
         if (amount > userBalance) {
             revert Errors.InsufficientUserBalance(amount, userBalance);
         }
