@@ -67,8 +67,11 @@ export async function deployFixture() {
         8
     );
 
-    await usdt.transfer(user1, expandDecimals(10000000, usdtDecimals));
-    await uni.transfer(user1, expandDecimals(1000000, uniDecimals));
+    const usdtBalanceUser1 = expandDecimals(10000000, usdtDecimals);
+    const uniBalanceUser1 = expandDecimals(1000000, uniDecimals);
+
+    await usdt.transfer(user1, usdtBalanceUser1);
+    await uni.transfer(user1, uniBalanceUser1);
 
     const dex = await createUniswapV3(
         user0, 
@@ -182,6 +185,12 @@ export async function deployFixture() {
       },
       dexes: {
           dex
+      },
+      balances: {
+        usdtBalanceUser1,
+        uniBalanceUser1,
+        usdtSupplyAmount,
+        uniSupplyAmount
       },
       //props: { signerIndexes: [0, 1, 2, 3, 4, 5, 6], executionFee: "1000000000000000" },
     };

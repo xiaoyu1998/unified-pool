@@ -157,6 +157,7 @@ library BorrowUtils {
             Printer.log("totalDebt",  totalDebt);
         }
 
+        //validate account health
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, poolCache.underlyingAsset);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
         PositionUtils.validateLiquidationHealthFactor(

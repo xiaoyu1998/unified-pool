@@ -39,7 +39,7 @@ describe("Exchange", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    it("executeDeposit", async () => {
+    it("executeDeposit usd", async () => {
         const usdtBalanceBeforePool = await usdt.balanceOf(usdtPool.poolToken);
         const usdtBalanceBeforeUser1 = await usdt.balanceOf(user1.address);
 
@@ -64,6 +64,36 @@ describe("Exchange", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0);  
+    });
+
+    it("executeDeposit longPosition none to long", async () => {
+        const uniBalanceBeforePool = await uni.balanceOf(uniPool.poolToken);
+        const uniBalanceBeforeUser1 = await uni.balanceOf(user1.address);
+
+        //Deposit
+        const uniAmount = expandDecimals(200000, uniDecimals);
+        await uni.connect(user1).approve(router.target, uniAmount);
+        const usdtParams: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const uniParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: uni.target,
+        };
+
+        const multicallArgst = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParams]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
+
+        expect(await uni.balanceOf(uniPool.poolToken)).eq(uniBalanceBeforePool + uniAmount);
+        expect(await uni.balanceOf(user1.address)).eq(uniBalanceBeforeUser1 - uniAmount);
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(uniAmount);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(1);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniAmount);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0);
     });
 
     it("executeDeposit PoolNotFound", async () => {
