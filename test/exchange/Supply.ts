@@ -7,11 +7,6 @@ import { SupplyUtils } from "../../typechain-types/contracts/exchange/SupplyHand
 import { errorsContract} from "../../utils/error";
 import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
-// export async function getSupply(dataStore, reader, address, underlyingAsset) {
-//     const {balanceSupply } = await getMarginAndSupply(dataStore, reader, address, underlyingAsset);
-//     return balanceSupply;
-// }
-
 describe("Exchange", () => {
     let fixture;
     let user0, user1, user2;
@@ -101,50 +96,14 @@ describe("Exchange", () => {
 
     it("executeSupply validateSupply poolConfiguration", async () => {
 
-        const usdtSupplyAmount = expandDecimals(8000000, usdtDecimals);
-        await usdt.connect(user1).approve(router.target, usdtSupplyAmount);
-        const usdtParamsSupply: SupplyUtils.SupplyParamsStructOutput = {
+        const usdtAmount = expandDecimals(8000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtAmount);
+        const usdtParams: SupplyUtils.SupplyParamsStructOutput = {
             underlyingAsset: usdt.target,
             to: user1.address,
         };
 
-        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", usdt, usdtParamsSupply)
-
-        // const multicallArgsConfig = [
-        //     config.interface.encodeFunctionData("setPoolActive", [usdt.target, false]),
-        //     config.interface.encodeFunctionData("setPoolFrozen", [usdt.target, false]),
-        //     config.interface.encodeFunctionData("setPoolPaused", [usdt.target, false]),
-        // ];
-        // await config.multicall(multicallArgsConfig);
-
-        // const multicallArgsSupply = [
-        //     exchangeRouter.interface.encodeFunctionData("executeSupply", [usdtParamsSupply]),
-        // ];
-        // await expect(
-        //     exchangeRouter.connect(user1).multicall(multicallArgsSupply)
-        // ).to.be.revertedWithCustomError(errorsContract, "PoolIsInactive");  
-
-        // //PoolIsFrozen
-        // const multicallArgsConfig2 = [
-        //     config.interface.encodeFunctionData("setPoolActive", [usdt.target, true]),
-        //     config.interface.encodeFunctionData("setPoolFrozen", [usdt.target, true]),
-        //     config.interface.encodeFunctionData("setPoolPaused", [usdt.target, false]),
-        // ];
-        // await config.multicall(multicallArgsConfig2);   
-        // await expect(
-        //     exchangeRouter.connect(user1).multicall(multicallArgsSupply)
-        // ).to.be.revertedWithCustomError(errorsContract, "PoolIsFrozen");  
-
-        // //PoolIsPaused
-        // const multicallArgsConfig3 = [
-        //     config.interface.encodeFunctionData("setPoolActive", [usdt.target, true]),
-        //     config.interface.encodeFunctionData("setPoolFrozen", [usdt.target, false]),
-        //     config.interface.encodeFunctionData("setPoolPaused", [usdt.target, true]),
-        // ];
-        // await config.multicall(multicallArgsConfig3);   
-        // await expect(
-        //     exchangeRouter.connect(user1).multicall(multicallArgsSupply)
-        // ).to.be.revertedWithCustomError(errorsContract, "PoolIsPaused");     
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", usdt, usdtParams)
     });
 
 }); 

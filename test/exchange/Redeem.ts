@@ -227,14 +227,14 @@ describe("Exchange", () => {
 
     it("executeRedeem validateRedeem poolConfiguration", async () => {
 
-        const uniAmountRedeem = expandDecimals(400000, uniDecimals);
-        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+        const uniAmount = expandDecimals(400000, uniDecimals);
+        const uniParams: RedeemUtils.RedeemParamsStructOutput = {
             underlyingAsset: uni.target,
-            amount: uniAmountRedeem,
+            amount: uniAmount,
             to:user1.address
         };
 
-        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", uni, uniParamsRedeem)
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", uni, uniParams)
  
     });
 

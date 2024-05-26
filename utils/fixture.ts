@@ -131,7 +131,6 @@ export async function deployFixture() {
     ];
     await exchangeRouter.multicall(multicallArgs2);
 
-
     return {
       accountList,
       accounts: {
