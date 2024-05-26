@@ -226,7 +226,6 @@ describe("Exchange", () => {
     });
 
     it("executeRedeem validateRedeem poolConfiguration", async () => {
-
         const uniAmount = expandDecimals(400000, uniDecimals);
         const uniParams: RedeemUtils.RedeemParamsStructOutput = {
             underlyingAsset: uni.target,
@@ -235,7 +234,6 @@ describe("Exchange", () => {
         };
 
         await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", uni, uniParams)
- 
     });
 
 }); 

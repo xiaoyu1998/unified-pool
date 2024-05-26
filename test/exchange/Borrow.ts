@@ -200,8 +200,6 @@ describe("Exchange", () => {
 
     });
 
-
-
     it("executeBorrow validateWithdraw testPoolConfiguration", async () => {
         //EmptyBorrowAmounts
         const usdtAmmount = expandDecimals(1000000, usdtDecimals);
@@ -210,7 +208,6 @@ describe("Exchange", () => {
             amount: usdtAmmount,
         };
         await testPoolConfiguration(config, exchangeRouter, user1, "executeBorrow", usdt, usdtParams)
-
     });
 
 

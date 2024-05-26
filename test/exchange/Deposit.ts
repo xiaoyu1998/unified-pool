@@ -76,11 +76,11 @@ describe("Exchange", () => {
         const usdtParams: DepositUtils.DepositParamsStructOutput = {
             underlyingAsset: usdt.target,
         };
-        const uniParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+        const uniParams: DepositUtils.DepositParamsStructOutput = {
             underlyingAsset: uni.target,
         };
 
-        const multicallArgst = [
+        const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniAmount]),
             exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParams]),
         ];
@@ -94,7 +94,7 @@ describe("Exchange", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniAmount);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-    });
+    }); 
 
     it("executeDeposit PoolNotFound", async () => {
         const usdtParams: DepositUtils.DepositParamsStructOutput = {
