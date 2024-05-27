@@ -5,14 +5,14 @@ import { expandDecimals, bigNumberify } from "../../utils/math"
 
 import { Position } from "../../typechain-types/contracts/test/PositionTest";
 
-describe("Exchange", () => {
+describe("Position", () => {
     let positionTest;
 
     beforeEach(async () => {
         positionTest = await deployContract("PositionTest", []);
     });
 
-    it("longPosition none to long", async () => {
+    it("longPosition none to short", async () => {
         let price = expandDecimals(8, usdtOracleDecimal);
         let amount = expandDecimals(1, usdtDecimals);
         const position: Position.PropsStructOutput = {
@@ -28,7 +28,6 @@ describe("Exchange", () => {
         };
         let positionOutput = await positionTest.longPosition(position, price, amount, false);
 
-        //redeemAmount <= collateralAmount
         expect(positionOutput.positionType).eq(1);
         expect(positionOutput.entryLongPrice).eq(price);
         expect(positionOutput.accLongAmount).eq(amount);
