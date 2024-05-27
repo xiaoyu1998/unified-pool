@@ -15,7 +15,7 @@ import {
     getBorrowApy
 } from "../../utils/helper"
 import { DepositUtils } from "../../typechain-types/contracts/exchange/DepositHandler";
-import { WithdrawUtils } from "../typechain-types/contracts/exchange/WithdrawHandler";
+import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler";
 import { RedeemUtils } from "../typechain-types/contracts/exchange/RedeemHandler";
 import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
@@ -233,7 +233,7 @@ describe("Exchange", () => {
             to:user1.address
         };
 
-        await testPoolConfiguration(config, exchangeRouter, user1, "executeSupply", uni, uniParams)
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeRedeem", uni, uniParams)
     });
 
 }); 

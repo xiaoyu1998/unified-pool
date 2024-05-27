@@ -57,7 +57,7 @@ library RepayUtils {
         uint256 collateralAmount;
         uint256 debtAmount;
         bool useCollateralToRepay;
-        uint256 extraAmountToRefund;
+        uint256 overpaymentAmount;
     }
 
     // @dev executes a repay
@@ -84,15 +84,15 @@ library RepayUtils {
         }
         Printer.log("repayAmount", vars.repayAmount);   
 
-        vars.extraAmountToRefund;
+        vars.overpaymentAmount;
         vars.debtToken = IDebtToken(vars.poolCache.debtToken);
         vars.debtAmount = vars.debtToken.balanceOf(account);
         if (vars.repayAmount > vars.debtAmount) {
-            vars.extraAmountToRefund = vars.repayAmount - vars.debtAmount;
+            vars.overpaymentAmount = vars.repayAmount - vars.debtAmount;
             vars.repayAmount         = vars.debtAmount;      
         }
         Printer.log("debtAmount", vars.debtAmount); 
-        Printer.log("extraAmountToRefund", vars.extraAmountToRefund); 
+        Printer.log("overpaymentAmount", vars.overpaymentAmount); 
 
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         vars.position  = PositionStoreUtils.get(params.dataStore, vars.positionKey);
@@ -102,7 +102,8 @@ library RepayUtils {
             vars.position, 
             vars.repayAmount, 
             vars.debtAmount, 
-            vars.collateralAmount
+            vars.collateralAmount,
+            vars.useCollateralToRepay
         );
 
         vars.poolCache.nextTotalScaledDebt = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
@@ -115,8 +116,8 @@ library RepayUtils {
                 vars.position.hasCollateral = false;
             }
         }
-        if(vars.extraAmountToRefund > 0 && !vars.useCollateralToRepay) {//Refund extra
-            vars.poolToken.transferOutUnderlyingAsset(account, vars.extraAmountToRefund);
+        if(vars.overpaymentAmount > 0 && !vars.useCollateralToRepay) {//Refund extra
+            vars.poolToken.transferOutUnderlyingAsset(account, vars.overpaymentAmount);
             vars.poolToken.syncUnderlyingAssetBalance();
         } 
 
@@ -160,7 +161,8 @@ library RepayUtils {
         Position.Props memory position,
         uint256 repayAmount,
         uint256 debtAmount,
-        uint256 collateralAmount
+        uint256 collateralAmount,
+        bool useCollateralToRepay
     ) internal pure {
         PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
@@ -173,7 +175,7 @@ library RepayUtils {
             revert Errors.EmptyRepayAmount();
         }
 
-        if(collateralAmount > 0){
+        if(useCollateralToRepay){
             if(collateralAmount < repayAmount){
                 revert Errors.InsufficientCollateralAmountForRepay(repayAmount, collateralAmount);
             }

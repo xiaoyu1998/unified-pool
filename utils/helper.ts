@@ -81,8 +81,8 @@ export async function getPoolInfo(address) {
 
 export function parsePosition(position) {
     const p: Position.PropsStructOutput = {
-        underlyingAsset: position[0],
-        account: position[1],
+        account: position[0],
+        underlyingAsset: position[1],
         entryLongPrice: position[2],
         accLongAmount: position[3],
         entryShortPrice: position[4],
@@ -281,6 +281,16 @@ export async function getEntryShortPrice(dataStore, reader, address, underlyingA
 export async function getAccShortAmount(dataStore, reader, address, underlyingAsset) {
     const { accShortAmount } = await getPosition(dataStore, reader, address, underlyingAsset);
     return accShortAmount;
+}
+
+export async function getHasCollateral(dataStore, reader, address, underlyingAsset) {
+    const { hasCollateral } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return hasCollateral;
+}
+
+export async function getHasDebt(dataStore, reader, address, underlyingAsset) {
+    const { hasDebt } = await getPosition(dataStore, reader, address, underlyingAsset);
+    return hasDebt;
 }
 
 
