@@ -98,7 +98,6 @@ library PoolUtils {
 
         vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(vars.unclaimedFee);
                                           //- unclaimedFee;
-        
         Printer.log("unclaimedFee", vars.unclaimedFee);
         Printer.log("nextTotalScaledDebt", poolCache.nextTotalScaledDebt);
         Printer.log("nextBorrowIndex", poolCache.nextBorrowIndex);

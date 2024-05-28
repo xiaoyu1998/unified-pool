@@ -17,7 +17,7 @@ import { DepositUtils } from "../../typechain-types/contracts/exchange/DepositHa
 import { errorsContract} from "../../utils/error";
 import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
-describe("Exchange", () => {
+describe("Exchange Deposit", () => {
     let fixture;
     let user0, user1, user2;
     let config, dataStore, roleStore, reader, router, exchangeRouter;
@@ -26,8 +26,7 @@ describe("Exchange", () => {
 
     beforeEach(async () => {
         fixture = await deployFixture();
-        ({ 
-            config, 
+        ({  config, 
             dataStore, 
             roleStore, 
             reader,

@@ -61,7 +61,7 @@ contract PoolFactory is RoleModule {
         );
 
         PoolStoreUtils.set(address(dataStore), poolKey, pool);
-        //emitPoolCreated(address(poolToken), salt, indexToken, longToken, shortToken);
+        //emitPoolCreated(poolKey, address(poolToken), address(debtToken));
 
         return pool;
     }

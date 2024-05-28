@@ -21,7 +21,7 @@ import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler
 import { RepayUtils } from "../typechain-types/contracts/exchange/RepayHandler";
 import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
-describe("Exchange", () => {
+describe("Exchange Repay", () => {
     let fixture;
     let user0, user1, user2;
     let config, dataStore, roleStore, reader, router, exchangeRouter;

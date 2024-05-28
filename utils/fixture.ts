@@ -1,9 +1,13 @@
 
-import { getContract, sendTxn } from "./deploy";
+import { deployContract, contractAtOptions } from "./deploy";
 import { exchangeRouterModule } from "../ignition/modules/deployExchangeRouter"
+import { poolFactoryModule } from "../ignition/modules/deployPoolFactory"
+//import { eventEmitterModule } from "../ignition/modules/deployEventEmitter"
+// import { poolInterestRateStrategyModule } from "../ignition/modules/deployPoolInterestRateStrategy"
 import { createAsset, createUniswapV3 } from "./assetsDex";
-import { expandDecimals } from "./math"
+import { expandDecimals, bigNumberify } from "./math"
 import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "./constants";
+import * as keys from "./keys";
 
 export async function deployFixture() {
     const chainId = 31337; // hardhat chain id
@@ -85,8 +89,6 @@ export async function deployFixture() {
 
     await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0);
     await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0);
-    const usdtPool = await reader.getPool(dataStore.target, usdt.target);
-    const uniPool = await reader.getPool(dataStore.target, uni.target);
     
     //config pools
     const multicallArgs = [
@@ -113,6 +115,10 @@ export async function deployFixture() {
     ];
     await config.multicall(multicallArgs);
 
+    const usdtPool = await reader.getPool(dataStore.target, usdt.target);
+    const uniPool = await reader.getPool(dataStore.target, uni.target);
+
+    console.log(usdtPool);
     //supply
     const usdtSupplyAmount = expandDecimals(10000000, usdtDecimals);
     await usdt.approve(router.target, usdtSupplyAmount);
@@ -194,4 +200,96 @@ export async function deployFixture() {
       },
       //props: { signerIndexes: [0, 1, 2, 3, 4, 5, 6], executionFee: "1000000000000000" },
     };
+}
+
+export async function deployFixturePool() {
+    const chainId = 31337; // hardhat chain id
+    const accountList = await ethers.getSigners();
+    const [
+        user0,
+        user1,
+        user2,
+        user3,
+        user4,
+        user5,
+        user6,
+        user7,
+        user8,
+        signer0,
+        signer1,
+        signer2,
+        signer3,
+        signer4,
+        signer5,
+        signer6,
+        signer7,
+        signer8,
+        signer9,
+    ] = accountList;
+
+    const { 
+        roleStore,
+        dataStore,
+        poolStoreUtils,
+        poolFactory,
+        poolInterestRateStrategy,
+        eventEmitter,
+        poolEventUtils
+    } = await ignition.deploy(poolFactoryModule);
+
+    const poolTest = await deployContract("PoolTest", [], {
+        libraries: {
+            PoolStoreUtils: poolStoreUtils,
+            PoolEventUtils: poolEventUtils
+        },
+    });
+
+    //grant
+    await roleStore.grantRole(user0.address, keys.CONTROLLER);
+    await roleStore.grantRole(user0.address, keys.POOL_KEEPER);
+    await roleStore.grantRole(poolFactory.target, keys.CONTROLLER);
+    await roleStore.grantRole(poolTest.target, keys.CONTROLLER); 
+
+    //createPool
+    const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals]);
+    await usdt.mint(user0.address, expandDecimals(100000000, usdtDecimals));
+    await poolFactory.createPool(
+        usdt.target, 
+        poolInterestRateStrategy.target, 
+        bigNumberify(8307674973776616787610442450101080648843264)
+    );
+
+    //poolToken and debtToken
+    const pool = await poolTest.getPool(dataStore.target, usdt.target);
+    const poolToken = await contractAt("PoolToken", pool.poolToken, poolStoreUtils.target);
+    const debtToken = await contractAt("DebtToken", pool.debtToken, poolStoreUtils.target);
+
+    return {
+      accountList,
+      accounts: {
+          user0,
+          user1,
+          user2
+      },
+      contracts: {
+          dataStore,
+          poolStoreUtils,
+          eventEmitter,
+          poolToken,
+          debtToken,
+          poolTest
+      },
+      assets: {
+          usdt
+      }
+    };
+}
+
+export async function contractAt(name, address, poolStoreUtils) {
+    return await contractAtOptions(name, address, {
+        libraries: {
+            PoolStoreUtils: poolStoreUtils,
+        },         
+    });
+
 }

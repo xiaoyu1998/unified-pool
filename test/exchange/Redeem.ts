@@ -19,7 +19,7 @@ import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler
 import { RedeemUtils } from "../typechain-types/contracts/exchange/RedeemHandler";
 import { testPoolConfiguration} from "../../utils/poolConfiguration";
 
-describe("Exchange", () => {
+describe("Exchange Redeem", () => {
     let fixture;
     let user0, user1, user2;
     let config, dataStore, roleStore, reader, router, exchangeRouter;

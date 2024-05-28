@@ -5,7 +5,7 @@ import { expandDecimals, bigNumberify } from "../../utils/math"
 
 import { Position } from "../../typechain-types/contracts/test/PositionTest";
 
-describe("Position", () => {
+describe("Position ShortPosition", () => {
     let positionTest;
 
     beforeEach(async () => {
