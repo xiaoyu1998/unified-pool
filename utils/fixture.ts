@@ -250,6 +250,11 @@ export async function deployFixturePool() {
     await roleStore.grantRole(poolFactory.target, keys.CONTROLLER);
     await roleStore.grantRole(poolTest.target, keys.CONTROLLER); 
 
+    const ratebase = await poolInterestRateStrategy.getRatebase();
+    const optimalUsageRation = await poolInterestRateStrategy.getOptimalUsageRatio();
+    const rateSlop1 = await poolInterestRateStrategy.getRateSlope1();
+    const rateSlop2 = await poolInterestRateStrategy.getRateSlope2();
+
     //createPool
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals]);
     await usdt.mint(user0.address, expandDecimals(100000000, usdtDecimals));
@@ -260,6 +265,7 @@ export async function deployFixturePool() {
     );
 
     //poolToken and debtToken
+    const feeFactor = await poolTest.getPoolFeeFactor(dataStore.target, usdt.target);
     const pool = await poolTest.getPool(dataStore.target, usdt.target);
     const poolToken = await contractAt("PoolToken", pool.poolToken, poolStoreUtils.target);
     const debtToken = await contractAt("DebtToken", pool.debtToken, poolStoreUtils.target);
@@ -281,7 +287,14 @@ export async function deployFixturePool() {
       },
       assets: {
           usdt
-      }
+      },
+      rateFactors: {
+          ratebase,
+          optimalUsageRation,
+          rateSlop1,
+          rateSlop2,
+          feeFactor
+      },
     };
 }
 

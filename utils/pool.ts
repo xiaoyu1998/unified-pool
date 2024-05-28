@@ -1,9 +1,16 @@
 
 import { expect } from "chai";
 import { errorsContract } from "./error";
+import { expandDecimals } from "./math"
 
-
-export async function testPoolConfiguration(config, exchangeRouter, account, testEntry, underlyingAsset, params) {
+export async function testPoolConfiguration(
+    config, 
+    exchangeRouter, 
+    account, 
+    testEntry, 
+    underlyingAsset, 
+    params
+) {
 
         const multicallArgsConfig = [
             config.interface.encodeFunctionData("setPoolActive", [underlyingAsset.target, false]),
@@ -42,3 +49,4 @@ export async function testPoolConfiguration(config, exchangeRouter, account, tes
         ).to.be.revertedWithCustomError(errorsContract, "PoolIsPaused"); 
 
 }
+

@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { deployContract } from "../../utils/deploy";
 import { usdtDecimals } from "../../utils/constants";
-import { expandDecimals, bigNumberify } from "../../utils/math"
+import { expandDecimals, bigNumberify, getRates} from "../../utils/math"
 import { deployFixturePool } from "../../utils/fixture";
+import { getRates } from "../../utils/pool";
 
 import { Position } from "../../typechain-types/contracts/test/PositionTest";
 
@@ -11,6 +12,7 @@ describe("Pool", () => {
     let dataStore, poolStoreUtils, eventEmitter, poolToken, debtToken, poolTest;
     let user0, user1, user2;
     let usdt;
+    let ratebase, optimalUsageRation, rateSlop1, rateSlop2, feeFactor;
 
     beforeEach(async () => {
         fixture = await deployFixturePool();
@@ -22,7 +24,8 @@ describe("Pool", () => {
             poolTest
          } = fixture.contracts); 
         ({ user0, user1, user2 } = fixture.accounts);
-        ({ usdt } = fixture.assets);       
+        ({ usdt } = fixture.assets);   
+        ({ ratebase, optimalUsageRation, rateSlop1, rateSlop2, feeFactor } = fixture.rateFactors);    
     });
 
     it("UpdatePool updateInterestRates", async () => {
@@ -31,11 +34,27 @@ describe("Pool", () => {
        await usdt.transfer(poolToken, supplyAmount);
        await poolToken.mint(user0, supplyAmount, expandDecimals(1, 27));
        await debtToken.mint(user0, debtAmount, expandDecimals(1, 27));
+       await poolToken.addCollateral(user0, debtAmount);
 
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
        const pool = await poolTest.getPool(dataStore, usdt);
-       expect(pool.liquidityRate).eq("69444444444444444444444445");
-       expect(pool.borrowRate).eq("208333333333333333333333334");
+
+       const { liquidityRate, borrowRate } = getRates(
+           ratebase,
+           optimalUsageRation,
+           rateSlop1,
+           rateSlop2,
+           supplyAmount - debtAmount,//should delete unclaimedFee
+           debtAmount,
+           feeFactor
+       )
+
+       console.log("pool", pool);
+       console.log("liquidityRate", liquidityRate);
+       console.log("borrowRate", borrowRate);
+
+       expect(pool.liquidityRate).eq(liquidityRate);
+       expect(pool.borrowRate).eq(borrowRate);
     });
 
 }); 

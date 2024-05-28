@@ -5,7 +5,7 @@ import { expandDecimals, bigNumberify } from "../../utils/math"
 import { getSupply } from "../../utils/helper"
 import { SupplyUtils } from "../../typechain-types/contracts/exchange/SupplyHandler";
 import { errorsContract} from "../../utils/error";
-import { testPoolConfiguration} from "../../utils/poolConfiguration";
+import { testPoolConfiguration} from "../../utils/pool";
 
 describe("Exchange Supply", () => {
     let fixture;

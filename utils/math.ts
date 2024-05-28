@@ -2,6 +2,8 @@ import * as Math from 'mathjs'
 import bn from 'bignumber.js'
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
 
+import {PERCENTAGE_FACTOR, HALF_PERCENTAGE_FACTOR} from "./constants"
+
 export function bigNumberify(n) {
     // return ethers.toBigInt(n);
     return BigInt(n);
@@ -62,4 +64,39 @@ export function calcFee(
             .times(feeAmount.toString())
             .div(feePercentageFactor.toString());
             //TODO:should be feePercentageFactor - feeAmount in line95 /v3-core/contracts/libraries/SwapMath.sol
+}
+
+export function getRates(
+    ratebase, 
+    optimalUsageRation, 
+    rateSlop1, 
+    rateSlop2, 
+    availabeLiquidity, 
+    totalDebt,
+    feeFactor
+) {
+    const precision = expandDecimals(1, 27);
+    const borrowUsageRatio = BigInt(
+        new bn(totalDebt.toString())
+        .div((availabeLiquidity + totalDebt).toString())
+        .multipliedBy(precision.toString()).toString()
+    );
+
+    let borrowRate = ratebase;
+    if (borrowUsageRatio > optimalUsageRation) {
+        const excessBorrowUsageRatio = (borrowUsageRatio - optimalUsageRation)*precision/(precision - optimalUsageRation);
+        borrowRate += (rateSlop1 + rateSlop2*excessBorrowUsageRatio/precision);
+    } else {
+        borrowRate += rateSlop1*borrowUsageRatio/optimalUsageRation;
+    }
+
+    const liquidityRate = percentMul(borrowRate*borrowUsageRatio/precision, PERCENTAGE_FACTOR - feeFactor);
+    return {liquidityRate, borrowRate};
+}
+
+export function percentMul(
+    value, 
+    percentage, 
+): BigInt {
+    return (value * percentage + HALF_PERCENTAGE_FACTOR)/PERCENTAGE_FACTOR;
 }

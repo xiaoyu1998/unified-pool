@@ -21,3 +21,6 @@ export const uniOracleDecimal = 12;
 
 export const MIN_SQRT_RATIO = BigInt('4295128739')
 export const MAX_SQRT_RATIO = BigInt('1461446703485210103287273052203988822378723970342')
+
+export const PERCENTAGE_FACTOR = BigInt(10000);
+export const HALF_PERCENTAGE_FACTOR = BigInt(5000);

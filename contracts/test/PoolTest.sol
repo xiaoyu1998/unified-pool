@@ -35,4 +35,11 @@ contract PoolTest {
         Pool.Props memory pool = PoolStoreUtils.get(dataStore, underlyingAsset);
         return pool; 
     }
+
+    function getPoolFeeFactor(
+        address dataStore, 
+        address underlyingAsset
+    ) external view returns (uint256) {
+        return PoolStoreUtils.getPoolFeeFactor(dataStore, underlyingAsset); 
+    }
 }

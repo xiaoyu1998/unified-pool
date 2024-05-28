@@ -15,7 +15,7 @@ import {
 } from "../../utils/helper"
 import { DepositUtils } from "../../typechain-types/contracts/exchange/DepositHandler";
 import { errorsContract} from "../../utils/error";
-import { testPoolConfiguration} from "../../utils/poolConfiguration";
+import { testPoolConfiguration} from "../../utils/pool";
 
 describe("Exchange Deposit", () => {
     let fixture;
