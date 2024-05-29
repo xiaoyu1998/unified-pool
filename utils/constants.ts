@@ -26,3 +26,4 @@ export const PERCENTAGE_FACTOR = BigInt(10000);
 export const HALF_PERCENTAGE_FACTOR = BigInt(5000);
 export const SECONDS_PER_YEAR = BigInt(365 * 24 * 60 * 60);
 export const PRECISION = (BigInt(10)**BigInt(27));//27
+export const HALF_PRECISION = (BigInt(5)*BigInt(10)**BigInt(26));//27

@@ -6,7 +6,8 @@ import {
     PERCENTAGE_FACTOR, 
     HALF_PERCENTAGE_FACTOR, 
     SECONDS_PER_YEAR, 
-    PRECISION
+    PRECISION,
+    HALF_PRECISION
 } from "./constants"
 
 export function bigNumberify(n) {
@@ -80,22 +81,17 @@ export function calcRates(
     totalDebt,
     feeFactor
 ) {
-    //const PRECISION = expandDecimals(1, 27);
-    const borrowUsageRatio = BigInt(
-        new bn(totalDebt.toString())
-        .div((availabeLiquidity + totalDebt).toString())
-        .multipliedBy(PRECISION.toString()).toString()
-    );
+    const borrowUsageRatio = rayDiv(totalDebt, availabeLiquidity + totalDebt);
 
     let borrowRate = ratebase;
     if (borrowUsageRatio > optimalUsageRation) {
-        const excessBorrowUsageRatio = (borrowUsageRatio - optimalUsageRation)*PRECISION/(PRECISION - optimalUsageRation);
-        borrowRate += (rateSlop1 + rateSlop2*excessBorrowUsageRatio/PRECISION);
+        const excessBorrowUsageRatio = rayDiv((borrowUsageRatio - optimalUsageRation), (PRECISION - optimalUsageRation));
+        borrowRate += (rateSlop1 + rayMul(rateSlop2, excessBorrowUsageRatio));
     } else {
-        borrowRate += rateSlop1*borrowUsageRatio/optimalUsageRation;
+        borrowRate += rayDiv(rayMul(rateSlop1, borrowUsageRatio), optimalUsageRation);
     }
 
-    const liquidityRate = percentMul(borrowRate*borrowUsageRatio/PRECISION, PERCENTAGE_FACTOR - feeFactor);
+    const liquidityRate = percentMul(rayMul(borrowRate, borrowUsageRatio), PERCENTAGE_FACTOR - feeFactor);
     return {liquidityRate, borrowRate};
 }
 
@@ -115,12 +111,12 @@ export function calcFeeAmount(
     nextLiquidityIndex,
     feeFactor
 ): BigInt {
-    const prevTotalDebt = currTotalScaledDebt*currBorrowIndex/PRECISION;
-    const currTotalDebt = currTotalScaledDebt*nextBorrowIndex/PRECISION;
+    const prevTotalDebt = rayMul(currTotalScaledDebt, currBorrowIndex);
+    const currTotalDebt = rayMul(currTotalScaledDebt, nextBorrowIndex);
     const increaseTotalDebt = currTotalDebt - prevTotalDebt;
     const feeAmount = percentMul(increaseTotalDebt, feeFactor);
 
-    return feeAmount/nextLiquidityIndex*PRECISION;
+    return rayDiv(feeAmount, nextLiquidityIndex);
 }
 
 export function calcIndexes(
@@ -132,19 +128,27 @@ export function calcIndexes(
 ) {
    //const PRECISION = expandDecimals(1, 27);
    const cumulatedLiquidityInterest = calcInterest(currLiquidityRate, interestPaymentPeriodInSeconds);
-   const nextLiquidityIndex = cumulatedLiquidityInterest*currLiquidityIndex/PRECISION;
+   const nextLiquidityIndex = rayMul(cumulatedLiquidityInterest, currLiquidityIndex);
    const cumulatedBorrowInterest = calcInterest(currBorrowRate, interestPaymentPeriodInSeconds);
-   const nextBorrowIndex = cumulatedBorrowInterest*currBorrowIndex/PRECISION;
+   const nextBorrowIndex = rayMul(cumulatedBorrowInterest, currBorrowIndex);
 
-   console.log("currLiquidityRate", currLiquidityRate);
-   console.log("interestPaymentPeriodInSeconds", interestPaymentPeriodInSeconds);
-   console.log("SECONDS_PER_YEAR", SECONDS_PER_YEAR);
-   console.log("result", currLiquidityRate*interestPaymentPeriodInSeconds);
-   console.log("cumulatedLiquidityInterest", PRECISION + currLiquidityRate*interestPaymentPeriodInSeconds/SECONDS_PER_YEAR);
+   // console.log("currLiquidityRate", currLiquidityRate);
+   // console.log("interestPaymentPeriodInSeconds", interestPaymentPeriodInSeconds);
+   // console.log("SECONDS_PER_YEAR", SECONDS_PER_YEAR);
+   // console.log("result", currLiquidityRate*interestPaymentPeriodInSeconds);
+   // console.log("cumulatedLiquidityInterest", PRECISION + currLiquidityRate*interestPaymentPeriodInSeconds/SECONDS_PER_YEAR);
 
-   console.log("cumulatedLiquidityInterest", cumulatedLiquidityInterest);
-   console.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
+   // console.log("cumulatedLiquidityInterest", cumulatedLiquidityInterest);
+   // console.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
 
    return {nextLiquidityIndex, nextBorrowIndex};
+}
+
+export function rayMul(a, b){
+    return (a*b + HALF_PRECISION)/PRECISION;
+}
+
+export function rayDiv(a, b){
+   return (a*PRECISION + b/bigNumberify(2))/b;
 }
 
