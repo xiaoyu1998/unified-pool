@@ -96,6 +96,8 @@ export function calcRates(
 }
 
 export function percentMul( value, percentage ): BigInt {
+    console.log("percentage", percentage);
+    console.log("value * percentage", value * percentage);
     return (value * percentage + HALF_PERCENTAGE_FACTOR)/PERCENTAGE_FACTOR;
 }
 
@@ -115,6 +117,8 @@ export function calcFeeAmount(
     const currTotalDebt = rayMul(currTotalScaledDebt, nextBorrowIndex);
     const increaseTotalDebt = currTotalDebt - prevTotalDebt;
     const feeAmount = percentMul(increaseTotalDebt, feeFactor);
+    console.log("feeAmount", feeAmount);
+    console.log("nextLiquidityIndex", nextLiquidityIndex);
 
     return rayDiv(feeAmount, nextLiquidityIndex);
 }
@@ -131,15 +135,6 @@ export function calcIndexes(
    const nextLiquidityIndex = rayMul(cumulatedLiquidityInterest, currLiquidityIndex);
    const cumulatedBorrowInterest = calcInterest(currBorrowRate, interestPaymentPeriodInSeconds);
    const nextBorrowIndex = rayMul(cumulatedBorrowInterest, currBorrowIndex);
-
-   // console.log("currLiquidityRate", currLiquidityRate);
-   // console.log("interestPaymentPeriodInSeconds", interestPaymentPeriodInSeconds);
-   // console.log("SECONDS_PER_YEAR", SECONDS_PER_YEAR);
-   // console.log("result", currLiquidityRate*interestPaymentPeriodInSeconds);
-   // console.log("cumulatedLiquidityInterest", PRECISION + currLiquidityRate*interestPaymentPeriodInSeconds/SECONDS_PER_YEAR);
-
-   // console.log("cumulatedLiquidityInterest", cumulatedLiquidityInterest);
-   // console.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
 
    return {nextLiquidityIndex, nextBorrowIndex};
 }

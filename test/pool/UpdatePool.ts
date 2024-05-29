@@ -105,14 +105,11 @@ describe("Pool", () => {
            debtAmount,
            pool.borrowIndex,
            pool2.borrowIndex,
-           pool2.liquidityRate,
+           pool2.liquidityIndex,
            feeFactor
        );
        expect(pool2.totalFee).eq(feeAmount);
        expect(pool2.unclaimedFee).eq(feeAmount);
-
-       // console.log("feeAmount", feeAmount);
-       // console.log("feeAmount*pool2.borrowIndex/PRECISION", feeAmount*pool2.borrowIndex/PRECISION);
 
        await time.increase(interestPaymentPeriodInSeconds);
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
@@ -126,10 +123,6 @@ describe("Pool", () => {
            rayMul(debtAmount, pool3.borrowIndex),
            feeFactor
        )
-       console.log("totalAvailableLiquidity", supplyAmount - debtAmount - rayMul(feeAmount, pool3.borrowIndex));
-       console.log("debtAmount", rayMul(debtAmount, pool3.borrowIndex));
-       console.log("liquidityRate", liquidityRate);
-       console.log("borrowRate", borrowRate);
 
        expect(pool3.liquidityRate).eq(liquidityRate);
        expect(pool3.borrowRate).eq(borrowRate);

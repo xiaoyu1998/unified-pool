@@ -261,11 +261,13 @@ export async function deployFixturePool() {
     await poolFactory.createPool(
         usdt.target, 
         poolInterestRateStrategy.target, 
-        bigNumberify(8307674973776616787610442450101080648843264)
+        "8307674973776616787610442450101080648843264"
     );
 
     //poolToken and debtToken
     const feeFactor = await poolTest.getPoolFeeFactor(dataStore.target, usdt.target);
+
+    console.log("feeFactor", feeFactor);
     const pool = await poolTest.getPool(dataStore.target, usdt.target);
     const poolToken = await contractAt("PoolToken", pool.poolToken, poolStoreUtils.target);
     const debtToken = await contractAt("DebtToken", pool.debtToken, poolStoreUtils.target);
