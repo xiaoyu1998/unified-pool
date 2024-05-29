@@ -2,7 +2,12 @@ import * as Math from 'mathjs'
 import bn from 'bignumber.js'
 bn.config({ EXPONENTIAL_AT: 999999, DECIMAL_PLACES: 40 })
 
-import {PERCENTAGE_FACTOR, HALF_PERCENTAGE_FACTOR} from "./constants"
+import {
+    PERCENTAGE_FACTOR, 
+    HALF_PERCENTAGE_FACTOR, 
+    SECONDS_PER_YEAR, 
+    PRECISION
+} from "./constants"
 
 export function bigNumberify(n) {
     // return ethers.toBigInt(n);
@@ -66,7 +71,7 @@ export function calcFee(
             //TODO:should be feePercentageFactor - feeAmount in line95 /v3-core/contracts/libraries/SwapMath.sol
 }
 
-export function getRates(
+export function calcRates(
     ratebase, 
     optimalUsageRation, 
     rateSlop1, 
@@ -75,28 +80,71 @@ export function getRates(
     totalDebt,
     feeFactor
 ) {
-    const precision = expandDecimals(1, 27);
+    //const PRECISION = expandDecimals(1, 27);
     const borrowUsageRatio = BigInt(
         new bn(totalDebt.toString())
         .div((availabeLiquidity + totalDebt).toString())
-        .multipliedBy(precision.toString()).toString()
+        .multipliedBy(PRECISION.toString()).toString()
     );
 
     let borrowRate = ratebase;
     if (borrowUsageRatio > optimalUsageRation) {
-        const excessBorrowUsageRatio = (borrowUsageRatio - optimalUsageRation)*precision/(precision - optimalUsageRation);
-        borrowRate += (rateSlop1 + rateSlop2*excessBorrowUsageRatio/precision);
+        const excessBorrowUsageRatio = (borrowUsageRatio - optimalUsageRation)*PRECISION/(PRECISION - optimalUsageRation);
+        borrowRate += (rateSlop1 + rateSlop2*excessBorrowUsageRatio/PRECISION);
     } else {
         borrowRate += rateSlop1*borrowUsageRatio/optimalUsageRation;
     }
 
-    const liquidityRate = percentMul(borrowRate*borrowUsageRatio/precision, PERCENTAGE_FACTOR - feeFactor);
+    const liquidityRate = percentMul(borrowRate*borrowUsageRatio/PRECISION, PERCENTAGE_FACTOR - feeFactor);
     return {liquidityRate, borrowRate};
 }
 
-export function percentMul(
-    value, 
-    percentage, 
-): BigInt {
+export function percentMul( value, percentage ): BigInt {
     return (value * percentage + HALF_PERCENTAGE_FACTOR)/PERCENTAGE_FACTOR;
 }
+
+export function calcInterest(rate, seconds): BigInt {  
+
+    return PRECISION + (rate * seconds)/SECONDS_PER_YEAR;
+}
+
+export function calcFeeAmount(
+    currTotalScaledDebt,
+    currBorrowIndex,
+    nextBorrowIndex,
+    nextLiquidityIndex,
+    feeFactor
+): BigInt {
+    const prevTotalDebt = currTotalScaledDebt*currBorrowIndex/PRECISION;
+    const currTotalDebt = currTotalScaledDebt*nextBorrowIndex/PRECISION;
+    const increaseTotalDebt = currTotalDebt - prevTotalDebt;
+    const feeAmount = percentMul(increaseTotalDebt, feeFactor);
+
+    return feeAmount/nextLiquidityIndex*PRECISION;
+}
+
+export function calcIndexes(
+    currLiquidityIndex,
+    currLiquidityRate,
+    currBorrowIndex,
+    currBorrowRate,
+    interestPaymentPeriodInSeconds
+) {
+   //const PRECISION = expandDecimals(1, 27);
+   const cumulatedLiquidityInterest = calcInterest(currLiquidityRate, interestPaymentPeriodInSeconds);
+   const nextLiquidityIndex = cumulatedLiquidityInterest*currLiquidityIndex/PRECISION;
+   const cumulatedBorrowInterest = calcInterest(currBorrowRate, interestPaymentPeriodInSeconds);
+   const nextBorrowIndex = cumulatedBorrowInterest*currBorrowIndex/PRECISION;
+
+   console.log("currLiquidityRate", currLiquidityRate);
+   console.log("interestPaymentPeriodInSeconds", interestPaymentPeriodInSeconds);
+   console.log("SECONDS_PER_YEAR", SECONDS_PER_YEAR);
+   console.log("result", currLiquidityRate*interestPaymentPeriodInSeconds);
+   console.log("cumulatedLiquidityInterest", PRECISION + currLiquidityRate*interestPaymentPeriodInSeconds/SECONDS_PER_YEAR);
+
+   console.log("cumulatedLiquidityInterest", cumulatedLiquidityInterest);
+   console.log("cumulatedBorrowInterest", cumulatedBorrowInterest);
+
+   return {nextLiquidityIndex, nextBorrowIndex};
+}
+

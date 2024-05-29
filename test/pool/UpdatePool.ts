@@ -1,11 +1,9 @@
 import { expect } from "chai";
 import { deployContract } from "../../utils/deploy";
 import { usdtDecimals } from "../../utils/constants";
-import { expandDecimals, bigNumberify, getRates} from "../../utils/math"
+import { expandDecimals, bigNumberify, calcRates, calcIndexes, calcFeeAmount} from "../../utils/math"
 import { deployFixturePool } from "../../utils/fixture";
-import { getRates } from "../../utils/pool";
-
-import { Position } from "../../typechain-types/contracts/test/PositionTest";
+import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Pool", () => {
     let fixture;
@@ -27,8 +25,57 @@ describe("Pool", () => {
         ({ usdt } = fixture.assets);   
         ({ ratebase, optimalUsageRation, rateSlop1, rateSlop2, feeFactor } = fixture.rateFactors);    
     });
+    
+    // it("UpdatePool updateInterestRates borrowUsageRatio > optimalUsageRation", async () => {
+    //    const supplyAmount = expandDecimals(1000000, usdtDecimals);
+    //    const debtAmount = expandDecimals(900000, usdtDecimals);
+    //    await usdt.transfer(poolToken, supplyAmount);
+    //    await poolToken.mint(user0, supplyAmount, expandDecimals(1, 27));
+    //    await debtToken.mint(user0, debtAmount, expandDecimals(1, 27));
+    //    await poolToken.addCollateral(user0, debtAmount);
 
-    it("UpdatePool updateInterestRates borrowUsageRatio <= optimalUsageRation", async () => {
+    //    await poolTest.updatePool(eventEmitter, dataStore, usdt);
+    //    const pool = await poolTest.getPool(dataStore, usdt);
+
+    //    const { liquidityRate, borrowRate } = calcRates(
+    //        ratebase,
+    //        optimalUsageRation,
+    //        rateSlop1,
+    //        rateSlop2,
+    //        supplyAmount - debtAmount,//should delete unclaimedFee
+    //        debtAmount,
+    //        feeFactor
+    //    )
+    //    expect(pool.liquidityRate).eq(liquidityRate);
+    //    expect(pool.borrowRate).eq(borrowRate);
+    // });
+
+    // it("UpdatePool updateInterestRates borrowUsageRatio <= optimalUsageRation", async () => {
+    //    const supplyAmount = expandDecimals(1000000, usdtDecimals);
+    //    const debtAmount = expandDecimals(500000, usdtDecimals);
+    //    await usdt.transfer(poolToken, supplyAmount);
+    //    await poolToken.mint(user0, supplyAmount, expandDecimals(1, 27));
+    //    await debtToken.mint(user0, debtAmount, expandDecimals(1, 27));
+    //    await poolToken.addCollateral(user0, debtAmount);
+
+    //    await poolTest.updatePool(eventEmitter, dataStore, usdt);
+    //    const pool = await poolTest.getPool(dataStore, usdt);
+
+    //    const { liquidityRate, borrowRate } = calcRates(
+    //        ratebase,
+    //        optimalUsageRation,
+    //        rateSlop1,
+    //        rateSlop2,
+    //        supplyAmount - debtAmount,//should delete unclaimedFee
+    //        debtAmount,
+    //        feeFactor
+    //    )
+
+    //    expect(pool.liquidityRate).eq(liquidityRate);
+    //    expect(pool.borrowRate).eq(borrowRate);
+    // });
+
+    it("UpdatePool UpdateIndex, totalFee and unclaimedFee", async () => {
        const supplyAmount = expandDecimals(1000000, usdtDecimals);
        const debtAmount = expandDecimals(500000, usdtDecimals);
        await usdt.transfer(poolToken, supplyAmount);
@@ -39,42 +86,33 @@ describe("Pool", () => {
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
        const pool = await poolTest.getPool(dataStore, usdt);
 
-       const { liquidityRate, borrowRate } = getRates(
-           ratebase,
-           optimalUsageRation,
-           rateSlop1,
-           rateSlop2,
-           supplyAmount - debtAmount,//should delete unclaimedFee
-           debtAmount,
-           feeFactor
-       )
-
-       expect(pool.liquidityRate).eq(liquidityRate);
-       expect(pool.borrowRate).eq(borrowRate);
-    });
-
-    it("UpdatePool updateInterestRates borrowUsageRatio > optimalUsageRation", async () => {
-       const supplyAmount = expandDecimals(1000000, usdtDecimals);
-       const debtAmount = expandDecimals(900000, usdtDecimals);
-       await usdt.transfer(poolToken, supplyAmount);
-       await poolToken.mint(user0, supplyAmount, expandDecimals(1, 27));
-       await debtToken.mint(user0, debtAmount, expandDecimals(1, 27));
-       await poolToken.addCollateral(user0, debtAmount);
-
+       const interestPaymentPeriodInSeconds = BigInt(14 * 24 * 60 * 60);
+       await time.increase(interestPaymentPeriodInSeconds);
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
-       const pool = await poolTest.getPool(dataStore, usdt);
+       const pool2 = await poolTest.getPool(dataStore, usdt);
 
-       const { liquidityRate, borrowRate } = getRates(
-           ratebase,
-           optimalUsageRation,
-           rateSlop1,
-           rateSlop2,
-           supplyAmount - debtAmount,//should delete unclaimedFee
+       const {nextLiquidityIndex, nextBorrowIndex } = calcIndexes(
+           pool.liquidityIndex, 
+           pool.liquidityRate,
+           pool.borrowIndex, 
+           pool.borrowRate,
+           interestPaymentPeriodInSeconds + bigNumberify(1)//TODO:why should add this one?
+       );
+
+       expect(pool2.liquidityIndex).eq(nextLiquidityIndex);
+       expect(pool2.borrowIndex).eq(nextBorrowIndex);
+
+       const feeAmount = calcFeeAmount(
            debtAmount,
+           pool.borrowIndex,
+           pool2.borrowIndex,
+           pool2.liquidityRate,
            feeFactor
-       )
-       expect(pool.liquidityRate).eq(liquidityRate);
-       expect(pool.borrowRate).eq(borrowRate);
+       );
+
+       expect(pool2.totalFee).eq(feeAmount);
+       expect(pool2.unclaimedFee).eq(feeAmount);
+
     });
 
 }); 

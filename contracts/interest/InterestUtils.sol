@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "../utils/WadRayMath.sol";
 import "../chain/Chain.sol";
-
+import "../utils/Printer.sol";
 /**
  * @title MathUtils library
  * @author Aave
@@ -36,6 +36,9 @@ library InterestUtils {
       uint256 lastUpdateTimestamp
   ) internal view returns (uint256) {
       //solium-disable-next-line
+      // Printer.log("rate" , rate);
+      // Printer.log("interestPaymentPeriodInSeconds" ,(Chain.currentTimestamp() - uint256(lastUpdateTimestamp)));
+      // Printer.log("SECONDS_PER_YEAR" , SECONDS_PER_YEAR);
       uint256 result = rate * (Chain.currentTimestamp() - uint256(lastUpdateTimestamp));
       unchecked {
           result = result / SECONDS_PER_YEAR;
