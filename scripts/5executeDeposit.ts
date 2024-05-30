@@ -43,7 +43,6 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"

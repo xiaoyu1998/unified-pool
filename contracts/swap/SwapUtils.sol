@@ -141,7 +141,7 @@ library SwapUtils {
         //update collateral
         vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
         vars.poolTokenOut.addCollateral(account, vars.amountOut);
-        
+
         //update position price
         if (vars.poolInIsUsd || vars.poolOutIsUsd) {
             vars.price = OracleUtils.calcPrice(

@@ -7,6 +7,7 @@ async function main() {
     const [owner] = await ethers.getSigners();
 
     const exchangeRouter = await getContract("ExchangeRouter"); 
+    const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
@@ -20,6 +21,14 @@ async function main() {
     const uniAddress = getTokens("UNI")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
+
+    //deposit
+    const poolUsdt = await getPoolInfo(usdtAddress); 
+    const depositAmmountUsdt = expandDecimals(1000000, usdtDecimals);
+    await sendTxn(usdt.approve(router.target, depositAmmountUsdt), `usdt.approve(${router.target})`)
+    const paramsUsdt: DepositUtils.DepositParamsStruct = {
+        underlyingAsset: usdtAddress,
+    };
 
     //borrow
     const borrowAmmount = expandDecimals(100000, uniDecimals);
@@ -36,15 +45,14 @@ async function main() {
         sqrtPriceLimitX96: 0
     };
     const multicallArgs = [
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
     ];
-    // const tx = await exchangeRouter.multicall(multicallArgs, {
-    //     gasLimit:2000000,
-    // });
     await sendTxn(
         exchangeRouter.multicall(multicallArgs, {
-            gasLimit:2000000,
+            gasLimit:3000000,
         }),
         "exchangeRouter.multicall"
     );
