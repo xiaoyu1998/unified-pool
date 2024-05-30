@@ -96,13 +96,10 @@ export function calcRates(
 }
 
 export function percentMul( value, percentage ): BigInt {
-    console.log("percentage", percentage);
-    console.log("value * percentage", value * percentage);
     return (value * percentage + HALF_PERCENTAGE_FACTOR)/PERCENTAGE_FACTOR;
 }
 
 export function calcInterest(rate, seconds): BigInt {  
-
     return PRECISION + (rate * seconds)/SECONDS_PER_YEAR;
 }
 
@@ -130,16 +127,15 @@ export function calcIndexes(
     currBorrowRate,
     interestPaymentPeriodInSeconds
 ) {
-   //const PRECISION = expandDecimals(1, 27);
    const cumulatedLiquidityInterest = calcInterest(currLiquidityRate, interestPaymentPeriodInSeconds);
    const nextLiquidityIndex = rayMul(cumulatedLiquidityInterest, currLiquidityIndex);
    const cumulatedBorrowInterest = calcInterest(currBorrowRate, interestPaymentPeriodInSeconds);
    const nextBorrowIndex = rayMul(cumulatedBorrowInterest, currBorrowIndex);
-
    return {nextLiquidityIndex, nextBorrowIndex};
 }
 
 export function rayMul(a, b){
+    console.log(typeof a, typeof b);
     return (a*b + HALF_PRECISION)/PRECISION;
 }
 

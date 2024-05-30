@@ -36,7 +36,6 @@ contract PoolFactory is RoleModule {
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         Printer.log("--------------------createPool---------------------");
         Printer.log("configuration", configuration);
-
         address poolKey = Keys.poolKey(underlyingAsset);
 
         Pool.Props memory existingPool = PoolStoreUtils.get(address(dataStore), poolKey);

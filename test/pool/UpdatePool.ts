@@ -4,6 +4,7 @@ import { usdtDecimals, PRECISION } from "../../utils/constants";
 import { expandDecimals, bigNumberify, calcRates, calcIndexes, calcFeeAmount, rayMul} from "../../utils/math"
 import { deployFixturePool } from "../../utils/fixture";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
+import { errorsContract} from "../../utils/error";
 
 describe("Pool", () => {
     let fixture;
@@ -66,7 +67,7 @@ describe("Pool", () => {
            optimalUsageRation,
            rateSlop1,
            rateSlop2,
-           supplyAmount - debtAmount,//should delete unclaimedFee
+           supplyAmount - debtAmount,
            debtAmount,
            feeFactor
        )
@@ -83,15 +84,14 @@ describe("Pool", () => {
        await debtToken.mint(user0, debtAmount, expandDecimals(1, 27));
        await poolToken.addCollateral(user0, debtAmount);
 
+       //update Index
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
        const pool = await poolTest.getPool(dataStore, usdt);
-
        const interestPaymentPeriodInSeconds = BigInt(14 * 24 * 60 * 60);
        await time.increase(interestPaymentPeriodInSeconds);
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
        const pool2 = await poolTest.getPool(dataStore, usdt);
-
-       const {nextLiquidityIndex, nextBorrowIndex } = calcIndexes(
+       let {nextLiquidityIndex, nextBorrowIndex } = calcIndexes(
            pool.liquidityIndex, 
            pool.liquidityRate,
            pool.borrowIndex, 
@@ -101,6 +101,7 @@ describe("Pool", () => {
        expect(pool2.liquidityIndex).eq(nextLiquidityIndex);
        expect(pool2.borrowIndex).eq(nextBorrowIndex);
 
+       // totalFee and unclaimedFee 
        const feeAmount = calcFeeAmount(
            debtAmount,
            pool.borrowIndex,
@@ -111,22 +112,37 @@ describe("Pool", () => {
        expect(pool2.totalFee).eq(feeAmount);
        expect(pool2.unclaimedFee).eq(feeAmount);
 
+       //update Rates with unclaimedFee
        await time.increase(interestPaymentPeriodInSeconds);
        await poolTest.updatePool(eventEmitter, dataStore, usdt);
        const pool3 = await poolTest.getPool(dataStore, usdt);
+       ({ nextLiquidityIndex, nextBorrowIndex } = calcIndexes(
+           pool2.liquidityIndex, 
+           pool2.liquidityRate,
+           pool2.borrowIndex, 
+           pool2.borrowRate,
+           interestPaymentPeriodInSeconds + bigNumberify(1)//TODO:why should add this one?
+       ));
+       console.log("nextLiquidityIndex", nextLiquidityIndex);
+       console.log("nextBorrowIndex", nextBorrowIndex);
        const { liquidityRate, borrowRate } = calcRates(
            ratebase,
            optimalUsageRation,
            rateSlop1,
            rateSlop2,
-           supplyAmount - debtAmount - rayMul(feeAmount, pool3.borrowIndex),//should delete unclaimedFee
-           rayMul(debtAmount, pool3.borrowIndex),
+           supplyAmount - debtAmount - rayMul(feeAmount, nextBorrowIndex),
+           rayMul(debtAmount, nextBorrowIndex),
            feeFactor
        )
 
        expect(pool3.liquidityRate).eq(liquidityRate);
        expect(pool3.borrowRate).eq(borrowRate);
+    });
 
+    it("UpdatePool PoolNotFound", async () => {
+        await expect(
+            poolTest.updatePool(eventEmitter, dataStore, usdt)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
     });
 
 }); 
