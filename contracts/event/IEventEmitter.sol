@@ -50,7 +50,8 @@ interface IEventEmitter {
         address underlyingAssetOut,
         address account,
         uint256 amountIn,
-        uint256 amountOut
+        uint256 amountOut,
+        uint256 fee
     ) external;
 
     function emitPositionLiquidation(

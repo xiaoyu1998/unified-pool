@@ -195,13 +195,16 @@ library SwapUtils {
             vars.poolOut
         );
 
+        //vars.amountIn * IDex(vars.dex).getFeeAmount()*;
+
         SwapEventUtils.emitSwap(
             params.eventEmitter, 
             params.underlyingAssetIn, 
             params.underlyingAssetOut, 
             account, 
             vars.amountIn,
-            vars.amountOut
+            vars.amountOut,
+            IDex(vars.dex).getSwapFee(vars.amountIn)
         );
 
         //return (amountIn, amountOut);
@@ -336,7 +339,8 @@ library SwapUtils {
             params.underlyingAssetOut, 
             account, 
             vars.amountIn,
-            vars.amountOut
+            vars.amountOut,
+            IDex(vars.dex).getSwapFee(vars.amountIn)
         );
 
         //return (amountIn, amountOut);

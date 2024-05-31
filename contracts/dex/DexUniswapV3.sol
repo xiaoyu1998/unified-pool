@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol';
 import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
 
@@ -171,12 +172,20 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         }
     }
 
+    /// @inheritdoc IDex
     function getPool() public view returns(address) {
         return _pool;
     }
-
+    
+    /// @inheritdoc IDex
     function getFeeAmount() public view returns(uint24) {
         return _feeAmount;
+    }
+    
+    /// @inheritdoc IDex
+    function getSwapFee(uint256 amountIn) public view returns(uint256) {
+        //return Math.mulDiv(amountIn, _feeAmount, 1e6 - _feeAmount);
+        return Math.mulDiv(amountIn, _feeAmount, 1e6);
     }
 
 

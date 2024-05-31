@@ -58,7 +58,8 @@ contract EventEmitter is RoleModule {
         address indexed underlyingAssetOut,
         address indexed account,
         uint256 amountIn,
-        uint256 amountOut
+        uint256 amountOut,
+        uint256 fee
     );
 
     event PositionLiquidation(
@@ -195,14 +196,16 @@ contract EventEmitter is RoleModule {
         address underlyingAssetOut,
         address account,
         uint256 amountIn,
-        uint256 amountOut
+        uint256 amountOut,
+        uint256 fee
     ) external onlyController {
         emit Swap(
             underlyingAssetIn,
             underlyingAssetOut,
             account,
             amountIn,
-            amountOut
+            amountOut,
+            fee
         );
     }
 

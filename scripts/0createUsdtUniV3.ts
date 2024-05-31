@@ -109,7 +109,8 @@ async function main() {
         uniAmountIn,
         0 //the max sqrtPriceLimitX96 
     );
-    console.log("fee", calcFee(uniAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the uni price to calc values in usd
+    //console.log("fee", calcFee(uniAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the uni price to calc values in usd
+    console.log("fee", await reader.getDexPoolSwapConstantFee(dataStore, uniAddress, usdtAddress, uniAmountIn)); 
     console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
     console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); //delete feeAmount in amountIn to get the silppage without fee
 

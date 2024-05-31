@@ -3,7 +3,6 @@
 pragma solidity ^0.8.20;
 
 interface IDex {
-
     function swapExactIn(
         address from,
         address underlyingAssetIn,
@@ -23,6 +22,7 @@ interface IDex {
     // function getSqrtPriceLimitX96(address tokenIn) external view returns (uint256);
     function getPool() external view returns(address);
     function getFeeAmount() external view returns(uint24);
+    function getSwapFee(uint256) external view returns(uint256);
 }
 
 

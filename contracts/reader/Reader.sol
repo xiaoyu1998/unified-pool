@@ -132,5 +132,9 @@ contract Reader {
         return ReaderDexUtils._getDexPoolFeeAmount(dataStore, underlyingAssetA, underlyingAssetB);
     }
 
+    function getDexPoolSwapConstantFee(address dataStore, address underlyingAssetA, address underlyingAssetB, uint256 amountIn) external view returns (uint256) {
+        return ReaderDexUtils._getDexPoolSwapConstantFee(dataStore, underlyingAssetA, underlyingAssetB, amountIn);
+    }
+
 
 }

@@ -118,7 +118,7 @@ export async function deployFixture() {
     const usdtPool = await reader.getPool(dataStore.target, usdt.target);
     const uniPool = await reader.getPool(dataStore.target, uni.target);
 
-    console.log(usdtPool);
+    //console.log(usdtPool);
     //supply
     const usdtSupplyAmount = expandDecimals(10000000, usdtDecimals);
     await usdt.approve(router.target, usdtSupplyAmount);

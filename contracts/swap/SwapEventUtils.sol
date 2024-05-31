@@ -12,14 +12,16 @@ library SwapEventUtils {
         address underlyingAssetOut,
         address account,
         uint256 amountIn,
-        uint256 amountOut
+        uint256 amountOut,
+        uint256 fee
     ) external {
         IEventEmitter(eventEmitter).emitSwap(
             underlyingAssetIn,
             underlyingAssetOut,
             account,
             amountIn,
-            amountOut
+            amountOut,
+            fee
         );
     }
 
