@@ -15,6 +15,9 @@ import {
 
 async function main() {
     const [owner] = await ethers.getSigners();
+ 
+    const dataStore = await getContract("DataStore"); 
+    const reader = await getContract("Reader");  
 
     //create underlyingAssets
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
@@ -88,8 +91,15 @@ async function main() {
     console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 
+    //set dex
+    const multicallArgs2 = [
+        config.interface.encodeFunctionData("setDex", [usdt.target, uni.target, dex.target]),
+    ];
+    await sendTxn(config.multicall(multicallArgs2), "config.multicall");
+
     //quoter 
-    const feeAmount = await dex.getFeeAmount();
+    //const feeAmount = await dex.getFeeAmount();
+    const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
     const quoter = await deployContract("Quoter", [factory.target]);
     const uniAmountIn = expandDecimals(10000, uniDecimals);
     const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
@@ -107,11 +117,6 @@ async function main() {
     const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0);
     console.log("estimatedGas", estimatedGas);
 
-    //set dex
-    const multicallArgs2 = [
-        config.interface.encodeFunctionData("setDex", [usdt.target, uni.target, dex.target]),
-    ];
-    await sendTxn(config.multicall(multicallArgs2), "config.multicall");
 }
 
 

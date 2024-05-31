@@ -17,4 +17,9 @@ library ReaderDexUtils {
         return IDex(dex).getPool();
     }   
 
+
+    function _getDexPoolFeeAmount(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (uint256) {
+        address dex = DexStoreUtils.get(dataStore, underlyingAssetA, underlyingAssetB);
+        return IDex(dex).getFeeAmount();
+    } 
 }

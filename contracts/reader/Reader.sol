@@ -128,5 +128,9 @@ contract Reader {
         return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
     }
 
+    function getDexPoolFeeAmount(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (uint256) {
+        return ReaderDexUtils._getDexPoolFeeAmount(dataStore, underlyingAssetA, underlyingAssetB);
+    }
+
 
 }
