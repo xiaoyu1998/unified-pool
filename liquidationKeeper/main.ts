@@ -34,12 +34,13 @@ eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorL
 //init pokers
 for (let i; i < pokerCount; i++){
     pokers[i] = new Worker(path.resolve(__dirname, 'poker.ts'), {
-        workerData: {id: BigInt(i)},
+        workerData: {id: BigInt(i)}, //should add eth url
         execArgv: ['-r', 'ts-node/register']
     });
 
     //should add eth url
-    pokers[i].postMessage({accounts: getPokerAccounts(accounts, pokerId, pokerCount)});
+    const accountsPoker = getPokerAccounts(accounts, pokerId, pokerCount);
+    if (accountsPoker.length > 0) { pokers[i].postMessage({accounts: accountsPoker}); }
 
     pokers[i].on('message', (message) => {
         const pokerId = message.pokerId;
@@ -47,7 +48,8 @@ for (let i; i < pokerCount; i++){
             delAccount(accounts, account);
         }
         if (message.finished?){
-            pokers[i].postMessage({accounts: getPokerAccounts(accounts, pokerId, pokerCount)});
+            const accountsPoker = getPokerAccounts(accounts, pokerId, pokerCount);
+            if (accountsPoker.length > 0) { pokers[i].postMessage({accounts: accountsPoker}); }
         }
     });
 }

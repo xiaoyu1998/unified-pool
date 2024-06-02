@@ -37,7 +37,8 @@ async function liquidation(account){
 }
 
 
-let pokerId = workerData.id
+let pokerId = workerData.id;
+// let url = workerData.url;
 parentPort?.on('message', (message) => {
     let accounts = message.accounts;
     for (let i; i < accounts.length; i++){

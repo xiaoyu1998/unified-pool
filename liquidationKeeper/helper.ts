@@ -3,13 +3,16 @@ import path from 'path';
 
 //libraries
 export  function getPokerAccounts(accounts, index, pokerCount) {
-    const accountSizeEveryPoker = accounts.length/pokerCount;
+    const accountSizeEveryPoker = (accounts.length + pokerCount) / pokerCount;
     const start = accountSizeEveryPoker * index;
+    if (start > accounts.length - 1){
+        return [];
+    }
 
-    const end = (index >= pokerCount - 1)  
-        ?accounts.length - 1
-        :accountSizeEveryPoker * (index + 1) - 1;
-
+    let end = accountSizeEveryPoker * (index + 1) - 1;
+    if (end > accounts.length - 1) {
+        end = accounts.length - 1;
+    }
     return accounts.slice(start, end);
 }
 
