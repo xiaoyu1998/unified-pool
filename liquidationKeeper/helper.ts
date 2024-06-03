@@ -3,6 +3,9 @@ import path from 'path';
 
 //libraries
 export  function getPokerAccounts(accounts, index, pokerCount) {
+    if (!accounts) {
+        return [];
+    }
     const accountSizeEveryPoker = (accounts.length + pokerCount) / pokerCount;
     const start = accountSizeEveryPoker * index;
     if (start > accounts.length - 1){
@@ -58,12 +61,12 @@ const liquidationAccountsFilepath = path.join(__dirname, '..', '..', `.liquidati
 
 // Define a function to read JSON file
 export function readAccounts(): any {
-  if (fs.existsSync(tmpAddressesFilepath)) {
-    const data = fs.readFileSync(liquidationAccountsFilepath, 'utf-8');
-    return JSON.parse(data);
+  if (fs.existsSync(liquidationAccountsFilepath)) {
+      const data = fs.readFileSync(liquidationAccountsFilepath, 'utf-8');
+      return JSON.parse(data);
   }
 
-  return {}
+  return []
 }
 
 // Define a function to write JSON file
