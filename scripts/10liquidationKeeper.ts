@@ -1,10 +1,16 @@
-import { contractAt, getContract, getEventEmitter, getDeployedContractAddresses } from "../utils/deploy";
-import { getLiquidationHealthFactor, getLiquidityAndDebts, getPositions } from "../utils/helper";
+import { contractAt, sendTxn, getContract, getEventEmitter, getDeployedContractAddresses } from "../utils/deploy";
+import { getLiquidationHealthFactor, getLiquidityAndDebts } from "../utils/helper";
 import { MaxUint256 } from "../utils/constants";
 import { expandDecimals } from "../utils/math";
-import { LiquidationUtils } from "../typechain-types/contracts/exchange/LiquidationHandler";
-import { LiquidationEvent } from "../typechain-types/contracts/event/EventEmitter";
-import { PositionLiquidationEvent } from "../typechain-types/contracts/event/EventEmitter";
+// import { LiquidationUtils } from "../typechain-types/contracts/exchange/LiquidationHandler";
+// import { LiquidationEvent } from "../typechain-types/contracts/event/EventEmitter";
+// import { PositionLiquidationEvent } from "../typechain-types/contracts/event/EventEmitter";
+
+import { 
+    Mutex,
+    readAccounts,
+    writeAccounts
+ } from "../utils/liquidationKeeper";
 
 async function liquidation(account){
     const exchangeRouter = await getContract("ExchangeRouter"); 
@@ -35,46 +41,60 @@ async function liquidation(account){
 
 }
 
+async function delAccount(mutex, accounts, account) {
+    await mutex.dispatch(async () => {
+        accounts = accounts.filter(item => item !== account)
+        writeAccounts(accounts);
+    });
+}
+
+async function addAccount(mutex, accounts, account) {
+    await mutex.dispatch(async () => {
+        if (accounts.indexOf(account) == -1) {
+            accounts.push(account);
+            writeAccounts(accounts);
+        }
+    });
+}
+
 async function main() {
     const [owner] = await ethers.getSigners();
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Liquidation", (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
-        const event: LiquidationEvent.OutputTuple = {
-            liquidator: liquidator,
-            account: account,
-            healthFactor: healthFactor,
-            healthFactorLiquidationThreshold: healthFactorLiquidationThreshold,
-            totalCollateralUsd: totalCollateralUsd,
-            totalDebtUsd: totalDebtUsd
-        };
-        console.log("eventEmitter Liquidation" , event);
+    let accounts = readAccounts();
+    const mutex = new Mutex();
+    eventEmitter.on("Borrow", async (pool, borrower, amount, borrowRate) => { 
+        console.log("eventEmitter Borrow" ,pool, borrower, amount, borrowRate);
+        await addAccount(mutex, accounts, borrower);
     });
-    eventEmitter.on("PositionLiquidation", (liquidator, underlyingAsset, account, collateral, debt, price) => {
-        const event: PositionLiquidationEvent.OutputTuple = {
-            liquidator: liquidator,
-            underlyingAsset: underlyingAsset,
-            account: account,
-            collateral: collateral,
-            debt: debt,
-            price: price
-        };
-        console.log("eventEmitter PositionLiquidation", event);
+    eventEmitter.on("Repay", async (pool, repayer, amount, useCollateral) => { 
+        console.log("eventEmitter Repay", pool, repayer, amount, useCollateral);
+        const factor = await getLiquidationHealthFactor(repayer);
+        if (factor.userTotalDebtUsd == 0) {
+            await delAccount(mutex, accounts, repayer);
+        }
+    });
+    eventEmitter.on("Liquidation", async (liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd) => { 
+        console.log("eventEmitter Liquidation", liquidator, account, healthFactor, healthFactorLiquidationThreshold, totalCollateralUsd, totalDebtUsd);
+        await delAccount(mutex, accounts, account);
     });
 
-    const config = await getContract("Config");
-    //await config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25))//400%
-    await sendTxn(
-        config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
-        "config.setHealthFactorLiquidationThreshold"
-    );
+    // const config = await getContract("Config");
+    // await sendTxn(
+    //     config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
+    //     "config.setHealthFactorLiquidationThreshold"
+    // );
 
     while(true){
-        const account = owner.address;
-        const factor = await getLiquidationHealthFactor(account);
-        console.log("factor", factor);
-        if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
-            await liquidation(account);
+        const accountsChecking = accounts;
+        for (const account of accountsChecking) {
+            const factor = await getLiquidationHealthFactor(account);
+            // console.log("factor", factor);
+            if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
+                await liquidation(account);
+            }
         }
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
 

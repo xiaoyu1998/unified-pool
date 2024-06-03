@@ -25,7 +25,7 @@ async function main() {
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
-    const depositAmmountUni = expandDecimals(10000, uniDecimals);
+    const depositAmmountUni = expandDecimals(100000, uniDecimals);
     await sendTxn(uni.approve(router.target, depositAmmountUni), `uni.approve(${router.target})`)
     
     //execute deposit
