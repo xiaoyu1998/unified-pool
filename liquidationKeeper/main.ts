@@ -6,7 +6,7 @@ import {
     readAccounts,
     writeAccounts,
     getPokerAccounts
- } from "./helper";
+ } from "../utils/liquidationKeeper";
  import path from 'path';
 
 async function main() {

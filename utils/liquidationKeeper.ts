@@ -2,6 +2,24 @@ import fs from 'fs';
 import path from 'path';
 
 //libraries
+export  function getPokerAccounts(accounts, index, pokerCount) {
+    if (!accounts) {
+        return [];
+    }
+    const accountSizeEveryPoker = (accounts.length + pokerCount) / pokerCount;
+    const start = accountSizeEveryPoker * index;
+    if (start > accounts.length - 1){
+        return [];
+    }
+
+    let end = accountSizeEveryPoker * (index + 1) - 1;
+    if (end > accounts.length - 1) {
+        end = accounts.length - 1;
+    }
+    return accounts.slice(start, end);
+}
+
+
 export class Mutex {
     private _locking: Promise<void> = Promise.resolve();
     private _locked: boolean = false;
