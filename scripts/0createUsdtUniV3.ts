@@ -15,7 +15,7 @@ import {
 
 async function main() {
     const [owner] = await ethers.getSigners();
- 
+
     const dataStore = await getContract("DataStore"); 
     const reader = await getContract("Reader");  
 

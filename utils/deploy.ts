@@ -125,7 +125,7 @@ export async function getContract(name) {
         name == "CloseEventUtils" ||
         name == "EventEmitter"  || 
         name == "DexStoreUtils" ||
-        name == "PoolEventUtils"
+        name == "PoolEventUtils" 
     ) {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address);
@@ -140,6 +140,7 @@ export async function getContract(name) {
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
+    //const readerUtils = await getContract("ReaderUtils");
 
     if (name == "ReaderDexUtils") {
         const address = getDeployedContractAddresses(name);
@@ -170,8 +171,7 @@ export async function getContract(name) {
     //const configStoreUtils = await getContract("ConfigStoreUtils");
     const oracleUtils = await getContract("OracleUtils");
 
-    if (name == "ReaderUtils") {
-        //const oracleUtils = await getContract("OracleUtils");
+    if (name == "ReaderPositionUtils") {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
             libraries: {
@@ -204,8 +204,7 @@ export async function getContract(name) {
     }
 
     if (name == "Reader") {
-        //const oracleUtils = await getContract("OracleUtils");
-        const readerUtils = await getContract("ReaderUtils");
+        const readerPositionUtils = await getContract("ReaderPositionUtils");
         const readerDexUtils = await getContract("ReaderDexUtils");
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
@@ -213,8 +212,7 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
-                //ConfigStoreUtils: configStoreUtils,
-                ReaderUtils: readerUtils,
+                ReaderPositionUtils: readerPositionUtils,
                 ReaderDexUtils: readerDexUtils,
                 PositionStoreUtils: positionStoreUtils,
             },         

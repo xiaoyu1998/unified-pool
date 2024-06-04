@@ -43,6 +43,14 @@ contract Reader {
         return ReaderPositionUtils._getPositionsInfo(dataStore, account, 0, positionCount);
     }
 
+    function getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) external view returns (uint256) {
+        return ReaderPositionUtils._getMaxAmountToRedeem(dataStore, underlyingAsset, account);
+    }
+
+    function getLiquidationHealthFactor(address dataStore, address account) external view returns (ReaderPositionUtils.GetLiquidationHealthFactor memory) {
+        return ReaderPositionUtils._getLiquidationHealthFactor(dataStore, account);
+    }
+
     function getPool(address dataStore, address poolKey) external view returns (Pool.Props memory) {
         return ReaderUtils._getPool(dataStore, poolKey);
     }
@@ -114,14 +122,6 @@ contract Reader {
 
     function getPrice(address dataStore, address underlyingAsset) external view returns (uint256) {
         return OracleUtils.getPrice(dataStore, underlyingAsset);
-    }
-
-    function getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) external view returns (uint256) {
-        return ReaderUtils._getMaxAmountToRedeem(dataStore, underlyingAsset, account);
-    }
-
-    function getLiquidationHealthFactor(address dataStore, address account) external view returns (ReaderUtils.GetLiquidationHealthFactor memory) {
-        return ReaderUtils._getLiquidationHealthFactor(dataStore, account);
     }
 
     function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {

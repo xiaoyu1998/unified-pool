@@ -11,7 +11,7 @@ import "../data/Keys.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../pool/Pool.sol";
-import "../position/PositionStoreUtils.sol";
+//import "../position/PositionStoreUtils.sol";
 import "../position/PositionUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
@@ -75,13 +75,13 @@ library ReaderUtils {
         bool isUsd;
     }
 
-    struct GetLiquidationHealthFactor {
-        uint256 healthFactor;
-        uint256 healthFactorLiquidationThreshold;
-        bool isHealthFactorHigherThanLiquidationThreshold;
-        uint256 userTotalCollateralUsd;
-        uint256 userTotalDebtUsd;
-    }
+    // struct GetLiquidationHealthFactor {
+    //     uint256 healthFactor;
+    //     uint256 healthFactorLiquidationThreshold;
+    //     bool isHealthFactorHigherThanLiquidationThreshold;
+    //     uint256 userTotalCollateralUsd;
+    //     uint256 userTotalDebtUsd;
+    // }
 
     function _getLiquidityAndDebt(
         address account,
@@ -260,24 +260,24 @@ library ReaderUtils {
         return poolsInfo;
     }
 
-    function _getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) internal view returns (uint256) {
-        address poolKey = Keys.poolKey(underlyingAsset);
-        Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
-        PoolUtils.validateEnabledPool(pool, poolKey);
-        IPoolToken poolToken = IPoolToken(pool.poolToken);
-        uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
-    }
+    // function _getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) internal view returns (uint256) {
+    //     address poolKey = Keys.poolKey(underlyingAsset);
+    //     Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
+    //     PoolUtils.validateEnabledPool(pool, poolKey);
+    //     IPoolToken poolToken = IPoolToken(pool.poolToken);
+    //     uint256 collateralAmount = poolToken.balanceOfCollateral(account);
+    //     return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
+    // }
 
-    function _getLiquidationHealthFactor(address dataStore, address account) external view returns (GetLiquidationHealthFactor memory) {
-        GetLiquidationHealthFactor memory liquidationHealthFactor;
-        (   liquidationHealthFactor.healthFactor,
-            liquidationHealthFactor.healthFactorLiquidationThreshold,
-            liquidationHealthFactor.isHealthFactorHigherThanLiquidationThreshold,
-            liquidationHealthFactor.userTotalCollateralUsd,
-            liquidationHealthFactor.userTotalDebtUsd
-        ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);    
-        return liquidationHealthFactor;
-    }
+    // function _getLiquidationHealthFactor(address dataStore, address account) external view returns (GetLiquidationHealthFactor memory) {
+    //     GetLiquidationHealthFactor memory liquidationHealthFactor;
+    //     (   liquidationHealthFactor.healthFactor,
+    //         liquidationHealthFactor.healthFactorLiquidationThreshold,
+    //         liquidationHealthFactor.isHealthFactorHigherThanLiquidationThreshold,
+    //         liquidationHealthFactor.userTotalCollateralUsd,
+    //         liquidationHealthFactor.userTotalDebtUsd
+    //     ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);    
+    //     return liquidationHealthFactor;
+    // }
     
 }
