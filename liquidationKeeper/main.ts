@@ -5,16 +5,18 @@ import {
     Mutex,
     readAccounts,
     writeAccounts,
-    getPokerAccounts
+    getLiquidatorAccounts,
+    delAccount,
+    addAccount
  } from "../utils/liquidationKeeper";
  import path from 'path';
 
 async function main() {
     //function 
     const mutex = new Mutex();
-    const pokerCount = 2;
+    const liquidatorCount = 2;
     let accounts = readAccounts();
-    //let pokers[];
+    //let liquidators[];
 
     //listen events
     const eventEmitter = await getEventEmitter();  
@@ -31,49 +33,40 @@ async function main() {
         await delAccount(mutex, accounts, account);
     });
 
-    //init pokers
-    for (let i = 0; i < pokerCount; i++){
-        console.log("parent: pokerId", i);
-        const poker = new Worker(path.resolve(__dirname, 'poker.ts'), {
+    //init liquidators
+    for (let i = 0; i < liquidatorCount; i++){
+        console.log("parent: liquidatorId", i);
+        const liquidator = new Worker(path.resolve(__dirname, 'liquidator.ts'), {
             workerData: {id: BigInt(i)}, //should add eth url
             execArgv: ['-r', 'ts-node/register']
         });
 
-        poker.postMessage({test: i});
-        //console.log("parent: pokerId", i);
+        liquidator.postMessage({test: i});
+        //console.log("parent: liquidatorId", i);
 
         //should add eth url
-        const accountsPoker = getPokerAccounts(accounts, i, pokerCount);
-        if (accountsPoker.length > 0) { poker.postMessage({accounts: accountsPoker}); }
+        const accountsLiquidator = getLiquidatorAccounts(accounts, i, liquidatorCount);
+        if (accountsLiquidator.length > 0) { liquidator.postMessage({accounts: accountsLiquidator}); }
 
-        poker.on('message', (message) => {
-            const pokerId = message.pokerId;
+        liquidator.on('message', (message) => {
+            const liquidatorId = message.liquidatorId;
             if (message.liquidated){
                 delAccount(accounts, account);
             }
             if (message.finished){
-                const accountsPoker = getPokerAccounts(accounts, pokerId, pokerCount);
-                if (accountsPoker.length > 0) { self.postMessage({accounts: accountsPoker}); }
+                const accountsLiquidator = getLiquidatorAccounts(accounts, liquidatorId, liquidatorCount);
+                if (accountsLiquidator.length > 0) { self.postMessage({accounts: accountsLiquidator}); }
             }
         });
     }
 
 }
 
-main();
-
-async function delAccount(mutex, accounts, account) {
-    await mutex.dispatch(async () => {
-        accounts = accounts.filter(item => item !== account)
-        writeAccounts(accounts);
-    });
-}
-
-async function addAccount(mutex, accounts, account) {
-    await mutex.dispatch(async () => {
-        if (accounts.indexOf(account) == -1) {
-            accounts.push(account);
-            writeAccounts(accounts);
-        }
-    });
-}
+main()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((ex) => {
+    console.error(ex);
+    process.exit(1);
+  });

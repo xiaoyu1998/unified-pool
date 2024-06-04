@@ -9,7 +9,9 @@ import { expandDecimals } from "../utils/math";
 import { 
     Mutex,
     readAccounts,
-    writeAccounts
+    writeAccounts,
+    delAccount,
+    addAccount
  } from "../utils/liquidationKeeper";
 
 async function liquidation(account){
@@ -39,22 +41,6 @@ async function liquidation(account){
         "exchangeRouter.executeLiquidation"
     );
 
-}
-
-async function delAccount(mutex, accounts, account) {
-    await mutex.dispatch(async () => {
-        accounts = accounts.filter(item => item !== account)
-        writeAccounts(accounts);
-    });
-}
-
-async function addAccount(mutex, accounts, account) {
-    await mutex.dispatch(async () => {
-        if (accounts.indexOf(account) == -1) {
-            accounts.push(account);
-            writeAccounts(accounts);
-        }
-    });
 }
 
 async function main() {
@@ -88,21 +74,19 @@ async function main() {
         const accountsChecking = accounts;
         for (const account of accountsChecking) {
             const factor = await getLiquidationHealthFactor(account);
-            // console.log("factor", factor);
+            console.log("factor", factor);
             if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
                 await liquidation(account);
             }
         }
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 }
 
 main()
-  .then(() => {
-    process.exit(0);
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
   })
-  .catch((ex) => {
-    console.error(ex);
-    process.exit(1);
-  });

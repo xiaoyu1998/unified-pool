@@ -2,17 +2,33 @@ import fs from 'fs';
 import path from 'path';
 
 //libraries
-export  function getPokerAccounts(accounts, index, pokerCount) {
+export async function delAccount(mutex, accounts, account) {
+    await mutex.dispatch(async () => {
+        accounts = accounts.filter(item => item !== account)
+        writeAccounts(accounts);
+    });
+}
+
+export async function addAccount(mutex, accounts, account) {
+    await mutex.dispatch(async () => {
+        if (accounts.indexOf(account) == -1) {
+            accounts.push(account);
+            writeAccounts(accounts);
+        }
+    });
+}
+
+export  function getLiquidatorAccounts(accounts, index, pokerCount) {
     if (!accounts) {
         return [];
     }
-    const accountSizeEveryPoker = (accounts.length + pokerCount) / pokerCount;
-    const start = accountSizeEveryPoker * index;
+    const accountSizeEveryLiquidator = (accounts.length + pokerCount) / pokerCount;
+    const start = accountSizeEveryLiquidator * index;
     if (start > accounts.length - 1){
         return [];
     }
 
-    let end = accountSizeEveryPoker * (index + 1) - 1;
+    let end = accountSizeEveryLiquidator * (index + 1) - 1;
     if (end > accounts.length - 1) {
         end = accounts.length - 1;
     }

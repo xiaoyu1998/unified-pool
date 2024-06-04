@@ -39,8 +39,8 @@ import { PositionLiquidationEvent } from "../typechain-types/contracts/event/Eve
     }
 
     // let url = workerData.url;
-    let pokerId = workerData.id;
-    console.log("poker: pokerId", pokerId);
+    let liquidatorId = workerData.id;
+    console.log("liquidator: liquidatorId", liquidatorId);
 
     parentPort?.on('message', async (message) => {
         if (message.test) {  
@@ -54,10 +54,10 @@ import { PositionLiquidationEvent } from "../typechain-types/contracts/event/Eve
                 const factor = await getLiquidationHealthFactor(accounts[i]);
                 if(!factor.isHealthFactorHigherThanLiquidationThreshold) {
                     await liquidation(accounts[i]);
-                    self.postMessage({pokerId:pokerId, liquidated:accounts[i]});
+                    self.postMessage({liquidatorId:liquidatorId, liquidated:accounts[i]});
                 }           
             }
-            self.postMessage({pokerId:pokerId, finished:true});
+            self.postMessage({liquidatorId:liquidatorId, finished:true});
         } 
     });
 })();
