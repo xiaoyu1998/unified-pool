@@ -25,7 +25,7 @@ contract DepositHandler is IDepositHandler, GlobalReentrancyGuard, RoleModule {
     function executeDeposit(
         address account,
         DepositUtils.DepositParams calldata depositParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController{
 
         DepositUtils.ExecuteDepositParams memory params = DepositUtils.ExecuteDepositParams(
            address(dataStore),

@@ -25,7 +25,7 @@ contract WithdrawHandler is IWithdrawHandler, GlobalReentrancyGuard, RoleModule 
     function executeWithdraw(
         address account,
         WithdrawUtils.WithdrawParams calldata withdrawParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController{
 
         WithdrawUtils.ExecuteWithdrawParams memory params = WithdrawUtils.ExecuteWithdrawParams(
            address(dataStore),

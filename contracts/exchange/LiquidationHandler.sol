@@ -25,7 +25,7 @@ contract LiquidationHandler is ILiquidationHandler, GlobalReentrancyGuard, RoleM
     function executeLiquidation(
         address liquidator,
         LiquidationUtils.LiquidationParams calldata liquidationParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController{
 
         LiquidationUtils.ExecuteLiquidationParams memory params = LiquidationUtils.ExecuteLiquidationParams(
            address(dataStore),

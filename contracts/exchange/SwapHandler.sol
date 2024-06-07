@@ -25,7 +25,7 @@ contract SwapHandler is ISwapHandler, GlobalReentrancyGuard, RoleModule {
     function executeSwap(
         address account,
         SwapUtils.SwapParams calldata swapParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController{
 
         SwapUtils.ExecuteSwapParams memory params = SwapUtils.ExecuteSwapParams(
            address(dataStore),

@@ -79,7 +79,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     m.call(roleStore, "grantRole",  [closeHandler, keys.CONTROLLER], {id:"grantRole9"});
     m.call(roleStore, "grantRole",  [poolFactory, keys.CONTROLLER], {id:"grantRole10"});
     m.call(roleStore, "grantRole",  [config, keys.CONTROLLER], {id:"grantRole11"});
-    m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole12"});
+    m.call(roleStore, "grantRole",  [exchangeRouter, keys.CONTROLLER], {id:"grantRole12"});
+    m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole13"});
     return { 
         roleStore, 
         dataStore, 

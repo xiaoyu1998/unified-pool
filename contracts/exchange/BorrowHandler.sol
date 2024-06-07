@@ -25,7 +25,7 @@ contract BorrowHandler is IBorrowHandler, GlobalReentrancyGuard, RoleModule {
     function executeBorrow(
         address account,
         BorrowUtils.BorrowParams calldata BorrowParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController {
 
         BorrowUtils.ExecuteBorrowParams memory params = BorrowUtils.ExecuteBorrowParams(
            address(dataStore),
