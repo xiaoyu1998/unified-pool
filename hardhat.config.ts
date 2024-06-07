@@ -1,6 +1,7 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition-ethers";
+import "@nomicfoundation/hardhat-foundry";
 import { ethers, ignition } from "hardhat";
 import { defaultRpcs } from "./utils/network";
 
