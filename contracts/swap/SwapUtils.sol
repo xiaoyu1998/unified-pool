@@ -65,6 +65,8 @@ library SwapUtils {
         bytes32 positionKeyOut;
         IPoolToken poolTokenIn;
         IPoolToken poolTokenOut;
+        IDebtToken debtTokenIn;
+        IDebtToken debtTokenOut;
         uint256 collateralAmount;
         address dex;
         uint256 amountInAfterSwap;
@@ -72,6 +74,11 @@ library SwapUtils {
         uint256 amountIn;
         uint256 amountOut;
         uint256 price;
+
+        uint256 collateralIn;
+        uint256 debtScaledIn;
+        uint256 collateralOut;
+        uint256 debtScaledOut;
     }
 
     // @dev executes a swap
@@ -103,8 +110,10 @@ library SwapUtils {
             vars.poolOutIsUsd
         );
 
+        vars.debtTokenIn  = IDebtToken(vars.poolIn.debtToken);
+        vars.debtTokenOut = IDebtToken(vars.poolOut.debtToken);
         vars.poolTokenIn  = IPoolToken(vars.poolIn.poolToken);
-        vars.poolTokenOut  = IPoolToken(vars.poolOut.poolToken);
+        vars.poolTokenOut = IPoolToken(vars.poolOut.poolToken);
         vars.amountIn = params.amount;
         vars.collateralAmount = vars.poolTokenIn.balanceOfCollateral(account);
         if( vars.amountIn > vars.collateralAmount){
@@ -197,6 +206,11 @@ library SwapUtils {
 
         //vars.amountIn * IDex(vars.dex).getFeeAmount()*;
 
+        vars.collateralIn  = vars.poolTokenIn.balanceOfCollateral(account);
+        vars.debtScaledIn  = vars.debtTokenIn.scaledBalanceOf(account);
+        vars.collateralOut = vars.poolTokenOut.balanceOfCollateral(account);
+        vars.debtScaledOut = vars.debtTokenOut.scaledBalanceOf(account) ;
+
         SwapEventUtils.emitSwap(
             params.eventEmitter, 
             params.underlyingAssetIn, 
@@ -204,7 +218,11 @@ library SwapUtils {
             account, 
             vars.amountIn,
             vars.amountOut,
-            IDex(vars.dex).getSwapFee(vars.amountIn)
+            IDex(vars.dex).getSwapFee(vars.amountIn),
+            vars.collateralIn,
+            vars.debtScaledIn,
+            vars.collateralOut,
+            vars.debtScaledOut  
         );
 
         //return (amountIn, amountOut);
@@ -241,6 +259,8 @@ library SwapUtils {
             vars.poolOutIsUsd
         );
 
+        vars.debtTokenIn  = IDebtToken(vars.poolIn.debtToken);
+        vars.debtTokenOut = IDebtToken(vars.poolOut.debtToken);
         vars.poolTokenIn  = IPoolToken(vars.poolIn.poolToken);
         vars.poolTokenOut  = IPoolToken(vars.poolOut.poolToken);
         vars.amountOut = params.amount;//should be change to amount
@@ -333,6 +353,11 @@ library SwapUtils {
             vars.poolOut
         );
 
+        vars.collateralIn  = vars.poolTokenIn.balanceOfCollateral(account);
+        vars.debtScaledIn  = vars.debtTokenIn.scaledBalanceOf(account);
+        vars.collateralOut = vars.poolTokenOut.balanceOfCollateral(account);
+        vars.debtScaledOut = vars.debtTokenOut.scaledBalanceOf(account) ;
+
         SwapEventUtils.emitSwap(
             params.eventEmitter, 
             params.underlyingAssetIn, 
@@ -340,7 +365,11 @@ library SwapUtils {
             account, 
             vars.amountIn,
             vars.amountOut,
-            IDex(vars.dex).getSwapFee(vars.amountIn)
+            IDex(vars.dex).getSwapFee(vars.amountIn),
+            vars.collateralIn,
+            vars.debtScaledIn,
+            vars.collateralOut,
+            vars.debtScaledOut  
         );
 
         //return (amountIn, amountOut);

@@ -11,8 +11,8 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Redeem", (pool, redeemer, to, amount) =>{
-        console.log("eventEmitter Redeem" ,pool, redeemer, to, amount);
+    eventEmitter.on("Redeem", (pool, redeemer, to, amount, collateral, debtScaled) =>{
+        console.log("eventEmitter Redeem" ,pool, redeemer, to, amount, collateral, debtScaled);
     }); 
 
     //execute repay

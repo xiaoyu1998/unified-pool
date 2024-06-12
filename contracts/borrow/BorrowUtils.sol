@@ -43,62 +43,75 @@ library BorrowUtils {
         uint256 amount;
     }
 
+    struct BorrowLocalVars {
+        Pool.Props pool;
+        PoolCache.Props poolCache;
+        address poolKey;
+        bool poolIsUsd;
+        IPoolToken poolToken;
+        IDebtToken debtToken;
+        bytes32 positionKey;
+        Position.Props position;
+    }
+
     // @dev executes a borrow
     // @param account the withdrawing account
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
         Printer.log("-------------------------executeBorrow--------------------------");  
-        (   Pool.Props memory pool,
-            PoolCache.Props memory poolCache,
-            address poolKey,
-            bool poolIsUsd
+        BorrowLocalVars memory vars;
+        (   vars.pool,
+            vars.poolCache,
+            vars.poolKey,
+            vars.poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        (   Position.Props memory position,
-            bytes32 positionKey
+        (   vars.position,
+            vars.positionKey
         ) = PositionUtils.getOrInit(
             account,
             params.dataStore, 
             params.underlyingAsset, 
             Position.PositionTypeShort,
-            poolIsUsd
+            vars.poolIsUsd
         );
 
         BorrowUtils.validateBorrow( 
             account, 
             params.dataStore, 
-            pool,
-            poolCache, 
+            vars.pool,
+            vars.poolCache, 
             params.amount
         );
 
         //TODO:Should have borrow "to"
-        IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        poolToken.addCollateral(account, params.amount);//this line will change Rate
-        (, poolCache.nextTotalScaledDebt) = IDebtToken(poolCache.debtToken).mint(
+        vars.debtToken = IDebtToken(vars.poolCache.debtToken);
+        vars.poolToken = IPoolToken(vars.poolCache.poolToken);
+        vars.poolToken.addCollateral(account, params.amount);//this line will change Rate
+        (, vars.poolCache.nextTotalScaledDebt) = vars.debtToken.mint(
             account, 
             params.amount, 
-            poolCache.nextBorrowIndex
+            vars.poolCache.nextBorrowIndex
         );
         
-        position.hasCollateral = true;
-        position.hasDebt = true; 
+        vars.position.hasCollateral = true;
+        vars.position.hasDebt = true; 
         PositionStoreUtils.set(
             params.dataStore, 
-            positionKey, 
-            position
+            vars.positionKey, 
+            vars.position
         );
 
         PoolUtils.updateInterestRates(
             params.eventEmitter,
-            pool,
-            poolCache
+            vars.pool,
+            vars.poolCache
         );   
 
         PoolStoreUtils.set(
             params.dataStore, 
-            poolKey, 
-            pool
+            vars.poolKey, 
+            vars.pool
         );
 
         BorrowEventUtils.emitBorrow(
@@ -106,7 +119,9 @@ library BorrowUtils {
             params.underlyingAsset, 
             account, 
             params.amount,
-            pool.borrowRate
+            vars.pool.borrowRate,
+            vars.poolToken.balanceOfCollateral(account),
+            vars.debtToken.scaledBalanceOf(account)            
         );
     }
 

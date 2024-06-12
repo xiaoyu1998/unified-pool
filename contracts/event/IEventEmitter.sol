@@ -21,28 +21,36 @@ interface IEventEmitter {
     function emitDeposit(
         address underlyingAsset,
         address account,
-        uint256 depositAmount
+        uint256 depositAmount,
+        uint256 collateral,
+        uint256 debtScaled
     ) external;
 
     function emitRedeem(
         address underlyingAsset,
         address account,
         address to,
-        uint256 redeemAmount
+        uint256 redeemAmount,
+        uint256 collateral,
+        uint256 debtScaled
     ) external;
 
     function emitBorrow(
         address underlyingAsset,
         address account,
         uint256 borrowAmount,
-        uint256 borrowRate
+        uint256 borrowRate,
+        uint256 collateral,
+        uint256 debtScaled
     ) external;
 
     function emitRepay(
         address underlyingAsset,
         address repayer,
         uint256 repayAmount,
-        bool useCollateral
+        bool useCollateral,
+        uint256 collateral,
+        uint256 debtScaled
     ) external;
 
     function emitSwap(
@@ -51,7 +59,11 @@ interface IEventEmitter {
         address account,
         uint256 amountIn,
         uint256 amountOut,
-        uint256 fee
+        uint256 fee,
+        uint256 collateralIn,
+        uint256 debtScaledIn,
+        uint256 collateralOut,
+        uint256 debtScaledOut
     ) external;
 
     function emitPositionLiquidation(
@@ -78,7 +90,9 @@ interface IEventEmitter {
         address account,
         uint256 collateralAmount,
         uint256 debtAmount,
-        uint256 remainAmountUsd
+        uint256 remainAmountUsd,
+        uint256 collateralUsd,
+        uint256 debtScaledUsd
     ) external;
 
     function emitClose(

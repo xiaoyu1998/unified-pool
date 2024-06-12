@@ -11,13 +11,17 @@ library RedeemEventUtils {
         address underlyingAsset,
         address redeemer,
         address to,
-        uint256 redeemAmount
+        uint256 redeemAmount,
+        uint256 collateral,
+        uint256 debtScaled
     ) external {
         IEventEmitter(eventEmitter).emitRedeem(
             underlyingAsset,
             redeemer,
             to,
-            redeemAmount
+            redeemAmount,
+            collateral,
+            debtScaled
         );
     }
 

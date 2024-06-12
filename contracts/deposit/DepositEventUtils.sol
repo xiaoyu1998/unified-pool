@@ -10,12 +10,16 @@ library DepositEventUtils {
         address eventEmitter,
         address underlyingAsset,
         address account,
-        uint256 depositAmount
+        uint256 depositAmount,
+        uint256 collateral,
+        uint256 debtScaled       
     ) external {
         IEventEmitter(eventEmitter).emitDeposit(
             underlyingAsset,
             account,
-            depositAmount
+            depositAmount,
+            collateral,
+            debtScaled
         );
     }
 

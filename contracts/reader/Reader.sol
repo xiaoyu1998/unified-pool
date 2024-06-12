@@ -3,12 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
-
 import "../position/Position.sol";
-
-//import "../oracle/OracleStoreUtils.sol";
-//import "../oracle/OracleUtils.sol";
-
 import "./ReaderUtils.sol";
 import "./ReaderPositionUtils.sol";
 import "./ReaderDexUtils.sol";
@@ -24,10 +19,6 @@ contract Reader {
         bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
         return ReaderPositionUtils._getPosition(dataStore, positionKey);
     }
-
-    // function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
-    //     return ReaderPositionUtils._getPosition(dataStore, positionKey);
-    // }
 
     function getPositions(address dataStore, address account) external view returns (Position.Props[] memory) {
         return ReaderPositionUtils._getPositions(dataStore, account);
@@ -111,14 +102,6 @@ contract Reader {
             ReaderUtils._getLiquidityAndDebt(account, poolToken, debtToken);
         return accountLiquidity;
     }
-
-    // function getOracle(address dataStore, address underlyingAsset) external view returns (address) {
-    //     return OracleStoreUtils.get(dataStore, underlyingAsset);
-    // }
-
-    // function getOracleDecimals(address dataStore, address underlyingAsset) external view returns (uint256) {
-    //     return OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
-    // }
 
     function getPrice(address dataStore, address underlyingAsset) external view returns (uint256) {
         return OracleUtils.getPrice(dataStore, underlyingAsset);

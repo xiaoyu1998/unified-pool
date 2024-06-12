@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.20;
 
-// import "../data/DataStore.sol";
 import "../data/IDataStore.sol";
 import "../data/Keys.sol";
 
@@ -10,21 +9,8 @@ import "../pool/PoolConfigurationUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 
 // @title ConfigStoreUtils
-// @dev Library for deposit functions, to help with the depositing of liquidity
-// into a pool in return for pool tokens
+// @dev Library for config store utils functions, to help with the getting of configurations
 library ConfigStoreUtils {
-
-    // function getHealthFactorCollateralRateThreshold(address dataStore, address underlyingAsset) public view returns (uint256) {
-    //     return IDataStore(dataStore).getUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset));
-    // }
-
-    // function getDebtMultiplierFactorForRedeem(address dataStore) public view returns (uint256) {
-    //     return IDataStore(dataStore).getUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM);
-    // }
-
-    // function getHealthFactorLiquidationThreshold(address dataStore) public view returns (uint256) {
-    //     return IDataStore(dataStore).getUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD);
-    // }
 
     function getPoolDecimals(address dataStore, address underlyingAsset ) public view returns (uint256) {
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, underlyingAsset);

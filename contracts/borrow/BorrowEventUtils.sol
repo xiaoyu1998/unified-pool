@@ -11,13 +11,17 @@ library BorrowEventUtils {
         address underlyingAsset,
         address account,
         uint256 borrowAmount,
-        uint256 borrowRate
+        uint256 borrowRate,
+        uint256 collateral,
+        uint256 debtScaled 
     ) external {
         IEventEmitter(eventEmitter).emitBorrow(
             underlyingAsset,
             account,
             borrowAmount,
-            borrowRate
+            borrowRate,
+            collateral,
+            debtScaled
         );
     }
 

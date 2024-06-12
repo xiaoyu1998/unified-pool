@@ -11,13 +11,17 @@ library RepayEventUtils {
         address underlyingAsset,
         address repayer,
         uint256 repayAmount,
-        bool useCollateral
+        bool useCollateral,
+        uint256 collateral,
+        uint256 debtScaled 
     ) external {
         IEventEmitter(eventEmitter).emitRepay(
             underlyingAsset,
             repayer,
             repayAmount,
-            useCollateral
+            useCollateral,
+            collateral,
+            debtScaled
         );
     }
 

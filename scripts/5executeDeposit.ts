@@ -11,8 +11,8 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Deposit", (pool, depositer, amount) =>{
-        console.log("eventEmitter Deposit" ,pool, depositer, amount);
+    eventEmitter.on("Deposit", (pool, depositer, amount, collateral, debtScaled) =>{
+        console.log("eventEmitter Deposit" ,pool, depositer, amount, collateral, debtScaled);
     }); 
     
     //approve allowances to the router

@@ -40,58 +40,75 @@ library DepositUtils {
         address underlyingAsset;
     }
 
+    struct DepositLocalVars {
+        Pool.Props pool;
+        PoolCache.Props poolCache;
+        address poolKey;
+        bool poolIsUsd;
+        IPoolToken poolToken;
+        IDebtToken debtToken;
+        bytes32 positionKey;
+        Position.Props position;
+        uint256 depositAmount;
+        uint256 price;
+    }
+
     // @dev executes a deposit
     // @param account the depositng account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
         Printer.log("-------------------------executeDeposit--------------------------");
-        (   Pool.Props memory pool,
-            ,
-            address poolKey,
-            bool poolIsUsd
+        DepositLocalVars memory vars;
+        (   vars.pool,
+            vars.poolCache,
+            vars.poolKey,
+            vars.poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        (   Position.Props memory position,
-            bytes32 positionKey
+        (   vars.position,
+            vars.positionKey
         ) = PositionUtils.getOrInit(
             account,
             params.dataStore, 
             params.underlyingAsset, 
             Position.PositionTypeLong,
-            poolIsUsd
+            vars.poolIsUsd
         );
 
-        IPoolToken poolToken   = IPoolToken(pool.poolToken);
-        uint256 depositAmount = poolToken.recordTransferIn(params.underlyingAsset);
+        vars.debtToken   = IDebtToken(vars.pool.debtToken);
+        vars.poolToken   = IPoolToken(vars.pool.poolToken);
+        vars.depositAmount = vars.poolToken.recordTransferIn(params.underlyingAsset);
 
         DepositUtils.validateDeposit(
-            pool, 
-            depositAmount
+            vars.pool, 
+            vars.depositAmount
         );
 
-        poolToken.addCollateral(account, depositAmount);
-        position.hasCollateral = true;
-        if (!poolIsUsd){
-            uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
-            PositionUtils.longPosition(position, price, depositAmount, true);
+        vars.poolToken.addCollateral(account, vars.depositAmount);
+        vars.position.hasCollateral = true;
+        if (!vars.poolIsUsd){
+            vars.price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
+            PositionUtils.longPosition(vars.position, vars.price, vars.depositAmount, true);
         }
         PositionStoreUtils.set(
             params.dataStore, 
-            positionKey, 
-            position
+            vars.positionKey, 
+            vars.position
         );
 
         PoolStoreUtils.set(
             params.dataStore, 
-            poolKey, 
-            pool
+            vars.poolKey, 
+            vars.pool
         );
 
         DepositEventUtils.emitDeposit(
             params.eventEmitter, 
             params.underlyingAsset, 
             account, 
-            depositAmount
+            vars.depositAmount,
+            vars.poolToken.balanceOfCollateral(account),
+            vars.debtToken.scaledBalanceOf(account)
         );
     }
 

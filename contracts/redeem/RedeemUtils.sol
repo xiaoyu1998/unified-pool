@@ -56,6 +56,7 @@ library RedeemUtils {
         bytes32 positionKey;
         uint256 redeemAmount;
         IPoolToken poolToken;
+        IDebtToken debtToken;
         uint256 collateralAmount;
         uint256 maxAmountToRedeem;
         uint256 remainCollateral;
@@ -82,6 +83,7 @@ library RedeemUtils {
         vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
         
         vars.redeemAmount = params.amount;
+        vars.debtToken   = IDebtToken(vars.pool.debtToken);
         vars.poolToken = IPoolToken(vars.pool.poolToken);
         vars.collateralAmount = vars.poolToken.balanceOfCollateral(account); 
         vars.maxAmountToRedeem = PositionUtils.maxAmountToRedeem(account, params.dataStore, params.underlyingAsset, vars.collateralAmount);  
@@ -124,7 +126,9 @@ library RedeemUtils {
             params.underlyingAsset, 
             account, 
             params.to, 
-            vars.redeemAmount
+            vars.redeemAmount,
+            vars.poolToken.balanceOfCollateral(account),
+            vars.debtToken.scaledBalanceOf(account)
         );
     }
 

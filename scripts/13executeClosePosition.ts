@@ -11,14 +11,16 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("ClosePosition", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd) => {
+    eventEmitter.on("ClosePosition", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd, collateralUsd, debtScaledUsd) => {
         const event: ClosePositionEvent.OutputTuple = {
             underlyingAsset: underlyingAsset,
             underlyingAssetUsd: underlyingAssetUsd,
             account: account,
             collateralAmount: collateralAmount,
             debtAmount: debtAmount,
-            remainAmountUsd: remainAmountUsd
+            remainAmountUsd: remainAmountUsd,
+            collateralUsd: collateralUsd,
+            debtScaledUsd: debtScaledUsd
         };        
         console.log("eventEmitter ClosePosition" ,event);
     });

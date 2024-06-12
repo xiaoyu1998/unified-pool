@@ -11,8 +11,19 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Swap", (underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut, fee) =>{
-        console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut, fee);
+    eventEmitter.on("Swap", (
+        underlyingAssetIn, 
+        underlyingAssetOut, 
+        account,
+        amountIn, 
+        amountOut, 
+        fee,
+        collateralIn,
+        debtScaledIn,
+        collateralOut,
+        debtScaledOut
+        ) =>{
+        console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut, fee, collateralIn, debtScaledIn, collateralOut, debtScaledOut);
     });
 
     const usdtDecimals = getTokens("USDT")["decimals"];

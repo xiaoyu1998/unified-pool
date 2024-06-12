@@ -27,14 +27,18 @@ contract EventEmitter is RoleModule {
         address indexed pool,
         address indexed depositer,
         //address indexed to,
-        uint256 amount
+        uint256 amount,
+        uint256 collateral,
+        uint256 debtScaled
     );
 
     event Redeem(
         address indexed pool,
         address indexed redeemer,
         address indexed to,
-        uint256 amount
+        uint256 amount,
+        uint256 collateral,
+        uint256 debtScaled
     );
 
     event Borrow(
@@ -42,7 +46,9 @@ contract EventEmitter is RoleModule {
         address indexed borrower,
         //address indexed to,
         uint256 amount,
-        uint256 borrowRate
+        uint256 borrowRate,
+        uint256 collateral,
+        uint256 debtScaled
     );
 
     event Repay(
@@ -50,16 +56,24 @@ contract EventEmitter is RoleModule {
         // address indexed to,
         address indexed repayer,
         uint256 amount,
-        bool useCollateral
+        bool useCollateral,
+        uint256 collateral,
+        uint256 debtScaled
     );
 
     event Swap(
-        address indexed underlyingAssetIn,
-        address indexed underlyingAssetOut,
+        // address indexed underlyingAssetIn,
+        // address indexed underlyingAssetOut,
+        address indexed poolIn,
+        address indexed poolOut,
         address indexed account,
         uint256 amountIn,
         uint256 amountOut,
-        uint256 fee
+        uint256 fee,
+        uint256 collateralIn,
+        uint256 debtScaledIn,
+        uint256 collateralOut,
+        uint256 debtScaledOut
     );
 
     event PositionLiquidation(
@@ -86,7 +100,9 @@ contract EventEmitter is RoleModule {
         address indexed account,
         uint256 collateral,
         uint256 debt,
-        uint256 remainUsd
+        uint256 remainUsd,
+        uint256 collateralUsd,
+        uint256 debtScaledUsd   
     );
 
     event Close(
@@ -140,12 +156,16 @@ contract EventEmitter is RoleModule {
     function emitDeposit(
         address underlyingAsset,
         address account,
-        uint256 depositAmount
+        uint256 depositAmount,
+        uint256 collateral,
+        uint256 debtScaled
     ) external onlyController {
         emit Deposit(
             underlyingAsset,
             account,
-            depositAmount
+            depositAmount,
+            collateral,
+            debtScaled
         );
     }
 
@@ -153,13 +173,17 @@ contract EventEmitter is RoleModule {
         address underlyingAsset,
         address account,
         address to,
-        uint256 redeemAmount
+        uint256 redeemAmount,
+        uint256 collateral,
+        uint256 debtScaled
     ) external onlyController {
         emit Redeem(
             underlyingAsset,
             account,
             to,
-            redeemAmount
+            redeemAmount,
+            collateral,
+            debtScaled
         );
     }
 
@@ -167,13 +191,17 @@ contract EventEmitter is RoleModule {
         address underlyingAsset,
         address account,
         uint256 borrowAmount,
-        uint256 borrowRate
+        uint256 borrowRate,
+        uint256 collateral,
+        uint256 debtScaled
     ) external onlyController {
         emit Borrow(
             underlyingAsset,
             account,
             borrowAmount,
-            borrowRate
+            borrowRate,
+            collateral,
+            debtScaled
         );
     }
 
@@ -181,13 +209,17 @@ contract EventEmitter is RoleModule {
         address underlyingAsset,
         address repayer,
         uint256 repayAmount,
-        bool useCollateral
+        bool useCollateral,
+        uint256 collateral,
+        uint256 debtScaled
     ) external onlyController {
         emit Repay(
             underlyingAsset,
             repayer,
             repayAmount,
-            useCollateral
+            useCollateral,
+            collateral,
+            debtScaled
         );
     }
 
@@ -197,7 +229,11 @@ contract EventEmitter is RoleModule {
         address account,
         uint256 amountIn,
         uint256 amountOut,
-        uint256 fee
+        uint256 fee,
+        uint256 collateralIn,
+        uint256 debtScaledIn,
+        uint256 collateralOut,
+        uint256 debtScaledOut
     ) external onlyController {
         emit Swap(
             underlyingAssetIn,
@@ -205,7 +241,11 @@ contract EventEmitter is RoleModule {
             account,
             amountIn,
             amountOut,
-            fee
+            fee,
+            collateralIn,
+            debtScaledIn,
+            collateralOut,
+            debtScaledOut
         );
     }
 
@@ -251,7 +291,9 @@ contract EventEmitter is RoleModule {
         address account,
         uint256 collateralAmount,
         uint256 debtAmount,
-        uint256 remainAmountUsd
+        uint256 remainAmountUsd,
+        uint256 collateralUsd,
+        uint256 debtScaledUsd
     ) external onlyController {
         emit ClosePosition(
             underlyingAsset,
@@ -259,7 +301,9 @@ contract EventEmitter is RoleModule {
             account,
             collateralAmount,
             debtAmount,
-            remainAmountUsd
+            remainAmountUsd,
+            collateralUsd,
+            debtScaledUsd
         );
     }
 

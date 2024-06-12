@@ -56,6 +56,8 @@ library CloseUtils {
         Position.Props position;
         IPoolToken poolToken;
         IDebtToken debtToken;
+        IPoolToken poolTokenUsd;
+        IDebtToken debtTokenUsd;
         uint256 collateralAmount;
         uint256 debtAmount;
         RepayUtils.ExecuteRepayParams repayParams;
@@ -122,7 +124,10 @@ library CloseUtils {
         if(vars.position.underlyingAsset != params.underlyingAssetUsd){
             PositionUtils.reset(vars.position);
             PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position); 
-        }    
+        } 
+
+        vars.poolTokenUsd = IPoolToken(PoolStoreUtils.getPoolToken(params.dataStore, params.underlyingAssetUsd));
+        vars.debtTokenUsd = IDebtToken(PoolStoreUtils.getDebtToken(params.dataStore, params.underlyingAssetUsd));   
 
         CloseEventUtils.emitClosePosition(
             params.eventEmitter, 
@@ -131,7 +136,9 @@ library CloseUtils {
             account, 
             vars.collateralAmount, 
             vars.debtAmount,
-            vars.remainAmountUsd
+            vars.remainAmountUsd,
+            vars.poolTokenUsd.balanceOfCollateral(account),
+            vars.debtTokenUsd.scaledBalanceOf(account)  
         );
     }
 

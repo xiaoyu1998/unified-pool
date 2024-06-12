@@ -147,7 +147,9 @@ library RepayUtils {
             params.underlyingAsset, 
             account, 
             vars.repayAmount,
-            vars.useCollateralToRepay
+            vars.useCollateralToRepay,
+            vars.poolToken.balanceOfCollateral(account),
+            vars.debtToken.scaledBalanceOf(account)            
         );
 
     }

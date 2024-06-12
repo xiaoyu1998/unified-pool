@@ -13,7 +13,9 @@ library CloseEventUtils {
         address account,
         uint256 collateralAmount,
         uint256 debtAmount,
-        uint256 remainAmountUsd
+        uint256 remainAmountUsd,
+        uint256 collateralUsd,
+        uint256 debtScaledUsd
     ) external {
         IEventEmitter(eventEmitter).emitClosePosition(
             underlyingAsset,
@@ -21,7 +23,9 @@ library CloseEventUtils {
             account,
             collateralAmount,
             debtAmount,
-            remainAmountUsd
+            remainAmountUsd,
+            collateralUsd,
+            debtScaledUsd
         );
     }
 

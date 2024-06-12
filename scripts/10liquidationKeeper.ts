@@ -48,11 +48,11 @@ async function main() {
     const eventEmitter = await getEventEmitter();  
     let accounts = readAccounts();
     const mutex = new Mutex();
-    eventEmitter.on("Borrow", async (pool, borrower, amount, borrowRate) => { 
-        console.log("eventEmitter Borrow" ,pool, borrower, amount, borrowRate);
+    eventEmitter.on("Borrow", async (pool, borrower, amount, borrowRate, collateral, debtScaled) => { 
+        console.log("eventEmitter Borrow" ,pool, borrower, amount, borrowRate, collateral, debtScaled);
         await addAccount(mutex, accounts, borrower);
     });
-    eventEmitter.on("Repay", async (pool, repayer, amount, useCollateral) => { 
+    eventEmitter.on("Repay", async (pool, repayer, amount, useCollateral, collateral, debtScaled) => { 
         console.log("eventEmitter Repay", pool, repayer, amount, useCollateral);
         const factor = await getLiquidationHealthFactor(repayer);
         if (factor.userTotalDebtUsd == 0) {

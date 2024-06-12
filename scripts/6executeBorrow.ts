@@ -11,8 +11,8 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Borrow", (pool, borrower, to, amount) =>{
-        console.log("eventEmitter Borrow" ,pool, borrower, to, amount);
+    eventEmitter.on("Borrow", (pool, borrower, to, amount, collateral, debtScaled) =>{
+        console.log("eventEmitter Borrow" ,pool, borrower, to, amount, collateral, debtScaled);
     }); 
 
     //const config = await getContract("Config");
