@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 
 interface IDex2 {
 
-    struct SwapParams {
+    struct SwapParams2 {
         address tokenIn;
         address tokenOut;
         uint24 fee;
@@ -14,13 +14,13 @@ interface IDex2 {
 
     function swapExactIn(
         address from,
-        SwapParams memory params, 
+        SwapParams2 memory params, 
         address to
     ) external;
 
     function swapExactOut(
         address from,
-        SwapParams memory params,  
+        SwapParams2 memory params,  
         address to
     ) external;
 

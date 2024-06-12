@@ -63,11 +63,12 @@ export function parsePoolInfo(pool) {
         totalDebt: pool[26],   
         borrowUsageRatio: pool[27],
         optimalUsageRatio: pool[28],
-        rateSlope1: pool[29],
-        rateSlope2: pool[30],                   
-        symbol: pool[31],
-        price: pool[32],
-        isUsd: pool[33]
+        rateBase: pool[29],
+        rateSlope1: pool[30],
+        rateSlope2: pool[31],                   
+        symbol: pool[32],
+        price: pool[33],
+        isUsd: pool[34]
     };
     return p;
 }

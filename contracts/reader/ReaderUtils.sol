@@ -67,6 +67,7 @@ library ReaderUtils {
 
         uint256 borrowUsageRatio;
         uint256 optimalUsageRatio;
+        uint256 rateBase;
         uint256 rateSlope1;
         uint256 rateSlope2;
 
@@ -205,7 +206,7 @@ library ReaderUtils {
             false,false,false,false,
             0,0,0,0,
             0,0,0,0,0,0,
-            0,0,0,0,
+            0,0,0,0,0,
             "",
             0,
             false    
@@ -239,6 +240,7 @@ library ReaderUtils {
         poolInfo.borrowUsageRatio = (poolInfo.totalDebt == 0)? 0:poolInfo.totalDebt.rayDiv(poolInfo.availableLiquidity + poolInfo.totalDebt);
 
         IPoolInterestRateStrategy strategy = IPoolInterestRateStrategy(poolInfo.interestRateStrategy);
+        poolInfo.rateBase = strategy.getRatebase();
         poolInfo.optimalUsageRatio = strategy.getOptimalUsageRatio();
         poolInfo.rateSlope1 = strategy.getRateSlope1();
         poolInfo.rateSlope2 = strategy.getRateSlope2();

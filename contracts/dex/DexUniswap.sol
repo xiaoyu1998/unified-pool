@@ -34,7 +34,7 @@ contract DexUniswap is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2 {
     /// @inheritdoc IDex2
     function swapExactIn(
         address from,
-        SwapParams memory params,
+        SwapParams2 memory params,
         address to
     ) external override{
         bool zeroForOne = params.tokenIn < params.tokenOut;
@@ -66,7 +66,7 @@ contract DexUniswap is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2 {
     /// @inheritdoc IDex2
     function swapExactOut(
         address from,
-        SwapParams memory params,
+        SwapParams2 memory params,
         address to
     ) external override{
         bool zeroForOne = params.tokenIn < params.tokenOut;
