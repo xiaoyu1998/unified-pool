@@ -5,15 +5,15 @@
 ```shell
 git clone git@github.com:xiaoyu1998/up-contracts.git --recursive
 ```
-#### Installation
-
-```shell
-npm install
-```
 #### Foundry support
 
 ```shell
 curl -L https://foundry.paradigm.xyz | bash
+```
+#### Installation
+
+```shell
+npm install
 ```
 #### Run local node
 ```shell
