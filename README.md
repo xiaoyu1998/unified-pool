@@ -10,6 +10,11 @@ git clone git@github.com:xiaoyu1998/up-contracts.git --recursive
 ```shell
 npm install
 ```
+#### Foundry support
+
+```shell
+curl -L https://foundry.paradigm.xyz | bash
+```
 #### Run local node
 ```shell
 npx hardhat node
