@@ -61,6 +61,7 @@ async function main() {
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
     //console.log("allowance", await usdt.allowance(owner.address, router.target));
+    console.log("prices",await reader.getPoolsPrice(dataStore)); 
 
 }
 

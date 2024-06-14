@@ -60,6 +60,10 @@ contract Reader {
         return ReaderUtils._getPoolsInfo(dataStore, 0, poolsCount);
     }
 
+    function getPoolsPrice(address dataStore) external view returns (ReaderUtils.GetPoolPrice[] memory) {
+        uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
+        return ReaderUtils._getPoolsPrice(dataStore, 0, poolsCount);
+    }
 
     function getLiquidityAndDebts(address dataStore, address account) external view returns (ReaderUtils.GetLiquidityAndDebt[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);

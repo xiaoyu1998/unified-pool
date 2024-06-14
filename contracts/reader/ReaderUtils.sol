@@ -32,58 +32,6 @@ library ReaderUtils {
         uint256 debt; 
     }
 
-    struct GetPoolInfo {
-        uint256 keyId;
-        uint256 liquidityIndex;
-        uint256 liquidityRate;
-        uint256 borrowIndex;
-        uint256 borrowRate;
-        
-        address interestRateStrategy;
-        address underlyingAsset;
-        address poolToken;
-        address debtToken;
-
-        uint256 configuration;
-        uint256 totalFee;
-        uint256 unclaimedFee;
-        uint256 lastUpdateTimestamp;
-
-        bool isActive;
-        bool isPaused;
-        bool isFrozen;
-        bool borrowingEnabled;
-        uint256 decimals;
-        uint256 borrowCapacity;
-        uint256 supplyCapacity;
-        uint256 feeFactor;
-
-        uint256 scaledTotalSupply;
-        uint256 totalSupply;
-        uint256 totalCollateral;
-        uint256 availableLiquidity;
-        uint256 scaledTotalDebt;
-        uint256 totalDebt;
-
-        uint256 borrowUsageRatio;
-        uint256 optimalUsageRatio;
-        uint256 rateBase;
-        uint256 rateSlope1;
-        uint256 rateSlope2;
-
-        string symbol;
-        uint256 price;
-        bool isUsd;
-    }
-
-    // struct GetLiquidationHealthFactor {
-    //     uint256 healthFactor;
-    //     uint256 healthFactorLiquidationThreshold;
-    //     bool isHealthFactorHigherThanLiquidationThreshold;
-    //     uint256 userTotalCollateralUsd;
-    //     uint256 userTotalDebtUsd;
-    // }
-
     function _getLiquidityAndDebt(
         address account,
         address poolTokenAddress, 
@@ -163,14 +111,6 @@ library ReaderUtils {
         return m;
     }
 
-    // function _getPosition(address dataStore, bytes32 positionKey) internal view returns (Position.Props memory) {
-    //     return PositionStoreUtils.get(dataStore, positionKey);
-    // }
-
-    // function _getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
-    //     return PositionUtils.getPositions(account, dataStore);
-    // }
-
     function _getPool(address dataStore, address poolKey) internal view returns (Pool.Props memory) {
         return PoolStoreUtils.get(dataStore, poolKey);
     }
@@ -185,6 +125,50 @@ library ReaderUtils {
         }
 
         return pools;
+    }
+
+    struct GetPoolInfo {
+        uint256 keyId;
+        uint256 liquidityIndex;
+        uint256 liquidityRate;
+        uint256 borrowIndex;
+        uint256 borrowRate;
+        
+        address interestRateStrategy;
+        address underlyingAsset;
+        address poolToken;
+        address debtToken;
+
+        uint256 configuration;
+        uint256 totalFee;
+        uint256 unclaimedFee;
+        uint256 lastUpdateTimestamp;
+
+        bool isActive;
+        bool isPaused;
+        bool isFrozen;
+        bool borrowingEnabled;
+        uint256 decimals;
+        uint256 borrowCapacity;
+        uint256 supplyCapacity;
+        uint256 feeFactor;
+
+        uint256 scaledTotalSupply;
+        uint256 totalSupply;
+        uint256 totalCollateral;
+        uint256 availableLiquidity;
+        uint256 scaledTotalDebt;
+        uint256 totalDebt;
+
+        uint256 borrowUsageRatio;
+        uint256 optimalUsageRatio;
+        uint256 rateBase;
+        uint256 rateSlope1;
+        uint256 rateSlope2;
+
+        string symbol;
+        uint256 price;
+        bool isUsd;
     }
 
     function _getPoolInfo(address dataStore, address poolKey) internal view returns (GetPoolInfo memory) {
@@ -262,24 +246,32 @@ library ReaderUtils {
         return poolsInfo;
     }
 
-    // function _getMaxAmountToRedeem(address dataStore, address underlyingAsset, address account) internal view returns (uint256) {
-    //     address poolKey = Keys.poolKey(underlyingAsset);
-    //     Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
-    //     PoolUtils.validateEnabledPool(pool, poolKey);
-    //     IPoolToken poolToken = IPoolToken(pool.poolToken);
-    //     uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-    //     return PositionUtils.maxAmountToRedeem(account, dataStore, underlyingAsset, collateralAmount);     
-    // }
+    struct GetPoolPrice {
+        address underlyingAsset;
+        string symbol;
+        uint256 price;
+    }
 
-    // function _getLiquidationHealthFactor(address dataStore, address account) external view returns (GetLiquidationHealthFactor memory) {
-    //     GetLiquidationHealthFactor memory liquidationHealthFactor;
-    //     (   liquidationHealthFactor.healthFactor,
-    //         liquidationHealthFactor.healthFactorLiquidationThreshold,
-    //         liquidationHealthFactor.isHealthFactorHigherThanLiquidationThreshold,
-    //         liquidationHealthFactor.userTotalCollateralUsd,
-    //         liquidationHealthFactor.userTotalDebtUsd
-    //     ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);    
-    //     return liquidationHealthFactor;
-    // }
+    function _getPoolPrice(address dataStore, address poolKey) internal view returns (GetPoolPrice memory) {
+        Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
+        GetPoolPrice memory poolPrice = GetPoolPrice(
+            pool.underlyingAsset,
+            IERC20Metadata(pool.underlyingAsset).symbol(),
+            OracleUtils.getPrice(dataStore, pool.underlyingAsset)
+        );
+
+        return poolPrice;
+    }
+
+    function _getPoolsPrice(address dataStore, uint256 start, uint256 end) internal view returns (GetPoolPrice[] memory) {
+        address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, start, end);
+        GetPoolPrice[] memory poolsPrice = new GetPoolPrice[](poolKeys.length);
+        for (uint256 i; i < poolKeys.length; i++) {
+            address poolKey = poolKeys[i];
+            poolsPrice[i] = _getPoolPrice(dataStore, poolKey);
+        }
+
+        return poolsPrice;
+    }
     
 }
