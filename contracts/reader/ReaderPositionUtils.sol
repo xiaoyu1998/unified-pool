@@ -204,5 +204,9 @@ library ReaderPositionUtils {
         return liquidationHealthFactor;
     }
 
+    function _getLiquidationHealthFactor(address dataStore) external view returns (uint256) {   
+        return PositionStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
+    }
+
     
 }

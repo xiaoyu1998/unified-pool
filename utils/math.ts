@@ -135,7 +135,7 @@ export function calcIndexes(
 }
 
 export function rayMul(a, b){
-    console.log(typeof a, typeof b);
+    //console.log(typeof a, typeof b);
     return (a*b + HALF_PRECISION)/PRECISION;
 }
 
