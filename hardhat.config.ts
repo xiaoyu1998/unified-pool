@@ -13,7 +13,8 @@ const getRpcUrl = (network) => {
 const getEnvAccount = () => {
   const { ACCOUNT_KEY } = process.env;
   if (ACCOUNT_KEY) {
-    return [ACCOUNT_KEY];
+    //return [ACCOUNT_KEY];
+    return ACCOUNT_KEY.split(",");
   }
   return [];
 };

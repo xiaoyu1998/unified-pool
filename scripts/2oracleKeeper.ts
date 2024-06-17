@@ -76,6 +76,8 @@ async function main() {
             multicall.aggregate3(multicallArgs),
             "multicall.aggregate3"
         );
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 }
 

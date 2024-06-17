@@ -92,7 +92,7 @@ async function main() {
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
-    await sendTxn(uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 20)), "uniswapV3MintCallee.mint");
+    await sendTxn(uniswapV3MintCallee.mint(uniswapPool.target, owner.address, tickLower, tickUpper, expandDecimals(10, 15)), "uniswapV3MintCallee.mint");
     console.log("userUsdtAfterMint", await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint", await uni.balanceOf(owner.address)); 
 
