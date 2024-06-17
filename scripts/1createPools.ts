@@ -4,10 +4,12 @@ import { parsePool } from "../utils/helper";
 
 async function main() {
     //create pools
-    const usdtDecimals = getTokens("USDT")["decimals"];
-    const uniDecimals = getTokens("UNI")["decimals"];
     const usdt = getTokens("USDT")["address"];
     const uni  = getTokens("UNI")["address"];
+    const eth  = getTokens("ETH")["address"];
+    const usdtDecimals = getTokens("USDT")["decimals"];
+    const uniDecimals = getTokens("UNI")["decimals"];
+    const ethDecimals = getTokens("ETH")["decimals"];
     const configuration = 0;//TODO:should be assgined to a reasonable configuration
     const poolFactory = await getContract("PoolFactory");
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
@@ -17,6 +19,10 @@ async function main() {
     );
     await sendTxn(
         poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
+        "poolFactory.createPool(uni)"
+    );
+    await sendTxn(
+        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(uni)"
     );
 
@@ -45,8 +51,17 @@ async function main() {
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolUsd", [uni, false]),
+        //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [eth, expandDecimals(120, 25)]),//120%        
+        config.interface.encodeFunctionData("setPoolActive", [eth, true]),
+        config.interface.encodeFunctionData("setPoolFrozen", [eth, false]),
+        config.interface.encodeFunctionData("setPoolPaused", [eth, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [eth, true]),
+        config.interface.encodeFunctionData("setPoolDecimals", [eth, ethDecimals]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [eth, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [eth, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [eth, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [eth, false]),
     ];
-    //const tx = await config.multicall(multicallArgs);
     await sendTxn(
         config.multicall(multicallArgs),
         "config.multicall"

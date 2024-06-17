@@ -15,9 +15,11 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
 }
 
 export const usdtDecimals = 6;
-export const usdtOracleDecimal = 24;
+export const usdtOracleDecimals = 24;
 export const uniDecimals = 18;
-export const uniOracleDecimal = 12;
+export const uniOracleDecimals = 12;
+export const ethDecimals = 18;
+export const ethOracleDecimals = 12;
 
 export const MIN_SQRT_RATIO = BigInt('4295128739')
 export const MAX_SQRT_RATIO = BigInt('1461446703485210103287273052203988822378723970342')

@@ -40,7 +40,7 @@ async function main() {
     while(true){
         const prices = [];
         await fetchPrices().then((priceItems) => {
-            // console.log(priceItems)
+            //console.log(priceItems)
             priceItems.forEach((priceItem) => {
                 try {
                     const token = getTokens(priceItem.tokenSymbol);

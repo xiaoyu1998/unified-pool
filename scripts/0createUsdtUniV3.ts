@@ -1,7 +1,7 @@
 import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
 import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcFee } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
-import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "../utils/constants";
+import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals, ethDecimals, ethOracleDecimals} from "../utils/constants";
 
 import {
   abi as FACTORY_ABI,
@@ -22,18 +22,23 @@ async function main() {
     //create underlyingAssets
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
     const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
+    const eth = await deployContract("MintableToken", ["ETH", "ETH", ethDecimals])
     await sendTxn(usdt.mint(owner.address, expandDecimals(100000000, usdtDecimals)), "usdt.mint");
     await sendTxn(uni.mint(owner.address, expandDecimals(20000000, uniDecimals)), "uni.mint");
+    await sendTxn(eth.mint(owner.address, expandDecimals(10000, ethDecimals)), "eth.mint");
 
     //set oracle
-    const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimal, expandDecimals(1, usdtOracleDecimal)]);
-    const uniOracle = await deployContract("MockAggregator", [uniOracleDecimal, expandDecimals(8, uniOracleDecimal)]);
+    const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimals, expandDecimals(1, usdtOracleDecimals)]);
+    const uniOracle = await deployContract("MockAggregator", [uniOracleDecimals, expandDecimals(8, uniOracleDecimals)]);
+    const ethOracle = await deployContract("MockAggregator", [ethOracleDecimals, expandDecimals(3539, ethOracleDecimals)]);
     const config = await getContract("Config");
     const multicallArgs = [
         config.interface.encodeFunctionData("setOracle", [usdt.target, usdtOracle.target]),
-        config.interface.encodeFunctionData("setOracleDecimals", [usdt.target, usdtOracleDecimal]),
+        config.interface.encodeFunctionData("setOracleDecimals", [usdt.target, usdtOracleDecimals]),
         config.interface.encodeFunctionData("setOracle", [uni.target, uniOracle.target]),
-        config.interface.encodeFunctionData("setOracleDecimals", [uni.target, uniOracleDecimal]),
+        config.interface.encodeFunctionData("setOracleDecimals", [uni.target, uniOracleDecimals]),
+        config.interface.encodeFunctionData("setOracle", [eth.target, ethOracle.target]),
+        config.interface.encodeFunctionData("setOracleDecimals", [eth.target, ethOracleDecimals]),
     ];
     await sendTxn(config.multicall(multicallArgs), "config.multicall");
 
@@ -42,14 +47,21 @@ async function main() {
         "address":usdt.target, 
         "decimals":usdtDecimals, 
         "oracle":usdtOracle.target,
-        "oracleDecimals":usdtOracleDecimal,
+        "oracleDecimals":usdtOracleDecimals,
     }});
 
     writeTokenAddresses({"UNI": {
         "address":uni.target, 
         "decimals":uniDecimals, 
         "oracle":uniOracle.target,
-        "oracleDecimals":uniOracleDecimal,
+        "oracleDecimals":uniOracleDecimals,
+    }});
+
+    writeTokenAddresses({"ETH": {
+        "address":eth.target, 
+        "decimals":ethDecimals, 
+        "oracle":ethOracle.target,
+        "oracleDecimals":ethOracleDecimals,
     }});
 
     console.log(readTokenAddresses());

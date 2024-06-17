@@ -6,7 +6,7 @@ import { poolFactoryModule } from "../ignition/modules/deployPoolFactory"
 // import { poolInterestRateStrategyModule } from "../ignition/modules/deployPoolInterestRateStrategy"
 import { createAsset, createUniswapV3 } from "./assetsDex";
 import { expandDecimals, bigNumberify } from "./math"
-import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from "./constants";
+import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals} from "./constants";
 import * as keys from "./keys";
 
 export async function deployFixture() {
@@ -57,7 +57,7 @@ export async function deployFixture() {
         "USDT", 
         100000000, 
         usdtDecimals,  
-        usdtOracleDecimal, 
+        usdtOracleDecimals, 
         1
     );
     const [uni, uniOracle] = await createAsset(
@@ -67,7 +67,7 @@ export async function deployFixture() {
         "UNI", 
         10000000, 
         uniDecimals, 
-        uniOracleDecimal, 
+        uniOracleDecimals, 
         8
     );
 
