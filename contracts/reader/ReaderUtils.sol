@@ -250,6 +250,7 @@ library ReaderUtils {
         address underlyingAsset;
         string symbol;
         uint256 price;
+        uint256 decimals;
     }
 
     function _getPoolPrice(address dataStore, address poolKey) internal view returns (GetPoolPrice memory) {
@@ -257,7 +258,8 @@ library ReaderUtils {
         GetPoolPrice memory poolPrice = GetPoolPrice(
             pool.underlyingAsset,
             IERC20Metadata(pool.underlyingAsset).symbol(),
-            OracleUtils.getPrice(dataStore, pool.underlyingAsset)
+            OracleUtils.getPrice(dataStore, pool.underlyingAsset),
+            PoolConfigurationUtils.getDecimals(pool.configuration)
         );
 
         return poolPrice;
