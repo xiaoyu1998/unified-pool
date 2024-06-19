@@ -30,9 +30,16 @@ const config: HardhatUserConfig = {
          }
     },
     networks:{
+        localnet: {
+            url: getRpcUrl("localnet"),
+            chainId: 1998,
+            accounts: getEnvAccount(),
+            blockGasLimit: 20_000_000,
+            gas: 20_000_000,
+        },
         testnet: {
             url: getRpcUrl("testnet"),
-            chainId: 1998,
+            chainId: 31337,
             accounts: getEnvAccount(),
             blockGasLimit: 20_000_000,
             gas: 20_000_000,

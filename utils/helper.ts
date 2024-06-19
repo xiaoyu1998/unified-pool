@@ -80,6 +80,15 @@ export async function getPoolInfo(address) {
     return parsePoolInfo(poolUsdt);
 }
 
+export async function getPoolsInfo(dataStore, reader) {
+    const pools = await reader.getPoolsInfo(dataStore.target);
+    let ps = [];
+    for (let i = 0; i < pools.length; i++) {
+         ps[i] = parsePoolInfo(pools[i]);
+    }
+    return ps;
+}
+
 export function parsePosition(position) {
     const p: Position.PropsStructOutput = {
         account: position[0],
