@@ -47,13 +47,35 @@ npx hardhat run scripts/12executeShort.ts --network localhost
 ```
 #### ClosePosition
 ```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
-npx hardhat run scripts/1createPools.ts --network testnet
-npx hardhat run scripts/2oracleKeeper.ts --network testnet
-npx hardhat run scripts/3executeSupply.ts --network testnet
-npx hardhat run scripts/13executeClosePosition.ts --network testnet
+npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
+npx hardhat run scripts/1createPools.ts --network localhost
+npx hardhat run scripts/2oracleKeeper.ts --network localhost
+npx hardhat run scripts/3executeSupply.ts --network localhost
+npx hardhat run scripts/13executeClosePosition.ts --network localhost
 ```
-## Testnet
+## localnet
+#### [Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
+
+#### Configuration 
+```shell
+1.localnet chainId 1998 
+2.modify IP address and PORT in webSocketUrl and defaultRpcs in utils/network.ts
+3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
+```
+#### Deploy contracts
+```shell
+npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localnet
+```
+#### Close
+```shell
+npx hardhat run scripts/0createUsdtUniV3.ts --network localnet
+npx hardhat run scripts/1createPools.ts --network localnet
+npx hardhat run scripts/2oracleKeeper.ts --network localnet
+npx hardhat run scripts/3executeSupply.ts --network localnet
+npx hardhat run scripts/14executeClose.ts --network localnet
+```
+
+## testnet
 #### [Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
 
 #### Configuration 
@@ -66,11 +88,7 @@ npx hardhat run scripts/13executeClosePosition.ts --network testnet
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
 ```
-#### Close
+#### print
 ```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network testnet
-npx hardhat run scripts/1createPools.ts --network testnet
-npx hardhat run scripts/2oracleKeeper.ts --network testnet
-npx hardhat run scripts/3executeSupply.ts --network testnet
-npx hardhat run scripts/14executeClose.ts --network testnet
+npx hardhat run scripts/15print.ts --network testnet
 ```
