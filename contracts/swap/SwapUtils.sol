@@ -74,6 +74,8 @@ library SwapUtils {
         uint256 amountIn;
         uint256 amountOut;
         uint256 price;
+        uint256 priceIn;
+        uint256 priceOut;
 
         uint256 collateralIn;
         uint256 debtScaledIn;
@@ -152,7 +154,7 @@ library SwapUtils {
         vars.poolTokenOut.addCollateral(account, vars.amountOut);
 
         //update position price
-        if (vars.poolInIsUsd || vars.poolOutIsUsd) {
+        if (vars.poolInIsUsd || vars.poolOutIsUsd) {//swap with usd
             vars.price = OracleUtils.calcPrice(
                 vars.amountIn,
                 PoolConfigurationUtils.getDecimals(vars.poolIn.configuration), 
@@ -168,6 +170,12 @@ library SwapUtils {
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
                 PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
+        } else {//swap without usd
+            vars.priceIn = OracleUtils.getPrice(params.dataStore, params.underlyingAssetIn);
+            PositionUtils.shortPosition(vars.positionIn,  vars.priceIn, vars.amountIn, true);
+
+            vars.priceOut = OracleUtils.getPrice(params.dataStore, params.underlyingAssetOut);
+            PositionUtils.longPosition(vars.positionOut, vars.priceOut, vars.amountOut, true);
         }
 
         //update postions
@@ -317,6 +325,12 @@ library SwapUtils {
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
                 PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
+        } else {//swap without usd
+            vars.priceIn = OracleUtils.getPrice(params.dataStore, params.underlyingAssetIn);
+            PositionUtils.shortPosition(vars.positionIn,  vars.priceIn, vars.amountIn, true);
+
+            vars.priceOut = OracleUtils.getPrice(params.dataStore, params.underlyingAssetOut);
+            PositionUtils.longPosition(vars.positionOut, vars.priceOut, vars.amountOut, true);
         }
 
         //update postions
