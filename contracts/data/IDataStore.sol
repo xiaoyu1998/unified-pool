@@ -32,6 +32,4 @@ interface IDataStore {
     function getBytes32ValuesAt(bytes32 setKey, uint256 start, uint256 end) external view returns (bytes32[] memory);
 
     function incrementUint(bytes32 key, uint256 value) external returns (uint256);
-
-
 }

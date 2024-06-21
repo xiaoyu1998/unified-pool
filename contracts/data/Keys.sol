@@ -73,7 +73,7 @@ library Keys {
         return keccak256(abi.encode(ORACLE_DECIMALS, underlyingAsset));
     }
 
-    // @dev key for the oracle key
+    // @dev key for the oracle 
     // @param underlyingAsset the underlyingAsset for the oracle key
     function oracleKey(address underlyingAsset) internal pure returns (bytes32) {
         return keccak256(abi.encode(ORACLE, underlyingAsset));
@@ -86,14 +86,14 @@ library Keys {
     }
 
     // @dev key for the pool
-    // @param underlyingAsset the underlying asset
+    // @param underlyingAsset the underlying asset for the pool
     function poolKey(address underlyingAsset) internal pure returns (address) {
         // return keccak256(abi.encode(ACCOUNT_POSITION, underlyingAsset, account));
         return underlyingAsset;
     }
 
-    // @dev key for the account position list
-    // @param account the account for the list
+    // @dev key for the account position
+    // @param account the account for the position
     function accountPositionKey(address underlyingAsset, address account) internal pure returns (bytes32) {
         return keccak256(abi.encode(ACCOUNT_POSITION, underlyingAsset, account));
     }
@@ -104,21 +104,21 @@ library Keys {
         return keccak256(abi.encode(ACCOUNT_POSITION_LIST, account));
     }
 
-    // @dev key for the claimable fee amount
-    // @param market the market for the fee
-    // @param token the token for the fee
-    function claimableFeeAmountKey(address pool, address token) internal pure returns (bytes32) {
-        return keccak256(abi.encode(CLAIMABLE_FEE_AMOUNT, pool, token));
-    }
+    // // @dev key for the claimable fee amount
+    // // @param pool the pool for the fee
+    // // @param token the token for the fee
+    // function claimableFeeAmountKey(address pool, address token) internal pure returns (bytes32) {
+    //     return keccak256(abi.encode(CLAIMABLE_FEE_AMOUNT, pool, token));
+    // }
 
-    // @dev key for gas to forward for token transfer
-    // @param the token to check
-    // @return key for gas to forward for token transfer
-    function tokenTransferGasLimit(address token) internal pure returns (bytes32) {
-        return keccak256(abi.encode(
-            TOKEN_TRANSFER_GAS_LIMIT,
-            token
-        ));
-   }
+   //  // @dev key for gas to forward for token transfer
+   //  // @param the token to check
+   //  // @return key for gas to forward for token transfer
+   //  function tokenTransferGasLimit(address token) internal pure returns (bytes32) {
+   //      return keccak256(abi.encode(
+   //          TOKEN_TRANSFER_GAS_LIMIT,
+   //          token
+   //      ));
+   // }
 
 }

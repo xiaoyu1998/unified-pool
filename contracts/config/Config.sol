@@ -57,7 +57,6 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     function setHealthFactorLiquidationThreshold(
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
-        // dataStore.setUint(Keys.HEALTH_FACTOR_LIQUIDATION_THRESHOLD, threshold);
         PositionStoreUtils.setHealthFactorLiquidationThreshold(address(dataStore), threshold);
     }
 
