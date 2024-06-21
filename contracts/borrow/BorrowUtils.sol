@@ -55,7 +55,7 @@ library BorrowUtils {
     }
 
     // @dev executes a borrow
-    // @param account the withdrawing account
+    // @param account the borrowing account
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
         Printer.log("-------------------------executeBorrow--------------------------");  
@@ -126,9 +126,12 @@ library BorrowUtils {
     }
 
     // 
-    // @notice Validates a borrow action.
+    // @dev Validates a borrow action.
+    // @param account The borrowing account
+    // @param dataStore DataStore
+    // @param pool The state of the pool
     // @param poolCache The cached data of the pool
-    // @param amount The amount to be Borrow
+    // @param amountToBorrow The amount to be Borrow
     //
     function validateBorrow(
         address account,

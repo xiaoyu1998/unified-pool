@@ -64,7 +64,6 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     function setDebtMultiplierFactorForRedeem(
         uint256 multiplierFactor
     ) external onlyConfigKeeper nonReentrant {
-        // dataStore.setUint(Keys.DEBT_MULTIPLIER_FACTOR_FOR_REDEEM, multiplierFactor);
         PositionStoreUtils.setDebtMultiplierFactorForRedeem(address(dataStore), multiplierFactor);
     }
 
@@ -72,7 +71,6 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         address underlyingAsset,
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
-        // dataStore.setUint(Keys.healthFactorCollateralRateThresholdKey(underlyingAsset), threshold);
         PositionStoreUtils.setHealthFactorCollateralRateThreshold(address(dataStore), underlyingAsset, threshold);
     } 
     

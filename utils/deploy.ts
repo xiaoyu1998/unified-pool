@@ -108,8 +108,7 @@ export async function getContract(name) {
         name == "DataStore" ||
         name == "PoolStoreUtils" ||
         name == "PositionStoreUtils" ||
-        name == "FeeUtils" ||
-//        name == "ConfigStoreUtils" ||     
+        name == "FeeUtils" ||  
         name == "OracleStoreUtils"  ||
         name == "Router" ||
         name == "PoolInterestRateStrategy" ||
@@ -135,7 +134,6 @@ export async function getContract(name) {
     const dataStore = await getContract("DataStore");
     const poolStoreUtils = await getContract("PoolStoreUtils");
     const positionStoreUtils = await getContract("PositionStoreUtils");
-//    const feeUtils = await getContract("FeeUtils");
     const poolEventUtils = await getContract("PoolEventUtils");
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
@@ -151,15 +149,6 @@ export async function getContract(name) {
         });
     }
 
-    // if (name == "ConfigStoreUtils") {
-    //     const address = getDeployedContractAddresses(name);
-    //     return await contractAtOptions(name, address, {
-    //         libraries: {
-    //             PoolStoreUtils: poolStoreUtils,
-    //         },         
-    //     });
-    // }
-
     if (name == "OracleUtils") {
         const address = getDeployedContractAddresses(name);
         return await contractAtOptions(name, address, {
@@ -168,7 +157,7 @@ export async function getContract(name) {
             },         
         });
     }
-    //const configStoreUtils = await getContract("ConfigStoreUtils");
+
     const oracleUtils = await getContract("OracleUtils");
 
     if (name == "ReaderPositionUtils") {
@@ -229,7 +218,6 @@ export async function getContract(name) {
                 RepayEventUtils: repayEventUtils,
                 PoolEventUtils: poolEventUtils,
                 OracleUtils: oracleUtils,
-//                FeeUtils: feeUtils,
             },        
         });      
     }
@@ -242,7 +230,6 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-               // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 DexStoreUtils: dexStoreUtils,
                 SwapEventUtils: swapEventUtils,
@@ -258,7 +245,6 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 SupplyEventUtils: supplyEventUtils,
                 PoolEventUtils: poolEventUtils,
- //               FeeUtils: feeUtils,
             },        
         });
 
@@ -278,7 +264,6 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 WithdrawEventUtils: withdrawEventUtils,
                 PoolEventUtils: poolEventUtils,
- //               FeeUtils: feeUtils,
             },        
         });
         const address = getDeployedContractAddresses(name);
@@ -317,8 +302,6 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-//                FeeUtils: feeUtils,
-                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 BorrowEventUtils: borrowEventUtils,
                 PoolEventUtils: poolEventUtils,
@@ -351,7 +334,6 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 RedeemEventUtils: redeemEventUtils,
             },        
@@ -372,7 +354,6 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-               // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 DexStoreUtils: dexStoreUtils,
                 SwapEventUtils: swapEventUtils,
@@ -394,7 +375,6 @@ export async function getContract(name) {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
-                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 LiquidationEventUtils: liquidationEventUtils,
                 PoolEventUtils: poolEventUtils,
@@ -420,7 +400,6 @@ export async function getContract(name) {
                 PositionStoreUtils: positionStoreUtils,
                 RepayUtils: repayUtils,
                 SwapUtils: swapUtils,
-                // ConfigStoreUtils: configStoreUtils,
                 OracleUtils: oracleUtils,
                 CloseEventUtils: closeEventUtils,
             },        

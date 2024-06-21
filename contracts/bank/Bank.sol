@@ -40,23 +40,6 @@ contract Bank is RoleModule {
         _transferOut(token, receiver, amount);
     }
 
-   //  // @dev transfer tokens from this contract to a receiver
-   //  // handles native token transfers as well
-   //  //
-   //  // @param token the token to transfer
-   //  // @param amount the amount to transfer
-   //  // @param receiver the address to transfer to
-   //  // @param shouldUnwrapNativeToken whether to unwrap the wrapped native token
-   //  // before transferring
-   //  function transferOut(
-   //      address token,
-   //      address receiver,
-   //      uint256 amount
-   // //     bool shouldUnwrapNativeToken
-   //  ) external onlyController {
-   //       _transferOut(token, receiver, amount);
-   //  }
-
     // @dev transfer tokens from this contract to a receiver
     //
     // @param token the token to transfer

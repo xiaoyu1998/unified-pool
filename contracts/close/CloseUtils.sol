@@ -28,8 +28,8 @@ import "../event/EventEmitter.sol";
 import "./CloseEventUtils.sol";
 
 // @title CloseUtils
-// @dev Library for close position functions, to help with the close of position
-// into a market in return for market tokens
+// @dev Library for close position functions, to help with repay the debts
+// and sell the collaterals in dex of positions
 library CloseUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -142,8 +142,9 @@ library CloseUtils {
         );
     }
 
-    // @notice Validates a close position action.
-    // @param poolCache The cached data of the pool
+    // @dev Validates a close position action.
+    // @param pool The state of the pool
+    // @param position The state of the position
     // @param collateralAmount The amount of collateral
     // @param debtAmount The amount of debt
     function validateClosePosition(
@@ -197,7 +198,7 @@ library CloseUtils {
         uint256 amountUsdAfterBuyCollateralAndRepay;
     }
     // @dev executes close an account all positions 
-    // @param account the closing account's positions
+    // @param account the closing account
     // @param params ExecuteCloseParams
     function executeClose(
         address account, 
@@ -328,10 +329,10 @@ library CloseUtils {
         );
     }
 
-    // @notice Validates a close position action.
-    // @param poolCache The cached data of the pool
-    // @param collateralAmount The amount of collateral
-    // @param debtAmount The amount of debt
+    // @notice Validates a close action.
+    // @param account The closing account
+    // @param dataStore DataStore
+    // @param positionsLength The positions number
     function validateClose(
         address account, 
         address dataStore,
