@@ -1,5 +1,5 @@
 import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
-import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcFee } from "../utils/math"
+import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcSqrtPriceLimitX96, calcFee } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals, ethDecimals, ethOracleDecimals} from "../utils/constants";
 
@@ -125,6 +125,7 @@ async function main() {
     console.log("fee", await reader.getDexPoolSwapConstantFee(dataStore, uniAddress, usdtAddress, uniAmountIn)); 
     console.log("priceImpact", calcPriceImpact(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); 
     console.log("silppage", calcSilppage(usdtAmountOut, uniAmountIn, startSqrtPriceX96, uniIsZero).toString()); //delete feeAmount in amountIn to get the silppage without fee
+    console.log("startSqrtPriceX96", startSqrtPriceX96, "sqrtPriceLimitX96", calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", uniIsZero).toString());
 
     //estimateGas
     const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0);

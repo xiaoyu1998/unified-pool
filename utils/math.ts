@@ -31,6 +31,17 @@ export function encodePriceSqrt(amount1: BigInt, amount0: BigInt): BigInt {
       )
 }
 
+// returns the sqrt price as a 64x96
+export function encodePriceSqrt2(price: String): BigInt {
+    return BigInt(
+        new bn(price)
+          .sqrt()
+          .multipliedBy(new bn(2).pow(96))
+          .integerValue(3)
+          .toString()
+      )
+}
+
 export function decodePriceSqrt(sqrtPriceX96: BigInt): bn {
     return new bn((sqrtPriceX96 ** BigInt(2)).toString()).div(new bn(2).pow(192));
 }
@@ -59,6 +70,21 @@ export function calcPriceImpact(
     startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
     const quoteOutputAmount = startPrice.times(amountIn.toString());
     return (quoteOutputAmount.minus(amountOut.toString())).div(quoteOutputAmount);
+}
+
+export function calcSqrtPriceLimitX96(
+    sqrtPriceX96: BigInt,
+    maxSilppage: String,
+    isZeroForOne: bool
+): BigInt {
+    let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
+    const denominator = isZeroForOne?(new bn(1).plus(maxSilppage)):(new bn(1).plus(maxSilppage));
+    //console.log("bn(1) + bn(maxSilppage)", bn(2).toString());
+    console.log("denominator", denominator.toString());
+    const endPrice = startPrice.div(denominator);
+    console.log("startPrice", startPrice.toString());
+    console.log("endPrice", endPrice.toString());
+    return encodePriceSqrt2(endPrice.toString());
 }
 
 export function calcFee(

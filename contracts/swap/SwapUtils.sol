@@ -309,7 +309,7 @@ library SwapUtils {
         vars.poolTokenOut.addCollateral(account, vars.amountOut);
         
         //update position price
-        if (vars.poolInIsUsd || vars.poolOutIsUsd) {
+        if (vars.poolInIsUsd || vars.poolOutIsUsd) {//swap with usd
             vars.price = OracleUtils.calcPrice(
                 vars.amountIn,
                 PoolConfigurationUtils.getDecimals(vars.poolIn.configuration), 
