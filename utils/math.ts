@@ -78,7 +78,7 @@ export function calcSqrtPriceLimitX96(
     isZeroForOne: bool
 ): BigInt {
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-    const denominator = isZeroForOne?(new bn(1).plus(maxSilppage)):(new bn(1).plus(maxSilppage));
+    const denominator = isZeroForOne?(new bn(1).minus(maxSilppage)):(new bn(1).plus(maxSilppage));
     //console.log("bn(1) + bn(maxSilppage)", bn(2).toString());
     console.log("denominator", denominator.toString());
     const endPrice = startPrice.div(denominator);
