@@ -123,8 +123,11 @@ contract EventEmitter is RoleModule {
 
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
-    // @dev emit a general event log
-    // @param eventName the name of the event
+    // @dev emit a Supply event
+    // @param underlyingAsset the underlyingAsset of the pool
+    // @param account the account of the event
+    // @param to the to of the event
+    // @param supplyAmount the supplyAmount of the event
     function emitSupply(
         address underlyingAsset,
         address account,

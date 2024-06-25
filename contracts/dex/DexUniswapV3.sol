@@ -47,7 +47,6 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         address to,
         uint256 sqrtPriceLimitX96
     ) external override{
-        //uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
         uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
             return _swapExact0For1(from, _pool, amountIn, to, priceLimit);
@@ -66,7 +65,6 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         address to,
         uint256 sqrtPriceLimitX96
     ) external override{
-        //uint160 sqrtPriceLimitX96 = getSqrtPriceLimitX96(tokenIn);
         uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
             return _swap0ForExact1(from, _pool, amountOut, to, priceLimit);
@@ -184,8 +182,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
     
     /// @inheritdoc IDex
     function getSwapFee(uint256 amountIn) public view returns(uint256) {
-        //return Math.mulDiv(amountIn, _feeAmount, 1e6 - _feeAmount);
-        return Math.mulDiv(amountIn, _feeAmount, 1e6);
+            return Math.mulDiv(amountIn, _feeAmount, 1e6);
     }
 
 

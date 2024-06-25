@@ -54,7 +54,7 @@ library DepositUtils {
     }
 
     // @dev executes a deposit
-    // @param account the depositng account
+    // @param account the depositing account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
         Printer.log("-------------------------executeDeposit--------------------------");
@@ -115,7 +115,7 @@ library DepositUtils {
 
     //
     // @notice Validates a deposit action.
-    // @param pool The cached data of the pool
+    // @param pool The state of the pool
     // @param amount The amount to be deposit
     //
     function validateDeposit(

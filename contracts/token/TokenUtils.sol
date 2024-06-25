@@ -30,7 +30,7 @@ library TokenUtils {
     }
 
    
-   // @param token The address of the ERC20 token that is being transferred.
+    // @param token The address of the ERC20 token that is being transferred.
     // @param receiver The address of the recipient of the `token` transfer.
     // @param amount The amount of `token` to transfer.
     function transfer(

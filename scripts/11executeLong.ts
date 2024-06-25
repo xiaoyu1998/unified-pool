@@ -53,7 +53,7 @@ async function main() {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
         amount: borrowAmmount,
-        sqrtPriceLimitX96: 0
+        sqrtPriceLimitX96: BigInt("24450341851670856832067953828192382")
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),

@@ -34,19 +34,19 @@ async function main() {
 
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
-        underlyingAssetIn: usdtAddress,
+        underlyingAssetIn: ethers.ZeroAddress,
         underlyingAssetOut: uniAddress,
         amount: expandDecimals(100000, usdtDecimals),
-        sqrtPriceLimitX96: 0
+        sqrtPriceLimitX96: BigInt("24450341851670856832067953828192382")
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
-    await sendTxn(
-        exchangeRouter.multicall(multicallArgs),
-        "exchangeRouter.multicall"
-    );
+    const tx = await exchangeRouter.multicall.staticCall(multicallArgs);
+    // await sendTxn(
+    //     exchangeRouter.multicall(multicallArgs),
+    //     "exchangeRouter.multicall"
+    // );
 
     //print 
     const poolUsdtAfterSwap = await getPoolInfo(usdtAddress); 
