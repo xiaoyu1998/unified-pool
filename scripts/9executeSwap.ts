@@ -35,14 +35,14 @@ async function main() {
     //
     const usdtIsZero =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
     const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
-    const quoterAddress = "0xF85895D097B2C25946BB95C4d11E2F3c035F8f0C";
+    const quoterAddress = "0x3eA845dB1be0461dDf41267e6322aB7A57000621";
     const quoter = await contractAt("Quoter", quoterAddress);
-    const uniAmountIn = expandDecimals(1000, uniDecimals);
+    const usdtAmountIn = expandDecimals(10000, usdtDecimals);
     const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
         usdtAddress,
         uniAddress, 
         feeAmount,
-        uniAmountIn,
+        usdtAmountIn,
         0
     );
 
