@@ -78,7 +78,7 @@ npx hardhat run scripts/14executeClose.ts --network localnet
 ## testnet
 #### Configuration 
 ```shell
-1.export ACCOUNT_KEY="privateKey for running scripts"
+export ACCOUNT_KEY="privateKey for running scripts"
 ```
 #### print
 ```shell
