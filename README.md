@@ -76,11 +76,9 @@ npx hardhat run scripts/14executeClose.ts --network localnet
 ```
 
 ## testnet
-#### [Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
-
 #### Configuration 
 ```shell
-1.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
+1.export ACCOUNT_KEY="privateKey for running scripts"
 ```
 #### print
 ```shell
