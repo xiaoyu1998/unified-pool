@@ -80,13 +80,7 @@ npx hardhat run scripts/14executeClose.ts --network localnet
 
 #### Configuration 
 ```shell
-1.testnet chainId 1998 
-2.modify IP address and PORT in webSocketUrl and defaultRpcs in utils/network.ts
-3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
-```
-#### Deploy contracts
-```shell
-npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network testnet
+1.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
 ```
 #### print
 ```shell
