@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
         },
         testnet: {
             url: getRpcUrl("testnet"),
-            chainId: 31337,
+            chainId: 1998,
             accounts: getEnvAccount(),
             blockGasLimit: 20_000_000,
             gas: 20_000_000,

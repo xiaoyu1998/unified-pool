@@ -3,11 +3,11 @@ import { expandDecimals } from "../utils/math";
 import { getPool } from "../utils/helper";
 
 async function main() {
-    // const accounts = await ethers.getSigners();
-    // const owner = accounts[0];
-    // const users = accounts.slice(1);
+    const accounts = await ethers.getSigners();
+    const owner = accounts[0];
+    const users = accounts.slice(1);
 
-    // //init contracts
+    //init contracts
     // const exchangeRouter = await getContract("ExchangeRouter"); 
     // const router = await getContract("Router");
     // const dataStore = await getContract("DataStore");   
@@ -26,28 +26,33 @@ async function main() {
     //     console.log("eventEmitter Borrow" ,event);
     // });
 
-    // //transfer usdt and eth
-    // const usdtDecimals = getTokens("USDT")["decimals"];
-    // const usdtAddress = getTokens("USDT")["address"];
-    // const usdt = await contractAt("MintableToken", usdtAddress);
+    //transfer usdt and eth
+    const usdtDecimals = getTokens("USDT")["decimals"];
+    const usdtAddress = getTokens("USDT")["address"];
+    const usdt = await contractAt("MintableToken", usdtAddress);
 
-    // const uniDecimals = getTokens("UNI")["decimals"];
-    // const uniAddress = getTokens("UNI")["address"];
-    // const uni = await contractAt("MintableToken", uniAddress);
-    // const amountUsdt = expandDecimals(10000, usdtDecimals);
-    // //console.log("owner",await usdt.balanceOf(owner)); 
+    const uniDecimals = getTokens("UNI")["decimals"];
+    const uniAddress = getTokens("UNI")["address"];
+    const uni = await contractAt("MintableToken", uniAddress);
+    const amountUsdt = expandDecimals(2000000, usdtDecimals);
+    const amountUni = expandDecimals(200000, uniDecimals);
+    //console.log("owner",await usdt.balanceOf(owner)); 
 
-    // //transfer usdt and eth
-    // for (const user of users) {
-    //     const amountEth = expandDecimals(1, 18);
-    //     await sendTxn(
-    //         usdt.transfer(user, amountUsdt), `usdt.transfer(${user.address} ${amountUsdt})`
-    //     );
+    //transfer usdt and eth
+    for (const user of users) {
+        const amountEth = expandDecimals(1, 18);
+        await sendTxn(
+            usdt.transfer(user, amountUsdt), `usdt.transfer(${user.address} ${amountUsdt})`
+        );
 
-    //     await sendTxn(
-    //         owner.sendTransaction({to:user, value:amountEth}), `owner.transfer(${user.address} ${amountEth})`
-    //     );
-    // };
+         await sendTxn(
+            uni.transfer(user, amountUni), `uni.transfer(${user.address} ${amountUni})`
+        );
+
+        await sendTxn(
+            owner.sendTransaction({to:user, value:amountEth}), `owner.transfer(${user.address} ${amountEth})`
+        );
+    };
 
     // for (const user of users) {
     //     await sendTxn(
@@ -76,11 +81,11 @@ async function main() {
     //     );
     // };
 
-    const config = await getContract("Config");
-    await sendTxn(
-        config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
-        "config.setHealthFactorLiquidationThreshold"
-    );
+    // const config = await getContract("Config");
+    // await sendTxn(
+    //     config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
+    //     "config.setHealthFactorLiquidationThreshold"
+    // );
 
 }
 

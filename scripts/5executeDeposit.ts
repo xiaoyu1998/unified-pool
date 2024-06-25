@@ -10,10 +10,10 @@ async function main() {
     const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
-    const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Deposit", (pool, depositer, amount, collateral, debtScaled) =>{
-        console.log("eventEmitter Deposit" ,pool, depositer, amount, collateral, debtScaled);
-    }); 
+    // const eventEmitter = await getEventEmitter();  
+    // eventEmitter.on("Deposit", (pool, depositer, amount, collateral, debtScaled) =>{
+    //     console.log("eventEmitter Deposit" ,pool, depositer, amount, collateral, debtScaled);
+    // }); 
     
     //approve allowances to the router
     const usdtDecimals = getTokens("USDT")["decimals"];
