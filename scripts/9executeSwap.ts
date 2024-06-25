@@ -1,5 +1,5 @@
 import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
-import { expandDecimals, encodePriceSqrt, calcSqrtPriceLimitX96 } from "../utils/math";
+import { expandDecimals, encodePriceSqrt, calcSqrtPriceLimitX96, calcPriceImpact } from "../utils/math";
 import { getPoolInfo, getLiquidityAndDebts, getPositions} from "../utils/helper";
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";
 
@@ -33,12 +33,12 @@ async function main() {
     const uni = await contractAt("MintableToken", uniAddress);
 
     //
-    const usdtIsZero =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
+    const isZeroForOne =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
     const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
     const quoterAddress = "0x3eA845dB1be0461dDf41267e6322aB7A57000621";
     const quoter = await contractAt("Quoter", quoterAddress);
     const usdtAmountIn = expandDecimals(10000, usdtDecimals);
-    const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
+    const [uniAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
         usdtAddress,
         uniAddress, 
         feeAmount,
@@ -46,7 +46,9 @@ async function main() {
         0
     );
 
-    const sqrtPriceLimitX96 = calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", usdtIsZero).toString();
+    const sqrtPriceLimitX96 = calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", isZeroForOne);
+    console.log("sqrtPriceLimitX96", sqrtPriceLimitX96.toString()); 
+    console.log("priceImpact", calcPriceImpact(uniAmountOut, usdtAmountIn, startSqrtPriceX96, isZeroForOne).toString()); 
 
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
