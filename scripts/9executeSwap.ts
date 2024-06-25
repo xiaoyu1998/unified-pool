@@ -9,21 +9,21 @@ async function main() {
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
-    // const eventEmitter = await getEventEmitter();  
-    // eventEmitter.on("Swap", (
-    //     underlyingAssetIn, 
-    //     underlyingAssetOut, 
-    //     account,
-    //     amountIn, 
-    //     amountOut, 
-    //     fee,
-    //     collateralIn,
-    //     debtScaledIn,
-    //     collateralOut,
-    //     debtScaledOut
-    //     ) =>{
-    //     console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut, fee, collateralIn, debtScaledIn, collateralOut, debtScaledOut);
-    // });
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Swap", (
+        underlyingAssetIn, 
+        underlyingAssetOut, 
+        account,
+        amountIn, 
+        amountOut, 
+        fee,
+        collateralIn,
+        debtScaledIn,
+        collateralOut,
+        debtScaledOut
+        ) =>{
+        console.log("eventEmitter Swap" ,underlyingAssetIn, underlyingAssetOut, account, amountIn, amountOut, fee, collateralIn, debtScaledIn, collateralOut, debtScaledOut);
+    });
 
     const usdtDecimals = getTokens("USDT")["decimals"];
     const uniDecimals = getTokens("UNI")["decimals"];
@@ -37,8 +37,8 @@ async function main() {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
         amount: expandDecimals(10000, usdtDecimals),
-        sqrtPriceLimitX96: BigInt("257050102320719215204012")
-        //sqrtPriceLimitX96: 0
+        //sqrtPriceLimitX96: BigInt("257050102320719215204012")
+        sqrtPriceLimitX96: 0
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),

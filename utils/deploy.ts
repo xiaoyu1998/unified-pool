@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import parse from 'csv-parse';
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
-import {deployAddresses, webSocketUrl} from "./network"
+import {assetAddresses, deployAddresses, webSocketUrl} from "./network"
 
 export async function sendTxn(txnPromise, label) {
     const txn = await txnPromise
@@ -54,8 +54,6 @@ export async function contractAtOptions(name, address, options, provider) {
 }
 
 export function getDeployedContractAddresses(name){
-    // return deployed_address[`${name}#${name}`];
-    //console.log("HARDHAT_NETWORK", process.env.HARDHAT_NETWORK);
     if (!process.env.HARDHAT_NETWORK){
         process.env.HARDHAT_NETWORK = 'localhost';
     }
@@ -64,18 +62,27 @@ export function getDeployedContractAddresses(name){
     return json[`${name}#${name}`];    
 }
 
-const tmpAddressesFilepath = path.join(__dirname, '..', '..', `.tmp-addresses-${process.env.HARDHAT_NETWORK}.json`)
-
+// const tmpAddressesFilepath = path.join(__dirname, '..', '..', `.tmp-addresses-${process.env.HARDHAT_NETWORK}.json`)
 export function readTokenAddresses() {
-    if (fs.existsSync(tmpAddressesFilepath)) {
-        return JSON.parse(fs.readFileSync(tmpAddressesFilepath))
+    if (!process.env.HARDHAT_NETWORK){
+        process.env.HARDHAT_NETWORK = 'localhost';
+    }
+    const assetAddressFile = path.join(__dirname, '..', assetAddresses[`${process.env.HARDHAT_NETWORK}`]);
+
+    if (fs.existsSync(assetAddressFile)) {
+        return JSON.parse(fs.readFileSync(assetAddressFile))
     }
     return {}
 }
 
 export function writeTokenAddresses(json) {
-    const tmpAddresses = Object.assign(readTokenAddresses(), json)
-    fs.writeFileSync(tmpAddressesFilepath, JSON.stringify(tmpAddresses))
+    if (!process.env.HARDHAT_NETWORK){
+        process.env.HARDHAT_NETWORK = 'localhost';
+    }
+    const assetAddressFile = path.join(__dirname, '..', assetAddresses[`${process.env.HARDHAT_NETWORK}`]);
+
+    const assets = Object.assign(readTokenAddresses(), json)
+    fs.writeFileSync(assetAddressFile, JSON.stringify(assets))
 }
 
 export function getTokens(name) {

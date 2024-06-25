@@ -1,0 +1,12 @@
+{"USDT": {
+      "address": "0xFF70bA5c0322a30FD0052D2AF03bbCa3DfcC4d1A",
+      "decimals": 6,
+      "oracle": "0x3EcBa8293465Fa661E502F256DE1B44e7d7a7244",
+      "oracleDecimals": 8
+    },
+  "UNI": {
+    "address": "0xfa5381501166d8c6689D434EDF6829883E15f522",
+    "decimals": 18,
+    "oracle": "0x50AEdc09Cd38556aca9901dbc28005b33cDaE9b6",
+    "oracleDecimals": 8
+  }}
