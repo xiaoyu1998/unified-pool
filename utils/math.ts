@@ -55,10 +55,22 @@ export function calcSilppage(
     const currentPrice = bn(amountOut.toString())
                        .div(amountIn.toString());
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-    startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
+    startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);//price for in
     const deltaAbs = currentPrice.minus(startPrice).abs();
     return deltaAbs.div(currentPrice);
 }
+
+// export function calcPriceImpact(
+//     amountOut: BigInt, 
+//     amountIn: BigInt, 
+//     sqrtPriceX96: BigInt,
+//     isZeroForOne:bool 
+// ): BigInt {
+//     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
+//     startPrice = isZeroForOne?bn(1).div(startPrice):startPrice;
+//     const quoteOutputAmount = bn(amountIn.toString()).div(startPrice);
+//     return (quoteOutputAmount.minus(amountOut.toString())).abs().div(quoteOutputAmount);
+// }
 
 export function calcPriceImpact(
     amountOut: BigInt, 
@@ -67,9 +79,14 @@ export function calcPriceImpact(
     isZeroForOne:bool 
 ): BigInt {
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-    startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);
+    startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);//price for in
     const quoteOutputAmount = startPrice.times(amountIn.toString());
-    return (quoteOutputAmount.minus(amountOut.toString())).div(quoteOutputAmount);
+    // console.log("startPrice", startPrice.toString());
+    // console.log("amountIn", amountIn);
+    // console.log("amountOut", amountOut);
+    // console.log("quoteOutputAmount", quoteOutputAmount.toString());
+    return (quoteOutputAmount.minus(amountOut.toString())).abs().div(quoteOutputAmount);
+
 }
 
 export function calcSqrtPriceLimitX96(
