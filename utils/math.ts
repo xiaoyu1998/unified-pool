@@ -81,11 +81,12 @@ export function calcPriceImpact(
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
     startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);//price for in
     const quoteOutputAmount = startPrice.times(amountIn.toString());
-    // console.log("startPrice", startPrice.toString());
+    console.log("isZeroForOne", isZeroForOne);
+    console.log("startPriceIn", startPrice.toString());
     // console.log("amountIn", amountIn);
     // console.log("amountOut", amountOut);
     // console.log("quoteOutputAmount", quoteOutputAmount.toString());
-    return (quoteOutputAmount.minus(amountOut.toString())).abs().div(quoteOutputAmount);
+    return (quoteOutputAmount.minus(amountOut.toString())).div(quoteOutputAmount);
 
 }
 
@@ -95,12 +96,13 @@ export function calcSqrtPriceLimitX96(
     isZeroForOne: bool
 ): BigInt {
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-    const denominator = isZeroForOne?(new bn(1).minus(maxSilppage)):(new bn(1).plus(maxSilppage));
+    //const denominator = isZeroForOne?(new bn(1).minus(maxSilppage)):(new bn(1).plus(maxSilppage));
+    const denominator = isZeroForOne?(new bn(1).plus(maxSilppage)):(new bn(1).minus(maxSilppage));
     //console.log("bn(1) + bn(maxSilppage)", bn(2).toString());
     console.log("denominator", denominator.toString());
     const endPrice = startPrice.div(denominator);
-    console.log("startPrice", startPrice.toString());
-    console.log("endPrice", endPrice.toString());
+    console.log("startPrice0", startPrice.toString());
+    console.log("endPrice0", endPrice.toString());
     return encodePriceSqrt2(endPrice.toString());
 }
 
