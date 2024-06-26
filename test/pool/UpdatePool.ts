@@ -123,8 +123,6 @@ describe("Pool", () => {
            pool2.borrowRate,
            interestPaymentPeriodInSeconds + bigNumberify(1)//TODO:why should add this one?
        ));
-       console.log("nextLiquidityIndex", nextLiquidityIndex);
-       console.log("nextBorrowIndex", nextBorrowIndex);
        const { liquidityRate, borrowRate } = calcRates(
            ratebase,
            optimalUsageRation,
@@ -141,7 +139,7 @@ describe("Pool", () => {
 
     it("UpdatePool PoolNotFound", async () => {
         await expect(
-            poolTest.updatePool(eventEmitter, dataStore, usdt)
+            poolTest.updatePool(eventEmitter, dataStore, ethers.ZeroAddress)
         ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
     });
 

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { deployContract } from "../../utils/deploy";
-import { usdtDecimals, usdtOracleDecimal} from "../../utils/constants";
+import { usdtDecimals, usdtOracleDecimals} from "../../utils/constants";
 import { expandDecimals, bigNumberify } from "../../utils/math"
 
 import { Position } from "../../typechain-types/contracts/test/PositionTest";
@@ -13,7 +13,7 @@ describe("Position LongPosition", () => {
     });
 
     it("longPosition none to short", async () => {
-        let price = expandDecimals(8, usdtOracleDecimal);
+        let price = expandDecimals(8, usdtOracleDecimals);
         let amount = expandDecimals(1, usdtDecimals);
         const position: Position.PropsStructOutput = {
             account: ethers.ZeroAddress,
@@ -34,7 +34,7 @@ describe("Position LongPosition", () => {
     });
 
     it("longPosition long to long, New price accumulate to the entry price", async () => {
-        let price = expandDecimals(8, usdtOracleDecimal);
+        let price = expandDecimals(8, usdtOracleDecimals);
         let amount = expandDecimals(1, usdtDecimals);
         const position: Position.PropsStructOutput = {
             account: ethers.ZeroAddress,
@@ -56,7 +56,7 @@ describe("Position LongPosition", () => {
     });
 
     it("longPosition long to long, New price don't accumulate to the entry price", async () => {
-        let price = expandDecimals(8, usdtOracleDecimal);
+        let price = expandDecimals(8, usdtOracleDecimals);
         let amount = expandDecimals(1, usdtDecimals);
         const position: Position.PropsStructOutput = {
             account: ethers.ZeroAddress,
@@ -78,7 +78,7 @@ describe("Position LongPosition", () => {
     });
 
     it("longPosition short to long, accShortAmount > amount", async () => {
-        let price = expandDecimals(8, usdtOracleDecimal);
+        let price = expandDecimals(8, usdtOracleDecimals);
         let amount = expandDecimals(2, usdtDecimals);
         const position: Position.PropsStructOutput = {
             account: ethers.ZeroAddress,
@@ -100,7 +100,7 @@ describe("Position LongPosition", () => {
     });
 
     it("longPosition short to long, accShortAmount < amount", async () => {
-        let price = expandDecimals(8, usdtOracleDecimal);
+        let price = expandDecimals(8, usdtOracleDecimals);
         let amount = expandDecimals(1, usdtDecimals);
         const position: Position.PropsStructOutput = {
             account: ethers.ZeroAddress,

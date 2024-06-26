@@ -12,6 +12,7 @@ describe("Config", () => {
     let usdt, usdtOracle, uni;
     let usdtPool;
     let dex;
+    let usdtOracleDecimals, uniOracleDecimals;
 
     beforeEach(async () => {
         fixture = await deployFixture();
@@ -29,10 +30,11 @@ describe("Config", () => {
         ({ usdt, usdtOracle, uni } = fixture.assets);
         ({ usdtPool } = fixture.pools);
         ({ dex } = fixture.dexes);
+        ({ usdtOracleDecimals, uniOracleDecimals } = fixture.decimals);
     });
 
-    it("configSet", async () => {
-    // it("setOracleThresholdMultiplier", async () => {
+    //it("configSet", async () => {
+    it("setOracleThresholdMultiplier", async () => {
         // setOracle
         await expect(
             config.connect(user1).setOracle(usdtPool.underlyingAsset, usdtOracle.target)
@@ -51,23 +53,24 @@ describe("Config", () => {
             await oracleStoreUtils.get(dataStore.target, usdtPool.underlyingAsset)
         ).eq(usdtOracle.target);
 
+
         // setOracleDecimals
         await expect(
-            config.connect(user1).setOracleDecimals(usdtPool.underlyingAsset, usdtOracleDecimal)
+            config.connect(user1).setOracleDecimals(usdtPool.underlyingAsset, usdtOracleDecimals)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
         await expect(
-            config.connect(user0).setOracleDecimals(ethers.ZeroAddress, usdtOracleDecimal)
+            config.connect(user0).setOracleDecimals(ethers.ZeroAddress, usdtOracleDecimals)
         ).to.be.revertedWithCustomError(errorsContract, "UnderlyAssetEmpty");
 
         await expect(
             config.connect(user0).setOracleDecimals(usdtPool.underlyingAsset, expandDecimals(1, 30) + bigNumberify(1))
         ).to.be.revertedWithCustomError(errorsContract, "InvalidOracleDecimals");    
 
-        await config.connect(user0).setOracleDecimals(usdtPool.underlyingAsset, usdtOracleDecimal);     
+        await config.connect(user0).setOracleDecimals(usdtPool.underlyingAsset, usdtOracleDecimals);     
         await expect(
             await oracleStoreUtils.getOracleDecimals(dataStore.target, usdtPool.underlyingAsset)
-        ).eq(usdtOracleDecimal);
+        ).eq(usdtOracleDecimals);
 
 
         // setHealthFactorLiquidationThreshold
@@ -112,17 +115,13 @@ describe("Config", () => {
         await expect(
             await dexStoreUtils.get(dataStore.target, usdt.target, uni.target)
         ).eq(dex.target);
-    // });
+    });
 
-    // it("setPoolBooleans", async () => {
+    it("setPoolBooleans", async () => {
         // setPoolActive
         await expect(
             config.connect(user1).setPoolActive(usdtPool.underlyingAsset, true)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
-
-        // await expect(
-        //     await poolStoreUtils.getPoolActive(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(false);
 
         await expect(
             config.connect(user0).setPoolActive(ethers.ZeroAddress, true)
@@ -139,10 +138,6 @@ describe("Config", () => {
             config.connect(user1).setPoolFrozen(usdtPool.underlyingAsset, true)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolFrozen(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(false);
-
         await expect(
             config.connect(user0).setPoolFrozen(ethers.ZeroAddress, true)
         ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
@@ -156,10 +151,6 @@ describe("Config", () => {
         await expect(
             config.connect(user1).setPoolPaused(usdtPool.underlyingAsset, true)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
-
-        // await expect(
-        //     await poolStoreUtils.getPoolPaused(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(false);
 
         await expect(
             config.connect(user0).setPoolPaused(ethers.ZeroAddress, true)
@@ -175,9 +166,6 @@ describe("Config", () => {
             config.connect(user1).setPoolUsd(usdtPool.underlyingAsset, true)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolUsd(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(false);
 
         await expect(
             config.connect(user0).setPoolUsd(ethers.ZeroAddress, true)
@@ -193,10 +181,6 @@ describe("Config", () => {
             config.connect(user1).setPoolBorrowingEnabled(usdtPool.underlyingAsset, true)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(false);
-
         await expect(
             config.connect(user0).setPoolBorrowingEnabled(ethers.ZeroAddress, true)
         ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
@@ -205,17 +189,13 @@ describe("Config", () => {
         await expect(
             await poolStoreUtils.getPoolBorrowingEnabled(dataStore.target, usdtPool.underlyingAsset)
         ).eq(true);
-    // });
+    });
 
-    // it("setPoolValues", async () => {
+    it("setPoolValues", async () => {
         // setPoolDecimals
         await expect(
             config.connect(user1).setPoolDecimals(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
-
-        // await expect(
-        //     await poolStoreUtils.getPoolDecimals(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(0);
 
         await expect(
             config.connect(user0).setPoolDecimals(ethers.ZeroAddress, 10)
@@ -235,9 +215,6 @@ describe("Config", () => {
             config.connect(user1).setPoolFeeFactor(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolFeeFactor(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(0);
 
         await expect(
             config.connect(user0).setPoolFeeFactor(ethers.ZeroAddress, 10)
@@ -257,10 +234,6 @@ describe("Config", () => {
             config.connect(user1).setPoolBorrowCapacity(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolBorrowCapacity(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(0);
-
         await expect(
             config.connect(user0).setPoolBorrowCapacity(ethers.ZeroAddress, 10)
         ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
@@ -279,9 +252,6 @@ describe("Config", () => {
             config.connect(user1).setPoolSupplyCapacity(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-        // await expect(
-        //     await poolStoreUtils.getPoolSupplyCapacity(dataStore.target, usdtPool.underlyingAsset)
-        // ).eq(0);
 
         await expect(
             config.connect(user0).setPoolSupplyCapacity(ethers.ZeroAddress, 10)

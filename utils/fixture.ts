@@ -198,6 +198,12 @@ export async function deployFixture() {
         usdtSupplyAmount,
         uniSupplyAmount
       },
+      decimals: {
+        usdtDecimals,
+        usdtOracleDecimals,
+        uniDecimals,
+        uniOracleDecimals
+      },
       //props: { signerIndexes: [0, 1, 2, 3, 4, 5, 6], executionFee: "1000000000000000" },
     };
 }
@@ -267,7 +273,7 @@ export async function deployFixturePool() {
     //poolToken and debtToken
     const feeFactor = await poolTest.getPoolFeeFactor(dataStore.target, usdt.target);
 
-    console.log("feeFactor", feeFactor);
+    //console.log("feeFactor", feeFactor);
     const pool = await poolTest.getPool(dataStore.target, usdt.target);
     const poolToken = await contractAt("PoolToken", pool.poolToken, poolStoreUtils.target);
     const debtToken = await contractAt("DebtToken", pool.debtToken, poolStoreUtils.target);
