@@ -2,6 +2,7 @@ import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmi
 import { expandDecimals } from "../utils/math";
 import { getPoolInfo, getMarginsAndSupplies, getPositions, getPositionsInfo, getLiquidationHealthFactor} from "../utils/helper";
 import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler";
+import { getErrorMsg } from "../utils/error";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -34,20 +35,20 @@ async function main() {
         amount: borrowAmmountUsdt,
     };
     
-    //borrow uni
-    // const borrowAmmountUni = expandDecimals(100000, uniDecimals);
-    // const paramsUni: BorrowUtils.BorrowParamsStruct = {
-    //     underlyingAsset: uniAddress,
-    //     amount: borrowAmmountUni,
-    // };
+    borrow uni
+    const borrowAmmountUni = expandDecimals(100000, uniDecimals);
+    const paramsUni: BorrowUtils.BorrowParamsStruct = {
+        underlyingAsset: uniAddress,
+        amount: borrowAmmountUni,
+    };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
-        // exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
     try {
         const tx = await exchangeRouter.multicall.staticCall(multicallArgs, {gasLimit:3000000});
     } catch(err){
-        console.log(err);
+        console.log("Error:", getErrorMsg(err.data));
     }
     // await sendTxn(
     //     exchangeRouter.multicall(multicallArgs, {
