@@ -31,12 +31,17 @@ async function main() {
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
 
+    console.log("usdtAddress", usdtAddress);
+
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
     const amountUsdt = expandDecimals(2000000, usdtDecimals);
     const amountUni = expandDecimals(200000, uniDecimals);
-    //console.log("owner",await usdt.balanceOf(owner)); 
+    
+    console.log("owner usdt",await usdt.balanceOf(owner)); 
+    console.log("owner uni",await uni.balanceOf(owner)); 
+
 
     //transfer usdt and eth
     for (const user of users) {

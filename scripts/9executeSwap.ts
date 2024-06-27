@@ -35,7 +35,7 @@ async function main() {
     //
     const isZeroForOne =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
     const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
-    const quoterAddress = "0x3eA845dB1be0461dDf41267e6322aB7A57000621";
+    const quoterAddress = "0xFCb9aB7bBf155F5d76de65a2ae429aB5CCEdeA69";
     const quoter = await contractAt("Quoter", quoterAddress);
     const usdtAmountIn = expandDecimals(10000, usdtDecimals);
     const [uniAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
@@ -47,8 +47,10 @@ async function main() {
     );
 
     const sqrtPriceLimitX96 = calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", isZeroForOne);
+    console.log("isUsdtZero", isZeroForOne);
+    console.log("startSqrtPriceX96", startSqrtPriceX96.toString()); 
     console.log("sqrtPriceLimitX96", sqrtPriceLimitX96.toString()); 
-    console.log("priceImpact", calcPriceImpact(uniAmountOut, usdtAmountIn, startSqrtPriceX96, isZeroForOne).toString()); 
+    //console.log("priceImpact", calcPriceImpact(uniAmountOut, usdtAmountIn, startSqrtPriceX96, isZeroForOne).toString()); 
 
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
@@ -61,11 +63,13 @@ async function main() {
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
     ];
-    //const tx = await exchangeRouter.multicall.staticCall(multicallArgs);
-    await sendTxn(
-        exchangeRouter.multicall(multicallArgs),
-        "exchangeRouter.multicall"
-    );
+    const tx = await exchangeRouter.multicall.staticCall(multicallArgs);
+    // await sendTxn(
+    //     exchangeRouter.multicall(multicallArgs, {
+    //         gasLimit:3000000,
+    //     }),
+    //     "exchangeRouter.multicall"
+    // );
 
     //print 
     const poolUsdtAfterSwap = await getPoolInfo(usdtAddress); 

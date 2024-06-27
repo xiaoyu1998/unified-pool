@@ -1,12 +1,12 @@
 {"USDT": {
-      "address": "0xFF70bA5c0322a30FD0052D2AF03bbCa3DfcC4d1A",
+      "address": "0x93607468544843Dc65c5aEA5B9647B8c57A3D74E",
       "decimals": 6,
-      "oracle": "0x3EcBa8293465Fa661E502F256DE1B44e7d7a7244",
+      "oracle": "0xF0B91CF28218fd5E5AC89eCc42E24476dba98e97",
       "oracleDecimals": 8
     },
   "UNI": {
-    "address": "0xfa5381501166d8c6689D434EDF6829883E15f522",
+    "address": "0xDEAce0ac17741E57b6b96eb6Eaf28cA1E67805a0",
     "decimals": 18,
-    "oracle": "0x50AEdc09Cd38556aca9901dbc28005b33cDaE9b6",
+    "oracle": "0x2b73D2725101E03860A64dfD2Df27d031aBE4076",
     "oracleDecimals": 8
   }}
