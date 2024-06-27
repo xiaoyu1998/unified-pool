@@ -52,24 +52,32 @@ async function main() {
     console.log("sqrtPriceLimitX96", sqrtPriceLimitX96.toString()); 
     //console.log("priceImpact", calcPriceImpact(uniAmountOut, usdtAmountIn, startSqrtPriceX96, isZeroForOne).toString()); 
 
+    //execute borrow
+    const borrowAmmount = expandDecimals(1, usdtDecimals);
+    const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
+        underlyingAsset: usdtAddress,
+        amount: borrowAmmount,
+    };
+
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amount: expandDecimals(10000, usdtDecimals),
+        amount: expandDecimals(1, usdtDecimals),
         //sqrtPriceLimitX96: BigInt("257050102320719215204012")
         sqrtPriceLimitX96: sqrtPriceLimitX96
     };
     const multicallArgs = [
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
     ];
-    const tx = await exchangeRouter.multicall.staticCall(multicallArgs);
-    // await sendTxn(
-    //     exchangeRouter.multicall(multicallArgs, {
-    //         gasLimit:3000000,
-    //     }),
-    //     "exchangeRouter.multicall"
-    // );
+    //const tx = await exchangeRouter.multicall.staticCall(multicallArgs);
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs, {
+            gasLimit:3000000,
+        }),
+        "exchangeRouter.multicall"
+    );
 
     //print 
     const poolUsdtAfterSwap = await getPoolInfo(usdtAddress); 

@@ -42,9 +42,9 @@ contract Reader {
         return ReaderPositionUtils._getLiquidationHealthFactor(dataStore, account);
     }
 
-    function getLiquidationHealthFactor(address dataStore) external view returns (uint256) {
-        return ReaderPositionUtils._getLiquidationHealthFactor(dataStore);
-    }
+    // function getLiquidationHealthFactor(address dataStore) external view returns (uint256) {
+    //     return ReaderPositionUtils._getLiquidationHealthFactor(dataStore);
+    // }
 
     function getPool(address dataStore, address poolKey) external view returns (Pool.Props memory) {
         return ReaderUtils._getPool(dataStore, poolKey);

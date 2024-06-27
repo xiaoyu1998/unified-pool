@@ -52,12 +52,12 @@ async function main() {
     const paramsSwap: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amount: borrowAmmount,
-        sqrtPriceLimitX96: BigInt("24450341851670856832067953828192382")
+        amount: borrowAmmount +  depositAmmountUsdt,
+        sqrtPriceLimitX96: 0
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
+        // exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
     ];

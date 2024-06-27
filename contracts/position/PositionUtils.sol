@@ -147,6 +147,22 @@ library PositionUtils {
             uint256 adjustDebt = Math.mulDiv(debt, WadRayMath.RAY, 10**decimals);//align to Ray
             userDebtUsd = adjustDebt.rayMul(assetPrice);
         }
+
+        // address poolToken = PoolStoreUtils.getPoolToken(dataStore, position.underlyingAsset);
+        // uint256 collateral = IPoolToken(poolToken).balanceOfCollateral(position.account);
+        // if (collateral > 0) {
+        //     uint256 adjustCollateral = Math.mulDiv(collateral, WadRayMath.RAY, 10**decimals);//align to Ray
+        //     userCollateralUsd = adjustCollateral.rayMul(assetPrice);
+        // }
+
+        // address debtToken = PoolStoreUtils.getDebtToken(dataStore, position.underlyingAsset);
+        // uint256 debt = IDebtToken(debtToken).balanceOf(position.account);
+        // if (debt > 0) {
+        //     uint256 adjustDebt = Math.mulDiv(debt, WadRayMath.RAY, 10**decimals);//align to Ray
+        //     userDebtUsd = adjustDebt.rayMul(assetPrice);
+        // }
+
+
         return (userCollateralUsd, userDebtUsd);
     }
     // T = (C + C1*P)/(D + D1*P)

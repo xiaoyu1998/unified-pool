@@ -4,7 +4,7 @@ import { parseError, getErrorString } from "../utils/error";
 
 
 let errorBytes =
-"0x4e487b710000000000000000000000000000000000000000000000000000000000000011";
+"0xe43ec917";
 
 async function main() {
   errorBytes = errorBytes.toLocaleLowerCase();
