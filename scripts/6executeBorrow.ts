@@ -44,11 +44,17 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
         // exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
-    await sendTxn(
-        exchangeRouter.multicall(multicallArgs),
-        "exchangeRouter.multicall"
-    );
+    try {
+        const tx = await exchangeRouter.multicall.staticCall(multicallArgs, {gasLimit:3000000});
+    } catch(err){
+        console.log(err);
+    }
+    // await sendTxn(
+    //     exchangeRouter.multicall(multicallArgs, {
+    //         gasLimit:3000000,
+    //     }),
+    //     "exchangeRouter.multicall"
+    // );
 
     //print poolUsdt
     const poolUsdt = await getPoolInfo(usdtAddress); 
