@@ -90,9 +90,8 @@ abstract contract ScaledToken is MintableERC20 {
     address receiver, 
     uint256 amount, 
     uint256 index
-  ) internal {
+  ) internal returns (bool) {
     uint256 amountScaled = amount.rayDiv(index);
-    // require(amountScaled != 0, Errors.INVALID_BURN_AMOUNT);
     if (amountScaled == 0){
         revert Errors.EmptyBurnAmounts();
     }
@@ -114,6 +113,8 @@ abstract contract ScaledToken is MintableERC20 {
         emit Transfer(account, address(0), amountToBurn);
         emit Burn(account, receiver, amountToBurn, balanceIncrease, index);
     }
+
+    return (scaledBalance == amountScaled);
   }
 
   // @notice Implements the basic logic to burn all sbalance token.

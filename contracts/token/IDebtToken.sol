@@ -14,7 +14,7 @@ interface IDebtToken {
         address from,
         uint256 amount,
         uint256 index
-    ) external returns (uint256);
+    ) external returns (bool, uint256);
 
     function burnAll(address from) external returns (uint256);
 

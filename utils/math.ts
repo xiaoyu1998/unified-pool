@@ -159,8 +159,8 @@ export function calcFeeAmount(
     const currTotalDebt = rayMul(currTotalScaledDebt, nextBorrowIndex);
     const increaseTotalDebt = currTotalDebt - prevTotalDebt;
     const feeAmount = percentMul(increaseTotalDebt, feeFactor);
-    console.log("feeAmount", feeAmount);
-    console.log("nextLiquidityIndex", nextLiquidityIndex);
+    // console.log("feeAmount", feeAmount);
+    // console.log("nextLiquidityIndex", nextLiquidityIndex);
 
     return rayDiv(feeAmount, nextLiquidityIndex);
 }

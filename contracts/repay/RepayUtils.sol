@@ -58,6 +58,7 @@ library RepayUtils {
         uint256 debtAmount;
         bool useCollateralToRepay;
         uint256 overpaymentAmount;
+        bool noDebt;
     }
 
     // @dev executes a repay
@@ -106,8 +107,11 @@ library RepayUtils {
             vars.useCollateralToRepay
         );
 
-        vars.poolCache.nextTotalScaledDebt = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
-        if (vars.debtToken.scaledBalanceOf(account) == 0) {
+        (   vars.noDebt, 
+            vars.poolCache.nextTotalScaledDebt
+        ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
+        //if (vars.debtToken.scaledBalanceOf(account) == 0) {
+        if (vars.noDebt){
             vars.position.hasDebt = false; 
         }
         if (vars.useCollateralToRepay) {//reduce collateral to repay

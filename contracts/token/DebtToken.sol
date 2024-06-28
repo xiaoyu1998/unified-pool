@@ -63,9 +63,9 @@ contract DebtToken is RoleModule, ScaledToken {
     	address from, 
     	uint256 amount, 
     	uint256 index
-    ) external virtual onlyController returns (uint256) {
-		_burnScaled(from, address(0), amount, index);
-		return scaledTotalSupply();  
+    ) external virtual onlyController returns (bool, uint256) {
+		//_burnScaled(from, address(0), amount, index);
+		return (_burnScaled(from, address(0), amount, index), scaledTotalSupply());  
     }
 
     // @dev burn market tokens from an account

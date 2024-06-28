@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import Errors from "../artifacts/contracts/error/Errors.sol/Errors.json";
 export const errorsInterface = new ethers.Interface(Errors.abi);
-//export const errorsContract = new ethers.Contract(ethers.ZeroAddress, Errors.abi);
+export const errorsContract = new ethers.Contract(ethers.ZeroAddress, Errors.abi);
 
 export function getErrorString(error) {
     return JSON.stringify({
