@@ -149,14 +149,22 @@ library SwapUtils {
             revert Errors.InsufficientDexLiquidity(vars.amountInAfterSwap, vars.amountIn);
         }
         
-        //update collateral
-        vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
-        vars.poolTokenOut.addCollateral(account, vars.amountOut);
+        // //update collateral
+        // vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
+        // vars.poolTokenOut.addCollateral(account, vars.amountOut);
 
+        // //update position and entryPrice
+        // if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
+        //     vars.positionIn.hasCollateral  = false;
+        // }
+        // vars.positionOut.hasCollateral = true;
+
+        //update collateral
         //update position and entryPrice
-        if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
+        if (vars.poolTokenIn.removeCollateral(account, vars.amountIn) == 0){
             vars.positionIn.hasCollateral  = false;
         }
+        vars.poolTokenOut.addCollateral(account, vars.amountOut);
         vars.positionOut.hasCollateral = true;
 
         if (vars.poolInIsUsd || vars.poolOutIsUsd) {//swap with usd
@@ -309,14 +317,22 @@ library SwapUtils {
             revert Errors.InsufficientCollateralForSwap(vars.amountIn, vars.collateralAmount);
         }
         
-        //update collateral
-        vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
-        vars.poolTokenOut.addCollateral(account, vars.amountOut);
+        // //update collateral
+        // vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
+        // vars.poolTokenOut.addCollateral(account, vars.amountOut);
         
+        // //update position and entryPrice
+        // if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
+        //     vars.positionIn.hasCollateral  = false;
+        // }
+        // vars.positionOut.hasCollateral = true;
+
+        //update collateral
         //update position and entryPrice
-        if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
+        if (vars.poolTokenIn.removeCollateral(account, vars.amountIn) == 0){
             vars.positionIn.hasCollateral  = false;
         }
+        vars.poolTokenOut.addCollateral(account, vars.amountOut);
         vars.positionOut.hasCollateral = true;
         
         if (vars.poolInIsUsd || vars.poolOutIsUsd) {//swap with usd

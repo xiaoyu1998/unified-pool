@@ -99,9 +99,11 @@ library RedeemUtils {
             vars.redeemAmount
         );
 
-        vars.poolToken.removeCollateral(account, vars.redeemAmount);
-        vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);
-        vars.remainCollateral = vars.poolToken.balanceOfCollateral(account);
+        // vars.poolToken.removeCollateral(account, vars.redeemAmount);
+        // vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);
+        // vars.remainCollateral = vars.poolToken.balanceOfCollateral(account);
+        vars.remainCollateral = vars.poolToken.removeCollateral(account, vars.redeemAmount);
+        vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);     
         if (vars.remainCollateral == 0) {
             vars.position.hasCollateral = false;
         }

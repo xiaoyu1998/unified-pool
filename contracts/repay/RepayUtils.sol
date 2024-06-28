@@ -111,8 +111,9 @@ library RepayUtils {
             vars.position.hasDebt = false; 
         }
         if (vars.useCollateralToRepay) {//reduce collateral to repay
-            vars.poolToken.removeCollateral(account, vars.repayAmount);
-            if(vars.poolToken.balanceOfCollateral(account) == 0) {
+            // vars.poolToken.removeCollateral(account, vars.repayAmount);
+            // if(vars.poolToken.balanceOfCollateral(account) == 0) {
+            if(vars.poolToken.removeCollateral(account, vars.repayAmount) == 0) {
                 vars.position.hasCollateral = false;
             }
         }

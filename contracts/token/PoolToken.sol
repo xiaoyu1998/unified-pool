@@ -122,20 +122,24 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	function addCollateral(
 		address account, 
 		uint256 amount
-	) public onlyController {
+	) public onlyController returns (uint256) {
         _Collaterals[account] = _Collaterals[account] + amount;
         _totalCollateral   = _totalCollateral + amount;
+
+        return _Collaterals[account];
 	}
 
 	function removeCollateral(
 		address account, 
 		uint256 amount
-	) public onlyController {
+	) public onlyController returns (uint256) {
 		if( _Collaterals[account] < amount){
 			revert Errors.InsufficientCollateralAmount(amount, _Collaterals[account]);
 		}
         _Collaterals[account] = _Collaterals[account] - amount;
         _totalCollateral   = _totalCollateral - amount;
+
+        return _Collaterals[account];
 	}
 
 	function balanceOfCollateral(
