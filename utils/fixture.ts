@@ -2,11 +2,14 @@
 import { deployContract, contractAtOptions } from "./deploy";
 import { exchangeRouterModule } from "../ignition/modules/deployExchangeRouter"
 import { poolFactoryModule } from "../ignition/modules/deployPoolFactory"
-//import { eventEmitterModule } from "../ignition/modules/deployEventEmitter"
-// import { poolInterestRateStrategyModule } from "../ignition/modules/deployPoolInterestRateStrategy"
-import { createAsset, createUniswapV3 } from "./assetsDex";
+import { createAsset } from "./assetsDex";
 import { expandDecimals, bigNumberify } from "./math"
-import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals} from "./constants";
+import { 
+    usdtDecimals, 
+    usdtOracleDecimals,
+    uniDecimals, 
+    uniOracleDecimals
+} from "./constants";
 import * as keys from "./keys";
 
 export async function deployFixture() {
@@ -77,15 +80,15 @@ export async function deployFixture() {
     await usdt.transfer(user1, usdtBalanceUser1);
     await uni.transfer(user1, uniBalanceUser1);
 
-    const dex = await createUniswapV3(
-        user0, 
-        config, 
-        usdt, 
-        usdtDecimals, 
-        uni, 
-        uniDecimals, 
-        8
-    );
+    // const dex = await createUniswapV3(
+    //     user0, 
+    //     config, 
+    //     usdt, 
+    //     usdtDecimals, 
+    //     uni, 
+    //     uniDecimals, 
+    //     8
+    // );
 
     await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0);
     await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0);
@@ -177,7 +180,8 @@ export async function deployFixture() {
           poolStoreUtils,
           positionStoreUtils,
           oracleStoreUtils,
-          dexStoreUtils
+          dexStoreUtils,
+          poolInterestRateStrategy
       },
       assets: {
           usdt,
@@ -189,9 +193,9 @@ export async function deployFixture() {
           usdtPool,
           uniPool
       },
-      dexes: {
-          dex
-      },
+      // dexes: {
+      //     dex
+      // },
       balances: {
         usdtBalanceUser1,
         uniBalanceUser1,
