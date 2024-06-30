@@ -52,6 +52,8 @@ library CloseUtils {
     struct ClosePositionLocalVars {
         address poolKey;
         Pool.Props pool; 
+        address poolKeyUsd;
+        Pool.Props poolUsd;
         bytes32 positionKey;
         Position.Props position;
         IPoolToken poolToken;
@@ -80,9 +82,13 @@ library CloseUtils {
         vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
         PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
 
+        vars.poolKeyUsd = Keys.poolKey(params.underlyingAssetUsd);
+        vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolKeyUsd);
+        PoolUtils.validateEnabledPool(vars.pool, vars.poolKeyUsd);
+
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
-        PositionUtils.validateEnabledPosition(vars.position);
+        //PositionUtils.validateEnabledPosition(vars.position);
 
         vars.poolToken = IPoolToken(vars.pool.poolToken);
         vars.debtToken = IDebtToken(vars.pool.debtToken);
@@ -92,6 +98,7 @@ library CloseUtils {
 
         CloseUtils.validateClosePosition( 
             vars.pool,
+            vars.poolUsd,
             vars.position,
             vars.collateralAmount,
             vars.debtAmount
@@ -149,12 +156,14 @@ library CloseUtils {
     // @param debtAmount The amount of debt
     function validateClosePosition(
         Pool.Props memory pool,
+        Pool.Props memory poolUsd,
         Position.Props memory position,
         uint256 collateralAmount,
         uint256 debtAmount
     ) internal pure {
         Printer.log("-------------------------validateClosePosition--------------------------");
         PoolUtils.validateConfigurationPool(pool, false);
+        PoolUtils.validateConfigurationPool(poolUsd, false);
         PositionUtils.validateEnabledPosition(position);
 
         if (collateralAmount <  debtAmount) {

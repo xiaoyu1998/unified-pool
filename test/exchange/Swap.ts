@@ -62,6 +62,9 @@ describe("Exchange Swap", () => {
         );
 
     });
+    // it("executeSwapExactOut and Swap with no usd", async () => {
+
+    // }
 
     it("executeSwap InsufficientDexLiquidity", async () => {
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
