@@ -4,6 +4,7 @@ import { usdtDecimals, usdtOracleDecimal, uniDecimals, uniOracleDecimal} from ".
 import { errorsContract} from "../../utils/error";
 import { parsePoolInfo} from "../../utils/helper";
 import { expandDecimals, bigNumberify } from "../../utils/math"
+import { createUniswapV3 } from "../../utils/assetsDex";
 
 describe("Config", () => {
     let fixture;
@@ -11,7 +12,7 @@ describe("Config", () => {
     let config, dataStore, roleStore, reader, poolStoreUtils, positionStoreUtils, oracleStoreUtils, dexStoreUtils;
     let usdt, usdtOracle, uni;
     let usdtPool;
-    let dex;
+    // let dex;
     let usdtOracleDecimals, uniOracleDecimals;
 
     beforeEach(async () => {
@@ -29,7 +30,7 @@ describe("Config", () => {
         ({ user0, user1, user2 } = fixture.accounts);
         ({ usdt, usdtOracle, uni } = fixture.assets);
         ({ usdtPool } = fixture.pools);
-        ({ dex } = fixture.dexes);
+        // ({ dex } = fixture.dexes);
         ({ usdtOracleDecimals, uniOracleDecimals } = fixture.decimals);
     });
 
@@ -95,6 +96,16 @@ describe("Config", () => {
 
 
         // setDex
+        const [dex, poolV3] = await createUniswapV3(
+            user0, 
+            config, 
+            usdt, 
+            usdtDecimals, 
+            uni, 
+            uniDecimals, 
+            8
+        );
+
         await expect(
             config.connect(user1).setDex(usdt.target, uni.target, dex.target)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");  
