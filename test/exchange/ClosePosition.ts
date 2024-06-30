@@ -22,7 +22,7 @@ import { createAsset, createUniswapV3, addLiquidityV3 } from "../../utils/assets
 import { testPoolConfiguration } from "../../utils/pool";
 import { ethDecimals, ethOracleDecimals, PRECISION } from "../../utils/constants";
 
-describe("Exchange Close", () => {
+describe("Exchange ClosePosition", () => {
     let fixture;
     let user0, user1, user2;
     let config, dataStore, roleStore, reader, router, exchangeRouter, poolFactory, poolInterestRateStrategy;
@@ -150,11 +150,9 @@ describe("Exchange Close", () => {
         expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
-
     });
 
     it("executeClosePosition validateClosePosition EmptyPosition", async () => {
-
         //EmptyPosition
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
@@ -170,7 +168,6 @@ describe("Exchange Close", () => {
 
 
     it("executeClosePosition validateClosePosition CollateralCanNotCoverDebt and underlyingAsset testPoolConfiguration", async () => {
-
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
         const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
@@ -204,7 +201,6 @@ describe("Exchange Close", () => {
     });
 
     it("executeClosePosition validateClosePosition underlyingAssetUsd testPoolConfiguration", async () => {
-
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
         const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
