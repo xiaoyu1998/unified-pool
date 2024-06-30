@@ -63,37 +63,34 @@ describe("Exchange Swap", () => {
 
     });
 
-    // it("executeSwap InsufficientDexLiquidity", async () => {
-    //     const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
-    //     await usdt.connect(user1).approve(router.target, usdtDepositAmount);
-    //     const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
-    //         underlyingAsset: usdt.target,
-    //     };
+    it("executeSwap InsufficientDexLiquidity", async () => {
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
 
-    //     const usdtAmountSwap = expandDecimals(1000000, usdtDecimals);
-    //     const usdtParamsSwap: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: usdt.target,
-    //         underlyingAssetOut: uni.target,
-    //         amount: usdtAmountSwap,
-    //         sqrtPriceLimitX96: 0
+        const usdtAmountSwap = expandDecimals(1000000, usdtDecimals);
+        const usdtParamsSwap: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: usdt.target,
+            underlyingAssetOut: uni.target,
+            amount: usdtAmountSwap,
+            sqrtPriceLimitX96: 0
 
-    //     };
+        };
 
-    //     const multicallArgs = [
-    //         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
-    //         exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
-    //         exchangeRouter.interface.encodeFunctionData("executeSwap", [usdtParamsSwap]),
-    //     ];
-    //     await expect(
-    //         exchangeRouter.connect(user1).multicall(multicallArgs)
-    //     ).to.be.revertedWithCustomError(errorsContract, "InsufficientDexLiquidity");
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [usdtParamsSwap]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "InsufficientDexLiquidity");
     
-    // });
+    });
 
-    it("executeSwap amountIn < collateralAmount", async () => {
-
-        // console.log("userUsdtBeforeMint",await usdt.balanceOf(user0.address)); 
-        // console.log("userUniBeforeMint",await uni.balanceOf(user0.address));  
+    it("executeSwap long amountIn < collateralAmount", async () => {
         await addLiquidityV3(
             user0,
             usdt,
@@ -101,8 +98,6 @@ describe("Exchange Swap", () => {
             dex,
             poolV3
         )
-        // console.log("userUsdtAfterMint",await usdt.balanceOf(user0.address)); 
-        // console.log("userUniAfterMint",await uni.balanceOf(user0.address));  
 
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
@@ -155,8 +150,7 @@ describe("Exchange Swap", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });
 
-    it("executeSwap amountIn >= collateralAmount", async () => {
-
+    it("executeSwap long amountIn >= collateralAmount", async () => {
         await addLiquidityV3(
             user0,
             usdt,
@@ -216,86 +210,117 @@ describe("Exchange Swap", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });
 
+    it("executeSwap PoolNotFound", async () => {
+        //amountIn pool not found
+        const uniAmount = expandDecimals(100000, uniDecimals);
+        const uniParams: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: ethers.ZeroAddress,
+            underlyingAssetOut: usdt.target,
+            amount: uniAmount,
+            sqrtPriceLimitX96: 0
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
 
-    // it("executeSwap PoolNotFound and SwapPoolsNotMatch", async () => {
-    //     //amountIn pool not found
-    //     const uniAmount = expandDecimals(100000, uniDecimals);
-    //     const uniParams: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: ethers.ZeroAddress,
-    //         underlyingAssetOut: usdt.target,
-    //         amount: uniAmount,
-    //         sqrtPriceLimitX96: 0
-    //     };
-    //     const multicallArgsSwap = [
-    //         exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams]),
-    //     ];
-    //     await expect(
-    //         exchangeRouter.connect(user1).multicall(multicallArgsSwap)
-    //     ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        //amountOut pool not found
+        const uniParams2: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: uni.target,
+            underlyingAssetOut: ethers.ZeroAddress,
+            amount: uniAmount,
+            sqrtPriceLimitX96: 0
+        };
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams2]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs2)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
 
-    //     //amountOut pool not found
-    //     const uniParams2: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: uni.target,
-    //         underlyingAssetOut: ethers.ZeroAddress,
-    //         amount: uniAmount,
-    //         sqrtPriceLimitX96: 0
-    //     };
-    //     const multicallArgsSwap2 = [
-    //         exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams2]),
-    //     ];
-    //     await expect(
-    //         exchangeRouter.connect(user1).multicall(multicallArgsSwap2)
-    //     ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+    });
 
-    //     //swap pools not match
-    //     const [eth, ethOracle] = await createAsset(
-    //         user0, 
-    //         config, 
-    //         "ETH", 
-    //         "ETH", 
-    //         10000, 
-    //         ethDecimals, 
-    //         ethOracleDecimals, 
-    //         3000
-    //     );
-    //     await poolFactory.createPool(eth.target, poolInterestRateStrategy.target, 0);
+    it("executeSwap SwapPoolsNotMatch and EmptySwapAmount", async () => {
 
-    //     const uniParams3: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: eth.target,
-    //         underlyingAssetOut: usdt.target,
-    //         amount: uniAmount,
-    //         sqrtPriceLimitX96: 0
-    //     };
-    //     const multicallArgsSwap3 = [
-    //         exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams3]),
-    //     ];
-    //     await expect(
-    //         exchangeRouter.connect(user1).multicall(multicallArgsSwap3)
-    //     ).to.be.revertedWithCustomError(errorsContract, "SwapPoolsNotMatch");
-    // });
+        //swap pools not match
+        const uniAmount = expandDecimals(100000, uniDecimals);
+        const [eth, ethOracle] = await createAsset(
+            user0, 
+            config, 
+            "ETH", 
+            "ETH", 
+            10000, 
+            ethDecimals, 
+            ethOracleDecimals, 
+            3000
+        );
+        await poolFactory.createPool(eth.target, poolInterestRateStrategy.target, 0);
 
-    // it("executeSwap validateSwap underlyingAssetIn testPoolConfiguration", async () => {
-    //     const uniAmount = expandDecimals(100000, uniDecimals);
-    //     const uniParams: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: uni.target,
-    //         underlyingAssetOut: usdt.target,
-    //         amount: uniAmount,
-    //         sqrtPriceLimitX96: 0
-    //     };
+        const uniParams: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: eth.target,
+            underlyingAssetOut: usdt.target,
+            amount: uniAmount,
+            sqrtPriceLimitX96: 0
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [uniParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "SwapPoolsNotMatch");
 
-    //     await testPoolConfiguration(config, exchangeRouter, user1, "executeSwap", uni, uniParams)
-    // });
 
-    // it("executeSwap validateSwap underlyingAssetOut testPoolConfiguration", async () => {
-    //     const uniAmount = expandDecimals(100000, uniDecimals);
-    //     const uniParams: SwapUtils.SwapParamsStructOutput = {
-    //         underlyingAssetIn: uni.target,
-    //         underlyingAssetOut: usdt.target,
-    //         amount: uniAmount,
-    //         sqrtPriceLimitX96: 0
-    //     };
+        //EmptySwapAmount
+        const usdtDepositAmount = expandDecimals(1000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
 
-    //     await testPoolConfiguration(config, exchangeRouter, user1, "executeSwap", usdt, uniParams)
-    // });
+        const usdtAmountIn = expandDecimals(0, usdtDecimals);
+        const usdtParamsSwap: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: usdt.target,
+            underlyingAssetOut: uni.target,
+            amount: usdtAmountIn,
+            sqrtPriceLimitX96: 0
+        };
+
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [usdtParamsSwap]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs2)
+        ).to.be.revertedWithCustomError(errorsContract, "EmptySwapAmount");
+
+    });
+
+
+    it("executeSwap validateSwap underlyingAssetIn testPoolConfiguration", async () => {
+        const uniAmount = expandDecimals(100000, uniDecimals);
+        const uniParams: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: uni.target,
+            underlyingAssetOut: usdt.target,
+            amount: uniAmount,
+            sqrtPriceLimitX96: 0
+        };
+
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeSwap", uni, uniParams)
+    });
+
+    it("executeSwap validateSwap underlyingAssetOut testPoolConfiguration", async () => {
+        const uniAmount = expandDecimals(100000, uniDecimals);
+        const uniParams: SwapUtils.SwapParamsStructOutput = {
+            underlyingAssetIn: uni.target,
+            underlyingAssetOut: usdt.target,
+            amount: uniAmount,
+            sqrtPriceLimitX96: 0
+        };
+
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeSwap", usdt, uniParams)
+    });
 
 }); 
