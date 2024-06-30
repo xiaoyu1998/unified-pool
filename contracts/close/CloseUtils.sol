@@ -229,6 +229,7 @@ library CloseUtils {
         CloseUtils.validateClose( 
             account,
             params.dataStore,
+            vars.poolUsd,
             vars.positionCount
         );
         
@@ -345,12 +346,15 @@ library CloseUtils {
     function validateClose(
         address account, 
         address dataStore,
+        Pool.Props memory poolUsd,
         uint256 positionsLength
     ) internal view {
         Printer.log("-------------------------validateClose--------------------------");
         if (positionsLength == 0) {
             revert Errors.EmptyPositions(account);
         }
+
+        PoolUtils.validateConfigurationPool(poolUsd, false);
 
         (   uint256 healthFactor,
             uint256 healthFactorLiquidationThreshold,
