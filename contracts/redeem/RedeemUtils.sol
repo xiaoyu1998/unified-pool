@@ -64,7 +64,7 @@ library RedeemUtils {
     }
 
     // @dev executes a redeem
-    // @param account the redeemng account
+    // @param account the redeeming account
     // @param params ExecuteRedeemParams
     function executeRedeem(
         address account, 

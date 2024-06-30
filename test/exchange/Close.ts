@@ -108,7 +108,7 @@ describe("Exchange Close", () => {
     });
 
 
-    it("executeClose repay and swap ", async () => {
+    it("executeClose repay and executeSwapExactIn", async () => {
         await addLiquidityV3(
             user0,
             usdt,
@@ -152,6 +152,68 @@ describe("Exchange Close", () => {
         // console.log("colleratalUsdt", colleratalUsdt);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("797375144846");
+        expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, usdt.target)).eq(true);
+        expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
+ 
+    });
+
+    it("executeClose repay, executeSwapExactOut and repay", async () => {
+        await addLiquidityV3(
+            user0,
+            usdt,
+            uni,
+            dex,
+            poolV3
+        )
+
+        const usdtDepositAmount = expandDecimals(2000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const uniBorrowAmmount = expandDecimals(200000, uniDecimals);
+        const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        }; 
+        const uniAmountRedeem = expandDecimals(100000, uniDecimals);
+        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniAmountRedeem,
+            to:user1.address
+        };
+
+        const closeParams: CloseUtils.CloseParamsStructOutput = {
+            underlyingAssetUsd: usdt.target
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
+            exchangeRouter.interface.encodeFunctionData("executeClose", [closeParams]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
+
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+
+        // const colleratalUsdt = await getCollateral(dataStore, reader, user1.address, usdt.target);
+        // console.log("colleratalUsdt", colleratalUsdt);
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("1598739642383");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
         expect(await getHasCollateral(dataStore, reader, user1.address, usdt.target)).eq(true);
