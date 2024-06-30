@@ -33,42 +33,42 @@ async function main() {
     const uni = await contractAt("MintableToken", uniAddress);
 
     //
-    const isZeroForOne =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
-    const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
-    const quoterAddress = "0xFCb9aB7bBf155F5d76de65a2ae429aB5CCEdeA69";
-    const quoter = await contractAt("Quoter", quoterAddress);
-    const usdtAmountIn = expandDecimals(10000, usdtDecimals);
-    const [uniAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
-        usdtAddress,
-        uniAddress, 
-        feeAmount,
-        usdtAmountIn,
-        0
-    );
+    // const isZeroForOne =  (usdtAddress.toLowerCase() < uniAddress.toLowerCase()) ? true:false;
+    // const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
+    // const quoterAddress = "0xFCb9aB7bBf155F5d76de65a2ae429aB5CCEdeA69";
+    // const quoter = await contractAt("Quoter", quoterAddress);
+    // const usdtAmountIn = expandDecimals(10000, usdtDecimals);
+    // const [uniAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
+    //     usdtAddress,
+    //     uniAddress, 
+    //     feeAmount,
+    //     usdtAmountIn,
+    //     0
+    // );
 
-    const sqrtPriceLimitX96 = calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", isZeroForOne);
-    console.log("isUsdtZero", isZeroForOne);
-    console.log("startSqrtPriceX96", startSqrtPriceX96.toString()); 
-    console.log("sqrtPriceLimitX96", sqrtPriceLimitX96.toString()); 
+    // const sqrtPriceLimitX96 = calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", isZeroForOne);
+    // console.log("isUsdtZero", isZeroForOne);
+    // console.log("startSqrtPriceX96", startSqrtPriceX96.toString()); 
+    // console.log("sqrtPriceLimitX96", sqrtPriceLimitX96.toString()); 
     //console.log("priceImpact", calcPriceImpact(uniAmountOut, usdtAmountIn, startSqrtPriceX96, isZeroForOne).toString()); 
 
     //execute borrow
-    const borrowAmmount = expandDecimals(1, usdtDecimals);
-    const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
-        underlyingAsset: usdtAddress,
-        amount: borrowAmmount,
-    };
+    // const borrowAmmount = expandDecimals(10000, usdtDecimals);
+    // const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
+    //     underlyingAsset: usdtAddress,
+    //     amount: borrowAmmount,
+    // };
 
     //execute swap
     const params: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amount: expandDecimals(1, usdtDecimals),
-        //sqrtPriceLimitX96: BigInt("257050102320719215204012")
-        sqrtPriceLimitX96: sqrtPriceLimitX96
+        amount: expandDecimals(30000, usdtDecimals),
+        sqrtPriceLimitX96: 0
+        //sqrtPriceLimitX96: sqrtPriceLimitX96
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
+        // exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [params]),
     ];
     //const tx = await exchangeRouter.multicall.staticCall(multicallArgs);

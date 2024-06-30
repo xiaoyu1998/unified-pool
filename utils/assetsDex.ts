@@ -1,7 +1,7 @@
 
 import { sendTxn, deployContract, deployContractWithCode, contractAtWithCode } from "./deploy";
-import { expandDecimals, encodePriceSqrt } from "./math"
-import { FeeAmount } from "./constants";
+import { bigNumberify, expandDecimals, encodePriceSqrt } from "./math"
+import { MaxUint256, FeeAmount, TICK_SPACINGS } from "./constants";
 import {
   abi as FACTORY_ABI,
   bytecode as FACTORY_BYTECODE,
@@ -52,5 +52,21 @@ export async function createUniswapV3(account, config, token0, token0Decimals, t
     ];
     config.multicall(multicallArgs2);
 
-    return dex;
+    return [dex, pool];
+}
+
+export async function addLiquidityV3(account, token0, token1, dex, pool) {    
+
+    const slot0 = await pool.slot0();
+    const currentTick = slot0[1];
+    const uniswapV3MintCallee = await deployContract("UniswapV3MintCallee", []); 
+    await sendTxn(token0.approve(uniswapV3MintCallee.target, MaxUint256), "token0.approve");
+    await sendTxn(token1.approve(uniswapV3MintCallee.target, MaxUint256), "token1.approve");    
+
+    const tickSpacing = BigInt(TICK_SPACINGS[FeeAmount.MEDIUM]);
+    const tickTrim = (currentTick / tickSpacing) * tickSpacing;
+    const tickLower  = tickTrim - tickSpacing*bigNumberify(5);
+    const tickUpper  = tickTrim + tickSpacing*bigNumberify(5);
+    await sendTxn(uniswapV3MintCallee.mint(pool.target, account.address, tickLower, tickUpper, expandDecimals(10, 20)), "uniswapV3MintCallee.mint");
+
 }

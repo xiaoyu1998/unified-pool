@@ -1,12 +1,1 @@
-{"USDT": {
-      "address": "0x93607468544843Dc65c5aEA5B9647B8c57A3D74E",
-      "decimals": 6,
-      "oracle": "0xF0B91CF28218fd5E5AC89eCc42E24476dba98e97",
-      "oracleDecimals": 8
-    },
-  "UNI": {
-    "address": "0xDEAce0ac17741E57b6b96eb6Eaf28cA1E67805a0",
-    "decimals": 18,
-    "oracle": "0x2b73D2725101E03860A64dfD2Df27d031aBE4076",
-    "oracleDecimals": 8
-  }}
+  {"USDT":{"address":"0xa5543465883092C825D12698473838B50d84639f","decimals":6,"oracle":"0x967e43B864Af2C5dc4Fb7da863E5bAd827Fb45B2","oracleDecimals":8},"UNI":{"address":"0x0B4D21FB147682591e11f6C2ede750E656C571e6","decimals":18,"oracle":"0x03470746a2599718fA55aca1bD1D41d161cf4E84","oracleDecimals":8},"WBTC":{"address":"0x1760073011246D86F43706d12B0E41d49811072A","decimals":8,"oracle":"0x713c18Ce54248ff3E814C4084f5b562d1f2a6817","oracleDecimals":8},"WETH":{"address":"0x3d2e7C1b5626125B4FebbAE80fbed2f576131AFd","decimals":18,"oracle":"0x8D806A15ef18631A17E40EeD0EFf08b8Dd9b496B","oracleDecimals":8},"LINK":{"address":"0x2244F4ADE1eCE6C216C6B119c54725dEe34801B5","decimals":18,"oracle":"0x3d3055C0949d94477e31DD123D65eEbe2aD762db","oracleDecimals":8},"MATIC":{"address":"0x30Ee5eaA50d0edBd7587731257622Bf0d94075c0","decimals":18,"oracle":"0xFc50FF0f7e1d9Fafe6AaCfF60cE80125eBaF6228","oracleDecimals":8},"MKR":{"address":"0xEe7E3c90766841cD9BbeCFEbae8F19f603439b78","decimals":18,"oracle":"0xDe23F3aCdc90B1fe3bf24D957Ae3824983e77817","oracleDecimals":8},"SOL":{"address":"0x68F625EE5F2d85CD8e9dD4F3069a33b1764f8a7b","decimals":9,"oracle":"0xBBf510db0CFe7580cda8a5A96927d18B742D064E","oracleDecimals":8},"ARB":{"address":"0xc779fb90C7D8DB9A0772c9A22A3E1B7E3B378C9B","decimals":18,"oracle":"0x88C244b95d820aa138a5d6d6e0A1270AEd37d2E1","oracleDecimals":8},"AAVE":{"address":"0x525E81d745bFE6604741e6E76113efBbB56B62Ff","decimals":18,"oracle":"0xAD90181c2BFf3184d2B90A1488Df734f6B96c89E","oracleDecimals":8}}

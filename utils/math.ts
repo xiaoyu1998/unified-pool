@@ -188,3 +188,8 @@ export function rayDiv(a, b){
    return (a*PRECISION + b/bigNumberify(2))/b;
 }
 
+export function mulDiv(a, b, domominator){
+   //return (a*PRECISION + b/bigNumberify(2))/b;
+    return a*b/domominator;
+}
+

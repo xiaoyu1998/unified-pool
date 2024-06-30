@@ -113,7 +113,7 @@ async function main() {
     //const feeAmount = await dex.getFeeAmount();
     const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
     const quoter = await deployContract("Quoter", [factory.target]);
-    const uniAmountIn = expandDecimals(10000, uniDecimals);
+    const uniAmountIn = expandDecimals(100000000, uniDecimals);
     const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
         uniAddress, 
         usdtAddress,

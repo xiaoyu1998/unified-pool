@@ -440,9 +440,4 @@ library SwapUtils {
         //TODO:healthFactor should be validated        
     }
 
-    // function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
-    //     address dex = DexStoreUtils.get(dataStore, underlyingAssetA, underlyingAssetB);
-    //     return IDex(dex).getPool();
-
-    // }  
 }
