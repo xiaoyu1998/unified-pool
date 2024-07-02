@@ -23,8 +23,8 @@ import "../event/EventEmitter.sol";
 import "./RepayEventUtils.sol";
 
 // @title RepayUtils
-// @dev Library for deposit functions, to help with the depositing of liquidity
-// into a market in return for market tokens
+// @dev Library for repay functions, to help with the repaying the debt 
+// from a pool and burn the debt tokens
 library RepayUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -160,8 +160,13 @@ library RepayUtils {
     }
     
     // @notice Validates a repay action.
-    // @param pool The pool
+    // @param account The repaying account
+    // @param pool The state of the pool
+    // @param position The state of the position
     // @param repayAmount The amount to be repay
+    // @param debtAmount The amount of total debt
+    // @param collateralAmount The amount of total collateral
+    // @param useCollateralToRepay use the collateral to this repay action
     function validateRepay(
         address account,
         Pool.Props memory pool,

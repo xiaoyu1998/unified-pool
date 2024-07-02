@@ -20,17 +20,14 @@ contract BaseRouter is ReentrancyGuard, PayableMulticall, RoleModule {
 
     Router public immutable router;
     DataStore public immutable dataStore;
-    // EventEmitter public immutable eventEmitter;
 
     constructor(
         Router _router,
         RoleStore _roleStore,
         DataStore _dataStore
-        // EventEmitter _eventEmitter
     ) RoleModule(_roleStore) {
         router = _router;
         dataStore = _dataStore;
-        // eventEmitter = _eventEmitter;
     }
 
     // @dev Sends the given amount of tokens to the given address

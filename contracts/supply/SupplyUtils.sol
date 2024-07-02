@@ -20,7 +20,7 @@ import "../utils/Printer.sol";
 
 // @title SupplyUtils
 // @dev Library for supply functions, to help with the supplying of liquidity
-// into a market in return for market tokens
+// into a pool in return for pool tokens
 library SupplyUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -88,6 +88,7 @@ library SupplyUtils {
     }
     
     // @dev validates a supply action.
+    // @param pool The state of the pool
     // @param poolCache The cached data of the pool
     // @param amount The amount to be supply
     function validateSupply(

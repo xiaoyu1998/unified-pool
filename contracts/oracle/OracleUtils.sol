@@ -58,9 +58,6 @@ library OracleUtils {
         uint256 amountOthers = amountOut;
         uint256 decimalsOthers = decimalsOut;
         if (poolOutIsUsd){ //poolIn must be Not usd
-            // uint256 tmp;
-            // tmp = amountUsd; amountUsd = amountOthers; amountOthers = tmp;
-            // tmp = decimalsUsd; decimalsUsd = decimalsOthers; decimalsOthers = tmp;
             (amountUsd, amountOthers) = (amountOthers, amountUsd);
             (decimalsUsd, decimalsOthers) = (decimalsOthers, decimalsUsd);
         }

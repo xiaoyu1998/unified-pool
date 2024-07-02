@@ -5,8 +5,8 @@ pragma solidity ^0.8.20;
 import "../error/Errors.sol";
 
 
-// @title PoolUtils
-// @dev Library for Pool functions
+// @title PoolConfigurationUtils
+// @dev Library for Pool Configuration
 library PoolConfigurationUtils {
     uint256 internal constant DECIMALS_MASK =                  0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00FFFFFFFFFFFF; // prettier-ignore
     uint256 internal constant ACTIVE_MASK =                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFF; // prettier-ignore
@@ -53,16 +53,6 @@ library PoolConfigurationUtils {
             (poolConfigration & ~PAUSED_MASK) != 0
         );
     }
-
-    // // @notice Sets the active state of the pool
-    // // @param self The pool configuration
-    // // @param active The active state
-    // function setActive(uint256 poolConfigration, bool active) internal pure {
-    //     poolConfigration =
-    //         (poolConfigration & ACTIVE_MASK) |
-    //         (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
-    // }
-
 
     // @notice Sets the active state of the pool
     // @param self The pool configuration
@@ -150,7 +140,6 @@ library PoolConfigurationUtils {
                (uint256(enabled ? 1 : 0) << BORROWING_ENABLED_START_BIT_POSITION);
     }
 
-    
     // @notice Gets the borrowing state of the pool
     // @param self The pool configuration
     // @return The borrowing state
@@ -160,7 +149,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & ~BORROWING_MASK) != 0;
     }
 
-    
     // @notice Sets the decimals of the underlying asset of the pool
     // @param self The pool configuration
     // @param decimals The decimals
@@ -175,7 +163,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & DECIMALS_MASK) | (decimals << POOL_DECIMALS_START_BIT_POSITION);
     }
 
-    
     // @notice Gets the decimals of the underlying asset of the pool
     // @param self The pool configuration
     // @return The decimals of the asset
@@ -223,7 +210,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & BORROW_CAP_MASK) | (borrowCapacity << BORROW_CAP_START_BIT_POSITION);
     }
 
-    
     // @notice Gets the borrow cap of the pool
     // @param self The pool configuration
     // @return The borrow cap
@@ -233,7 +219,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & ~BORROW_CAP_MASK) >> BORROW_CAP_START_BIT_POSITION;
     }
 
-    
     // @notice Sets the supply cap of the pool
     // @param self The pool configuration
     // @param supplyCapacity The supply cap
@@ -247,7 +232,6 @@ library PoolConfigurationUtils {
         return (poolConfigration & SUPPLY_CAP_MASK) | (supplyCapacity << SUPPLY_CAP_START_BIT_POSITION);
     }
 
-    
     // @notice Gets the supply cap of the pool
     // @param self The pool configuration
     // @return The supply cap

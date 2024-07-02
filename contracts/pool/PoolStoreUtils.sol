@@ -76,10 +76,6 @@ library PoolStoreUtils {
             keccak256(abi.encode(key, POOL_CONFIGURATION))
         );
 
-        // pool.feeFactor = dataStore.getUint(
-        //     keccak256(abi.encode(key, POOL_FEE_FACTOR))
-        // );
-
         pool.totalFee = dataStore.getUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))
         );
@@ -170,11 +166,6 @@ library PoolStoreUtils {
             pool.configuration
         );
 
-        // dataStore.setUint(
-        //     keccak256(abi.encode(key, POOL_FEE_FACTOR)),
-        //     pool.feeFactor
-        // );
-
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE)),
             pool.totalFee
@@ -242,10 +233,6 @@ library PoolStoreUtils {
         dataStore.removeUint(
             keccak256(abi.encode(key, POOL_CONFIGURATION))
         );
-
-        // dataStore.removeUint(
-        //     keccak256(abi.encode(key, POOL_FEE_FACTOR))
-        // );
         
         dataStore.removeUint(
             keccak256(abi.encode(key, POOL_TOTAL_FEE))
@@ -311,14 +298,7 @@ library PoolStoreUtils {
         );        
     }
 
-    function getConfiguration(address dataStoreAddress, address key) external view returns (uint256){
-        // IDataStore dataStore = IDataStore(dataStoreAddress);
-        // if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-        //     revert Errors.PoolNotFound(key);
-        // }        
-        // return dataStore.getUint(
-        //     keccak256(abi.encode(key, POOL_CONFIGURATION))
-        // );  
+    function getConfiguration(address dataStoreAddress, address key) external view returns (uint256){ 
         return _getConfiguration(dataStoreAddress, key) ;
     }
 
@@ -378,12 +358,10 @@ library PoolStoreUtils {
     }
 
     function getPoolCount(address dataStore) internal view returns (uint256) {
-        //IDataStore dataStore = IDataStore(dataStore);
         return IDataStore(dataStore).getAddressCount(Keys.POOL_LIST);
     }
 
     function getPoolKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
-        //IDataStore dataStore = IDataStore(dataStore);
         return IDataStore(dataStore).getAddressValuesAt(Keys.POOL_LIST, start, end);
     }
 

@@ -74,10 +74,6 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, HAS_DEBT))
         );
 
-        // position.isLiquidated = dataStore.getBool(
-        //     keccak256(abi.encode(key, IS_LIQUIDATED))
-        // );
-
         return position;
     }
 
@@ -138,11 +134,6 @@ library PositionStoreUtils {
             position.hasDebt
         );
 
-        // dataStore.setBool(
-        //     keccak256(abi.encode(key, IS_LIQUIDATED)),
-        //     position.isLiquidated
-        // );
-
     }
 
     function remove(address dataStoreAddress, bytes32 key, address account) external {
@@ -197,9 +188,6 @@ library PositionStoreUtils {
             keccak256(abi.encode(key, HAS_DEBT))
         );
 
-        // dataStore.removeBool(
-        //     keccak256(abi.encode(key, IS_LIQUIDATED))
-        // );
     }
 
     function setHealthFactorLiquidationThreshold(address dataStore, uint256 threshold) external  {
@@ -227,12 +215,10 @@ library PositionStoreUtils {
     }
 
     function getPositionCount(address dataStore) internal view returns (uint256) {
-        //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getAddressCount(Keys.POSITION_LIST);
     }
 
     function getPositionKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
-        //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getAddressValuesAt(Keys.POSITION_LIST, start, end);
     }
 
@@ -244,46 +230,22 @@ library PositionStoreUtils {
     }
 
     function getAccountPositionCount(address dataStore, address account) internal view returns (uint256) {
-        //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getBytes32Count(Keys.accountPositionListKey(account));
     }
 
     function getAccountPositionKeys(address dataStore, address account, uint256 start, uint256 end) internal view returns (bytes32[] memory) {
-        //IDataStore dataStore = IDataStore(dataStoreAddress);
         return IDataStore(dataStore).getBytes32ValuesAt(Keys.accountPositionListKey(account), start, end);
     }
 
     function getPositions(address dataStore, address account) internal view returns (Position.Props[] memory) {
-        //Printer.log("-------------------------getPositions--------------------------");
         uint256 positionCount = getAccountPositionCount(dataStore, account);
-        //Printer.log("positionCount", positionCount);
         bytes32[] memory positionKeys = getAccountPositionKeys(dataStore, account, 0, positionCount);
         Position.Props[] memory positions = new Position.Props[](positionKeys.length);
         for (uint256 i; i < positionKeys.length; i++) {
-            //bytes32 positionKey = positionKeys[i];
-            //Printer.log("i", i);
             positions[i] = PositionStoreUtils._get(dataStore, positionKeys[i]);
         }
 
         return positions;
     }
-
-    // function getPositions(address dataStore, address account, uint256 start, uint256 end) internal view returns (Position.Props[] memory) {
-    //     // return PositionUtils.getPositions(account, dataStore);
-    //     bytes32[] memory positionKeys = getAccountPositionKeys(dataStore, account, start, end);
-    //     Position.Props[] memory positions = new Position.Props[](positionKeys.length);
-    //     for (uint256 i; i < positionKeys.length; i++) {
-    //         bytes32 positionKey = positionKeys[i];
-    //         positions[i] = get(dataStore, positionKey);
-    //     }
-
-    //     return positions;
-    // }
-
-    // function getPositions(address dataStore, address account) external view returns (Position.Props[] memory) {
-    //     uint256 positionCount = getAccountPositionCount(dataStore, account);
-    //     return getPositions(dataStore, account, 0, positionCount);
-    // }
-
 
 }

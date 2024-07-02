@@ -25,8 +25,8 @@ import "../event/EventEmitter.sol";
 import "./RedeemEventUtils.sol";
 
 // @title RedeemUtils
-// @dev Library for redeem functions, to help with the redeeming of liquidity
-// into a market in return for market tokens
+// @dev Library for redeem functions, to help with the redeeming of collateral
+// from a pool in return for underlying tokens
 library RedeemUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -135,7 +135,9 @@ library RedeemUtils {
     }
 
     // @notice Validates a redeem action.
-    // @param pool The pool
+    // @param account The redeeming account
+    // @param pool The state of the pool
+    // @param position The state of the position
     // @param amountToRedeem The amount to be redeemn
     function validateRedeem(
         address account,

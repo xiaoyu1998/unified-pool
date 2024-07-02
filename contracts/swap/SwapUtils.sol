@@ -27,8 +27,8 @@ import "../event/EventEmitter.sol";
 import "./SwapEventUtils.sol";
 
 // @title SwapUtils
-// @dev Library for swap functions, to help with the swaping of underlyinAssetIn
-// into a dex pool in return for underlyinAssetOut
+// @dev Library for swap functions, to help with the swaping the amountIn of underlyinAssetIn
+// into a dex pool in return for the amountOut of underlyinAssetOut
 library SwapUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -419,7 +419,10 @@ library SwapUtils {
 
 
     // @notice Validates a swap action.
-    // @param amountIn The amount to be swapped in
+    // @param poolIn The state of the poolIn
+    // @param poolOut The state of the poolOut
+    // @param amount The amount to be swapped in and to be swapped out
+    // @param dex The dex for swap
     function validateSwap(
         Pool.Props memory poolIn,
         Pool.Props memory poolOut,

@@ -6,8 +6,6 @@ pragma solidity ^0.8.20;
 library PoolCache {
 
     struct Props {
-        // uint256 TotalReserve;
-        // uint256 TotalCollateral;
         uint256 currLiquidityIndex;
         uint256 nextLiquidityIndex;
         uint256 currLiquidityRate;

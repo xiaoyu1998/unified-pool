@@ -30,21 +30,6 @@ contract RoleModule {
         _;
     }
 
-    /**
-     * @dev Only allows addresses with the TIMELOCK_MULTISIG role to call the function.
-     */
-    modifier onlyTimelockMultisig() {
-        _validateRole(Role.TIMELOCK_MULTISIG, "TIMELOCK_MULTISIG");
-        _;
-    }
-
-    /**
-     * @dev Only allows addresses with the TIMELOCK_ADMIN role to call the function.
-     */
-    modifier onlyTimelockAdmin() {
-        _validateRole(Role.TIMELOCK_ADMIN, "TIMELOCK_ADMIN");
-        _;
-    }
 
     /**
      * @dev Only allows addresses with the CONFIG_KEEPER role to call the function.

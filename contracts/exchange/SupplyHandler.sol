@@ -8,7 +8,7 @@ import "./ISupplyHandler.sol";
 import "../supply/SupplyUtils.sol";
 
 // @title SupplyHandler
-// @dev Contract to handle execution of supplys
+// @dev Contract to handle execution of supply
 contract SupplyHandler is ISupplyHandler, GlobalReentrancyGuard, RoleModule {
     EventEmitter public immutable eventEmitter;
 

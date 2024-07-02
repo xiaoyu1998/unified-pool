@@ -18,7 +18,7 @@ import "./WithdrawEventUtils.sol";
 
 // @title WithdrawUtils
 // @dev Library for withdraw functions, to help with the withdrawing of liquidity
-// into a market in return for market tokens
+// from a pool in return for underlying tokens
 library WithdrawUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
@@ -97,9 +97,10 @@ library WithdrawUtils {
     }
 
     // @notice Validates a withdraw action.
-    // @param pool The pool
+    // @param pool The state of the pool
     // @param amount The amount to be withdrawn
     // @param userBalance The supply balance of the user   
+    // @param unclaimedFee The unclaimed fee to calculate the available liquidity
     function validateWithdraw(
         Pool.Props memory pool,
         uint256 amount,
