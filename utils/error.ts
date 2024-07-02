@@ -4,7 +4,7 @@ export const errorsInterface = new ethers.Interface(Errors.abi);
 export const errorsContract = new ethers.Contract(ethers.ZeroAddress, Errors.abi);
 
 export enum ProtocolErrors {
-    ERC20_DECREASED_ALLOWANCE_BELOW_ZERO = 'ERC20: decreased allowance below zero',
+    ERC20_INSUFFICIENT_ALLOWANCE = 'ERC20: insufficient allowance',
     ERC20_TRANSFER_AMOUNT_EXCEEDS_BALANCE = 'ERC20: transfer amount exceeds balance',
 };
 

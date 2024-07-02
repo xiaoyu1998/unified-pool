@@ -94,7 +94,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         poolStoreUtils,
         positionStoreUtils,
         oracleStoreUtils,
-        dexStoreUtils
+        dexStoreUtils,
+        liquidationHandler
     };
 });
 

@@ -4,6 +4,8 @@ import { exchangeRouterModule } from "../ignition/modules/deployExchangeRouter"
 import { poolFactoryModule } from "../ignition/modules/deployPoolFactory"
 import { createAsset } from "./assetsDex";
 import { expandDecimals, bigNumberify } from "./math"
+import { parsePool } from "./helper";
+
 import { 
     usdtDecimals, 
     usdtOracleDecimals,
@@ -50,7 +52,8 @@ export async function deployFixture() {
         poolStoreUtils,
         positionStoreUtils,
         oracleStoreUtils,
-        dexStoreUtils
+        dexStoreUtils,
+        liquidationHandler
     } = await ignition.deploy(exchangeRouterModule);
 
     const [usdt, usdtOracle] = await createAsset(
@@ -118,8 +121,8 @@ export async function deployFixture() {
     ];
     await config.multicall(multicallArgs);
 
-    const usdtPool = await reader.getPool(dataStore.target, usdt.target);
-    const uniPool = await reader.getPool(dataStore.target, uni.target);
+    const usdtPool = parsePool(await reader.getPool(dataStore.target, usdt.target));
+    const uniPool = parsePool(await reader.getPool(dataStore.target, uni.target));
 
     //console.log(usdtPool);
     //supply
@@ -181,7 +184,8 @@ export async function deployFixture() {
           positionStoreUtils,
           oracleStoreUtils,
           dexStoreUtils,
-          poolInterestRateStrategy
+          poolInterestRateStrategy,
+          liquidationHandler
       },
       assets: {
           usdt,
