@@ -39,7 +39,7 @@ async function main() {
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeWithdraw", [paramsUsdt]),
-        exchangeRouter.interface.encodeFunctionData("executeWithdraw", [paramsUni]),
+        //exchangeRouter.interface.encodeFunctionData("executeWithdraw", [paramsUni]),
     ];
     // const tx = await exchangeRouter.multicall(multicallArgs);  
     await sendTxn(

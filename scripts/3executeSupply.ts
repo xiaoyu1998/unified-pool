@@ -21,7 +21,7 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
 
     console.log(usdtAddress);
-    const supplyAmountUsdt = expandDecimals(8000000, usdtDecimals);
+    const supplyAmountUsdt = expandDecimals(1000000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmountUsdt), `usdt.approve(${router.target})`)  
     console.log("userUsdt", await usdt.balanceOf(owner.address), supplyAmountUsdt); 
 

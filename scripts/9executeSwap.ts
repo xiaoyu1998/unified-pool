@@ -63,7 +63,7 @@ async function main() {
     const params: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: usdtAddress,
         underlyingAssetOut: uniAddress,
-        amount: expandDecimals(30000, usdtDecimals),
+        amount: expandDecimals(10000, usdtDecimals),
         sqrtPriceLimitX96: 0
         //sqrtPriceLimitX96: sqrtPriceLimitX96
     };

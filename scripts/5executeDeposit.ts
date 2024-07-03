@@ -38,8 +38,8 @@ async function main() {
         underlyingAsset: uniAddress,
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
+        // exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
     ];

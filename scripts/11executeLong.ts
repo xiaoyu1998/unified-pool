@@ -42,7 +42,7 @@ async function main() {
     };
 
     //execute borrow
-    const borrowAmmount = expandDecimals(1000000, usdtDecimals);
+    const borrowAmmount = expandDecimals(100000, usdtDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: borrowAmmount,

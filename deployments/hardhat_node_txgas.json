@@ -1,0 +1,20 @@
+{
+
+    "MintableToken.mint" : 68248,
+	"erc20.approval": 46573,
+	"uniswapFactory.createPool": 4558970,
+	"uniswapPool.initialize": 70508,
+	"UniswapV3MintCallee.mint": 317314,
+	"DexUniswapV3.swapExactIn": 130024,
+	"PoolFactory.createPool": 3499960,
+	"multicall.aggregate3.SetAnswer(3)": 302443,
+	"ExchangeRouter.multicall.executeSupply": 260345,
+	"ExchangeRouter.multicall.executeWithdraw": 251527,
+	"ExchangeRouter.multicall.executeDeposit": 542098,
+	"ExchangeRouter.multicall.executeRedeem": 435601,
+	"ExchangeRouter.multicall.executeBorrow": 511487,
+	"ExchangeRouter.multicall.executeRepay": 421769,
+	"ExchangeRouter.multicall.executeSwap": 684047,
+	"ExchangeRouter.multicall.executeBorrow_Swap": 1186813,
+	"ExchangeRouter.multicall.executeClosePosition": 1007407,
+}

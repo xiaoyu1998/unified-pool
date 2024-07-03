@@ -62,10 +62,10 @@ async function main() {
         underlyingAssetUsd: usdtAddress
     };
     const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
-        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),   
-        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
+        // exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
+        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
+        // exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),   
+        // exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
         exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
     ];
     //const tx = await exchangeRouter.multicall(multicallArgs);
