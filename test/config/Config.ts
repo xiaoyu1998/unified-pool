@@ -97,6 +97,7 @@ describe("Config", () => {
 
         // setDex
         const [dex, poolV3] = await createUniswapV3(
+            roleStore,
             user0, 
             config, 
             usdt, 

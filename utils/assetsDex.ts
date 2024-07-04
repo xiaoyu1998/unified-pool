@@ -28,7 +28,7 @@ export async function createAsset(account, config, name, symbol, amount, decimal
     return [token, oracle];
 }
 
-export async function createUniswapV3(account, config, token0, token0Decimals, token1, token1Decimals, price) {
+export async function createUniswapV3(roleStore, account, config, token0, token0Decimals, token1, token1Decimals, price) {
     //deploy uniswapV3 and create pool
     const token0Address = token0.target;
     const token1Address = token1.target;
@@ -44,7 +44,7 @@ export async function createUniswapV3(account, config, token0, token0Decimals, t
                          encodePriceSqrt(expandDecimals(1, token1Decimals), expandDecimals(price, token0Decimals));//1token1 = 10token0
     await pool.initialize(sqrtPriceX96);
 
-    const dex = await deployContract("DexUniswapV3", [token0Address, token1Address, FeeAmount.MEDIUM, pool.target]);
+    const dex = await deployContract("DexUniswapV3", [roleStore, token0Address, token1Address, FeeAmount.MEDIUM, pool.target]);
 
     //set dex
     const multicallArgs2 = [

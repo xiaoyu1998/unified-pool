@@ -16,6 +16,7 @@ import {
 async function main() {
     const [owner] = await ethers.getSigners();
 
+    const roleStore = await getContract("RoleStore"); 
     const dataStore = await getContract("DataStore"); 
     const reader = await getContract("Reader");  
 
@@ -96,12 +97,12 @@ async function main() {
     console.log("userUsdtAfterMint", await usdt.balanceOf(owner.address)); 
     console.log("userUniAfterMint", await uni.balanceOf(owner.address)); 
 
-    //swap 
-    const dex = await deployContract("DexUniswapV3", [usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
-    await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
-    console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
-    console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
+    //dex havs add role controller
+    const dex = await deployContract("DexUniswapV3", [roleStore, usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
+    // await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
+    // await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
+    // console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
+    // console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
 
     //set dex
     const multicallArgs2 = [
@@ -113,7 +114,7 @@ async function main() {
     //const feeAmount = await dex.getFeeAmount();
     const feeAmount = await reader.getDexPoolFeeAmount(dataStore, uniAddress, usdtAddress);
     const quoter = await deployContract("Quoter", [factory.target]);
-    const uniAmountIn = expandDecimals(100000000, uniDecimals);
+    const uniAmountIn = expandDecimals(10000, uniDecimals);
     const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
         uniAddress, 
         usdtAddress,
@@ -129,7 +130,7 @@ async function main() {
     console.log("startSqrtPriceX96", startSqrtPriceX96, "sqrtPriceLimitX96", calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", uniIsZero).toString());
 
     //estimateGas
-    const estimatedGas = await dex.swapExactIn.estimateGas(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0);
+    const estimatedGas = await uni.approve.estimateGas(dex.target, MaxUint256);
     console.log("estimatedGas", estimatedGas);
 
 }

@@ -52,6 +52,7 @@ describe("Exchange Swap", () => {
          } = fixture.decimals);
 
         [dex, poolV3] = await createUniswapV3(
+            roleStore,
             user0, 
             config, 
             usdt, 

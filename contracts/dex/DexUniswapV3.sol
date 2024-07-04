@@ -10,8 +10,9 @@ import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
 import "../error/Errors.sol";
 import "../utils/Printer.sol";
 import "./IDex.sol";
+import "../role/RoleModule.sol";
 
-contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
+contract DexUniswapV3 is IUniswapV3SwapCallback, IDex, RoleModule {
     using SafeCast for uint256;
 
     /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)
@@ -25,11 +26,12 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
     address internal _pool;
 
     constructor(
+        RoleStore _roleStore,
         address tokenA, 
         address tokenB,
         uint24 fee,
         address  pool
-    ) {
+    ) RoleModule(_roleStore) {
         if (tokenA == tokenB){
             revert Errors.TokenCanNotSwapWithSelf(tokenA);
         }
@@ -46,7 +48,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         uint256 amountIn,
         address to,
         uint256 sqrtPriceLimitX96
-    ) external override{
+    ) external override onlyController{
         uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
             return _swapExact0For1(from, _pool, amountIn, to, priceLimit);
@@ -64,7 +66,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex {
         uint256 amountOut,
         address to,
         uint256 sqrtPriceLimitX96
-    ) external override{
+    ) external override onlyController{
         uint160 priceLimit = (sqrtPriceLimitX96 == 0)?getSqrtPriceLimitX96(tokenIn):uint160(sqrtPriceLimitX96);
         if (tokenIn == _token0) {
             return _swap0ForExact1(from, _pool, amountOut, to, priceLimit);

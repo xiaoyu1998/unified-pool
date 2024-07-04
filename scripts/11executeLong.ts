@@ -56,8 +56,8 @@ async function main() {
         sqrtPriceLimitX96: 0
     };
     const multicallArgs = [
-        // exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
-        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
     ];
