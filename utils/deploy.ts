@@ -62,7 +62,6 @@ export function getDeployedContractAddresses(name){
     return json[`${name}#${name}`];    
 }
 
-// const tmpAddressesFilepath = path.join(__dirname, '..', '..', `.tmp-addresses-${process.env.HARDHAT_NETWORK}.json`)
 export function readTokenAddresses() {
     if (!process.env.HARDHAT_NETWORK){
         process.env.HARDHAT_NETWORK = 'localhost';
@@ -82,7 +81,9 @@ export function writeTokenAddresses(json) {
     const assetAddressFile = path.join(__dirname, '..', assetAddresses[`${process.env.HARDHAT_NETWORK}`]);
 
     const assets = Object.assign(readTokenAddresses(), json)
-    fs.writeFileSync(assetAddressFile, JSON.stringify(assets))
+    fs.writeFileSync(assetAddressFile, JSON.stringify(assets, null , 2))
+    console.log(JSON.stringify(assets));
+    //fs.writeFileSync(assetAddressFile, assets)
 }
 
 export function getTokens(name) {
