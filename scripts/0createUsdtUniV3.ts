@@ -1,4 +1,4 @@
-import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses } from "../utils/deploy"
+import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses, setDeployedContractAddress } from "../utils/deploy"
 import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcSqrtPriceLimitX96, calcFee } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals, ethDecimals, ethOracleDecimals} from "../utils/constants";
@@ -74,6 +74,7 @@ async function main() {
     const uniAddress = uni.target;
     const uniIsZero =  (uniAddress.toLowerCase() < usdtAddress.toLowerCase()) ? true:false;
     const factory = await deployContractWithCode(FACTORY_ABI, FACTORY_BYTECODE, owner);
+    setDeployedContractAddress("UniswapV3Factory", factory.target);
     await sendTxn(await factory.createPool(usdtAddress, uniAddress, FeeAmount.MEDIUM), "factory.createPool");
 
     //initialize pool and mint
