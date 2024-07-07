@@ -67,7 +67,7 @@ export function setDeployedContractAddress(name, address){
         process.env.HARDHAT_NETWORK = 'localhost';
     }
     const jsonFile = path.join(__dirname, '..', deployAddresses[`${process.env.HARDHAT_NETWORK}`]);
-    const addresses = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
+    let addresses = JSON.parse(fs.readFileSync(jsonFile, 'utf8'));
     addresses[`${name}#${name}`] = address;
     fs.writeFileSync(jsonFile, JSON.stringify(addresses, null , 2), 'utf8');     
 }
