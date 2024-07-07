@@ -45,21 +45,24 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
         //exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
+
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs, {
+            gasLimit:3000000,
+        }),
+        "exchangeRouter.multicall"
+    );
+
     // try {
-    //     const tx = await exchangeRouter.multicall.staticCall(multicallArgs, {gasLimit:3000000});
-    // } catch(err){
-    //     console.log("Error:", getErrorMsg(err.data));
+    //     await sendTxn(
+    //         exchangeRouter.multicall(multicallArgs, {
+    //             gasLimit:3000000,
+    //         }),
+    //         "exchangeRouter.multicall"
+    //     );
+    // } catch(err) {
+    //     console.log("Error:", await getErrorMsgFromTx(err.receipt.hash));
     // }
-    try {
-        await sendTxn(
-            exchangeRouter.multicall(multicallArgs, {
-                gasLimit:3000000,
-            }),
-            "exchangeRouter.multicall"
-        );
-    } catch(err) {
-        console.log("Error:", await getErrorMsgFromTx(err.receipt.hash));
-    }
 
     //print poolUsdt
     const poolUsdt = await getPoolInfo(usdtAddress); 

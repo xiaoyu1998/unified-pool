@@ -1,6 +1,6 @@
-import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
+import { contractAt, sendTxn, getTokens, getContract, getEventEmitter} from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPool } from "../utils/helper";
+import { getPool, parsePool } from "../utils/helper";
 
 async function main() {
     const accounts = await ethers.getSigners();
@@ -17,7 +17,8 @@ async function main() {
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
     const amountUni = expandDecimals(10000, uniDecimals);
-
+ 
+    //console.log("accounts", accounts); 
     console.log("owner usdt", await usdt.balanceOf(owner)); 
     console.log("owner uni", await uni.balanceOf(owner)); 
 
@@ -36,51 +37,68 @@ async function main() {
     };
 
     // //init contracts
-    // const exchangeRouter = await getContract("ExchangeRouter"); 
-    // const router = await getContract("Router");
-    // const dataStore = await getContract("DataStore");   
-    // const reader = await getContract("Reader");  
-    // const eventEmitter = await getEventEmitter();  
-    // eventEmitter.on("Borrow", (pool, borrower, amount, borrowRate, collateral, debtScaled) =>{
-    //     const event: BorrowEvent.OutputTuple = {
-    //         pool: pool,
-    //         borrower: borrower,
-    //         account: account,
-    //         amount: amount,
-    //         borrowRate: borrowRate,
-    //         collateral: collateral,
-    //         debtScaled: debtScaled
-    //     };        
-    //     console.log("eventEmitter Borrow" ,event);
-    // });
+    const exchangeRouter = await getContract("ExchangeRouter"); 
+    const router = await getContract("Router");
+    const dataStore = await getContract("DataStore");   
+    const reader = await getContract("Reader");  
+    const eventEmitter = await getEventEmitter();  
+    eventEmitter.on("Borrow", (pool, borrower, amount, borrowRate, collateral, debtScaled) =>{
+        const event: BorrowEvent.OutputTuple = {
+            pool: pool,
+            borrower: borrower,
+            account: account,
+            amount: amount,
+            borrowRate: borrowRate,
+            collateral: collateral,
+            debtScaled: debtScaled
+        };        
+        console.log("eventEmitter Borrow" ,event);
+    });
   
-    // //accounts init for liquidation
-    // for (const user of users) {
-    //     await sendTxn(
-    //         usdt.connect(user).approve(router.target, amountUsdt), `usdt.approve(${router.target} ${amountUsdt})`
-    //     );
-    //     //deposit usdt
-    //     const paramsUsdt: DepositUtils.DepositParamsStruct = {
-    //         underlyingAsset: usdtAddress,
-    //     };
-    //     //borrow uni
-    //     const borrowAmmountUni = expandDecimals(1000, uniDecimals);
-    //     const paramsUni: BorrowUtils.BorrowParamsStruct = {
-    //         underlyingAsset: uniAddress,
-    //         amount: borrowAmmountUni,
-    //     };
+    //accounts init for liquidation
+    for (const user of users) {
+        await sendTxn(
+            usdt.connect(user).approve(router.target, amountUsdt), `usdt.approve(${router.target} ${amountUsdt})`
+        );
+        //deposit usdt
+        const paramsUsdt: DepositUtils.DepositParamsStruct = {
+            underlyingAsset: usdtAddress,
+        };
+
+        //borrow usdt
+        const borrowAmmountUsdt = expandDecimals(10000, usdtDecimals);
+        const paramsBorrowUsdt: BorrowUtils.BorrowParamsStruct = {
+            underlyingAsset: usdtAddress,
+            amount: borrowAmmountUsdt,
+        };
+
+        //borrow uni
+        const borrowAmmountUni = expandDecimals(1000, uniDecimals);
+        const paramsUni: BorrowUtils.BorrowParamsStruct = {
+            underlyingAsset: uniAddress,
+            amount: borrowAmmountUni,
+        };
         
-    //     const poolUsdt = await getPool(usdtAddress); 
-    //     const multicallArgs = [
-    //         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, amountUsdt]),
-    //         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
-    //         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
-    //     ];
-    //     await sendTxn(
-    //         exchangeRouter.connect(user).multicall(multicallArgs),
-    //         "exchangeRouter.multicall"
-    //     );
-    // };
+        const poolUsdt = await getPool(usdtAddress); 
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, amountUsdt]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrowUsdt]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
+        ];
+        await sendTxn(
+            exchangeRouter.connect(user).multicall(multicallArgs),
+            "exchangeRouter.multicall"
+        );
+    };
+
+    console.log("owner usdt", await usdt.balanceOf(owner)); 
+    console.log("owner uni", await uni.balanceOf(owner)); 
+
+    const pools = await reader.getPools(dataStore.target);
+    for (const pool of pools) {
+        console.log(parsePool(pool));
+    }
 
     // const config = await getContract("Config");
     // await sendTxn(

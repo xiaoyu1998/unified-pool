@@ -5,7 +5,7 @@ import { getPoolsInfo, getLiquidityAndDebts, getPositions, getPositionsInfo,getL
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    console.log("owner", owner.address);
+    console.log("owner", owner);
 
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
@@ -41,6 +41,16 @@ async function main() {
     console.log("HealthFactor", await getLiquidationHealthFactor(owner.address));
     console.log("userUSDT", await usdt.balanceOf(owner.address)); 
     console.log("userUNI", await uni.balanceOf(owner.address)); 
+
+    // const filter = {
+    //   address: ['0x2eDc460229DC2710b4977d9F7225E6236dbAF7a2'],
+    //   //address: ['0x70121A415b6D3607B1469fbDBdC8bB6DC12E9FB8'],
+    //   fromBlock: 2735,
+    //   toBlock: "latest",
+    // };
+
+    // const provider = new ethers.getDefaultProvider("http://192.168.2.106:8545");
+    // console.log(await provider.getLogs(filter));
 
 }
 
