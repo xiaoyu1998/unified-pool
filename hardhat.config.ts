@@ -6,6 +6,12 @@ import { ethers, ignition } from "hardhat";
 import { defaultRpcs } from "./utils/network";
 
 const getRpcUrl = (network) => {
+    if (network == "sepolia") {
+        const { urlSepolia } = process.env;
+        if (urlSepolia) {
+            return urlSepolia;
+        }
+    }
     let rpc = defaultRpcs[network];
     return rpc;
 };
@@ -40,6 +46,13 @@ const config: HardhatUserConfig = {
         testnet: {
             url: getRpcUrl("testnet"),
             chainId: 1998,
+            accounts: getEnvAccount(),
+            blockGasLimit: 20_000_000,
+            gas: 20_000_000,
+        },
+        sepolia: {
+            url: getRpcUrl("sepolia"),
+            chainId: 11155111,
             accounts: getEnvAccount(),
             blockGasLimit: 20_000_000,
             gas: 20_000_000,

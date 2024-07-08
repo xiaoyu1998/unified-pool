@@ -2,12 +2,14 @@ export const assetAddresses = {
 	localhost : "ignition/deployments/chain-31337/underlyAsset_addresses.json",
 	localnet : "ignition/deployments/chain-1998/underlyAsset_addresses.json",
 	testnet : "deployments/testnet_underlyAsset_addresses.json",
+	sepolia : "deployments/testnet_underlyAsset_addresses.json",	
 };
 
 export const deployAddresses = {
 	localhost : "ignition/deployments/chain-31337/deployed_addresses.json",
 	localnet : "ignition/deployments/chain-1998/deployed_addresses.json",
 	testnet : "deployments/testnet_deployed_addresses.json",
+	sepolia : "deployments/testnet_deployed_addresses.json",
 };
 
 export const webSocketUrl = {
@@ -19,4 +21,5 @@ export const webSocketUrl = {
 export const defaultRpcs = {
 	localnet: "http://192.168.2.106:8545",
 	testnet: "https://spinnergo.online/bdw234131sdf/api/v1/rpc",
+	sepolia: "https://sepolia.infura.io/v3/",
 };

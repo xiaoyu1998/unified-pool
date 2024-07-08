@@ -49,6 +49,11 @@ export async function getErrorMsgFromTx(txHash){
         await ethers.provider.call(txRequest);
     } catch (err) {
         //console.log("Error:", getErrorMsg(err.data));
+        for (const key in err) {
+            if (err.hasOwnProperty(key)) {
+                console.log(`${key}: ${err[key]}`);
+            }
+        }
         errorMsg = getErrorMsg(err.data);
     }
 
