@@ -2,7 +2,7 @@ import hre from "hardhat";
 import { getErrorMsgFromTx } from "../utils/error";
 
 async function main() {
-  const txHash = "0xca94e038d2d7e48d59d0589452f0d1328394c709c1085463d01b143a8a454281";
+  const txHash = "0xe0b54d92266d4d01378b1c993e542261e205ecfa5c2790396cdd180afef39ff1";
   console.log("Error:", await getErrorMsgFromTx(txHash));
 }
 

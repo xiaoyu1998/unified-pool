@@ -2,14 +2,14 @@ export const assetAddresses = {
 	localhost : "ignition/deployments/chain-31337/underlyAsset_addresses.json",
 	localnet : "ignition/deployments/chain-1998/underlyAsset_addresses.json",
 	testnet : "deployments/testnet_underlyAsset_addresses.json",
-	sepolia : "deployments/testnet_underlyAsset_addresses.json",	
+	sepolia : "deployments/sepolia_underlyAsset_addresses.json",	
 };
 
 export const deployAddresses = {
 	localhost : "ignition/deployments/chain-31337/deployed_addresses.json",
 	localnet : "ignition/deployments/chain-1998/deployed_addresses.json",
 	testnet : "deployments/testnet_deployed_addresses.json",
-	sepolia : "deployments/testnet_deployed_addresses.json",
+	sepolia : "deployments/sepolia_deployed_addresses.json",
 };
 
 export const webSocketUrl = {

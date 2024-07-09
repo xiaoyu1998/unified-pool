@@ -188,5 +188,11 @@ library ReaderPositionUtils {
     function _getLiquidationHealthFactor(address dataStore) external view returns (uint256) {
        return PositionStoreUtils.getHealthFactorLiquidationThreshold(dataStore);
     }
+
+    function _getDebt(address dataStore, address account, address underlyingAsset) external view returns (uint256) {
+       address poolKey = Keys.poolKey(underlyingAsset);
+       address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
+       return IDebtToken(debtToken).balanceOf(account);
+    }
     
 }

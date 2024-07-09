@@ -21,13 +21,13 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const usdtAddress = getTokens("USDT")["address"];
     const usdt = await contractAt("MintableToken", usdtAddress);
-    const depositAmmountUsdt = expandDecimals(1000000, usdtDecimals);
+    const depositAmmountUsdt = expandDecimals(100000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, depositAmmountUsdt), `usdt.approve(${router.target})`)
 
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const uni = await contractAt("MintableToken", uniAddress);
-    const depositAmmountUni = expandDecimals(100000, uniDecimals);
+    const depositAmmountUni = expandDecimals(10000, uniDecimals);
     await sendTxn(uni.approve(router.target, depositAmmountUni), `uni.approve(${router.target})`)
     
     //execute deposit
@@ -40,8 +40,8 @@ async function main() {
         underlyingAsset: uniAddress,
     };
     const multicallArgs = [
-        // exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
-        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
     ];

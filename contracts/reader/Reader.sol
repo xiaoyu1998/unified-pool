@@ -15,6 +15,10 @@ contract Reader {
     using SafeCast for uint256;
     using Position for Position.Props;
 
+    function getDebt(address dataStore, address account, address underlyingAsset) external view returns (uint256) {
+        return ReaderPositionUtils._getDebt(dataStore, account, underlyingAsset);
+    }
+
     function getPosition(address dataStore, address account, address poolKey) external view returns (Position.Props memory) {
         bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
         return ReaderPositionUtils._getPosition(dataStore, positionKey);

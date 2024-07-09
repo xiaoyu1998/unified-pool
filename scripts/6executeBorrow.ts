@@ -36,14 +36,14 @@ async function main() {
     };
     
     //borrow uni
-    const borrowAmmountUni = expandDecimals(100000, uniDecimals);
+    const borrowAmmountUni = expandDecimals(10000, uniDecimals);
     const paramsUni: BorrowUtils.BorrowParamsStruct = {
         underlyingAsset: uniAddress,
         amount: borrowAmmountUni,
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUsdt]),
-        //exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsUni]),
     ];
 
     await sendTxn(
