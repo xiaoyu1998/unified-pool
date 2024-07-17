@@ -134,6 +134,4 @@ abstract contract IndexERC20 is Context, IERC20{
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
-
-
 }

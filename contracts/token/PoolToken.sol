@@ -33,14 +33,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     	_underlyingAsset = underlyingAsset_;
     }
 
-	// /// @inheritdoc IERC20
-	// function balanceOf(
-	//     address account
-	// ) public view virtual override(IndexERC20) returns (uint256) {
-	//     return super.balanceOf(account)
-	//     	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset));
-	// }
-
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address account
@@ -169,6 +161,4 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     function approveLiquidity(address spender, uint256 value) public onlyController returns (bool) {
     	return IERC20(_underlyingAsset).approve(spender, value);
     }
-
-
 }

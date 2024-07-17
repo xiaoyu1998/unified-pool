@@ -13,12 +13,7 @@ describe("poolToken Modifiers", () => {
 
     beforeEach(async () => {
         fixture = await deployFixturePool();
-        ({  dataStore, 
-            poolStoreUtils,
-            eventEmitter,
-            poolToken,
-            debtToken,
-            poolTest
+        ({  poolToken
          } = fixture.contracts); 
         ({ user0, user1, user2 } = fixture.accounts);
         ({ usdt } = fixture.assets);      

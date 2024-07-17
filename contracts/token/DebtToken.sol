@@ -26,16 +26,6 @@ contract DebtToken is RoleModule, ScaledToken {
     	_underlyingAsset = underlyingAsset_;
     }
 
-	// /// @inheritdoc IERC20
-	// function balanceOf(
-	//     address account
-	// ) public view virtual override returns (uint256) {
-
-	// 	uint256 currentSupplyScaled = super.balanceOf(account);
-	//     if (currentSupplyScaled == 0) { return 0; }
-	//     return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset));
-	// }
-
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address account
@@ -63,7 +53,6 @@ contract DebtToken is RoleModule, ScaledToken {
     	uint256 amount, 
     	uint256 index
     ) external virtual onlyController returns (bool, uint256) {
-    	//_mintScaled(to, amount, index);
       	return (_mintScaled(to, amount, index), scaledTotalSupply());
     }
 
@@ -75,7 +64,6 @@ contract DebtToken is RoleModule, ScaledToken {
     	uint256 amount, 
     	uint256 index
     ) external virtual onlyController returns (bool, uint256) {
-		//_burnScaled(from, address(0), amount, index);
 		return (_burnScaled(from, address(0), amount, index), scaledTotalSupply());  
     }
 
@@ -118,6 +106,4 @@ contract DebtToken is RoleModule, ScaledToken {
 	function underlyingAsset() external view returns (address) {
 		return _underlyingAsset;
 	}
-
-
 }
