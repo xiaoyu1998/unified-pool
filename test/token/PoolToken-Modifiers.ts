@@ -38,35 +38,35 @@ describe("poolToken Modifiers", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("poolToken to transferOnLiquidation burn not being the controller", async () => {
+    it("poolToken to invoke transferOnLiquidation not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             poolToken.connect(user1).transferOnLiquidation(user1, user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("poolToken to transferOutUnderlyingAsset burn not being the controller", async () => {
+    it("poolToken to invoke transferOutUnderlyingAsset not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             poolToken.connect(user1).transferOutUnderlyingAsset(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("poolToken to addCollateral burn not being the controller", async () => {
+    it("poolToken to invoke addCollateral not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             poolToken.connect(user1).addCollateral(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("poolToken to removeCollateral burn not being the controller", async () => {
+    it("poolToken to invoke removeCollateral not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             poolToken.connect(user1).removeCollateral(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("poolToken to approveLiquidity burn not being the controller", async () => {
+    it("poolToken to invoke approveLiquidity not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             poolToken.connect(user1).approveLiquidity(user1, amount)
