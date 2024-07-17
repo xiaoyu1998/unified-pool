@@ -26,14 +26,25 @@ contract DebtToken is RoleModule, ScaledToken {
     	_underlyingAsset = underlyingAsset_;
     }
 
+	// /// @inheritdoc IERC20
+	// function balanceOf(
+	//     address account
+	// ) public view virtual override returns (uint256) {
+
+	// 	uint256 currentSupplyScaled = super.balanceOf(account);
+	//     if (currentSupplyScaled == 0) { return 0; }
+	//     return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset));
+	// }
+
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address account
 	) public view virtual override returns (uint256) {
 
-		uint256 currentSupplyScaled = super.balanceOf(account);
-	    if (currentSupplyScaled == 0) { return 0; }
-	    return currentSupplyScaled.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset));
+		uint256 scaledBalance = super.balanceOf(account);
+	    if (scaledBalance == 0) { return 0; }
+	    return scaledBalance
+	    	.rayMul(PoolUtils.getPoolNormalizedBorrowingIndex(address(dataStore), _underlyingAsset));
 	}
 
 	/// @inheritdoc IERC20

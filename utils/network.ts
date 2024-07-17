@@ -1,8 +1,8 @@
 export const assetAddresses = {
 	localhost : "ignition/deployments/chain-31337/underlyAsset_addresses.json",
 	localnet : "ignition/deployments/chain-1998/underlyAsset_addresses.json",
-	testnet : "deployments/testnet_underlyAsset_addresses.json",
-	sepolia : "deployments/sepolia_underlyAsset_addresses.json",	
+	testnet : "deployments/testnet_underlyasset_addresses.json",
+	sepolia : "deployments/sepolia_underlyasset_addresses.json",	
 };
 
 export const deployAddresses = {

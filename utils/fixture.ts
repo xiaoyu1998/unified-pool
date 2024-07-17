@@ -83,16 +83,6 @@ export async function deployFixture() {
     await usdt.transfer(user1, usdtBalanceUser1);
     await uni.transfer(user1, uniBalanceUser1);
 
-    // const dex = await createUniswapV3(
-    //     user0, 
-    //     config, 
-    //     usdt, 
-    //     usdtDecimals, 
-    //     uni, 
-    //     uniDecimals, 
-    //     8
-    // );
-
     await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0);
     await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0);
     
@@ -197,9 +187,6 @@ export async function deployFixture() {
           usdtPool,
           uniPool
       },
-      // dexes: {
-      //     dex
-      // },
       balances: {
         usdtBalanceUser1,
         uniBalanceUser1,
@@ -212,7 +199,6 @@ export async function deployFixture() {
         uniDecimals,
         uniOracleDecimals
       },
-      //props: { signerIndexes: [0, 1, 2, 3, 4, 5, 6], executionFee: "1000000000000000" },
     };
 }
 

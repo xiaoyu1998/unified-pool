@@ -100,11 +100,11 @@ async function main() {
     //     console.log(parsePool(pool));
     // }
 
-    // const config = await getContract("Config");
-    // await sendTxn(
-    //     config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
-    //     "config.setHealthFactorLiquidationThreshold"
-    // );
+    const config = await getContract("Config");
+    await sendTxn(
+        config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
+        "config.setHealthFactorLiquidationThreshold"
+    );
 
     const liquidator = "0x9fc131ccDeAa47F910d7C61569b63fE0C42979dc";
     // await sendTxn(

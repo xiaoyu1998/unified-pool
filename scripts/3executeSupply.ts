@@ -21,7 +21,7 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
 
     console.log(usdtAddress);
-    const supplyAmountUsdt = expandDecimals(1000000, usdtDecimals);
+    const supplyAmountUsdt = expandDecimals(10000, usdtDecimals);
     await sendTxn(usdt.approve(router.target, supplyAmountUsdt), `usdt.approve(${router.target})`)  
     console.log("userUsdt", await usdt.balanceOf(owner.address), supplyAmountUsdt); 
 
@@ -49,7 +49,16 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, supplyAmountUni]),
         exchangeRouter.interface.encodeFunctionData("executeSupply", [paramsUni]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
+    // try {
+    //     const estimatedGas = await exchangeRouter.multicall.estimateGas(multicallArgs);
+    //     console.log("estimatedGas", estimatedGas);
+    // } catch (err){
+    //     for (const key in err) {
+    //         if (err.hasOwnProperty(key)) {
+    //             console.log(`${key}: ${err[key]}`);
+    //         }
+    //     }        
+    // }
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"

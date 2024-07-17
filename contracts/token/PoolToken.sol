@@ -33,11 +33,21 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     	_underlyingAsset = underlyingAsset_;
     }
 
+	// /// @inheritdoc IERC20
+	// function balanceOf(
+	//     address account
+	// ) public view virtual override(IndexERC20) returns (uint256) {
+	//     return super.balanceOf(account)
+	//     	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset));
+	// }
+
 	/// @inheritdoc IERC20
 	function balanceOf(
 	    address account
 	) public view virtual override(IndexERC20) returns (uint256) {
-	    return super.balanceOf(account)
+		uint256 scaledBalance = super.balanceOf(account);
+	    if (scaledBalance == 0) { return 0; }
+	    return scaledBalance
 	    	.rayMul(PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset));
 	}
 
@@ -109,10 +119,10 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	}
 
 	function transferOutUnderlyingAsset(
-        address receiver,
+        address to,
         uint256 amount
     ) external onlyController {
-        _transferOut(_underlyingAsset, receiver, amount);
+        _transferOut(_underlyingAsset, to, amount);
     }
 
 	function syncUnderlyingAssetBalance() external onlyController {
@@ -153,8 +163,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	}
 
 	function availableLiquidity(uint256 unclaimedFee) public view returns (uint256) {
-		Printer.log("totalCollateral", totalCollateral());
-		Printer.log("balanceOf", IERC20(_underlyingAsset).balanceOf(address(this)));
 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() - unclaimedFee;
 	}
 

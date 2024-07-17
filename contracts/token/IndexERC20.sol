@@ -17,7 +17,6 @@ abstract contract IndexERC20 is Context, IERC20{
     uint8 private _decimals;
     uint256 internal _totalSupply;
 
-   
     // @dev Constructor.
     // @param name The name of the token
     // @param symbol The symbol of the token
@@ -53,7 +52,6 @@ abstract contract IndexERC20 is Context, IERC20{
 
     /// @inheritdoc IERC20
     function transfer(address to, uint256 amount) external virtual override returns (bool) {
-        //uint128 castAmount = amount.toUint128();
         _transfer(_msgSender(), to, amount);
         return true;
     }
@@ -78,7 +76,6 @@ abstract contract IndexERC20 is Context, IERC20{
         address to,
         uint256 amount
     ) external virtual override returns (bool) {
-        //uint128 castAmount = amount.toUint128();
         _approve(from, _msgSender(), _allowances[from][_msgSender()] - amount);
         _transfer(from, to, amount);
         return true;
@@ -137,30 +134,6 @@ abstract contract IndexERC20 is Context, IERC20{
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
-
-    //
-    // @notice Update the name of the token
-    // @param newName The new name for the token
-    ///
-    // function _setName(string memory newName) internal {
-    //    _name = newName;
-    // }
-
-    //
-    // @notice Update the symbol for the token
-    // @param newSymbol The new symbol for the token
-    ///
-    // function _setSymbol(string memory newSymbol) internal {
-    //     _symbol = newSymbol;
-    // }
-
-    //
-    // @notice Update the number of decimals for the token
-    // @param newDecimals The new number of decimals for the token
-    ///
-    // function _setDecimals(uint8 newDecimals) internal {
-    //     _decimals = newDecimals;
-    // }
 
 
 }
