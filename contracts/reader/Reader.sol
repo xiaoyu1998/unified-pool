@@ -131,5 +131,9 @@ contract Reader {
         return ReaderDexUtils._getDexPoolSwapConstantFee(dataStore, underlyingAssetA, underlyingAssetB, amountIn);
     }
 
+    function getPoolToken(address dataStore, address poolKey) external view returns (address) {
+        return PoolStoreUtils.getPoolToken(dataStore, poolKey);
+    }
+
 
 }

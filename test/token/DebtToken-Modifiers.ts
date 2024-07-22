@@ -40,42 +40,42 @@ describe("debtToken Modifiers", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
-    it("debtToken to invoke transfer not be supported", async () => {
+    it("debtToken to invoke transfer not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).transfer(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "DebtTokenOperationNotSupported");
     });
 
-    it("debtToken to invoke allowance not be supported", async () => {
+    it("debtToken to invoke allowance not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).allowance(user1, user2)
         ).to.be.revertedWithCustomError(errorsContract, "DebtTokenOperationNotSupported");
     });
 
-    it("debtToken to invoke approve not be supported", async () => {
+    it("debtToken to invoke approve not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).approve(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "DebtTokenOperationNotSupported");
     });
 
-    it("debtToken to invoke transferFrom not be supported", async () => {
+    it("debtToken to invoke transferFrom not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).transferFrom(user1, user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "DebtTokenOperationNotSupported");
     });
 
-    it("debtToken to invoke increaseAllowance not be supported", async () => {
+    it("debtToken to invoke increaseAllowance not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).increaseAllowance(user1, amount)
         ).to.be.revertedWithCustomError(errorsContract, "DebtTokenOperationNotSupported");
     });
 
-    it("debtToken to invoke decreaseAllowance not be supported", async () => {
+    it("debtToken to invoke decreaseAllowance not to be supported", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
             debtToken.connect(user1).decreaseAllowance(user1, amount)
