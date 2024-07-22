@@ -82,7 +82,7 @@ async function main() {
     const poolUniAfterClosePosition = await getPoolInfo(uniAddress); 
     console.log("poolUsdtAfterClosePosition", poolUsdtAfterClosePosition);
     console.log("poolUniAfterClosePosition", poolUniAfterClosePosition);
-    console.log("Assets",await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
 }

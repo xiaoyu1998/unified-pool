@@ -73,6 +73,14 @@ contract Reader {
         return ReaderUtils._getPoolsPrice(dataStore, 0, poolsCount);
     }
 
+    function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
+        address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
+        address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
+        ReaderUtils.GetLiquidityAndDebt memory accountLiquidity = 
+            ReaderUtils._getLiquidityAndDebt(account, poolToken, debtToken);
+        return accountLiquidity;
+    }
+
     function getLiquidityAndDebts(address dataStore, address account) external view returns (ReaderUtils.GetLiquidityAndDebt[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, 0, poolsCount);
@@ -105,14 +113,6 @@ contract Reader {
         }
         //TODO:should delete empty items
         return marginsAndSupplies;
-    }
-
-    function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
-        address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
-        address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
-        ReaderUtils.GetLiquidityAndDebt memory accountLiquidity = 
-            ReaderUtils._getLiquidityAndDebt(account, poolToken, debtToken);
-        return accountLiquidity;
     }
 
     function getPrice(address dataStore, address underlyingAsset) external view returns (uint256) {

@@ -73,7 +73,7 @@ async function main() {
     const poolUniAfterSwap = await getPoolInfo(uniAddress); 
     console.log("poolUsdtAfterSwap", poolUsdtAfterSwap);
     console.log("poolUniAfterSwap", poolUniAfterSwap);
-    console.log("Assets",await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
 
