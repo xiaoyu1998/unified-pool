@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import parse from 'csv-parse';
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
-import {assetAddresses, deployAddresses, webSocketUrl} from "./network"
+import {tokenAddresses, deployAddresses, webSocketUrl} from "./network"
 
 export async function sendTxn(txnPromise, label) {
     const txn = await txnPromise
@@ -76,7 +76,7 @@ export function readTokenAddresses() {
     if (!process.env.HARDHAT_NETWORK){
         process.env.HARDHAT_NETWORK = 'localhost';
     }
-    const assetAddressFile = path.join(__dirname, '..', assetAddresses[`${process.env.HARDHAT_NETWORK}`]);
+    const assetAddressFile = path.join(__dirname, '..', tokenAddresses[`${process.env.HARDHAT_NETWORK}`]);
 
     if (fs.existsSync(assetAddressFile)) {
         return JSON.parse(fs.readFileSync(assetAddressFile))
@@ -88,7 +88,7 @@ export function writeTokenAddresses(json) {
     if (!process.env.HARDHAT_NETWORK){
         process.env.HARDHAT_NETWORK = 'localhost';
     }
-    const assetAddressFile = path.join(__dirname, '..', assetAddresses[`${process.env.HARDHAT_NETWORK}`]);
+    const assetAddressFile = path.join(__dirname, '..', tokenAddresses[`${process.env.HARDHAT_NETWORK}`]);
 
     const assets = Object.assign(readTokenAddresses(), json)
     fs.writeFileSync(assetAddressFile, JSON.stringify(assets, null , 2))

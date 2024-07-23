@@ -1,8 +1,8 @@
-export const assetAddresses = {
-	localhost : "ignition/deployments/chain-31337/underlyAsset_addresses.json",
-	localnet : "ignition/deployments/chain-1998/underlyAsset_addresses.json",
-	testnet : "deployments/testnet_underlyasset_addresses.json",
-	sepolia : "deployments/sepolia_underlyasset_addresses.json",	
+export const tokenAddresses = {
+	localhost : "ignition/deployments/chain-31337/token_addresses.json",
+	localnet : "ignition/deployments/chain-1998/token_addresses.json",
+	testnet : "deployments/testnet_token_addresses.json",
+	sepolia : "deployments/sepolia_token_addresses.json",	
 };
 
 export const deployAddresses = {
