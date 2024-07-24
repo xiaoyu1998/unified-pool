@@ -59,6 +59,11 @@ library WithdrawUtils {
             poolCache.nextBorrowIndex
         );
 
+        uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
+        if (amountToWithdraw > availableLiquidity) {
+            amountToWithdraw = availableLiquidity;
+        }
+
         WithdrawUtils.validateWithdraw(
             pool, 
             amountToWithdraw, 
@@ -114,14 +119,14 @@ library WithdrawUtils {
         }
         
         //TODO:This should be never happen
-        if (amount > userBalance) {
-            revert Errors.InsufficientUserBalance(amount, userBalance);
-        }
+        // if (amount > userBalance) {
+        //     revert Errors.InsufficientUserBalance(amount, userBalance);
+        // }
 
-        uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
-        if (amount > availableLiquidity) {
-            revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
-        } 
+        // uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
+        // if (amount > availableLiquidity) {
+        //     revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
+        // } 
       }
     
 }

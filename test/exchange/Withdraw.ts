@@ -29,7 +29,7 @@ describe("Exchange Withdraw", () => {
         ({ usdtPool, uniPool } = fixture.pools);
     });
 
-    it("executeWithdraw AmountToBorrow <= UserSupplyBalance", async () => {
+    it("executeWithdraw AmountToWithdraw <= UserSupplyBalance", async () => {
         const usdtBalanceBeforePool = await usdt.balanceOf(usdtPool.poolToken);
         const usdtBalanceBeforeUser1 = await usdt.balanceOf(user0.address);
         const usdtSupplyBeforeUser1 = await getSupply(dataStore, reader, user0.address, usdt.target);
@@ -50,7 +50,7 @@ describe("Exchange Withdraw", () => {
         expect(await getSupply(dataStore, reader, user0.address, usdt.target)).eq(usdtSupplyBeforeUser1 - usdtAmount);
     });
 
-    it("executeWithdraw AmountToBorrow > UserSupplyBalance", async () => {
+    it("executeWithdraw AmountToWithdraw > UserSupplyBalance", async () => {
         const usdtBalanceBeforePool = await usdt.balanceOf(usdtPool.poolToken);
         const usdtBalanceBeforeUser1 = await usdt.balanceOf(user0.address);
         //const usdtSupplyBeforeUser1 = await getSupply(dataStore, reader, user0.address, usdt.target);
@@ -69,6 +69,42 @@ describe("Exchange Withdraw", () => {
         expect(await usdt.balanceOf(usdtPool.poolToken)).eq(0);
         expect(await usdt.balanceOf(user0.address)).eq(usdtBalanceBeforeUser1 + usdtBalanceBeforePool);
         expect(await getSupply(dataStore, reader, user0.address, usdt.target)).eq(0);
+    });
+
+    it("executeWithdraw AmountToWithdraw > availableLiquidity", async () => {
+        const usdtBalanceBeforePool = await usdt.balanceOf(usdtPool.poolToken);
+        const uniAmountDeposit = expandDecimals(200000, uniDecimals);
+        await uni.connect(user0).approve(router.target, uniAmountDeposit);
+        const uniParamsDeposit: DepositUtils.DepositParamsStruct = {
+            underlyingAsset: uni.target,
+        };
+        const usdtAmmountBorrow = expandDecimals(1000000, usdtDecimals);
+        const usdtParamsBorrow: BorrowUtils.BorrowParamsStruct = {
+            underlyingAsset: usdt.target,
+            amount: usdtAmmountBorrow,
+        };
+        const multicallArgsDeposit = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniAmountDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [usdtParamsBorrow]),
+        ];
+        await exchangeRouter.connect(user0).multicall(multicallArgsDeposit);
+
+        const usdtBalanceBeforeUser1 = await usdt.balanceOf(user0.address);
+        const usdtAmount1 = expandDecimals(10000000, usdtDecimals);
+        const usdtParams1: WithdrawUtils.WithdrawParamsStructOutput = {
+            underlyingAsset: usdt.target,
+            amount: usdtAmount1,
+            to: user0.address,
+        };
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeWithdraw", [usdtParams1]),
+        ];
+        await exchangeRouter.connect(user0).multicall(multicallArgs2);
+        expect(await usdt.balanceOf(usdtPool.poolToken)).eq(usdtAmmountBorrow);
+        expect(await usdt.balanceOf(user0.address)).eq(usdtBalanceBeforeUser1 + usdtBalanceBeforePool - usdtAmmountBorrow);
+        expect(await getSupply(dataStore, reader, user0.address, usdt.target)).eq("1000000001980");
+
     });
 
     it("executeWithdraw PoolNotFound", async () => {
@@ -99,38 +135,7 @@ describe("Exchange Withdraw", () => {
         ];
         await expect(
             exchangeRouter.connect(user0).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "EmptyWithdrawAmounts");  
-
-        //InsufficientAvailableLiquidity
-        const uniAmountDeposit = expandDecimals(200000, uniDecimals);
-        await uni.connect(user0).approve(router.target, uniAmountDeposit);
-        const uniParamsDeposit: DepositUtils.DepositParamsStruct = {
-            underlyingAsset: uni.target,
-        };
-        const usdtAmmountBorrow = expandDecimals(1000000, usdtDecimals);
-        const usdtParamsBorrow: BorrowUtils.BorrowParamsStruct = {
-            underlyingAsset: usdt.target,
-            amount: usdtAmmountBorrow,
-        };
-        const multicallArgsDeposit = [
-            exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniAmountDeposit]),
-            exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
-            exchangeRouter.interface.encodeFunctionData("executeBorrow", [usdtParamsBorrow]),
-        ];
-        await exchangeRouter.connect(user0).multicall(multicallArgsDeposit);
-
-        const usdtAmount1 = expandDecimals(10000000, usdtDecimals);
-        const usdtParams1: WithdrawUtils.WithdrawParamsStructOutput = {
-            underlyingAsset: usdt.target,
-            amount: usdtAmount1,
-            to: user0.address,
-        };
-        const multicallArgs2 = [
-            exchangeRouter.interface.encodeFunctionData("executeWithdraw", [usdtParams1]),
-        ];
-        await expect(
-            exchangeRouter.connect(user0).multicall(multicallArgs2)
-        ).to.be.revertedWithCustomError(errorsContract, "InsufficientAvailableLiquidity");  
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyWithdrawAmounts");   
     });    
 
     it("executeWithdraw validateWithdraw poolConfiguration", async () => {
