@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IBorrowHandler.sol";
 import "../borrow/BorrowUtils.sol";
+import "../event/EventEmitter.sol";
+import "./IBorrowHandler.sol";
 
 // @title BorrowHandler
 // @dev Contract to handle execution of borrow

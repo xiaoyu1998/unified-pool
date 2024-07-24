@@ -3,7 +3,6 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
-import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -12,7 +11,6 @@ import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
 
-import "../event/EventEmitter.sol";
 import "./WithdrawEventUtils.sol";
 
 // @title WithdrawUtils

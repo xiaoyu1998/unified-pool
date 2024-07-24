@@ -3,7 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
-import "../data/Keys.sol";
+// import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -16,8 +16,7 @@ import "../oracle/OracleUtils.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-import "../utils/WadRayMath.sol";
-import "../event/EventEmitter.sol";
+//import "../utils/WadRayMath.sol";
 import "./DepositEventUtils.sol";
 
 // @title DepositUtils
@@ -27,8 +26,8 @@ library DepositUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
-    using WadRayMath for uint256;
-    using PoolConfigurationUtils for uint256;
+    //using WadRayMath for uint256;
+    ///using PoolConfigurationUtils for uint256;
 
     struct DepositParams {
         address underlyingAsset;

@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./ISupplyHandler.sol";
+import "../event/EventEmitter.sol";
 import "../supply/SupplyUtils.sol";
+import "./ISupplyHandler.sol";
 
 // @title SupplyHandler
 // @dev Contract to handle execution of supply

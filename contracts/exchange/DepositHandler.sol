@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IDepositHandler.sol";
 import "../deposit/DepositUtils.sol";
+import "../event/EventEmitter.sol";
+import "./IDepositHandler.sol";
 
 // @title DepositHandler
 // @dev Contract to handle execution of deposit

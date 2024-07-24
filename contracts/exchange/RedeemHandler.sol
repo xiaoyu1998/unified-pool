@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IRedeemHandler.sol";
 import "../redeem/RedeemUtils.sol";
+import "../event/EventEmitter.sol";
+import "./IRedeemHandler.sol";
 
 // @title RedeemHandler
 // @dev Contract to handle execution of redeem

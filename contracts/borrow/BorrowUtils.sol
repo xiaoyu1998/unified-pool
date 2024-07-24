@@ -3,7 +3,6 @@
 pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
-import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -17,9 +16,8 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 
-import "../oracle/OracleUtils.sol";
-import "../utils/WadRayMath.sol";
-import "../event/EventEmitter.sol";
+// import "../oracle/OracleUtils.sol";
+// import "../utils/WadRayMath.sol";
 import "./BorrowEventUtils.sol";
 
 // @title BorrowUtils

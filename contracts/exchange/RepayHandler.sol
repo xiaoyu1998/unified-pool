@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IRepayHandler.sol";
 import "../repay/RepayUtils.sol";
+import "../event/EventEmitter.sol";
+import "./IRepayHandler.sol";
 
 // @title RepayHandler
 // @dev Contract to handle execution of repay

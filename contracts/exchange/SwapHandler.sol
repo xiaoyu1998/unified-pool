@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./ISwapHandler.sol";
+import "../event/EventEmitter.sol";
 import "../swap/SwapUtils.sol";
+import "./ISwapHandler.sol";
 
 // @title SwapHandler
 // @dev Contract to handle execution of swap

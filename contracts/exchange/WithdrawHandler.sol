@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./IWithdrawHandler.sol";
+import "../event/EventEmitter.sol";
 import "../withdraw/WithdrawUtils.sol";
+import "./IWithdrawHandler.sol";
 
 // @title WithdrawHandler
 // @dev Contract to handle execution of withdraw

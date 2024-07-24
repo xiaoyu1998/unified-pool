@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import "../data/DataStore.sol";
-import "../data/Keys.sol";
+// import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -17,8 +17,8 @@ import "../token/IPoolToken.sol";
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-import "../utils/WadRayMath.sol";
-import "../event/EventEmitter.sol";
+// import "../utils/WadRayMath.sol";
+
 import "./LiquidationEventUtils.sol";
 
 // @title LiquidationUtils
@@ -26,8 +26,8 @@ library LiquidationUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
-    using WadRayMath for uint256;
-    using PoolConfigurationUtils for uint256;
+    // using WadRayMath for uint256;
+    // using PoolConfigurationUtils for uint256;
     using SafeERC20 for IERC20;
 
     struct LiquidationParams {

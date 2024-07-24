@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+//import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "../data/DataStore.sol";
-import "../data/Keys.sol";
+// import "../data/Keys.sol";
 import "../error/Errors.sol";
 
 import "../pool/Pool.sol";
@@ -19,11 +19,10 @@ import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 import "../oracle/OracleUtils.sol";
-import "../utils/WadRayMath.sol";
+//import "../utils/WadRayMath.sol";
 import "../dex/DexStoreUtils.sol";
 import "../dex/IDex.sol";
 
-import "../event/EventEmitter.sol";
 import "./SwapEventUtils.sol";
 
 // @title SwapUtils
@@ -33,8 +32,8 @@ library SwapUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
-    using WadRayMath for uint256;
-    using PoolConfigurationUtils for uint256;
+    // using WadRayMath for uint256;
+    // using PoolConfigurationUtils for uint256;
 
     struct SwapParams {
         address underlyingAssetIn;

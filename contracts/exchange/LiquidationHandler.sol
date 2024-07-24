@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./ILiquidationHandler.sol";
+import "../event/EventEmitter.sol";
 import "../liquidation/LiquidationUtils.sol";
+import "./ILiquidationHandler.sol";
 
 // @title LiquidationHandler
 // @dev Contract to handle execution of liquidation

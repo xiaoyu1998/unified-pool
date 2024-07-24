@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 
 import "../role/RoleModule.sol";
 import "../utils/GlobalReentrancyGuard.sol";
-import "./ICloseHandler.sol";
+import "../event/EventEmitter.sol";
 import "../close/CloseUtils.sol";
+import "./ICloseHandler.sol";
 
 // @title CloseHandler
 // @dev Contract to handle execution of close
