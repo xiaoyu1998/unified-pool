@@ -76,7 +76,6 @@ library CloseUtils {
         address account, 
         ExecuteClosePositionParams calldata params
     ) external {
-        Printer.log("-------------------------executeClosePosition--------------------------");
         ClosePositionLocalVars memory vars;
         vars.poolKey = Keys.poolKey(params.underlyingAsset);
         vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
@@ -88,7 +87,6 @@ library CloseUtils {
 
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
-        //PositionUtils.validateEnabledPosition(vars.position);
 
         vars.poolToken = IPoolToken(vars.pool.poolToken);
         vars.debtToken = IDebtToken(vars.pool.debtToken);
@@ -161,7 +159,6 @@ library CloseUtils {
         uint256 collateralAmount,
         uint256 debtAmount
     ) internal pure {
-        Printer.log("-------------------------validateClosePosition--------------------------");
         PoolUtils.validateConfigurationPool(pool, false);
         PoolUtils.validateConfigurationPool(poolUsd, false);
         PositionUtils.validateEnabledPosition(position);
@@ -213,7 +210,6 @@ library CloseUtils {
         address account, 
         ExecuteCloseParams calldata params
     ) external {
-        Printer.log("-------------------------executeClose--------------------------");
         CloseLocalVars memory vars;
 
         vars.poolUsdKey = Keys.poolKey(params.underlyingAssetUsd);
@@ -233,9 +229,6 @@ library CloseUtils {
             vars.positionCount
         );
         
-        Printer.log("-------------------------executeClose1st--------------------------");
-        Printer.log("positionCount", vars.positionCount);
-        Printer.log("amountUsdStartClose", vars.amountUsdStartClose);
         // reapy and sell collateral
         for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
@@ -277,17 +270,12 @@ library CloseUtils {
         (   vars.positionCount,
             vars.positionKeys 
         ) = PositionStoreUtils.getPositionKeys(account, params.dataStore);
-        Printer.log("-------------------------executeClose2nd--------------------------");
-        Printer.log("positionCount", vars.positionCount);
-        Printer.log("amountUsdAfterRepayAndSellCollateral", vars.amountUsdAfterRepayAndSellCollateral);
 
         // buy and repay the left debt
         for (vars.i = 0; vars.i < vars.positionCount; vars.i++) {
             vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKeys[vars.i]);
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
-            // PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
-            // PoolUtils.validateConfigurationPool(vars.pool, false);
 
             if (vars.position.underlyingAsset == params.underlyingAssetUsd) {
                 continue;
@@ -328,7 +316,6 @@ library CloseUtils {
             PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position);          
         }  
         vars.amountUsdAfterBuyCollateralAndRepay = vars.poolTokenUsd.balanceOfCollateral(account); 
-        Printer.log("amountUsdAfterBuyCollateralAndRepay", vars.amountUsdAfterBuyCollateralAndRepay);
         CloseEventUtils.emitClose(
             params.eventEmitter, 
             params.underlyingAssetUsd,
@@ -349,7 +336,6 @@ library CloseUtils {
         Pool.Props memory poolUsd,
         uint256 positionsLength
     ) internal view {
-        Printer.log("-------------------------validateClose--------------------------");
         if (positionsLength == 0) {
             revert Errors.EmptyPositions(account);
         }

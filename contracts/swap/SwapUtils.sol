@@ -87,7 +87,6 @@ library SwapUtils {
     // @param account the swap account
     // @param params ExecuteSwapParams
     function executeSwapExactIn(address account, ExecuteSwapParams calldata params) external returns (uint256) {
-        Printer.log("-------------------------executeSwap--------------------------");
         SwapLocalVars memory vars;
         (   vars.poolIn,
             ,
@@ -130,7 +129,6 @@ library SwapUtils {
             vars.dex
         );
 
-        Printer.log("-------------------------swapStart--------------------------");
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.amountIn);
         IDex(vars.dex).swapExactIn(
@@ -141,23 +139,12 @@ library SwapUtils {
             params.sqrtPriceLimitX96
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
-        Printer.log("-------------------------swapEnd--------------------------");
 
         vars.amountInAfterSwap = vars.poolTokenIn.recordTransferOut(params.underlyingAssetIn);
         vars.amountOut = vars.poolTokenOut.recordTransferIn(params.underlyingAssetOut);
         if (vars.amountIn != vars.amountInAfterSwap) {
             revert Errors.InsufficientDexLiquidity(vars.amountInAfterSwap, vars.amountIn);
         }
-        
-        // //update collateral
-        // vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
-        // vars.poolTokenOut.addCollateral(account, vars.amountOut);
-
-        // //update position and entryPrice
-        // if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
-        //     vars.positionIn.hasCollateral  = false;
-        // }
-        // vars.positionOut.hasCollateral = true;
 
         //update collateral
         //update position and entryPrice
@@ -225,8 +212,6 @@ library SwapUtils {
             vars.poolOut
         );
 
-        //vars.amountIn * IDex(vars.dex).getFeeAmount()*;
-
         vars.collateralIn  = vars.poolTokenIn.balanceOfCollateral(account);
         vars.debtScaledIn  = vars.debtTokenIn.scaledBalanceOf(account);
         vars.collateralOut = vars.poolTokenOut.balanceOfCollateral(account);
@@ -255,7 +240,6 @@ library SwapUtils {
     // @param account the swap account
     // @param params ExecuteSwapParams
     function executeSwapExactOut(address account, ExecuteSwapParams calldata params) external returns (uint256) {
-        Printer.log("-------------------------executeSwap--------------------------");
         SwapLocalVars memory vars;
         (   vars.poolIn,
             ,
@@ -295,7 +279,6 @@ library SwapUtils {
             vars.dex
         );
 
-        Printer.log("-------------------------swapStart--------------------------");
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.collateralAmount);
         IDex(vars.dex).swapExactOut(
@@ -306,7 +289,6 @@ library SwapUtils {
             params.sqrtPriceLimitX96
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
-        Printer.log("-------------------------swapEnd--------------------------");
 
         vars.amountIn = vars.poolTokenIn.recordTransferOut(params.underlyingAssetIn);
         vars.amountOutAfterSwap = vars.poolTokenOut.recordTransferIn(params.underlyingAssetOut);
@@ -316,16 +298,6 @@ library SwapUtils {
         if (vars.amountIn > vars.collateralAmount){
             revert Errors.InsufficientCollateralForSwap(vars.amountIn, vars.collateralAmount);
         }
-        
-        // //update collateral
-        // vars.poolTokenIn.removeCollateral(account, vars.amountIn);//this line will assert if account InsufficientCollateralAmount
-        // vars.poolTokenOut.addCollateral(account, vars.amountOut);
-        
-        // //update position and entryPrice
-        // if (vars.poolTokenIn.balanceOfCollateral(account) == 0){
-        //     vars.positionIn.hasCollateral  = false;
-        // }
-        // vars.positionOut.hasCollateral = true;
 
         //update collateral
         //update position and entryPrice
@@ -429,7 +401,6 @@ library SwapUtils {
         uint256 amount,
         address dex
     ) internal pure {
-        Printer.log("-------------------------validateSwap--------------------------");
         if (dex == address(0)){
              revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);
         }

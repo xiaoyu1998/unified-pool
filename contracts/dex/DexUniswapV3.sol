@@ -143,13 +143,6 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex, RoleModule {
         bytes calldata data
     ) external override {
         address sender = abi.decode(data, (address));
-
-        Printer.log("-------------------------uniswapV3SwapCallback--------------------------"); 
-        Printer.log("amount0Delta", amount0Delta);  
-        Printer.log("amount1Delta", amount1Delta); 
-        Printer.log("token0", IERC20Metadata(IUniswapV3Pool(msg.sender).token0()).symbol()); 
-        Printer.log("token1", IERC20Metadata(IUniswapV3Pool(msg.sender).token1()).symbol());  
-
         emit SwapCallback(amount0Delta, amount1Delta);
 
         if (amount0Delta > 0) {

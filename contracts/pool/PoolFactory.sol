@@ -34,8 +34,6 @@ contract PoolFactory is RoleModule {
         address interestRateStrategy,
         uint256 configuration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
-        Printer.log("--------------------createPool---------------------");
-        Printer.log("configuration", configuration);
         address poolKey = Keys.poolKey(underlyingAsset);
 
         Pool.Props memory existingPool = PoolStoreUtils.get(address(dataStore), poolKey);
@@ -63,8 +61,6 @@ contract PoolFactory is RoleModule {
         );
 
         PoolStoreUtils.set(address(dataStore), poolKey, pool);
-        //emitPoolCreated(poolKey, address(poolToken), address(debtToken));
-
         return pool;
     }
 

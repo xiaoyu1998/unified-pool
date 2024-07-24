@@ -19,7 +19,6 @@ interface IDex {
         uint256 sqrtPriceLimitX96
     ) external;
 
-    // function getSqrtPriceLimitX96(address tokenIn) external view returns (uint256);
     function getPool() external view returns(address);
     function getFeeAmount() external view returns(uint24);
     function getSwapFee(uint256) external view returns(uint256);

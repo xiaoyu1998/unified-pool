@@ -58,7 +58,6 @@ library PoolConfigurationUtils {
     // @param self The pool configuration
     // @param active The active state
     function setActive(uint256 poolConfigration, bool active) internal pure returns (uint256) {
-
         return (poolConfigration & ACTIVE_MASK) |
                (uint256(active ? 1 : 0) << IS_ACTIVE_START_BIT_POSITION);
     }

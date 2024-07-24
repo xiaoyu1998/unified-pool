@@ -41,7 +41,7 @@ contract CloseHandler is ICloseHandler, GlobalReentrancyGuard, RoleModule {
     function executeClosePosition(
         address account,
         CloseUtils.ClosePositionParams calldata closeParams
-    ) external globalNonReentrant {
+    ) external globalNonReentrant onlyController{
 
         CloseUtils.ExecuteClosePositionParams memory params = CloseUtils.ExecuteClosePositionParams(
            address(dataStore),

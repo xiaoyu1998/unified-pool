@@ -31,13 +31,6 @@ library FeeUtils {
         uint256 feeAmount          = increaseTotalDebt.percentMul(poolCache.feeFactor);
         pool.incrementFee(feeAmount.rayDiv(poolCache.nextLiquidityIndex));
 
-        Printer.log("-------------------------incrementFeeAmount--------------------------");
-        Printer.log("prevTotalDebt", prevTotalDebt );
-        Printer.log("currTotalDebt", currTotalDebt );
-        Printer.log("increaseTotalDebt", increaseTotalDebt );
-        Printer.log("feeAmount", feeAmount );
-        Printer.log("totalFee", pool.totalFee );
-        Printer.log("unclaimedFee", pool.unclaimedFee );
     }
 
 }

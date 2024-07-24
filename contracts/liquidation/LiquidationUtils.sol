@@ -63,7 +63,6 @@ library LiquidationUtils {
     // @param params liquidator
     // @param params ExecuteLiquidationParams
     function executeLiquidation(address liquidator, ExecuteLiquidationParams calldata params) external {
-        Printer.log("-------------------------executeLiquidation--------------------------");
         LiquidationLocalVars memory vars;
         (   vars.healthFactor,
             vars.healthFactorLiquidationThreshold,
@@ -113,7 +112,6 @@ library LiquidationUtils {
                 vars.poolToken.removeCollateral(vars.position.account, vars.collateralAmount);
                 vars.poolToken.transferOutUnderlyingAsset(liquidator, vars.collateralAmount);
             }
-            Printer.log("collateralAmount", vars.collateralAmount);
 
             if (vars.position.hasDebt){
                 vars.debtToken = IDebtToken(vars.pool.debtToken);
@@ -128,7 +126,6 @@ library LiquidationUtils {
                 );
                 vars.poolToken.syncUnderlyingAssetBalance();             
             }
-            Printer.log("debtAmount", vars.debtAmount);
 
             PositionUtils.reset(vars.position);
             PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);

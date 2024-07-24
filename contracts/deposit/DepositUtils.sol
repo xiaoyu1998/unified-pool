@@ -57,8 +57,7 @@ library DepositUtils {
     // @param account the depositing account
     // @param params ExecuteDepositParams
     function executeDeposit(address account, ExecuteDepositParams calldata params) external {
-        Printer.log("-------------------------executeDeposit--------------------------");
-        DepositLocalVars memory vars;
+         DepositLocalVars memory vars;
         (   vars.pool,
             vars.poolCache,
             vars.poolKey,

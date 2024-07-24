@@ -38,10 +38,6 @@ library OracleUtils {
         uint256 price = SafeCast.toUint256(_price);
         uint256 decimals = OracleStoreUtils.getOracleDecimals(dataStore, underlyingAsset);
         uint256 adjustPrice = Math.mulDiv(price, WadRayMath.RAY, 10**decimals);
-        // Printer.log("-----------------------getPrice------------------------");
-        // Printer.log("price", price);
-        // Printer.log("decimals", decimals);
-        // Printer.log("adjustPrice", adjustPrice);
         return adjustPrice;
     }
 
@@ -52,7 +48,6 @@ library OracleUtils {
         uint256 decimalsOut,
         bool poolOutIsUsd
     ) public pure returns (uint256) {
-        // Printer.log("-----------------------calcPrice------------------------");
         uint256 amountUsd = amountIn;
         uint256 decimalsUsd = decimalsIn;
         uint256 amountOthers = amountOut;
@@ -64,8 +59,6 @@ library OracleUtils {
 
         uint256 adjustAmountUsd = Math.mulDiv(amountUsd, WadRayMath.RAY, 10**decimalsUsd);
         uint256 adjustAmountOthers = Math.mulDiv(amountOthers, WadRayMath.RAY, 10**decimalsOthers);
-        Printer.log("adjustAmountUsd", adjustAmountUsd);
-        Printer.log("adjustAmountOthers", adjustAmountOthers);
         return adjustAmountUsd.rayDiv(adjustAmountOthers);
 
     }

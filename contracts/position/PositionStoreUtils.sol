@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 
 import "../data/Keys.sol";
 import "../data/IDataStore.sol";
+import "../error/Errors.sol";
 
 import "./Position.sol";
 import "../utils/Printer.sol";

@@ -70,9 +70,7 @@ library RedeemUtils {
         address account, 
         ExecuteRedeemParams calldata params
     ) external {
-        Printer.log("-------------------------executeRedeem--------------------------");
         ExecuteRedeemLocalVars memory vars;
-        //TODO:should be just get the pooltoken and pool configuration only
         (   vars.pool,
             ,
             vars.poolKey,
@@ -90,7 +88,7 @@ library RedeemUtils {
         if (vars.redeemAmount > vars.maxAmountToRedeem) {
             vars.redeemAmount = vars.maxAmountToRedeem;
         }
-        // Printer.log("redeemAmount", vars.redeemAmount);  
+
         RedeemUtils.validateRedeem( 
             account, 
             params.dataStore, 
@@ -99,9 +97,6 @@ library RedeemUtils {
             vars.redeemAmount
         );
 
-        // vars.poolToken.removeCollateral(account, vars.redeemAmount);
-        // vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);
-        // vars.remainCollateral = vars.poolToken.balanceOfCollateral(account);
         vars.remainCollateral = vars.poolToken.removeCollateral(account, vars.redeemAmount);
         vars.poolToken.transferOutUnderlyingAsset(params.to, vars.redeemAmount);     
         if (vars.remainCollateral == 0) {
@@ -146,7 +141,6 @@ library RedeemUtils {
         Position.Props memory position,
         uint256 amountToRedeem
     ) internal view {
-        Printer.log("-------------------------validateRedeem--------------------------");
         PoolUtils.validateConfigurationPool(pool, false);  
         PositionUtils.validateEnabledPosition(position);
         if (amountToRedeem == 0) {
@@ -162,12 +156,6 @@ library RedeemUtils {
             amountToRedeem,
             decimals
         );
-
-        // IPoolToken poolCacheToken = IPoolToken(pool.poolToken);
-        // IDebtToken debtToken   = IDebtToken(pool.debtToken);
-        // uint256 collateralAmount = poolCacheToken.balanceOfCollateral(account);
-        // uint256 debtAmount = debtToken.balanceOf(account);
-        // PositionUtils.validateCollateralRateHealthFactor(dataStore, pool.underlyingAsset, collateralAmount, debtAmount, amountToRedeem);
 
     }
 }

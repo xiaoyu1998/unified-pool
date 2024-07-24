@@ -18,12 +18,6 @@ contract UniswapV3MintCallee is IUniswapV3MintCallback {
         int24 tickUpper,
         uint128 amount
     ) external {
-        // Printer.log("-------------------------uniswapV3MintCallback--------------------------"); 
-        // Printer.log("pool", pool);
-        // Printer.log("recipient", recipient); 
-        // Printer.log("tickLower", int256(tickLower));  
-        // Printer.log("tickUpper", int256(tickUpper));  
-        // Printer.log("amount", uint256(amount));  
         IUniswapV3Pool(pool).mint(recipient, tickLower, tickUpper, amount, abi.encode(msg.sender));
     }
 
@@ -35,13 +29,6 @@ contract UniswapV3MintCallee is IUniswapV3MintCallback {
         bytes calldata data
     ) external override {
         address sender = abi.decode(data, (address));
-        Printer.log("-------------------------uniswapV3MintCallback--------------------------"); 
-        Printer.log("sender", sender);
-        Printer.log("amount0Owed", amount0Owed); 
-        Printer.log("amount1Owed", amount1Owed);  
-        Printer.log("token0", IERC20Metadata(IUniswapV3Pool(msg.sender).token0()).symbol()); 
-        Printer.log("token1", IERC20Metadata(IUniswapV3Pool(msg.sender).token1()).symbol()); 
-
         emit MintCallback(amount0Owed, amount1Owed);
         if (amount0Owed > 0)
             IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, amount0Owed);

@@ -65,7 +65,6 @@ library RepayUtils {
     // @param account the repaying account
     // @param params ExecuteRepayParams
     function executeRepay(address account, ExecuteRepayParams calldata params) external {
-        Printer.log("-------------------------executeRepay--------------------------");
         RepayLocalVars memory vars;
         (   vars.pool,
             vars.poolCache,
@@ -73,8 +72,6 @@ library RepayUtils {
             vars.poolIsUsd
         ) = PoolUtils.updatePoolAndCache(params.dataStore, params.underlyingAsset);
 
-        // uint256 repayAmount;
-        // uint256 collateralAmount;
         vars.poolToken = IPoolToken(vars.poolCache.poolToken);
         vars.useCollateralToRepay = (params.amount > 0) ? true:false;
         if (vars.useCollateralToRepay) { 
@@ -82,8 +79,7 @@ library RepayUtils {
             vars.collateralAmount = vars.poolToken.balanceOfCollateral(account);
         } else {//transferin to repay
             vars.repayAmount = vars.poolToken.recordTransferIn(params.underlyingAsset);
-        }
-        Printer.log("repayAmount", vars.repayAmount);   
+        }  
 
         vars.overpaymentAmount;
         vars.debtToken = IDebtToken(vars.poolCache.debtToken);
@@ -92,8 +88,6 @@ library RepayUtils {
             vars.overpaymentAmount = vars.repayAmount - vars.debtAmount;
             vars.repayAmount         = vars.debtAmount;      
         }
-        Printer.log("debtAmount", vars.debtAmount); 
-        Printer.log("overpaymentAmount", vars.overpaymentAmount); 
 
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         vars.position  = PositionStoreUtils.get(params.dataStore, vars.positionKey);
@@ -110,13 +104,10 @@ library RepayUtils {
         (   vars.noDebt, 
             vars.poolCache.nextTotalScaledDebt
         ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
-        //if (vars.debtToken.scaledBalanceOf(account) == 0) {
         if (vars.noDebt){
             vars.position.hasDebt = false; 
         }
         if (vars.useCollateralToRepay) {//reduce collateral to repay
-            // vars.poolToken.removeCollateral(account, vars.repayAmount);
-            // if(vars.poolToken.balanceOfCollateral(account) == 0) {
             if(vars.poolToken.removeCollateral(account, vars.repayAmount) == 0) {
                 vars.position.hasCollateral = false;
             }

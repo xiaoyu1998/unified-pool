@@ -26,7 +26,6 @@ contract EventEmitter is RoleModule {
     event Deposit(
         address indexed pool,
         address indexed depositer,
-        //address indexed to,
         uint256 amount,
         uint256 collateral,
         uint256 debtScaled
@@ -44,7 +43,6 @@ contract EventEmitter is RoleModule {
     event Borrow(
         address indexed pool,
         address indexed borrower,
-        //address indexed to,
         uint256 amount,
         uint256 borrowRate,
         uint256 collateral,
@@ -53,7 +51,6 @@ contract EventEmitter is RoleModule {
 
     event Repay(
         address indexed pool,
-        // address indexed to,
         address indexed repayer,
         uint256 amount,
         bool useCollateral,
@@ -62,8 +59,6 @@ contract EventEmitter is RoleModule {
     );
 
     event Swap(
-        // address indexed underlyingAssetIn,
-        // address indexed underlyingAssetOut,
         address indexed poolIn,
         address indexed poolOut,
         address indexed account,

@@ -17,7 +17,6 @@ library Keys {
     // @dev for a global pool salt
     bytes32 public constant POOL_SALT = keccak256(abi.encode("POOL_SALT"));
 
-
     // @dev for a global position list
     bytes32 public constant POSITION_LIST = keccak256(abi.encode("POSITION_LIST"));
     

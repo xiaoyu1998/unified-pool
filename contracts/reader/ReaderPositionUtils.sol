@@ -78,7 +78,6 @@ library ReaderPositionUtils {
         );
 
         vars.positionInfo.indexPrice = OracleUtils.getPrice(dataStore, vars.pool.underlyingAsset);
-        Printer.log("indexPrice", vars.positionInfo.indexPrice);
         
         vars.poolKey = Keys.poolKey(vars.pool.underlyingAsset);
         vars.poolToken = PoolStoreUtils.getPoolToken(dataStore, vars.poolKey);
@@ -90,19 +89,13 @@ library ReaderPositionUtils {
         vars.debtAmount = IDebtToken(vars.debtToken).balanceOf(vars.pool.account);
         vars.adjustCollateralAmount = Math.mulDiv(vars.collateralAmount, WadRayMath.RAY, 10**vars.decimals);
         vars.adjustDebtAmount = Math.mulDiv(vars.debtAmount, WadRayMath.RAY, 10**vars.decimals);
-        
-        Printer.log("collateralAmount", vars.collateralAmount);
-        Printer.log("debtAmount", vars.debtAmount);
         vars.equityAbs = SignedMath.abs(int256(vars.collateralAmount) - int256(vars.debtAmount));
-        Printer.log("equityAbs", vars.equityAbs);
-
         vars.adjustEquityAbs = SignedMath.abs(int256(vars.adjustCollateralAmount) - int256(vars.adjustDebtAmount));
         vars.equityUsdAbs = vars.adjustEquityAbs.rayMul(vars.positionInfo.indexPrice);
 
         vars.collateralHigherThanDebt = (vars.collateralAmount > vars.debtAmount) ? true : false;
         vars.positionInfo.equity = vars.collateralHigherThanDebt ? int256(vars.equityAbs): -int256(vars.equityAbs);
         vars.positionInfo.equityUsd = vars.collateralHigherThanDebt ? int256(vars.equityUsdAbs) : -int256(vars.equityUsdAbs);
-        Printer.log("equitequityUsdyAbs", vars.positionInfo.equityUsd);
 
         if (vars.pool.positionType == 0) {//short
             vars.positionInfo.entryPrice = vars.pool.entryShortPrice;          
@@ -119,14 +112,10 @@ library ReaderPositionUtils {
             //long, the collateral should higher than debt
             //the collateralHigherThanDebt is same as the isLong
             vars.positionInfo.pnlUsd = (vars.isPriceIncrease&&vars.collateralHigherThanDebt) ? int256(vars.pnlUsdAbs) : -int256(vars.pnlUsdAbs);
-            Printer.log("pnlUsd", vars.positionInfo.pnlUsd);
             
             (   vars.userTotalCollateralExceptThisPositionUsd,
                 vars.userTotalDebExceptThisPositiontUsd
             ) = PositionUtils.calculateUserTotalCollateralAndDebt(vars.pool.account, dataStore, vars.pool.underlyingAsset);
-
-            Printer.log("userTotalCollateralExceptThisPositionUsd", vars.userTotalCollateralExceptThisPositionUsd);
-            Printer.log("userTotalDebExceptThisPositiontUsd", vars.userTotalDebExceptThisPositiontUsd);
 
             vars.liquidationPrice = PositionUtils.getLiquidationPrice(
                 dataStore,

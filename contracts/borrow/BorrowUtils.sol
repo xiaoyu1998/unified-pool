@@ -58,7 +58,6 @@ library BorrowUtils {
     // @param account the borrowing account
     // @param params ExecuteBorrowParams
     function executeBorrow(address account, ExecuteBorrowParams calldata params) external {
-        Printer.log("-------------------------executeBorrow--------------------------");  
         BorrowLocalVars memory vars;
         (   vars.pool,
             vars.poolCache,
@@ -140,7 +139,6 @@ library BorrowUtils {
         PoolCache.Props memory poolCache,
         uint256 amountToBorrow
     ) internal view {
-        Printer.log("-------------------------validateBorrow--------------------------");
         //validate pool configuration
         PoolUtils.validateConfigurationPool(pool, true);   
 
@@ -162,9 +160,6 @@ library BorrowUtils {
         uint256 borrowCapacity = PoolConfigurationUtils.getBorrowCapacity(poolCache.configuration) 
                               * (10 ** poolDecimals);
 
-        Printer.log("poolDecimals", poolDecimals );
-        Printer.log("borrowCapacity", borrowCapacity);
-
         if (borrowCapacity != 0) {
             uint256 totalDebt =
                 poolCache.nextTotalScaledDebt.rayMul(poolCache.nextBorrowIndex) +
@@ -172,10 +167,9 @@ library BorrowUtils {
             if (totalDebt > borrowCapacity) {
                 revert Errors.BorrowCapacityExceeded(totalDebt, borrowCapacity);
             }
-            Printer.log("totalDebt",  totalDebt);
         }
 
-        //validate account health
+        //validate health
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, poolCache.underlyingAsset);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
         PositionUtils.validateLiquidationHealthFactor(
@@ -186,17 +180,6 @@ library BorrowUtils {
             decimals
         );
 
-        // IPoolToken poolToken = IPoolToken(poolCache.poolToken);
-        // IDebtToken debtToken   = IDebtToken(poolCache.debtToken);
-        // uint256 collateralAmount = poolToken.balanceOfCollateral(account);
-        // uint256 debtAmount = debtToken.balanceOf(account);
-        // PositionUtils.validateCollateralRateHealthFactor(
-        //     dataStore, 
-        //     poolCache.underlyingAsset, 
-        //     collateralAmount, 
-        //     debtAmount, 
-        //     amountToBorrow
-        // );
     }
     
 }

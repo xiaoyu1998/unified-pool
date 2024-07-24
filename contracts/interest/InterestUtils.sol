@@ -16,8 +16,6 @@ library InterestUtils {
   uint256 internal constant SECONDS_PER_YEAR = 365 days;
 
   struct CalculateInterestRatesParams {
-      // uint256 liquidityIn;
-      // uint256 liquidityOut;
       uint256 totalAvailableLiquidity;
       uint256 totalDebt;
       uint256 feeFactor;

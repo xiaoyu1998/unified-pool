@@ -15,7 +15,6 @@ import "../token/IPoolToken.sol";
 import "../event/EventEmitter.sol";
 import "./WithdrawEventUtils.sol";
 
-
 // @title WithdrawUtils
 // @dev Library for withdraw functions, to help with the withdrawing of liquidity
 // from a pool in return for underlying tokens
@@ -66,9 +65,7 @@ library WithdrawUtils {
 
         WithdrawUtils.validateWithdraw(
             pool, 
-            amountToWithdraw, 
-            userBalance,
-            unclaimedFee
+            amountToWithdraw
         );
 
         poolToken.burn(//amountToWithdraw liquidity will be reduced
@@ -78,7 +75,6 @@ library WithdrawUtils {
             poolCache.nextLiquidityIndex,
             unclaimedFee
         );
-        //poolToken.syncUnderlyingAssetBalance();
 
         PoolUtils.updateInterestRates(
             params.eventEmitter,
@@ -104,13 +100,9 @@ library WithdrawUtils {
     // @notice Validates a withdraw action.
     // @param pool The state of the pool
     // @param amount The amount to be withdrawn
-    // @param userBalance The supply balance of the user   
-    // @param unclaimedFee The unclaimed fee to calculate the available liquidity
     function validateWithdraw(
         Pool.Props memory pool,
-        uint256 amount,
-        uint256 userBalance,
-        uint256 unclaimedFee
+        uint256 amount
     ) internal view{
         PoolUtils.validateConfigurationPool(pool, false);    
 
@@ -118,15 +110,6 @@ library WithdrawUtils {
             revert Errors.EmptyWithdrawAmounts(); 
         }
         
-        //TODO:This should be never happen
-        // if (amount > userBalance) {
-        //     revert Errors.InsufficientUserBalance(amount, userBalance);
-        // }
-
-        // uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
-        // if (amount > availableLiquidity) {
-        //     revert Errors.InsufficientAvailableLiquidity(amount, availableLiquidity);
-        // } 
       }
     
 }
