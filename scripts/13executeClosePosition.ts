@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
-import { getPoolInfo, getLiquidityAndDebts, getPositions, getPositionsInfo} from "../utils/helper";
+import { getPoolInfo, getAssets, getPositions, getPositionsInfo} from "../utils/helper";
 import { CloseUtils } from "../typechain-types/contracts/exchange/CloseHandler.sol/CloseHandler";
 
 async function main() {
@@ -79,7 +79,7 @@ async function main() {
     const poolUniAfterClosePosition = await getPoolInfo(uniAddress); 
     console.log("poolUsdtAfterClosePosition", poolUsdtAfterClosePosition);
     console.log("poolUniAfterClosePosition", poolUniAfterClosePosition);
-    console.log("account",await getLiquidityAndDebts(dataStore, reader, owner.address));
+    console.log("assets",await getAssets(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
 
 }

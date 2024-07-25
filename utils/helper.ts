@@ -1,9 +1,11 @@
 
 const { getContract } = require("./deploy")
-// import { Pool } from "../typechain-types/contracts/pool/PoolFactory";
-// import { Position } from "../typechain-types/contracts/position/PositionStoreUtils";
-import { Pool, Position, ReaderUtils, ReaderPositionUtils } from "../typechain-types/contracts/reader/Reader";
-// import { ReaderPositionUtils } from "../typechain-types/contracts/reader/Reader";
+import { 
+    Pool, 
+    Position, 
+    ReaderUtils, 
+    ReaderPositionUtils 
+} from "../typechain-types/contracts/reader/Reader";
 
 export function parsePool(pool) {
     const p: Pool.PropsStructOutput = {
@@ -148,27 +150,27 @@ export async function getPositionInfo(dataStore, reader, address, underlyingAsse
 
 }
 
-export function parseLiquidityAndDebt(liquidity) {
-    const l: ReaderUtils.GetLiquidityAndDebtStructOutput = {
-        underlyingAsset: liquidity[0],
-        account: liquidity[1],
-        balance: liquidity[2],
-        scaled: liquidity[3],
-        collateral: liquidity[4],
-        scaledDebt: liquidity[5],
-        debt: liquidity[6],
-    };
-    return l;
-}
+// export function parseLiquidityAndDebt(liquidity) {
+//     const l: ReaderUtils.GetLiquidityAndDebtStructOutput = {
+//         underlyingAsset: liquidity[0],
+//         account: liquidity[1],
+//         balance: liquidity[2],
+//         scaled: liquidity[3],
+//         collateral: liquidity[4],
+//         scaledDebt: liquidity[5],
+//         debt: liquidity[6],
+//     };
+//     return l;
+// }
 
-export async function getLiquidityAndDebts(dataStore, reader, address) {
-    const liquidities = await reader.getLiquidityAndDebts(dataStore.target, address);
-    const accountLiquidities = [];
-    for (let i = 0; i < liquidities.length; i++) {
-         accountLiquidities[i] = parseLiquidityAndDebt(liquidities[i]);
-    }
-    return accountLiquidities;    
-}
+// export async function getLiquidityAndDebts(dataStore, reader, address) {
+//     const liquidities = await reader.getLiquidityAndDebts(dataStore.target, address);
+//     const accountLiquidities = [];
+//     for (let i = 0; i < liquidities.length; i++) {
+//          accountLiquidities[i] = parseLiquidityAndDebt(liquidities[i]);
+//     }
+//     return accountLiquidities;    
+// }
 
 export function parseMarginAndSupply(s) {
     const m: ReaderUtils.GetMarginAndSupplyStructOutput = {
@@ -184,7 +186,7 @@ export function parseMarginAndSupply(s) {
     return m;
 }
 
-export async function getMarginsAndSupplies(dataStore, reader, address) {
+export async function getAssets(dataStore, reader, address) {
     const s = await reader.getMarginsAndSupplies(dataStore.target, address);
     const accountMarginsAndSupplies = [];
     for (let i = 0; i < s.length; i++) {

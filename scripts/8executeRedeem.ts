@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPoolInfo, getMarginsAndSupplies, getPositions, getMaxAmountToRedeem} from "../utils/helper";
+import { getPoolInfo, getAssets, getPositions, getMaxAmountToRedeem} from "../utils/helper";
 import { RedeemUtils } from "../typechain-types/contracts/exchange/RedeemHandler";
 
 async function main() {
@@ -42,7 +42,7 @@ async function main() {
     const poolUsdtAfterRedeem = await getPoolInfo(usdtAddress); 
     console.log("poolUsdtBeforeRedeem", poolUsdt);
     console.log("poolUsdtAfterRedeem", poolUsdtAfterRedeem);
-    console.log("marginsAndSupplies",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("assets",await getAssets(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address));
     console.log("maxAmountToRedeem",await getMaxAmountToRedeem(dataStore, reader, owner.address, usdtAddress)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 

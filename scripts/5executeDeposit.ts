@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPoolInfo, getMarginsAndSupplies, getPositions} from "../utils/helper";
+import { getPoolInfo, getAssets, getPositions} from "../utils/helper";
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 
 async function main() {
@@ -52,7 +52,7 @@ async function main() {
 
     //print poolUsdt
     console.log("poolUsdtAfterDeposit", await getPoolInfo(usdtAddress));
-    console.log("marginsAndSupplies",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("assets",await getAssets(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 

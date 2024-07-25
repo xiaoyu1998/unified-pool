@@ -11,7 +11,6 @@ import {
 } from "./constants"
 
 export function bigNumberify(n) {
-    // return ethers.toBigInt(n);
     return BigInt(n);
 }
 
@@ -60,18 +59,6 @@ export function calcSilppage(
     return deltaAbs.div(currentPrice);
 }
 
-// export function calcPriceImpact(
-//     amountOut: BigInt, 
-//     amountIn: BigInt, 
-//     sqrtPriceX96: BigInt,
-//     isZeroForOne:bool 
-// ): BigInt {
-//     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-//     startPrice = isZeroForOne?bn(1).div(startPrice):startPrice;
-//     const quoteOutputAmount = bn(amountIn.toString()).div(startPrice);
-//     return (quoteOutputAmount.minus(amountOut.toString())).abs().div(quoteOutputAmount);
-// }
-
 export function calcPriceImpact(
     amountOut: BigInt, 
     amountIn: BigInt, 
@@ -81,11 +68,6 @@ export function calcPriceImpact(
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
     startPrice = isZeroForOne?startPrice:bn(1).div(startPrice);//price for in
     const quoteOutputAmount = startPrice.times(amountIn.toString());
-    console.log("isZeroForOne", isZeroForOne);
-    console.log("startPriceIn", startPrice.toString());
-    // console.log("amountIn", amountIn);
-    // console.log("amountOut", amountOut);
-    // console.log("quoteOutputAmount", quoteOutputAmount.toString());
     return (quoteOutputAmount.minus(amountOut.toString())).div(quoteOutputAmount);
 
 }
@@ -96,13 +78,8 @@ export function calcSqrtPriceLimitX96(
     isZeroForOne: bool
 ): BigInt {
     let startPrice = bn(decodePriceSqrt(sqrtPriceX96).toString());
-    //const denominator = isZeroForOne?(new bn(1).minus(maxSilppage)):(new bn(1).plus(maxSilppage));
     const denominator = isZeroForOne?(new bn(1).plus(maxSilppage)):(new bn(1).minus(maxSilppage));
-    //console.log("bn(1) + bn(maxSilppage)", bn(2).toString());
-    console.log("denominator", denominator.toString());
     const endPrice = startPrice.div(denominator);
-    console.log("startPrice0", startPrice.toString());
-    console.log("endPrice0", endPrice.toString());
     return encodePriceSqrt2(endPrice.toString());
 }
 
@@ -159,9 +136,6 @@ export function calcFeeAmount(
     const currTotalDebt = rayMul(currTotalScaledDebt, nextBorrowIndex);
     const increaseTotalDebt = currTotalDebt - prevTotalDebt;
     const feeAmount = percentMul(increaseTotalDebt, feeFactor);
-    // console.log("feeAmount", feeAmount);
-    // console.log("nextLiquidityIndex", nextLiquidityIndex);
-
     return rayDiv(feeAmount, nextLiquidityIndex);
 }
 
@@ -180,7 +154,6 @@ export function calcIndexes(
 }
 
 export function rayMul(a, b){
-    //console.log(typeof a, typeof b);
     return (a*b + HALF_PRECISION)/PRECISION;
 }
 

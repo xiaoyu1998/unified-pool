@@ -1,4 +1,3 @@
-
 import { sendTxn, deployContract, deployContractWithCode, contractAtWithCode } from "./deploy";
 import { bigNumberify, expandDecimals, encodePriceSqrt } from "./math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS } from "./constants";
@@ -56,7 +55,6 @@ export async function createUniswapV3(roleStore, account, config, token0, token0
 }
 
 export async function addLiquidityV3(account, token0, token1, dex, pool) {    
-
     const slot0 = await pool.slot0();
     const currentTick = slot0[1];
     const uniswapV3MintCallee = await deployContract("UniswapV3MintCallee", []); 

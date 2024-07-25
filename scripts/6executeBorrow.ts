@@ -1,6 +1,6 @@
 import { contractAt, sendTxn, getTokens, getContract, getContractAt, getEventEmitter } from "../utils/deploy";
 import { expandDecimals } from "../utils/math";
-import { getPoolInfo, getMarginsAndSupplies, getPositions, getPositionsInfo, getLiquidationHealthFactor} from "../utils/helper";
+import { getPoolInfo, getAssets, getPositions, getPositionsInfo, getLiquidationHealthFactor} from "../utils/helper";
 import { BorrowUtils } from "../typechain-types/contracts/exchange/BorrowHandler";
 import { getErrorMsgFromTx } from "../utils/error";
 
@@ -16,11 +16,6 @@ async function main() {
         console.log("eventEmitter Borrow" ,pool, borrower, to, amount, collateral, debtScaled);
     }); 
 
-    //const config = await getContract("Config");
-    // await sendTxn(
-    //     config.setHealthFactorLiquidationThreshold(expandDecimals(110, 25)),//for liquidationTest
-    //     "config.setHealthFactorLiquidationThreshold"
-    // );
     const uniDecimals = getTokens("UNI")["decimals"];
     const uniAddress = getTokens("UNI")["address"];
     const usdtDecimals = getTokens("USDT")["decimals"];
@@ -69,7 +64,7 @@ async function main() {
     const poolUni = await getPoolInfo(uniAddress); 
     console.log("poolUsdt", poolUsdt);
     console.log("poolUni", poolUni);
-    console.log("marginsAndSupplies",await getMarginsAndSupplies(dataStore, reader, owner.address));
+    console.log("assets",await getAssets(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
