@@ -15,72 +15,32 @@ curl -L https://foundry.paradigm.xyz | bash
 ```shell
 npm install
 ```
+#### Add Foundry Path
+```shell
+export PATH="$PATH:/from/path/.foundry/bin"
+```
 #### Run local node
 ```shell
 npx hardhat node
 ```
+
 #### Deploy contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```
-#### Execute contract terms
+#### Init Supply
 ```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
-npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2oracleKeeper.ts --network localhost
-npx hardhat run scripts/3executeSupply.ts --network localhost
-npx hardhat run scripts/4executeWithdraw.ts --network localhost
-npx hardhat run scripts/5executeDeposit.ts --network localhost
-npx hardhat run scripts/6executeBorrow.ts --network localhost
-npx hardhat run scripts/7executeRepay.ts --network localhost
-npx hardhat run scripts/8executeRedeem.ts --network localhost
-npx hardhat run scripts/9executeSwap.ts --network localhost
+npx hardhat run scripts/01createUsdtUniV3.ts --network localhost
+npx hardhat run scripts/01createPools.ts --network localhost
+npx hardhat run scripts/02oracleKeeper.ts --network localhost
+npx hardhat run scripts/03executeSupply.ts --network localhost
 ```
 #### Long and Short
 ```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
-npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2oracleKeeper.ts --network localhost
-npx hardhat run scripts/3executeSupply.ts --network localhost
 npx hardhat run scripts/11executeLong.ts --network localhost
 npx hardhat run scripts/12executeShort.ts --network localhost
 ```
 #### ClosePosition
 ```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localhost
-npx hardhat run scripts/1createPools.ts --network localhost
-npx hardhat run scripts/2oracleKeeper.ts --network localhost
-npx hardhat run scripts/3executeSupply.ts --network localhost
 npx hardhat run scripts/13executeClosePosition.ts --network localhost
-```
-## localnet
-#### [Run a geth node](https://github.com/xiaoyu1998/go-ethereum)
-
-#### Configuration 
-```shell
-1.localnet chainId 1998 
-2.modify IP address and PORT in webSocketUrl and defaultRpcs in utils/network.ts
-3.export ACCOUNT_KEY="privateKey for deploy contract and run scripts"
-```
-#### Deploy contracts
-```shell
-npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localnet
-```
-#### Close
-```shell
-npx hardhat run scripts/0createUsdtUniV3.ts --network localnet
-npx hardhat run scripts/1createPools.ts --network localnet
-npx hardhat run scripts/2oracleKeeper.ts --network localnet
-npx hardhat run scripts/3executeSupply.ts --network localnet
-npx hardhat run scripts/14executeClose.ts --network localnet
-```
-
-## testnet
-#### Configuration 
-```shell
-export ACCOUNT_KEY="privateKey for running scripts"
-```
-#### print
-```shell
-npx hardhat run scripts/15print.ts --network testnet
 ```
