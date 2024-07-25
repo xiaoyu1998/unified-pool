@@ -2,24 +2,18 @@
 
 pragma solidity ^0.8.20;
 
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
 import "../data/DataStore.sol";
-// import "../data/Keys.sol";
 import "../error/Errors.sol";
-
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
-
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 import "../oracle/OracleUtils.sol";
-// import "../utils/WadRayMath.sol";
 
 import "./RedeemEventUtils.sol";
 
@@ -30,8 +24,6 @@ library RedeemUtils {
     using Pool for Pool.Props;
     using PoolCache for PoolCache.Props;
     using Position for Position.Props;
-    // using WadRayMath for uint256;
-    // using PoolConfigurationUtils for uint256;
 
     struct RedeemParams {
         address underlyingAsset;

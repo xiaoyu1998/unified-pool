@@ -7,7 +7,7 @@ import {tokenAddresses, deployAddresses, webSocketUrl} from "./network"
 export async function sendTxn(txnPromise, label) {
     const txn = await txnPromise
     await txn.wait(1)
-    console.info(`Sent! ${label} ${txn.hash}`)
+    //console.info(`Sent! ${label} ${txn.hash}`)
     return txn
 }
 
@@ -92,8 +92,7 @@ export function writeTokenAddresses(json) {
 
     const assets = Object.assign(readTokenAddresses(), json)
     fs.writeFileSync(assetAddressFile, JSON.stringify(assets, null , 2))
-    console.log(JSON.stringify(assets));
-    //fs.writeFileSync(assetAddressFile, assets)
+    //console.log(JSON.stringify(assets));
 }
 
 export function getTokens(name) {
@@ -105,7 +104,6 @@ export async function getEventEmitter() {
     const address = getDeployedContractAddress("EventEmitter");
     const provider = new ethers.WebSocketProvider(webSocketUrl[`${process.env.HARDHAT_NETWORK}`]);
     return contractAtOptions("EventEmitter", address, undefined, provider);
-    // return getWebSocketContract("EventEmitter", address)
 }
 
 export async function getWebSocketContract(name, abi, bytecode, address) {
@@ -156,7 +154,6 @@ export async function getContract(name) {
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
-    //const readerUtils = await getContract("ReaderUtils");
 
     if (name == "ReaderDexUtils") {
         const address = getDeployedContractAddress(name);
@@ -294,7 +291,6 @@ export async function getContract(name) {
 
     if (name == "DepositHandler") {
         const depositEventUtils = await getContract("DepositEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const depositUtilsAddress = getDeployedContractAddress("DepositUtils");
         const depositUtils = await contractAtOptions("DepositUtils", depositUtilsAddress, {
             libraries: {
@@ -314,7 +310,6 @@ export async function getContract(name) {
 
     if (name == "BorrowHandler") {
         const borrowEventUtils = await getContract("BorrowEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const borrowUtilsAddress = getDeployedContractAddress("BorrowUtils");
         const borrowUtils = await contractAtOptions("BorrowUtils", borrowUtilsAddress, {
             libraries: {
@@ -346,7 +341,6 @@ export async function getContract(name) {
 
     if (name == "RedeemHandler") {
         const redeemEventUtils = await getContract("RedeemEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const redeemUtilsAddress = getDeployedContractAddress("RedeemUtils");
         const redeemUtils = await contractAtOptions("RedeemUtils", redeemUtilsAddress, {
             libraries: {
@@ -366,7 +360,6 @@ export async function getContract(name) {
 
     if (name == "SwapHandler") {
         const swapEventUtils = await getContract("SwapEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const swapUtilsAddress = getDeployedContractAddress("SwapUtils");
         const swapUtils = await contractAtOptions("SwapUtils", swapUtilsAddress, {
             libraries: {
@@ -387,7 +380,6 @@ export async function getContract(name) {
 
     if (name == "LiquidationHandler") {
         const liquidationEventUtils = await getContract("LiquidationEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const liquidationUtilsAddress = getDeployedContractAddress("LiquidationUtils");
         const liquidationUtils = await contractAtOptions("LiquidationUtils", liquidationUtilsAddress, {
             libraries: {
@@ -408,7 +400,6 @@ export async function getContract(name) {
 
     if (name == "CloseHandler") {
         const closeEventUtils = await getContract("CloseEventUtils");
-        //const oracleUtils = await getContract("OracleUtils");
         const repayUtils = await getContract("RepayUtils");
         const swapUtils = await getContract("SwapUtils");
         const closeUtilsAddress = getDeployedContractAddress("CloseUtils");
@@ -440,7 +431,6 @@ export async function getContract(name) {
         const swapHandler = await getContract("SwapHandler");
         const liquidationHandler = await getContract("LiquidationHandler");
         const closeHandler = await getContract("CloseHandler");
-        //const router = await getContract("Router");
         const address = getDeployedContractAddress(name);
         return await contractAtOptions(name, address, [
             router,

@@ -4,20 +4,15 @@ pragma solidity ^0.8.20;
 
 import "../data/DataStore.sol";
 import "../error/Errors.sol";
-
 import "../pool/Pool.sol";
 import "../pool/PoolCache.sol";
 import "../pool/PoolUtils.sol";
 import "../pool/PoolStoreUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
-
 import "../position/Position.sol";
 import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
-
-// import "../oracle/OracleUtils.sol";
-// import "../utils/WadRayMath.sol";
 import "./BorrowEventUtils.sol";
 
 // @title BorrowUtils
