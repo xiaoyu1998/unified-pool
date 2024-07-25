@@ -27,7 +27,7 @@ npx hardhat node
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```
-#### Init Supply
+#### Create Pools and Supply
 ```shell
 npx hardhat run scripts/01createUsdtUniV3.ts --network localhost
 npx hardhat run scripts/01createPools.ts --network localhost
