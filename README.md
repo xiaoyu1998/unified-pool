@@ -1,6 +1,6 @@
 ## Unified Pool Contracts
 
-#### Foundry support
+#### Foundry Support
 
 ```shell
 curl -L https://foundry.paradigm.xyz | bash
@@ -19,7 +19,7 @@ git clone git@github.com:xiaoyu1998/up-contracts.git --recursive
 ```shell
 npm install
 ```
-#### Run local node
+#### Run Local Node
 ```shell
 npx hardhat node
 ```
