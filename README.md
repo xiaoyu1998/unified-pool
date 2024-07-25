@@ -23,7 +23,7 @@ npm install
 ```shell
 npx hardhat node
 ```
-#### Deploy contracts
+#### Deploy Contracts
 ```shell
 npx hardhat ignition deploy ignition/modules/deployExchangeRouter.ts --network localhost
 ```
