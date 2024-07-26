@@ -73,6 +73,10 @@ contract Reader {
         return ReaderUtils._getPoolsPrice(dataStore, 0, poolsCount);
     }
 
+    function getPoolPrice(address dataStore, address poolKey) external view returns (ReaderUtils.GetPoolPrice memory) {
+        return ReaderUtils._getPoolPrice(dataStore, poolKey);
+    }
+
     function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
         address poolToken = PoolStoreUtils.getPoolToken(dataStore, poolKey);
         address debtToken = PoolStoreUtils.getDebtToken(dataStore, poolKey);
