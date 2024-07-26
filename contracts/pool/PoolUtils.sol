@@ -95,7 +95,8 @@ library PoolUtils {
             poolCache.nextBorrowIndex
         );
 
-        vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(vars.unclaimedFee);
+        //vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(vars.unclaimedFee);
+        vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();
         (   vars.nextLiquidityRate,
             vars.nextBorrowRate
         ) = IPoolInterestRateStrategy(pool.interestRateStrategy).calculateInterestRates(

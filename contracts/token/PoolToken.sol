@@ -20,6 +20,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	using WadRayMath for uint256;
 	event BalanceTransfer(address indexed from, address indexed to, uint256 value, uint256 index);
     
+    address internal _treasury;
 	address internal _underlyingAsset;
 
     mapping(address => uint256) private _Collaterals;
@@ -28,9 +29,11 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     constructor(
     	RoleStore _roleStore, 
     	DataStore _dataStore,
-    	address underlyingAsset_
+    	address underlyingAsset_,
+    	address treasury_
     ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN", 0) StrictBank(_roleStore, _dataStore) {
     	_underlyingAsset = underlyingAsset_;
+    	_treasury = treasury_;
     }
 
 	/// @inheritdoc IERC20
@@ -62,20 +65,37 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
       	_mintScaled(to, amount, index);
     }
 
-    // @dev burn pool tokens from an account
-    // @param account the account to burn tokens for
-    // @param amount the amount of tokens to burn
+    // // @dev burn pool tokens from an account
+    // // @param account the account to burn tokens for
+    // // @param amount the amount of tokens to burn
+    // function burn(
+    // 	address from, 
+    // 	address to, 
+    // 	uint256 amount, 
+    // 	uint256 index,
+    // 	uint256 unclaimedFee
+    // ) external virtual onlyController {
+	// 	_burnScaled( from, to, amount, index);
+	// 	if (to != address(this)) {
+	//          //TODO move to validation module
+	//          uint256 _availableLiquidity = availableLiquidity(unclaimedFee);
+	// 		 if (amount > _availableLiquidity){
+	// 		 	 revert Errors.InsufficientAvailableLiquidity(amount, _availableLiquidity);
+	// 		 }
+
+	// 		 _transferOut(_underlyingAsset, to, amount);
+	// 	}       
+    // }
     function burn(
     	address from, 
     	address to, 
     	uint256 amount, 
-    	uint256 index,
-    	uint256 unclaimedFee
+    	uint256 index
     ) external virtual onlyController {
 		_burnScaled( from, to, amount, index);
 		if (to != address(this)) {
 	         //TODO move to validation module
-	         uint256 _availableLiquidity = availableLiquidity(unclaimedFee);
+	         uint256 _availableLiquidity = availableLiquidity();
 			 if (amount > _availableLiquidity){
 			 	 revert Errors.InsufficientAvailableLiquidity(amount, _availableLiquidity);
 			 }
@@ -83,6 +103,13 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 			 _transferOut(_underlyingAsset, to, amount);
 		}       
     }
+
+	function mintToTreasury(uint256 amount, uint256 index) external virtual onlyController {
+		if (amount == 0) {
+			return;
+		}
+		_mintScaled(_treasury, amount, index);
+	}
 
 	function transferOnLiquidation(
 		address from,
@@ -154,9 +181,26 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		return _totalCollateral;
 	}
 
-	function availableLiquidity(uint256 unclaimedFee) public view returns (uint256) {
-		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() - unclaimedFee;
+	function availableLiquidity() public view returns (uint256) {
+		uint256 balance = IERC20(_underlyingAsset).balanceOf(address(this));
+		uint256 collateral = totalCollateral();
+
+		if (balance > collateral ){
+			return balance - collateral ;
+		}
+		else {
+			return 0;
+		}
 	}
+
+	// function availableLiquidity(uint256 unclaimedFee) public view returns (uint256) {
+	// 	if(IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() > unclaimedFee){
+	// 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() - unclaimedFee;
+	// 	}
+	// 	else {
+	// 		return 0;
+	// 	}
+	// }
 
     function approveLiquidity(address spender, uint256 value) public onlyController returns (bool) {
     	return IERC20(_underlyingAsset).approve(spender, value);

@@ -29,7 +29,7 @@ describe("poolToken Modifiers", () => {
     it("poolToken to invoke burn not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(
-            poolToken.connect(user1).burn(user1, user1, amount, expandDecimals(1, 27), 0)
+            poolToken.connect(user1).burn(user1, user1, amount, expandDecimals(1, 27))
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 

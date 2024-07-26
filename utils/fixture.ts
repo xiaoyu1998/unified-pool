@@ -83,8 +83,8 @@ export async function deployFixture() {
     await usdt.transfer(user1, usdtBalanceUser1);
     await uni.transfer(user1, uniBalanceUser1);
 
-    await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0);
-    await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0);
+    await poolFactory.createPool(usdt.target, poolInterestRateStrategy.target, 0, user0);
+    await poolFactory.createPool(uni.target, poolInterestRateStrategy.target, 0, user0);
     
     //config pools
     const multicallArgs = [
@@ -261,7 +261,8 @@ export async function deployFixturePool() {
     await poolFactory.createPool(
         usdt.target, 
         poolInterestRateStrategy.target, 
-        "8307674973776616787610442450101080648843264"
+        "8307674973776616787610442450101080648843264",
+        user0
     );
 
     //poolToken and debtToken

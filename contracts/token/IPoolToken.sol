@@ -12,12 +12,19 @@ interface IPoolToken {
         uint256 index
     ) external;
 
+    // function burn(
+    //     address from,
+    //     address to, 
+    //     uint256 amount,
+    //     uint256 index,
+    //     uint256 unclaimedFee
+    // ) external;
+
     function burn(
         address from,
         address to, 
         uint256 amount,
-        uint256 index,
-        uint256 unclaimedFee
+        uint256 index
     ) external;
 
     function balanceOf(address account) external view  returns (uint256);
@@ -30,7 +37,8 @@ interface IPoolToken {
     function balanceOfCollateral (address account) external view returns (uint256);
     function totalCollateral() external view  returns (uint256);
 
-    function availableLiquidity(uint256 unclaimedFee) external view  returns (uint256);
+    // function availableLiquidity(uint256 unclaimedFee) external view  returns (uint256);
+    function availableLiquidity() external view  returns (uint256);
     function recordTransferIn(address token) external returns (uint256);
     function recordTransferOut(address token) external returns (uint256);
     function transferOutUnderlyingAsset(

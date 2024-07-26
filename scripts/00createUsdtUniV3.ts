@@ -81,8 +81,8 @@ async function main() {
     const uniswapPoolAddress = await factory.getPool(uniAddress, usdtAddress,  FeeAmount.MEDIUM);
     const uniswapPool = await contractAtWithCode(POOL_ABI, POOL_BYTECODE, uniswapPoolAddress, owner);
     const sqrtPriceX96 = uniIsZero?
-                         encodePriceSqrt(expandDecimals(10, usdtDecimals), expandDecimals(1, uniDecimals)):
-                         encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(10, usdtDecimals));//1uni = 10usdt
+                         encodePriceSqrt(expandDecimals(7, usdtDecimals), expandDecimals(1, uniDecimals)):
+                         encodePriceSqrt(expandDecimals(1, uniDecimals), expandDecimals(7, usdtDecimals));//1uni = 10usdt
     await sendTxn(uniswapPool.initialize(sqrtPriceX96), "uniswapPool.initialize");
 
     const slot0 = await uniswapPool.slot0();

@@ -50,11 +50,12 @@ library WithdrawUtils {
             amountToWithdraw = userBalance;
         }
 
-        uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
-            poolCache.nextBorrowIndex
-        );
+        // uint256 unclaimedFee = poolCache.unclaimedFee.rayMul(
+        //     poolCache.nextBorrowIndex
+        // );
 
-        uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
+        //uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity(unclaimedFee);
+        uint256 availableLiquidity = IPoolToken(pool.poolToken).availableLiquidity();
         if (amountToWithdraw > availableLiquidity) {
             amountToWithdraw = availableLiquidity;
         }
@@ -64,12 +65,18 @@ library WithdrawUtils {
             amountToWithdraw
         );
 
+        // poolToken.burn(//amountToWithdraw liquidity will be reduced
+        //     account, 
+        //     params.to, 
+        //     amountToWithdraw, 
+        //     poolCache.nextLiquidityIndex,
+        //     unclaimedFee
+        // );
         poolToken.burn(//amountToWithdraw liquidity will be reduced
             account, 
             params.to, 
             amountToWithdraw, 
-            poolCache.nextLiquidityIndex,
-            unclaimedFee
+            poolCache.nextLiquidityIndex
         );
 
         PoolUtils.updateInterestRates(

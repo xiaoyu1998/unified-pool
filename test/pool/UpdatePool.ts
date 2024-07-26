@@ -128,7 +128,7 @@ describe("Pool", () => {
            optimalUsageRation,
            rateSlop1,
            rateSlop2,
-           supplyAmount - debtAmount - rayMul(feeAmount, nextBorrowIndex),
+           supplyAmount - debtAmount,
            rayMul(debtAmount, nextBorrowIndex),
            feeFactor
        )

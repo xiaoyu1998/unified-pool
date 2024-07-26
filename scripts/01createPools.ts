@@ -3,6 +3,7 @@ import { bigNumberify, expandDecimals } from "../utils/math";
 import { parsePool } from "../utils/helper";
 
 async function main() {
+    const [owner] = await ethers.getSigners();
     //create pools
     const usdt = getTokens("USDT")["address"];
     const uni  = getTokens("UNI")["address"];
@@ -14,15 +15,15 @@ async function main() {
     const poolFactory = await getContract("PoolFactory");
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
     await sendTxn(
-        poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration),
+        poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration, owner),
         "poolFactory.createPool(usdt)"
     );
     await sendTxn(
-        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
+        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration, owner),
         "poolFactory.createPool(uni)"
     );
     await sendTxn(
-        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration),
+        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration, owner),
         "poolFactory.createPool(uni)"
     );
 
