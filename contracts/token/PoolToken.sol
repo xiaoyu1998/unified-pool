@@ -183,10 +183,8 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 
 	function availableLiquidity() public view returns (uint256) {
 		uint256 balance = IERC20(_underlyingAsset).balanceOf(address(this));
-		uint256 collateral = totalCollateral();
-
-		if (balance > collateral ){
-			return balance - collateral ;
+		if (balance > _totalCollateral ){
+			return balance - _totalCollateral ;
 		}
 		else {
 			return 0;
