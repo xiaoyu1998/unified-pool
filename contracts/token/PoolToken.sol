@@ -73,27 +73,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		_mintScaled(treasury, amount, index);
 	}
 
-    // // @dev burn pool tokens from an account
-    // // @param account the account to burn tokens for
-    // // @param amount the amount of tokens to burn
-    // function burn(
-    // 	address from, 
-    // 	address to, 
-    // 	uint256 amount, 
-    // 	uint256 index,
-    // 	uint256 unclaimedFee
-    // ) external virtual onlyController {
-	// 	_burnScaled( from, to, amount, index);
-	// 	if (to != address(this)) {
-	//          //TODO move to validation module
-	//          uint256 _availableLiquidity = availableLiquidity(unclaimedFee);
-	// 		 if (amount > _availableLiquidity){
-	// 		 	 revert Errors.InsufficientAvailableLiquidity(amount, _availableLiquidity);
-	// 		 }
-
-	// 		 _transferOut(_underlyingAsset, to, amount);
-	// 	}       
-    // }
     function burn(
     	address from, 
     	address to, 
@@ -128,9 +107,7 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		uint256 amount
 	) internal override virtual {
 		uint256 index = PoolUtils.getPoolNormalizedLiquidityIndex(address(dataStore), _underlyingAsset);
-
 		super._transfer(from, to, amount, index);
-
 		emit BalanceTransfer(from, to, amount.rayDiv(index), index);
 	}
 

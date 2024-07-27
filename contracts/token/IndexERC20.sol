@@ -21,7 +21,6 @@ abstract contract IndexERC20 is Context, IERC20{
     // @param name The name of the token
     // @param symbol The symbol of the token
     // @param decimals The number of decimals of the token
-   
     constructor(string memory name_, string memory symbol_, uint8 decimals_) {
         _name = name_;
         _symbol = symbol_;
@@ -81,7 +80,6 @@ abstract contract IndexERC20 is Context, IERC20{
         return true;
     }
 
-     
     // @notice Increases the allowance of spender to spend _msgSender() tokens
     // @param spender The user allowed to spend on behalf of _msgSender()
     // @param addedValue The amount being added to the allowance

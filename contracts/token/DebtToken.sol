@@ -45,8 +45,8 @@ contract DebtToken is RoleModule, ScaledToken {
 	}
 
 
-    // @dev mint market tokens to an account
-    // @param account the account to mint to
+    // @dev mint pool tokens to an account
+    // @param to the to to mint to
     // @param amount the amount of tokens to mint
     function mint(
     	address to, 
@@ -56,8 +56,8 @@ contract DebtToken is RoleModule, ScaledToken {
       	return (_mintScaled(to, amount, index), scaledTotalSupply());
     }
 
-    // @dev burn market tokens from an account
-    // @param account the account to burn tokens for
+    // @dev burn pool tokens from an account
+    // @param from the from to burn tokens for
     // @param amount the amount of tokens to burn
     function burn(
     	address from, 
@@ -67,8 +67,8 @@ contract DebtToken is RoleModule, ScaledToken {
 		return (_burnScaled(from, address(0), amount, index), scaledTotalSupply());  
     }
 
-    // @dev burn market tokens from an account
-    // @param account the account to burn tokens for
+    // @dev burn pool tokens from an account
+    // @param from the from to burn tokens for
     // @param amount the amount of tokens to burn
     function burnAll(
     	address from
