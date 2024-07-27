@@ -51,6 +51,8 @@ interface IPoolToken {
     ) external returns (bool);
 
     function syncUnderlyingAssetBalance() external;
-
     function underlyingAsset() external view  returns (address);
+
+    function mintToTreasury(uint256 amount, uint256 index, address treasury) external;
+
 }

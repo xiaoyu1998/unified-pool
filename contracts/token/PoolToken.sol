@@ -20,7 +20,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 	using WadRayMath for uint256;
 	event BalanceTransfer(address indexed from, address indexed to, uint256 value, uint256 index);
     
-    address internal _treasury;
 	address internal _underlyingAsset;
 
     mapping(address => uint256) private _Collaterals;
@@ -29,11 +28,9 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     constructor(
     	RoleStore _roleStore, 
     	DataStore _dataStore,
-    	address underlyingAsset_,
-    	address treasury_
+    	address underlyingAsset_
     ) ScaledToken("UF_POOL_TOKEN", "UF_POOL_TOKEN", 0) StrictBank(_roleStore, _dataStore) {
     	_underlyingAsset = underlyingAsset_;
-    	_treasury = treasury_;
     }
 
 	/// @inheritdoc IERC20
@@ -64,6 +61,17 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
     ) external virtual onlyController {
       	_mintScaled(to, amount, index);
     }
+
+   	function mintToTreasury(
+		uint256 amount, 
+		uint256 index,
+		address treasury
+	) external virtual onlyController {
+		if (amount == 0) {
+			return;
+		}
+		_mintScaled(treasury, amount, index);
+	}
 
     // // @dev burn pool tokens from an account
     // // @param account the account to burn tokens for
@@ -103,13 +111,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 			 _transferOut(_underlyingAsset, to, amount);
 		}       
     }
-
-	function mintToTreasury(uint256 amount, uint256 index) external virtual onlyController {
-		if (amount == 0) {
-			return;
-		}
-		_mintScaled(_treasury, amount, index);
-	}
 
 	function transferOnLiquidation(
 		address from,

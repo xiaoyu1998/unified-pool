@@ -19,7 +19,7 @@ library OracleUtils {
     function getPrice(address dataStore, address underlyingAsset) public view returns (uint256) {
         address oracle = OracleStoreUtils.get(dataStore, underlyingAsset);
         if (oracle == address(0)) {
-            revert Errors.EmptyOracle(underlyingAsset);
+            revert Errors.EmptyPoolOracle(underlyingAsset);
         }
 
         IPriceFeed priceFeed = IPriceFeed(oracle);

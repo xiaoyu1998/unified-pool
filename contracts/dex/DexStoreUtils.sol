@@ -15,11 +15,11 @@ library DexStoreUtils {
 
     function set(address dataStore, address underlyingAssetA, address underlyingAssetB, address dex) external {
         if (underlyingAssetA == address(0) || underlyingAssetB == address(0)) {
-            revert Errors.UnderlyAssetEmpty();
+            revert Errors.EmptyUnderlyingAsset();
         }
 
         if (dex == address(0)) {
-            revert Errors.DexEmpty();
+            revert Errors.EmptyDex();
         }
 
         IDataStore(dataStore).setAddress(

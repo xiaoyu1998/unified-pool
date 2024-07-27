@@ -111,4 +111,11 @@ interface IEventEmitter {
         uint256 borrowIndex
     ) external;
 
+    function emitClaimFees(
+        address underlyingAsset,
+        uint256 scaledUnclaimedFee,
+        uint256 liquidityIndex,
+        uint256 unclaimedFee
+    ) external;
+
 }

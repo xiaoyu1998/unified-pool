@@ -17,11 +17,11 @@ library OracleStoreUtils {
 
     function set(address dataStore, address underlyingAsset, address oracle) external {
         if (underlyingAsset == address(0)) {
-            revert Errors.UnderlyAssetEmpty();
+            revert Errors.EmptyUnderlyingAsset();
         }
 
         if (oracle == address(0)) {
-            revert Errors.OracleEmpty();
+            revert Errors.EmptyOracle();
         }
 
         IDataStore(dataStore).setAddress(
@@ -36,7 +36,7 @@ library OracleStoreUtils {
 
     function setOracleDecimals(address dataStore, address underlyingAsset, uint256 oracleDecimals) external {
         if (underlyingAsset == address(0)) {
-            revert Errors.UnderlyAssetEmpty();
+            revert Errors.EmptyUnderlyingAsset();
         }
 
         if (oracleDecimals > MAX_ORACLE_DECIMALS) {

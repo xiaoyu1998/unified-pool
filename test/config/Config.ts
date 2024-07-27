@@ -9,7 +9,7 @@ import { createUniswapV3 } from "../../utils/assetsDex";
 describe("Config", () => {
     let fixture;
     let user0, user1, user2;
-    let config, dataStore, roleStore, reader, poolStoreUtils, positionStoreUtils, oracleStoreUtils, dexStoreUtils;
+    let config, dataStore, roleStore, reader, poolStoreUtils, positionStoreUtils, oracleStoreUtils, dexStoreUtils, feeStoreUtils;
     let usdt, usdtOracle, uni;
     let usdtPool;
     // let dex;
@@ -25,7 +25,8 @@ describe("Config", () => {
             poolStoreUtils, 
             positionStoreUtils, 
             oracleStoreUtils, 
-            dexStoreUtils 
+            dexStoreUtils,
+            feeStoreUtils
          } = fixture.contracts);
         ({ user0, user1, user2 } = fixture.accounts);
         ({ usdt, usdtOracle, uni } = fixture.assets);
@@ -34,7 +35,6 @@ describe("Config", () => {
         ({ usdtOracleDecimals, uniOracleDecimals } = fixture.decimals);
     });
 
-    //it("configSet", async () => {
     it("setOracleThresholdMultiplier", async () => {
         // setOracle
         await expect(
@@ -43,11 +43,11 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setOracle(ethers.ZeroAddress, usdtOracle.target)
-        ).to.be.revertedWithCustomError(errorsContract, "UnderlyAssetEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyUnderlyingAsset");
 
         await expect(
             config.connect(user0).setOracle(usdtPool.underlyingAsset, ethers.ZeroAddress)
-        ).to.be.revertedWithCustomError(errorsContract, "OracleEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyOracle");
 
         await config.connect(user0).setOracle(usdtPool.underlyingAsset, usdtOracle.target);     
         await expect(
@@ -62,7 +62,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setOracleDecimals(ethers.ZeroAddress, usdtOracleDecimals)
-        ).to.be.revertedWithCustomError(errorsContract, "UnderlyAssetEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyUnderlyingAsset");
 
         await expect(
             config.connect(user0).setOracleDecimals(usdtPool.underlyingAsset, expandDecimals(1, 30) + bigNumberify(1))
@@ -113,20 +113,31 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setDex(ethers.ZeroAddress, uni.target, dex.target)
-        ).to.be.revertedWithCustomError(errorsContract, "UnderlyAssetEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyUnderlyingAsset");
 
         await expect(
             config.connect(user0).setDex(usdt.target, ethers.ZeroAddress, dex.target)
-        ).to.be.revertedWithCustomError(errorsContract, "UnderlyAssetEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyUnderlyingAsset");
 
         await expect(
             config.connect(user0).setDex(usdt.target, uni.target, ethers.ZeroAddress)
-        ).to.be.revertedWithCustomError(errorsContract, "DexEmpty");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyDex");
 
         await config.connect(user0).setDex(usdt.target, uni.target, dex.target);     
         await expect(
             await dexStoreUtils.get(dataStore.target, usdt.target, uni.target)
         ).eq(dex.target);
+
+
+        // setTreasury
+        await expect(
+            config.connect(user1).setTreasury(user1.address)
+        ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");  
+
+        await config.connect(user0).setTreasury(user0.address);     
+        await expect(
+            await feeStoreUtils.getTreasury(dataStore.target)
+        ).eq(user0.address);
     });
 
     it("setPoolBooleans", async () => {

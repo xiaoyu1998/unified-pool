@@ -32,8 +32,7 @@ contract PoolFactory is RoleModule {
     function createPool(
         address underlyingAsset,
         address interestRateStrategy,
-        uint256 configuration,
-        address treasury
+        uint256 configuration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         address poolKey = Keys.poolKey(underlyingAsset);
 
@@ -42,7 +41,7 @@ contract PoolFactory is RoleModule {
             revert Errors.PoolAlreadyExists(poolKey, existingPool.poolToken);
         }
 
-        PoolToken poolToken = new PoolToken(roleStore, dataStore, underlyingAsset, treasury);
+        PoolToken poolToken = new PoolToken(roleStore, dataStore, underlyingAsset);
         DebtToken debtToken = new DebtToken(roleStore, dataStore, underlyingAsset);
 
         Pool.Props memory pool = Pool.Props(

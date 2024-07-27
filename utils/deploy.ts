@@ -140,7 +140,8 @@ export async function getContract(name) {
         name == "CloseEventUtils" ||
         name == "EventEmitter"  || 
         name == "DexStoreUtils" ||
-        name == "PoolEventUtils" 
+        name == "PoolEventUtils" ||
+        name == "FeeStoreUtils" 
     ) {
         const address = getDeployedContractAddress(name);
         return await contractAtOptions(name, address);
@@ -154,6 +155,17 @@ export async function getContract(name) {
     const oracleStoreUtils = await getContract("OracleStoreUtils");
     const dexStoreUtils = await getContract("DexStoreUtils");
     const router = await getContract("Router");
+    const feeStoreUtils = await getContract("FeeStoreUtils");
+
+    if (name == "FeeHandler") {
+        const address = getDeployedContractAddress(name);
+        return await contractAtOptions(name, address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                FeeStoreUtils: feeStoreUtils
+            },         
+        });
+    }
 
     if (name == "ReaderDexUtils") {
         const address = getDeployedContractAddress(name);
@@ -202,7 +214,8 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 OracleStoreUtils: oracleStoreUtils,
                 DexStoreUtils: dexStoreUtils,
-                PositionStoreUtils: positionStoreUtils
+                PositionStoreUtils: positionStoreUtils,
+                FeeStoreUtils: feeStoreUtils
             },         
         });
     }

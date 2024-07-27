@@ -30,8 +30,8 @@ library Errors {
     error InvalidBorrowCapacity(uint256 borrowCapacity, uint256 MaxValidBorrowCapacity);
     error InvalidSupplyCapacity(uint256 supplyCapacity, uint256 MaxValidSupplyCapacity);
 
-    // Oracle erros
-    error EmptyOracle(address underlyingAsset);
+    // Oracle errors
+    error EmptyPoolOracle(address underlyingAsset);
     error InvalidOraclePrice(address underlyingAsset, int256 price);
 
     // Position errors
@@ -113,12 +113,12 @@ library Errors {
     error EmptyReceiver();
 
     // OracleStoreUtils
-    error UnderlyAssetEmpty();
-    error OracleEmpty();
+    error EmptyUnderlyingAsset();
+    error EmptyOracle();
     error InvalidOracleDecimals(uint256 oracleDecimals, uint256 MaxOracleDecimals);
 
     // DexStoreUtils
-    error DexEmpty();
+    error EmptyDex();
 
     // Array errors
     error CompactedArrayOutOfBounds(
@@ -127,5 +127,11 @@ library Errors {
         uint256 slotIndex,
         string label
     );
+
+    // FeeUtils
+    error EmptyUnclaimedFee(address poool);
+
+    // FeeStoreUtils
+    error EmptyTreasury();
 
 }

@@ -91,9 +91,9 @@ library PoolUtils {
         vars.totalDebt = poolCache.nextTotalScaledDebt.rayMul(
             poolCache.nextBorrowIndex
         );
-        vars.unclaimedFee = poolCache.unclaimedFee.rayMul(
-            poolCache.nextBorrowIndex
-        );
+        // vars.unclaimedFee = poolCache.unclaimedFee.rayMul(
+        //     poolCache.nextBorrowIndex
+        // );
 
         //vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity(vars.unclaimedFee);
         vars.totalAvailableLiquidity = IPoolToken(poolCache.poolToken).availableLiquidity();

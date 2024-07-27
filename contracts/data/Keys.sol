@@ -59,6 +59,9 @@ library Keys {
     // @dev key for the amount of gas to forward for native token transfers
     bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
+    // @dev for a global TREASURY
+    bytes32 public constant TREASURY = keccak256(abi.encode("TREASURY"));
+
     // @dev key for the dex key
     // @param underlyingAsset the underlyingAsset for the dex key
     function dexKey(address underlyingAssetA, address underlyingAssetB) internal pure returns (bytes32) {

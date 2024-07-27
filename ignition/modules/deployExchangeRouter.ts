@@ -11,6 +11,7 @@ import { redeemHandlerModule } from "./deployRedeemHandler"
 import { swapHandlerModule } from "./deploySwapHandler"
 import { liquidationHandlerModule } from "./deployLiquidationHandler"
 import { closeHandlerModule } from "./deployCloseHandler"
+import { feeHandlerModule } from "./deployFeeHandler"
 
 import { configModule } from "./deployConfig"
 import { poolFactoryModule } from "./deployPoolFactory"
@@ -24,6 +25,7 @@ import { eventEmitterModule } from "./deployEventEmitter"
 import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { oracleStoreUtilsModule } from "./deployOracleStoreUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
+import { feeStoreUtilsModule } from "./deployFeeStoreUtils"
 
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
@@ -52,6 +54,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule)
     const { oracleStoreUtils } = m.useModule(oracleStoreUtilsModule)
     const { dexStoreUtils } = m.useModule(dexStoreUtilsModule)
+    const { feeHandler } = m.useModule(feeHandlerModule)
+    const { feeStoreUtils } = m.useModule(feeStoreUtilsModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,
@@ -81,6 +85,7 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     m.call(roleStore, "grantRole",  [config, keys.CONTROLLER], {id:"grantRole11"});
     m.call(roleStore, "grantRole",  [exchangeRouter, keys.CONTROLLER], {id:"grantRole12"});
     m.call(roleStore, "grantRole",  [exchangeRouter, keys.ROUTER_PLUGIN], {id:"grantRole13"});
+    m.call(roleStore, "grantRole",  [feeHandler, keys.CONTROLLER], {id:"grantRole14"});
     return { 
         roleStore, 
         dataStore, 
@@ -95,7 +100,8 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
         positionStoreUtils,
         oracleStoreUtils,
         dexStoreUtils,
-        liquidationHandler
+        liquidationHandler,
+        feeStoreUtils
     };
 });
 

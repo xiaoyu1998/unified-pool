@@ -15,15 +15,15 @@ async function main() {
     const poolFactory = await getContract("PoolFactory");
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
     await sendTxn(
-        poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration, owner),
+        poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(usdt)"
     );
     await sendTxn(
-        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration, owner),
+        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(uni)"
     );
     await sendTxn(
-        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration, owner),
+        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(uni)"
     );
 

@@ -287,6 +287,27 @@ library PoolStoreUtils {
         );       
     }
 
+    function getUnclaimedFee(address dataStoreAddress, address key) external view returns (uint256){
+        IDataStore dataStore = IDataStore(dataStoreAddress);
+        if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
+            revert Errors.PoolNotFound(key);
+        } 
+        return dataStore.getUint(
+            keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
+        );       
+    }
+
+    function setUnclaimedFee(address dataStoreAddress, address key, uint256 unclaimedFee) external {
+        IDataStore dataStore = IDataStore(dataStoreAddress);
+        if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
+            revert Errors.PoolNotFound(key);
+        } 
+        dataStore.setUint(
+            keccak256(abi.encode(key, POOL_UNCLAIMED_FEE)),
+            unclaimedFee
+        );        
+    }
+
     function setConfiguration(address dataStoreAddress, address key, uint256 poolConfigration) external {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {

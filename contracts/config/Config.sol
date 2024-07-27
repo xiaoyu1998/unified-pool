@@ -13,6 +13,7 @@ import "../pool/PoolUtils.sol";
 import "../oracle/OracleStoreUtils.sol";
 import "../dex/DexStoreUtils.sol";
 import "../position/PositionStoreUtils.sol";
+import "../fee/FeeStoreUtils.sol";
 
 import "../utils/Printer.sol";
 
@@ -39,6 +40,11 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
 
         _;
     }
+    function setTreasury(
+        address treasury
+    ) external onlyConfigKeeper nonReentrant {
+        FeeStoreUtils.setTreasury(address(dataStore), treasury);
+    } 
 
     function setOracle(
         address underlyingAsset,

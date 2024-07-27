@@ -116,6 +116,13 @@ contract EventEmitter is RoleModule {
         uint256 borrowIndex
     );
 
+    event ClaimFees(
+        address indexed pool,
+        uint256 scaledUnclaimedFee,
+        uint256 liquidityIndex,
+        uint256 unclaimedFee
+    );
+
     constructor(RoleStore _roleStore) RoleModule(_roleStore) {}
 
     // @dev emit a Supply event
@@ -334,6 +341,20 @@ contract EventEmitter is RoleModule {
             borrowRate,
             liquidityIndex,
             borrowIndex
+        );
+    }
+
+    function emitClaimFees(
+        address underlyingAsset,
+        uint256 scaledUnclaimedFee,
+        uint256 liquidityIndex,
+        uint256 unclaimedFee
+    ) external onlyController {
+        emit ClaimFees(
+            underlyingAsset,
+            scaledUnclaimedFee,
+            liquidityIndex,
+            unclaimedFee
         );
     }
 }

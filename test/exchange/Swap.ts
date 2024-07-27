@@ -260,7 +260,7 @@ describe("Exchange Swap", () => {
             ethOracleDecimals, 
             3000
         );
-        await poolFactory.createPool(eth.target, poolInterestRateStrategy.target, 0, user0);
+        await poolFactory.createPool(eth.target, poolInterestRateStrategy.target, 0);
 
         const uniParams: SwapUtils.SwapParamsStructOutput = {
             underlyingAssetIn: eth.target,
