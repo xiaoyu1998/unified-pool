@@ -26,6 +26,13 @@ describe("poolToken Modifiers", () => {
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
     });
 
+    it("poolToken to invoke mintToTreasury not being the controller", async () => {
+       const amount = expandDecimals(1, usdtDecimals);
+        await expect(
+            poolToken.connect(user1).mintToTreasury(amount, expandDecimals(1, 27), user1)
+        ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
+    });
+
     it("poolToken to invoke burn not being the controller", async () => {
        const amount = expandDecimals(1, usdtDecimals);
         await expect(

@@ -30,6 +30,7 @@ async function main() {
     //set pools configuration
     const config = await getContract("Config");
     const multicallArgs = [
+        config.interface.encodeFunctionData("setTreasury", [owner.address]),
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
         //config.interface.encodeFunctionData("setHealthFactorCollateralRateThreshold", [usdt, expandDecimals(110, 25)]),//110%

@@ -40,7 +40,6 @@ async function main() {
         config.interface.encodeFunctionData("setOracleDecimals", [uni.target, uniOracleDecimals]),
         config.interface.encodeFunctionData("setOracle", [eth.target, ethOracle.target]),
         config.interface.encodeFunctionData("setOracleDecimals", [eth.target, ethOracleDecimals]),
-        config.interface.encodeFunctionData("setTreasury", [owner.address]),
     ];
     await sendTxn(config.multicall(multicallArgs), "config.multicall");
 

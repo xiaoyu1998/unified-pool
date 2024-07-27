@@ -89,6 +89,7 @@ export async function deployFixture() {
     
     //config pools
     const multicallArgs = [
+        config.interface.encodeFunctionData("setTreasury", [user0.address]),
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
         config.interface.encodeFunctionData("setPoolActive", [usdt.target, true]),
