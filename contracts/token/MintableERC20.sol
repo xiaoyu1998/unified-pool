@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 import "./IndexERC20.sol";
 // @title MintableERC20 
-// @author Aave
 // @notice Implements mint and burn functions for IndexERC20/
 abstract contract MintableERC20 is IndexERC20 {
 

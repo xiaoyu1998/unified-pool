@@ -177,6 +177,21 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
     }
 
     /**
+     * @dev execute a new Swap with the given Swap parameters. The Swap is
+     * execute by calling the `executeSwap()` function on the Swap handler contract. 
+     */
+    function executeSwapExactOut(
+        SwapUtils.SwapParams calldata params
+    ) external override payable nonReentrant {
+        address account = msg.sender;
+
+        return swapHandler.executeSwapExactOut(
+            account,
+            params
+        );
+    }
+
+    /**
      * @dev execute a new Liquidation with the given Liquidation parameters. The Liquidation is
      * execute by calling the `executeLiquidation()` function on the Liquidation handler contract. 
      */

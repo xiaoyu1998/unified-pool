@@ -40,4 +40,23 @@ contract SwapHandler is ISwapHandler, GlobalReentrancyGuard, RoleModule {
         SwapUtils.executeSwapExactIn(account, params);
     }
 
+    // @dev executes a swapExactOut
+    // @param swapParams SwapUtils.SwapParams
+    function executeSwapExactOut(
+        address account,
+        SwapUtils.SwapParams calldata swapParams
+    ) external globalNonReentrant onlyController{
+
+        SwapUtils.ExecuteSwapParams memory params = SwapUtils.ExecuteSwapParams(
+           address(dataStore),
+           address(eventEmitter),
+           swapParams.underlyingAssetIn,     
+           swapParams.underlyingAssetOut,         
+           swapParams.amount,
+           swapParams.sqrtPriceLimitX96
+        );
+
+        SwapUtils.executeSwapExactOut(account, params);
+    }
+
 }

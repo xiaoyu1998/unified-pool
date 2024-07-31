@@ -71,6 +71,9 @@ library SwapUtils {
         uint256 debtScaledIn;
         uint256 collateralOut;
         uint256 debtScaledOut;
+
+        // uint256 healthFactor;
+        // uint256 healthFactorLiquidationThreshold;
     }
 
     // @dev executes a swap
@@ -112,7 +115,9 @@ library SwapUtils {
         }
         
         vars.dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
-        SwapUtils.validateSwap( 
+        SwapUtils.validateSwap(
+            account,
+            params.dataStore,
             vars.poolIn, 
             vars.poolOut,
             vars.amountIn,
@@ -262,7 +267,9 @@ library SwapUtils {
         vars.collateralAmount = vars.poolTokenIn.balanceOfCollateral(account);
         
         vars.dex = DexStoreUtils.get(params.dataStore, params.underlyingAssetIn, params.underlyingAssetOut);
-        SwapUtils.validateSwap( 
+        SwapUtils.validateSwap(
+            account,
+            params.dataStore,
             vars.poolIn, 
             vars.poolOut,
             vars.amountOut,
@@ -381,16 +388,20 @@ library SwapUtils {
 
 
     // @notice Validates a swap action.
+    // @param account The swapping account
+    // @param dataStore DataStore
     // @param poolIn The state of the poolIn
     // @param poolOut The state of the poolOut
     // @param amount The amount to be swapped in and to be swapped out
     // @param dex The dex for swap
     function validateSwap(
+        address account,
+        address dataStore,
         Pool.Props memory poolIn,
         Pool.Props memory poolOut,
         uint256 amount,
         address dex
-    ) internal pure {
+    ) internal {
         if (dex == address(0)){
              revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);
         }
@@ -398,10 +409,22 @@ library SwapUtils {
         PoolUtils.validateConfigurationPool(poolIn, false);
         PoolUtils.validateConfigurationPool(poolOut, false);
 
-        if(amount == 0) {
+        if (amount == 0) {
             revert Errors.EmptySwapAmount();
         } 
-        //TODO:healthFactor should be validated        
+        //TODO:healthFactor should be validated  
+        (   uint256 healthFactor,
+            uint256 healthFactorLiquidationThreshold,
+            bool isHealtherFactorHigherThanLiquidationThreshold,
+            ,
+        ) = PositionUtils.getLiquidationHealthFactor(account, dataStore);
+        if (!isHealtherFactorHigherThanLiquidationThreshold) {
+            revert Errors.HealthFactorLowerThanLiquidationThreshold(
+                healthFactor, 
+                healthFactorLiquidationThreshold
+            );
+        }
+
     }
 
 }

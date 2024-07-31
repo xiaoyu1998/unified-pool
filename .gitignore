@@ -21,3 +21,4 @@ node_modules
 
 ._.DS_Store
 .DS_Store
+/contracts/._.DS_Store

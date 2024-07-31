@@ -6,4 +6,5 @@ import "../swap/SwapUtils.sol";
 
 interface ISwapHandler {
     function executeSwap(address account, SwapUtils.SwapParams calldata params) external;
+    function executeSwapExactOut(address account, SwapUtils.SwapParams calldata params) external;
 }

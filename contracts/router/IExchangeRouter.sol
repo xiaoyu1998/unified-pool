@@ -41,6 +41,10 @@ interface IExchangeRouter {
         SwapUtils.SwapParams calldata params
     ) external payable;
 
+    function executeSwapExactOut(
+        SwapUtils.SwapParams calldata params
+    ) external payable;
+
     function executeLiquidation(
         LiquidationUtils.LiquidationParams calldata params
     ) external payable;
