@@ -178,7 +178,7 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
 
     /**
      * @dev execute a new Swap with the given Swap parameters. The Swap is
-     * execute by calling the `executeSwap()` function on the Swap handler contract. 
+     * execute by calling the `executeSwapExactOut()` function on the Swap handler contract. 
      */
     function executeSwapExactOut(
         SwapUtils.SwapParams calldata params
