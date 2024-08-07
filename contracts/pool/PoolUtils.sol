@@ -56,19 +56,18 @@ library PoolUtils {
         address key
     ) internal pure {
         if (pool.poolToken == address(0)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         }
-
     }
 
-
-    // function validatePoolIsUsd(
-    //     Pool.Props memory pool
-    // ) internal pure {
-    //     if (!PoolConfigurationUtils.getUsd(poolUsd.configuration)) {
-    //         revert Errors.PoolIsNotUsd(pool.underlyingAsset);
-    //     }
-    // }
+    function validatePoolIsUsd(
+        Pool.Props memory pool,
+        address key
+    ) internal pure {
+        if (!PoolConfigurationUtils.getUsd(pool.configuration)) {
+            revert Errors.PoolIsNotUsd(key);
+        }
+    }
 
     function updatePoolAndCache(
         address dataStore, 

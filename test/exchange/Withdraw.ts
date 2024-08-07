@@ -107,7 +107,7 @@ describe("Exchange Withdraw", () => {
 
     });
 
-    it("executeWithdraw PoolNotFound", async () => {
+    it("executeWithdraw EmptyPool", async () => {
         const usdtAmount = expandDecimals(2000000, usdtDecimals);
         const usdtParams: WithdrawUtils.WithdrawParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
@@ -119,7 +119,7 @@ describe("Exchange Withdraw", () => {
         ];
         await expect(
             exchangeRouter.connect(user0).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
     });
 
     it("executeWithdraw validateWithdraw", async () => {

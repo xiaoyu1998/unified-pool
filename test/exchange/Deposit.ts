@@ -95,7 +95,7 @@ describe("Exchange Deposit", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0);
     }); 
 
-    it("executeDeposit PoolNotFound", async () => {
+    it("executeDeposit EmptyPool", async () => {
         const usdtParams: DepositUtils.DepositParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
         };
@@ -104,7 +104,7 @@ describe("Exchange Deposit", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
     });
 
     it("executeDeposit validateWithdraw", async () => {

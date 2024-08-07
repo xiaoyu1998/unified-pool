@@ -139,7 +139,7 @@ describe("Exchange Redeem", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount);
     });
 
-    it("executeRedeem PoolNotFound", async () => {
+    it("executeRedeem EmptyPool", async () => {
         const uniAmountRedeem = expandDecimals(400000, uniDecimals);
         const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
@@ -151,7 +151,7 @@ describe("Exchange Redeem", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgsRedeem)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
     });
 

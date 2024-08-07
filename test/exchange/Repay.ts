@@ -203,7 +203,7 @@ describe("Exchange Repay", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });
 
-    it("executeRepay PoolNotFound", async () => {
+    it("executeRepay EmptyPool", async () => {
         const uniAmountRepay = expandDecimals(400000, uniDecimals);
         const uniParamsRepay: RepayUtils.RepayParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
@@ -214,7 +214,7 @@ describe("Exchange Repay", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgsRepay)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
     });
 

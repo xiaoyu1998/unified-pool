@@ -342,7 +342,7 @@ describe("Exchange Close", () => {
     });
 
 
-    it("executeClose PoolNotFound", async () => {
+    it("executeClose EmptyPool", async () => {
         const closeParams: CloseUtils.CloseParamsStructOutput = {
             underlyingAssetUsd: ethers.ZeroAddress
         }; 
@@ -351,7 +351,19 @@ describe("Exchange Close", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");     
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");     
+    });
+
+    it("executeClose PoolIsNotUsd", async () => {
+        const closeParams: CloseUtils.CloseParamsStructOutput = {
+            underlyingAssetUsd: uni.target
+        }; 
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("executeClose", [closeParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolIsNotUsd");     
     });
 
     it("executeClose validateClose HealthFactorLowerThanLiquidationThreshold", async () => {

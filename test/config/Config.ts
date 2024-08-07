@@ -148,7 +148,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolActive(ethers.ZeroAddress, true)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await config.connect(user0).setPoolActive(usdtPool.underlyingAsset, true);     
         await expect(
@@ -163,7 +163,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolFrozen(ethers.ZeroAddress, true)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await config.connect(user0).setPoolFrozen(usdtPool.underlyingAsset, true);     
         await expect(
@@ -177,7 +177,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolPaused(ethers.ZeroAddress, true)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await config.connect(user0).setPoolPaused(usdtPool.underlyingAsset, true);     
         await expect(
@@ -192,7 +192,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolUsd(ethers.ZeroAddress, true)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await config.connect(user0).setPoolUsd(usdtPool.underlyingAsset, true);     
         await expect(
@@ -206,7 +206,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolBorrowingEnabled(ethers.ZeroAddress, true)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await config.connect(user0).setPoolBorrowingEnabled(usdtPool.underlyingAsset, true);     
         await expect(
@@ -222,7 +222,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolDecimals(ethers.ZeroAddress, 10)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await expect(
             config.connect(user0).setPoolDecimals(usdtPool.underlyingAsset, 256)
@@ -238,10 +238,9 @@ describe("Config", () => {
             config.connect(user1).setPoolFeeFactor(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-
         await expect(
             config.connect(user0).setPoolFeeFactor(ethers.ZeroAddress, 10)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await expect(
             config.connect(user0).setPoolFeeFactor(usdtPool.underlyingAsset, 65536)
@@ -259,7 +258,7 @@ describe("Config", () => {
 
         await expect(
             config.connect(user0).setPoolBorrowCapacity(ethers.ZeroAddress, 10)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await expect(
             config.connect(user0).setPoolBorrowCapacity(usdtPool.underlyingAsset, 68719476736)
@@ -275,10 +274,9 @@ describe("Config", () => {
             config.connect(user1).setPoolSupplyCapacity(usdtPool.underlyingAsset, 10)
         ).to.be.revertedWithCustomError(errorsContract, "Unauthorized");
 
-
         await expect(
             config.connect(user0).setPoolSupplyCapacity(ethers.ZeroAddress, 10)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         await expect(
             config.connect(user0).setPoolSupplyCapacity(usdtPool.underlyingAsset, 68719476736)

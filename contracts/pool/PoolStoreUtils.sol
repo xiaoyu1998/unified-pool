@@ -186,7 +186,7 @@ library PoolStoreUtils {
     function remove(address dataStoreAddress, address key) external {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         }
 
         dataStore.removeAddress(
@@ -250,7 +250,7 @@ library PoolStoreUtils {
     function getPoolToken(address dataStoreAddress, address key) external view returns (address){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_TOKEN))
@@ -260,7 +260,7 @@ library PoolStoreUtils {
     function getDebtToken(address dataStoreAddress, address key) external view returns (address){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         return dataStore.getAddress(
             keccak256(abi.encode(key, POOL_DEBT_TOKEN))
@@ -270,7 +270,7 @@ library PoolStoreUtils {
     function getLiquidatyRate(address dataStoreAddress, address key) external view returns (uint256){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_LIQUIDITY_RATE))
@@ -280,7 +280,7 @@ library PoolStoreUtils {
     function getBorrowRate(address dataStoreAddress, address key) external view returns (uint256){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_BORROW_RATE))
@@ -290,7 +290,7 @@ library PoolStoreUtils {
     function getUnclaimedFee(address dataStoreAddress, address key) external view returns (uint256){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_UNCLAIMED_FEE))
@@ -300,7 +300,7 @@ library PoolStoreUtils {
     function setUnclaimedFee(address dataStoreAddress, address key, uint256 unclaimedFee) external {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_UNCLAIMED_FEE)),
@@ -311,7 +311,7 @@ library PoolStoreUtils {
     function setConfiguration(address dataStoreAddress, address key, uint256 poolConfigration) external {
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         } 
         dataStore.setUint(
             keccak256(abi.encode(key, POOL_CONFIGURATION)),
@@ -326,7 +326,7 @@ library PoolStoreUtils {
     function _getConfiguration(address dataStoreAddress, address key) internal view returns (uint256){
         IDataStore dataStore = IDataStore(dataStoreAddress);
         if (!dataStore.containsAddress(Keys.POOL_LIST, key)) {
-            revert Errors.PoolNotFound(key);
+            revert Errors.EmptyPool(key);
         }        
         return dataStore.getUint(
             keccak256(abi.encode(key, POOL_CONFIGURATION))

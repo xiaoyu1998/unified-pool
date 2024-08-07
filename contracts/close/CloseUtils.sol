@@ -71,7 +71,8 @@ library CloseUtils {
 
         vars.poolKeyUsd = Keys.poolKey(params.underlyingAssetUsd);
         vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolKeyUsd);
-        PoolUtils.validateEnabledPool(vars.pool, vars.poolKeyUsd);
+        PoolUtils.validateEnabledPool(vars.poolUsd, vars.poolKeyUsd);
+        PoolUtils.validatePoolIsUsd(vars.poolUsd, vars.poolKeyUsd);
 
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
         vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
@@ -149,6 +150,7 @@ library CloseUtils {
     ) internal pure {
         PoolUtils.validateConfigurationPool(pool, false);
         PoolUtils.validateConfigurationPool(poolUsd, false);
+        // PoolUtils.validatePoolIsUsd(poolUsd);
         PositionUtils.validateEnabledPosition(position);
 
         if (collateralAmount <  debtAmount) {
@@ -168,7 +170,7 @@ library CloseUtils {
     }
 
     struct CloseLocalVars {
-        address poolUsdKey;
+        address poolKeyUsd;
         Pool.Props poolUsd;       
         IPoolToken poolTokenUsd;
         uint256 positionCount;
@@ -200,9 +202,11 @@ library CloseUtils {
     ) external {
         CloseLocalVars memory vars;
 
-        vars.poolUsdKey = Keys.poolKey(params.underlyingAssetUsd);
-        vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolUsdKey);
-        PoolUtils.validateEnabledPool(vars.poolUsd, vars.poolUsdKey);
+        vars.poolKeyUsd = Keys.poolKey(params.underlyingAssetUsd);
+        vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolKeyUsd);
+        PoolUtils.validateEnabledPool(vars.poolUsd, vars.poolKeyUsd);
+        PoolUtils.validatePoolIsUsd(vars.poolUsd, vars.poolKeyUsd);
+
         vars.poolTokenUsd = IPoolToken(vars.poolUsd.poolToken);
         vars.amountUsdStartClose = vars.poolTokenUsd.balanceOfCollateral(account);
 
@@ -331,12 +335,7 @@ library CloseUtils {
         if (positionsLength == 0) {
             revert Errors.EmptyPositions(account);
         }
-
         PoolUtils.validateConfigurationPool(poolUsd, false);
-
-        // if (!PoolConfigurationUtils.getUsd(poolUsd.configuration)) {
-           
-        // }
 
         (   uint256 healthFactor,
             uint256 healthFactorLiquidationThreshold,

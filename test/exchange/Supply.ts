@@ -48,7 +48,7 @@ describe("Exchange Supply", () => {
         expect(await getSupply(dataStore, reader, user1.address, usdt.target)).eq(usdtSupplyAmount);
     });
 
-    it("executeSupply PoolNotFound", async () => {
+    it("executeSupply EmptyPool", async () => {
         const usdtParamsSupply: SupplyUtils.SupplyParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
             to: user1.address,
@@ -58,7 +58,7 @@ describe("Exchange Supply", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgsSupply)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
     });
 

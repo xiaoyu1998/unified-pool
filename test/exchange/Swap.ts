@@ -214,7 +214,7 @@ describe("Exchange Swap", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });
 
-    it("executeSwap PoolNotFound", async () => {
+    it("executeSwap EmptyPool", async () => {
         //amountIn pool not found
         const uniAmount = expandDecimals(100000, uniDecimals);
         const uniParams: SwapUtils.SwapParamsStructOutput = {
@@ -228,7 +228,7 @@ describe("Exchange Swap", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
         //amountOut pool not found
         const uniParams2: SwapUtils.SwapParamsStructOutput = {
@@ -242,7 +242,7 @@ describe("Exchange Swap", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs2)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
 
     });
 

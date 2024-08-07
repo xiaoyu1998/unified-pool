@@ -16,7 +16,12 @@ library Errors {
     error PoolAlreadyExists(address key, address poolToken);
 
     // PoolStoreUtils errors
-    error PoolNotFound(address key);
+    error PoolIsInactive(address pool);
+    error PoolIsPaused(address pool);
+    error PoolIsFrozen(address pool);
+    error PoolIsNotBorrowing(address pool);
+    error PoolIsNotUsd(address pool);
+    error EmptyPool(address key);
 
     // PoolToken errors
     error InsufficientAvailableLiquidity(uint256 amount, uint256 availableLiquidity);
@@ -47,10 +52,6 @@ library Errors {
     error HealthFactorLowerThanCollateralRateThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
 
     // BorrowUtils, WithdrawUtils errors
-    error PoolIsInactive(address pool);
-    error PoolIsPaused(address pool);
-    error PoolIsFrozen(address pool);
-    error PoolIsNotBorrowing(address pool);
     error CollateralBalanceIsZero();
     error EmptyBorrowAmounts();
     error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);

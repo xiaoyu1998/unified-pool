@@ -115,7 +115,7 @@ describe("Exchange Borrow", () => {
 
     });
 
-    it("executeBorrow PoolNotFound", async () => {
+    it("executeBorrow EmptyPool", async () => {
         const usdtAmmount = expandDecimals(1000000, usdtDecimals);
         const usdtParams: BorrowUtils.BorrowParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
@@ -126,7 +126,7 @@ describe("Exchange Borrow", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
     });
 
     it("executeBorrow validateWithdraw", async () => {

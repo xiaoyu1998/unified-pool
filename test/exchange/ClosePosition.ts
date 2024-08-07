@@ -153,6 +153,47 @@ describe("Exchange ClosePosition", () => {
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });
 
+    it("executeClosePosition EmptyPool", async () => {
+        //PoolIsNotUsd
+        const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
+            underlyingAsset: ethers.ZeroAddress,
+            underlyingAssetUsd: usdt.target
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool"); 
+
+        //PoolIsNotUsd
+        const closePositionParams2: CloseUtils.ClosePositionParamsStructOutput = {
+            underlyingAsset: usdt.target,
+            underlyingAssetUsd: ethers.ZeroAddress
+        };
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams2]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs2)
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool"); 
+    });
+
+
+    it("executeClosePosition PoolIsNotUsd", async () => {
+        //PoolIsNotUsd
+        const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
+            underlyingAsset: uni.target,
+            underlyingAssetUsd: uni.target
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs)
+        ).to.be.revertedWithCustomError(errorsContract, "PoolIsNotUsd"); 
+    });
+
     it("executeClosePosition validateClosePosition EmptyPosition", async () => {
         //EmptyPosition
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {

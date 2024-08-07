@@ -137,10 +137,10 @@ describe("Pool", () => {
        expect(pool3.borrowRate).eq(borrowRate);
     });
 
-    it("UpdatePool PoolNotFound", async () => {
+    it("UpdatePool EmptyPool", async () => {
         await expect(
             poolTest.updatePool(eventEmitter, dataStore, ethers.ZeroAddress)
-        ).to.be.revertedWithCustomError(errorsContract, "PoolNotFound");
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyPool");
     });
 
 }); 
