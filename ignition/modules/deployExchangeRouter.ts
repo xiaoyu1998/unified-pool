@@ -27,6 +27,9 @@ import { oracleStoreUtilsModule } from "./deployOracleStoreUtils"
 import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 import { feeStoreUtilsModule } from "./deployFeeStoreUtils"
 
+// import { borrowUtilsModule } from "./deployBorrowUtils"
+// import { depositUtilsModule } from "./deployDepositUtils"
+
 import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
 
@@ -56,6 +59,9 @@ export const exchangeRouterModule = buildModule("ExchangeRouter", (m) => {
     const { dexStoreUtils } = m.useModule(dexStoreUtilsModule)
     const { feeHandler } = m.useModule(feeHandlerModule)
     const { feeStoreUtils } = m.useModule(feeStoreUtilsModule)
+
+    // const { borrowUtils } = m.useModule(borrowUtilsModule)
+    // const { depositUtils } = m.useModule(depositUtilsModule)
 
     const exchangeRouter = m.contract("ExchangeRouter", [
         router,

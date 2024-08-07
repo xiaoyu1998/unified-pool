@@ -64,7 +64,7 @@ describe("Exchange Close", () => {
 
     });
 
-    it("executeClose repay only ", async () => {
+    it("executeClose collateralAmount == debtAmount, repay only ", async () => {
         const usdtDepositAmount = expandDecimals(1000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
         const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
@@ -109,7 +109,7 @@ describe("Exchange Close", () => {
     });
 
 
-    it("executeClose repay and executeSwapExactIn", async () => {
+    it("executeClose collateralAmount == debtAmount, repay and sell", async () => {
         await addLiquidityV3(
             user0,
             usdt,
@@ -149,9 +149,6 @@ describe("Exchange Close", () => {
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
 
-        // const colleratalUsdt = await getCollateral(dataStore, reader, user1.address, usdt.target);
-        // console.log("colleratalUsdt", colleratalUsdt);
-
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("797375144846");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
@@ -164,7 +161,7 @@ describe("Exchange Close", () => {
  
     });
 
-    it("executeClose repay, executeSwapExactOut and repay", async () => {
+    it("executeClose collateralAmount > 0, repay, buy and repay", async () => {
         await addLiquidityV3(
             user0,
             usdt,
@@ -212,8 +209,6 @@ describe("Exchange Close", () => {
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
 
-        // const colleratalUsdt = await getCollateral(dataStore, reader, user1.address, usdt.target);
-        // console.log("colleratalUsdt", colleratalUsdt);
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("1598739642383");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
@@ -224,6 +219,126 @@ describe("Exchange Close", () => {
         expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
  
+    });
+
+    it("executeClose collateralAmount = 0, sell and repay (long)", async () => {
+        await addLiquidityV3(
+            user0,
+            usdt,
+            uni,
+            dex,
+            poolV3
+        )
+        
+        const usdtDepositAmount = expandDecimals(1000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const usdtBorrowAmmount = expandDecimals(1000000, usdtDecimals);
+        const usdtParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: usdt.target,
+            amount: usdtBorrowAmmount,
+        }; 
+        const paramsSwap: SwapUtils.SwapParamsStruct = {
+            underlyingAssetIn: usdt.target,
+            underlyingAssetOut: uni.target,
+            amount: usdtDepositAmount+usdtBorrowAmmount,
+            sqrtPriceLimitX96: 0
+        };
+
+        const closeParams: CloseUtils.CloseParamsStructOutput = {
+            underlyingAssetUsd: usdt.target
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [usdtParamsBorrow]),
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
+            exchangeRouter.interface.encodeFunctionData("executeClose", [closeParams]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
+
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("988022201618");
+        expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, usdt.target)).eq(true);
+        expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
+
+    });
+
+    it("executeClose collateralAmount = 0, buy and repay (short)", async () => {
+        await addLiquidityV3(
+            user0,
+            usdt,
+            uni,
+            dex,
+            poolV3
+        )
+        
+        const usdtDepositAmount = expandDecimals(1000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
+        const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        }; 
+        const paramsSwap: SwapUtils.SwapParamsStruct = {
+            underlyingAssetIn: uni.target,
+            underlyingAssetOut: usdt.target,
+            amount: uniBorrowAmmount,
+            sqrtPriceLimitX96: 0
+        };
+
+        const closeParams: CloseUtils.CloseParamsStructOutput = {
+            underlyingAssetUsd: usdt.target
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
+            exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
+            exchangeRouter.interface.encodeFunctionData("executeClose", [closeParams]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
+
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+
+        expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("995193452887");
+        expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, usdt.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, usdt.target)).eq(true);
+        expect(await getPositionType(dataStore, reader, user1.address, usdt.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getEntryShortPrice(dataStore, reader, user1.address, usdt.target)).eq(0);
+        expect(await getAccShortAmount(dataStore, reader, user1.address, usdt.target)).eq(0); 
+
     });
 
 

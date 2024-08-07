@@ -4,6 +4,7 @@ import { getPoolInfo, getAssets, getPositions, getPositionsInfo} from "../utils/
 import { CloseUtils } from "../typechain-types/contracts/exchange/CloseHandler.sol/CloseHandler";
 import { DepositUtils } from "../typechain-types/contracts/exchange/DepositHandler";
 import { SwapUtils } from "../typechain-types/contracts/exchange/SwapHandler";
+import { getErrorMsg } from "../utils/error";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -12,17 +13,17 @@ async function main() {
     const router = await getContract("Router");
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader");  
-    const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("Close", (underlyingAssetUsd, account, amountUsdStartClose, amountUsdAfterRepayAndSellCollateral, amountUsdAfterBuyCollateralAndRepay) => {
-        const event: CloseEvent.OutputTuple = {
-            underlyingAssetUsd: underlyingAssetUsd,
-            account: account,
-            amountUsdStartClose: amountUsdStartClose,
-            amountUsdAfterRepayAndSellCollateral: amountUsdAfterRepayAndSellCollateral,
-            amountUsdAfterBuyCollateralAndRepay: amountUsdAfterBuyCollateralAndRepay
-        };        
-        console.log("eventEmitter Close" ,event);
-    });
+    // const eventEmitter = await getEventEmitter();  
+    // eventEmitter.on("Close", (underlyingAssetUsd, account, amountUsdStartClose, amountUsdAfterRepayAndSellCollateral, amountUsdAfterBuyCollateralAndRepay) => {
+    //     const event: CloseEvent.OutputTuple = {
+    //         underlyingAssetUsd: underlyingAssetUsd,
+    //         account: account,
+    //         amountUsdStartClose: amountUsdStartClose,
+    //         amountUsdAfterRepayAndSellCollateral: amountUsdAfterRepayAndSellCollateral,
+    //         amountUsdAfterBuyCollateralAndRepay: amountUsdAfterBuyCollateralAndRepay
+    //     };        
+    //     console.log("eventEmitter Close" ,event);
+    // });
 
     const usdtDecimals = getTokens("USDT")["decimals"];
     const uniDecimals = getTokens("UNI")["decimals"];
@@ -45,16 +46,29 @@ async function main() {
         underlyingAsset: uniAddress,
     };
 
-    //short uni 100,000
-    const borrowAmmount = expandDecimals(100000, uniDecimals);
+    // //short uni 100,000
+    // const borrowAmmount = expandDecimals(100000, uniDecimals);
+    // const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
+    //     underlyingAsset: uniAddress,
+    //     amount: borrowAmmount,
+    // };
+    // const paramsSwap: SwapUtils.SwapParamsStruct = {
+    //     underlyingAssetIn: uniAddress,
+    //     underlyingAssetOut: usdtAddress,
+    //     amount: borrowAmmount,
+    //     sqrtPriceLimitX96: 0
+    // };
+
+    //long uni 100,000
+    const borrowAmmount = expandDecimals(1000000, usdtDecimals);
     const paramsBorrow: BorrowUtils.BorrowParamsStruct = {
-        underlyingAsset: uniAddress,
+        underlyingAsset: usdtAddress,
         amount: borrowAmmount,
     };
     const paramsSwap: SwapUtils.SwapParamsStruct = {
-        underlyingAssetIn: uniAddress,
-        underlyingAssetOut: usdtAddress,
-        amount: borrowAmmount,
+        underlyingAssetIn: usdtAddress,
+        underlyingAssetOut: uniAddress,
+        amount: borrowAmmount+depositAmmountUsdt,
         sqrtPriceLimitX96: 0
     };
 
@@ -65,13 +79,23 @@ async function main() {
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("sendTokens", [usdtAddress, poolUsdt.poolToken, depositAmmountUsdt]),
         exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUsdt]),
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
-        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]), 
+        // exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
+        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]), 
         exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
         exchangeRouter.interface.encodeFunctionData("executeClose", [paramsClose]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
+    // try {
+    //     const estimatedGas = await exchangeRouter.multicall.estimateGas(multicallArgs);
+    //     console.log("estimatedGas", estimatedGas);
+    // } catch (err){
+    //     for (const key in err) {
+    //         if (err.hasOwnProperty(key)) {
+    //             console.log(`${key}: ${err[key]}`);
+    //         }
+    //     }  
+    //     //console.log("Error:", await getErrorMsg(err.data));      
+    // }
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"

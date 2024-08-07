@@ -61,6 +61,15 @@ library PoolUtils {
 
     }
 
+
+    // function validatePoolIsUsd(
+    //     Pool.Props memory pool
+    // ) internal pure {
+    //     if (!PoolConfigurationUtils.getUsd(poolUsd.configuration)) {
+    //         revert Errors.PoolIsNotUsd(pool.underlyingAsset);
+    //     }
+    // }
+
     function updatePoolAndCache(
         address dataStore, 
         address underlyingAsset

@@ -229,7 +229,8 @@ library CloseUtils {
             vars.debtToken = IDebtToken(vars.pool.debtToken);
             vars.collateralAmount = vars.poolToken.balanceOfCollateral(account);
             vars.debtAmount = vars.debtToken.balanceOf(account);
-            if (vars.debtAmount > 0) {
+            //1.repay
+            if (vars.collateralAmount > 0 && vars.debtAmount > 0) {
                 vars.repayParams = RepayUtils.ExecuteRepayParams(
                     params.dataStore,
                     params.eventEmitter,
@@ -239,6 +240,7 @@ library CloseUtils {
                 RepayUtils.executeRepay(account, vars.repayParams);
             }
 
+            //2.sell
             if (vars.collateralAmount > vars.debtAmount  && vars.position.underlyingAsset != params.underlyingAssetUsd) {
                 vars.remainAmount = vars.collateralAmount - vars.debtAmount;
                 vars.swapParams = SwapUtils.ExecuteSwapParams(
@@ -265,32 +267,32 @@ library CloseUtils {
             vars.poolKey = Keys.poolKey(vars.position.underlyingAsset);
             vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
 
-            if (vars.position.underlyingAsset == params.underlyingAssetUsd) {
-                continue;
-            }
-
             vars.debtToken = IDebtToken(vars.pool.debtToken);
             vars.collateralAmountUsd = vars.poolTokenUsd.balanceOfCollateral(account);
             vars.debtAmount = vars.debtToken.balanceOf(account);
             if (vars.debtAmount > 0) {
-                vars.swapParams = SwapUtils.ExecuteSwapParams(
-                    params.dataStore,
-                    params.eventEmitter,
-                    params.underlyingAssetUsd,
-                    vars.position.underlyingAsset,
-                    vars.debtAmount,
-                    0//should be have a sqrtPriceLimitX96
-                );
-                vars.CollateralAmountNeededUsd = SwapUtils.executeSwapExactOut(account, vars.swapParams);
-                if (vars.CollateralAmountNeededUsd > vars.collateralAmountUsd) {
-                    revert Errors.UsdCollateralCanNotCoverDebt(
-                        vars.collateralAmount, 
-                        vars.CollateralAmountNeededUsd, 
-                        vars.debtAmount, 
-                        vars.position.underlyingAsset
+                //3.buy 
+                if (vars.position.underlyingAsset != params.underlyingAssetUsd) {
+                    vars.swapParams = SwapUtils.ExecuteSwapParams(
+                        params.dataStore,
+                        params.eventEmitter,
+                        params.underlyingAssetUsd,
+                        vars.position.underlyingAsset,
+                        vars.debtAmount,
+                        0//should be have a sqrtPriceLimitX96
                     );
+                    vars.CollateralAmountNeededUsd = SwapUtils.executeSwapExactOut(account, vars.swapParams);
+                    if (vars.CollateralAmountNeededUsd > vars.collateralAmountUsd) {
+                        revert Errors.UsdCollateralCanNotCoverDebt(
+                            vars.collateralAmount, 
+                            vars.CollateralAmountNeededUsd, 
+                            vars.debtAmount, 
+                            vars.position.underlyingAsset
+                        );
+                    }
                 }
-
+                
+                //4.repay
                 vars.repayParams = RepayUtils.ExecuteRepayParams(
                     params.dataStore,
                     params.eventEmitter,
@@ -299,9 +301,11 @@ library CloseUtils {
                 );
                 RepayUtils.executeRepay(account, vars.repayParams);
             }
-            
-            PositionUtils.reset(vars.position);
-            PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position);          
+            //reset position for other asset, and retain the usd
+            if (vars.position.underlyingAsset != params.underlyingAssetUsd) {
+                PositionUtils.reset(vars.position);
+                PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position); 
+            }         
         }  
         vars.amountUsdAfterBuyCollateralAndRepay = vars.poolTokenUsd.balanceOfCollateral(account); 
         CloseEventUtils.emitClose(
@@ -329,6 +333,10 @@ library CloseUtils {
         }
 
         PoolUtils.validateConfigurationPool(poolUsd, false);
+
+        // if (!PoolConfigurationUtils.getUsd(poolUsd.configuration)) {
+           
+        // }
 
         (   uint256 healthFactor,
             uint256 healthFactorLiquidationThreshold,
