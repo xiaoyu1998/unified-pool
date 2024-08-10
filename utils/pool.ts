@@ -2,6 +2,7 @@
 import { expect } from "chai";
 import { errorsContract } from "./error";
 import { expandDecimals } from "./math"
+import * as keys from "./keys";
 
 export async function testPoolConfiguration(
     config, 
@@ -48,5 +49,13 @@ export async function testPoolConfiguration(
         exchangeRouter.connect(account).multicall(multicallArgsSupply)
     ).to.be.revertedWithCustomError(errorsContract, "PoolIsPaused"); 
 
+}
+
+export function getPoolCount(dataStore) {
+    return dataStore.getAddressCount(keys.POOL_LIST);
+}
+
+export function getPoolKeys(dataStore, start, end) {
+    return dataStore.getAddressValuesAt(keys.POOL_LIST, start, end);
 }
 

@@ -5,7 +5,7 @@ export const dataStoreModule = buildModule("DataStore", (m) => {
     const { roleStore } = m.useModule(roleStoreModule)
     const dataStore = m.contract("DataStore", [roleStore] );
 
-    return { dataStore };
+    return { dataStore, roleStore };
 });
 
 export default dataStoreModule;

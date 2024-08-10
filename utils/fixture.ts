@@ -2,6 +2,8 @@
 import { deployContract, contractAtOptions } from "./deploy";
 import { exchangeRouterModule } from "../ignition/modules/deployExchangeRouter"
 import { poolFactoryModule } from "../ignition/modules/deployPoolFactory"
+import { readerModule } from "../ignition/modules/deployReader"
+import { dataStoreModule } from "../ignition/modules/deployDataStore"
 import { createAsset } from "./assetsDex";
 import { expandDecimals, bigNumberify } from "./math"
 import { parsePool } from "./helper";
@@ -310,4 +312,64 @@ export async function contractAt(name, address, poolStoreUtils) {
         },         
     });
 
+}
+
+export async function deployFixtureStore() {
+    const chainId = 31337; // hardhat chain id
+    const accountList = await ethers.getSigners();
+    const [
+        user0,
+        user1,
+        user2,
+        user3,
+        user4,
+        user5,
+        user6,
+        user7,
+        user8,
+        signer0,
+        signer1,
+        signer2,
+        signer3,
+        signer4,
+        signer5,
+        signer6,
+        signer7,
+        signer8,
+        signer9,
+    ] = accountList;
+
+    const { 
+        roleStore,
+        dataStore
+    } = await ignition.deploy(dataStoreModule);
+
+    const {
+        poolStoreUtils,
+        reader
+    } = await ignition.deploy(readerModule);
+
+    // const poolStoreUtilsTest = await deployContract("PoolStoreUtilsTest", [], {
+    //     libraries: {
+    //         PoolStoreUtils: poolStoreUtils,
+    //     },
+    // });
+
+    //grant
+    await roleStore.grantRole(user0.address, keys.CONTROLLER);
+
+    return {
+      accountList,
+      accounts: {
+          user0,
+          user1,
+          user2
+      },
+      contracts: {
+          roleStore,
+          dataStore,
+          reader,
+          poolStoreUtils
+      },
+    };
 }

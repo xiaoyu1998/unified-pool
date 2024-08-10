@@ -138,6 +138,7 @@ library CloseUtils {
 
     // @dev Validates a close position action.
     // @param pool The state of the pool
+    // @param poolUsd The state of the poolUsd
     // @param position The state of the position
     // @param collateralAmount The amount of collateral
     // @param debtAmount The amount of debt
