@@ -31,7 +31,6 @@ describe("PoolStoreUtils", () => {
     });
     
     it("get, set, remove", async () => {
-        //const sampleItem = {};
         const itemKey = accountList[accountList.length - 1].address;
 
         const getEmptyItem = poolStoreUtilsTest.getEmptyPool;
@@ -67,7 +66,7 @@ describe("PoolStoreUtils", () => {
         const initialItemCount = await getItemCount(dataStore);
         const initialItemKeys = await getItemKeys(dataStore, 0, 10);
 
-        //add item
+        //set item
         await logGasUsage(
             setItem(dataStore, itemKey, sampleItem),
             "setItem",
@@ -80,6 +79,7 @@ describe("PoolStoreUtils", () => {
         expect(await getItemCount(dataStore)).eq(initialItemCount + BigInt(1));
         expect(await getItemKeys(dataStore, 0, 10)).deep.equal(initialItemKeys.concat(itemKey));
 
+        //remove item
         await removeItem(dataStore, itemKey, sampleItem);
         fetchedItem = await getItem(dataStore, itemKey);
         fetchedItem = parsePool(fetchedItem);
@@ -91,7 +91,5 @@ describe("PoolStoreUtils", () => {
         expect(await getItemKeys(dataStore, 0, 10)).deep.equal(initialItemKeys);     
 
     });
-
-    
 
 }); 
