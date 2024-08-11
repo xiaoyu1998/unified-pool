@@ -4,6 +4,15 @@ import parse from 'csv-parse';
 import { DeployFunction, DeployResult, DeploymentsExtension } from "hardhat-deploy/dist/types";
 import {tokenAddresses, deployAddresses, webSocketUrl} from "./network"
 
+export async function logGasUsage(tx, label) {
+    const result = await tx;
+    const txReceipt = await ethers.provider.getTransactionReceipt(result.hash);
+    if (label) {
+        console.info(label, txReceipt.gasUsed.toString());
+    }
+    return txReceipt;
+}
+
 export async function sendTxn(txnPromise, label) {
     const txn = await txnPromise
     await txn.wait(1)
