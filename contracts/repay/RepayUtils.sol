@@ -79,7 +79,7 @@ library RepayUtils {
         vars.debtAmount = vars.debtToken.balanceOf(account);
         if (vars.repayAmount > vars.debtAmount) {
             vars.overpaymentAmount = vars.repayAmount - vars.debtAmount;
-            vars.repayAmount         = vars.debtAmount;      
+            vars.repayAmount       = vars.debtAmount;      
         }
 
         vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);

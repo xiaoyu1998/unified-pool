@@ -28,6 +28,7 @@ library CloseUtils {
     struct ClosePositionParams {
         address underlyingAsset;
         address underlyingAssetUsd;
+        uint256 percentage;
     }
 
     struct ExecuteClosePositionParams {
@@ -35,6 +36,7 @@ library CloseUtils {
         address eventEmitter;
         address underlyingAsset;
         address underlyingAssetUsd;
+        uint256 percentage;
     }
 
     struct ClosePositionLocalVars {
@@ -50,12 +52,116 @@ library CloseUtils {
         IDebtToken debtTokenUsd;
         uint256 collateralAmount;
         uint256 debtAmount;
+        uint256 debtToCloseAmount;
         RepayUtils.ExecuteRepayParams repayParams;
         uint256 remainAmount;
         uint256 remainAmountUsd;
         SwapUtils.ExecuteSwapParams swapParams;
 
     }
+
+    // // @dev executes a position close
+    // // @param account the closing account
+    // // @param params ExecuteClosePositionParams
+    // function executeClosePosition(
+    //     address account, 
+    //     ExecuteClosePositionParams calldata params
+    // ) external {
+    //     ClosePositionLocalVars memory vars;
+    //     vars.poolKey = Keys.poolKey(params.underlyingAsset);
+    //     vars.pool = PoolStoreUtils.get(params.dataStore, vars.poolKey);
+    //     PoolUtils.validateEnabledPool(vars.pool, vars.poolKey);
+
+    //     vars.poolKeyUsd = Keys.poolKey(params.underlyingAssetUsd);
+    //     vars.poolUsd = PoolStoreUtils.get(params.dataStore, vars.poolKeyUsd);
+    //     PoolUtils.validateEnabledPool(vars.poolUsd, vars.poolKeyUsd);
+    //     PoolUtils.validatePoolIsUsd(vars.poolUsd, vars.poolKeyUsd);
+
+    //     vars.positionKey = Keys.accountPositionKey(params.underlyingAsset, account);
+    //     vars.position = PositionStoreUtils.get(params.dataStore, vars.positionKey);
+
+    //     vars.poolToken = IPoolToken(vars.pool.poolToken);
+    //     vars.debtToken = IDebtToken(vars.pool.debtToken);
+
+    //     vars.collateralAmount = vars.poolToken.balanceOfCollateral(account);
+    //     vars.debtAmount = vars.debtToken.balanceOf(account);
+
+    //     CloseUtils.validateClosePosition( 
+    //         vars.pool,
+    //         vars.poolUsd,
+    //         vars.position,
+    //         vars.collateralAmount,
+    //         vars.debtAmount
+    //     );
+    //     if (vars.debtAmount > 0) {
+    //         vars.repayParams = RepayUtils.ExecuteRepayParams(
+    //             params.dataStore,
+    //             params.eventEmitter,
+    //             params.underlyingAsset,
+    //             vars.debtAmount
+    //         );
+    //         RepayUtils.executeRepay(account, vars.repayParams);
+    //     }
+
+    //     vars.remainAmount = vars.collateralAmount - vars.debtAmount;
+    //     vars.remainAmountUsd = vars.remainAmount;
+    //     if(vars.remainAmount > 0 && params.underlyingAsset != params.underlyingAssetUsd) {
+    //         vars.swapParams = SwapUtils.ExecuteSwapParams(
+    //             params.dataStore,
+    //             params.eventEmitter,
+    //             params.underlyingAsset,
+    //             params.underlyingAssetUsd,
+    //             vars.remainAmount,
+    //             0
+    //         );
+
+    //         vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
+    //     }
+
+    //     if(vars.position.underlyingAsset != params.underlyingAssetUsd){
+    //         PositionUtils.reset(vars.position);
+    //         PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position); 
+    //     } 
+
+    //     vars.poolTokenUsd = IPoolToken(PoolStoreUtils.getPoolToken(params.dataStore, params.underlyingAssetUsd));
+    //     vars.debtTokenUsd = IDebtToken(PoolStoreUtils.getDebtToken(params.dataStore, params.underlyingAssetUsd));   
+
+    //     CloseEventUtils.emitClosePosition(
+    //         params.eventEmitter, 
+    //         params.underlyingAsset, 
+    //         params.underlyingAssetUsd,
+    //         account, 
+    //         vars.collateralAmount, 
+    //         vars.debtAmount,
+    //         vars.remainAmountUsd,
+    //         vars.poolTokenUsd.balanceOfCollateral(account),
+    //         vars.debtTokenUsd.scaledBalanceOf(account)  
+    //     );
+    // }
+
+    // // @dev Validates a close position action.
+    // // @param pool The state of the pool
+    // // @param poolUsd The state of the poolUsd
+    // // @param position The state of the position
+    // // @param collateralAmount The amount of collateral
+    // // @param debtAmount The amount of debt
+    // function validateClosePosition(
+    //     Pool.Props memory pool,
+    //     Pool.Props memory poolUsd,
+    //     Position.Props memory position,
+    //     uint256 collateralAmount,
+    //     uint256 debtAmount
+    // ) internal pure {
+    //     PoolUtils.validateConfigurationPool(pool, false);
+    //     PoolUtils.validateConfigurationPool(poolUsd, false);
+    //     // PoolUtils.validatePoolIsUsd(poolUsd);
+    //     PositionUtils.validateEnabledPosition(position);
+
+    //     if (collateralAmount <  debtAmount) {
+    //         revert Errors.CollateralCanNotCoverDebt(collateralAmount, debtAmount);
+    //     }
+
+    // }
 
     // @dev executes a position close
     // @param account the closing account
@@ -88,31 +194,40 @@ library CloseUtils {
             vars.poolUsd,
             vars.position,
             vars.collateralAmount,
-            vars.debtAmount
+            vars.debtAmount,
+            params.percentage
         );
-        if (vars.debtAmount > 0) {
+        vars.debtToCloseAmount = vars.debtAmount.rayMul(params.percentage);
+
+        if (vars.debtToCloseAmount > 0) {
             vars.repayParams = RepayUtils.ExecuteRepayParams(
                 params.dataStore,
                 params.eventEmitter,
                 params.underlyingAsset,
-                vars.debtAmount
+                vars.debtToCloseAmount
             );
             RepayUtils.executeRepay(account, vars.repayParams);
         }
 
-        vars.remainAmount = vars.collateralAmount - vars.debtAmount;
+        vars.remainAmount = vars.collateralAmount - vars.debtToCloseAmount;
         vars.remainAmountUsd = vars.remainAmount;
-        if(vars.remainAmount > 0 && params.underlyingAsset != params.underlyingAssetUsd) {
-            vars.swapParams = SwapUtils.ExecuteSwapParams(
-                params.dataStore,
-                params.eventEmitter,
-                params.underlyingAsset,
-                params.underlyingAssetUsd,
-                vars.remainAmount,
-                0
-            );
-
-            vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
+        if (vars.remainAmount > 0 
+            && params.underlyingAsset != params.underlyingAssetUsd
+        ) {
+            if (params.percentage == WadRayMath.RAY ) {// 100% sell out to usd
+                vars.swapParams = SwapUtils.ExecuteSwapParams(
+                    params.dataStore,
+                    params.eventEmitter,
+                    params.underlyingAsset,
+                    params.underlyingAssetUsd,
+                    vars.remainAmount,
+                    0
+                );
+                vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
+                vars.remainAmount = 0;
+            } else {// not 100% didn't sell out to usd
+                vars.remainAmountUsd = 0 
+            }
         }
 
         if(vars.position.underlyingAsset != params.underlyingAssetUsd){
@@ -129,8 +244,9 @@ library CloseUtils {
             params.underlyingAssetUsd,
             account, 
             vars.collateralAmount, 
-            vars.debtAmount,
+            vars.debtToCloseAmount,
             vars.remainAmountUsd,
+//            vars.remainAmount,
             vars.poolTokenUsd.balanceOfCollateral(account),
             vars.debtTokenUsd.scaledBalanceOf(account)  
         );
