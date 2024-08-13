@@ -61,15 +61,14 @@ describe("PoolStoreUtils", () => {
         sampleItem.underlyingAsset = accountList[1].address;
         sampleItem.poolToken = accountList[2].address;
         sampleItem.debtToken = accountList[3].address;
-        console.log(sampleItem);
+        //console.log(sampleItem);
 
         const initialItemCount = await getItemCount(dataStore);
         const initialItemKeys = await getItemKeys(dataStore, 0, 10);
 
         //set item
         await logGasUsage(
-            setItem(dataStore, itemKey, sampleItem),
-            "setItem",
+            setItem(dataStore, itemKey, sampleItem)
         );   
 
         let fetchedItem = await getItem(dataStore, itemKey);

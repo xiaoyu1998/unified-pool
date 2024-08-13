@@ -85,7 +85,8 @@ describe("Exchange ClosePosition", () => {
         };
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniDepositAmount]),
@@ -132,7 +133,8 @@ describe("Exchange ClosePosition", () => {
         };
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
@@ -157,7 +159,8 @@ describe("Exchange ClosePosition", () => {
         //PoolIsNotUsd
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
@@ -169,7 +172,8 @@ describe("Exchange ClosePosition", () => {
         //PoolIsNotUsd
         const closePositionParams2: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: usdt.target,
-            underlyingAssetUsd: ethers.ZeroAddress
+            underlyingAssetUsd: ethers.ZeroAddress,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs2 = [
             exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams2]),
@@ -184,7 +188,8 @@ describe("Exchange ClosePosition", () => {
         //PoolIsNotUsd
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: uni.target
+            underlyingAssetUsd: uni.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
@@ -198,7 +203,8 @@ describe("Exchange ClosePosition", () => {
         //EmptyPosition
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs = [
             exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
@@ -230,7 +236,8 @@ describe("Exchange ClosePosition", () => {
 
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };
         const multicallArgs2 = [
             exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
@@ -263,7 +270,8 @@ describe("Exchange ClosePosition", () => {
 
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
-            underlyingAssetUsd: usdt.target
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
         };       
 
         await testPoolConfiguration(config, exchangeRouter, user1, "executeClosePosition", usdt, closePositionParams)
