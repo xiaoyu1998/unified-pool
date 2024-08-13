@@ -90,7 +90,7 @@ library Errors {
     error EmptyPositions(address account);
     error CollateralCanNotCoverDebt(uint256 collateralAmount, uint256 debtAmount);
     error UsdCollateralCanNotCoverDebt(uint256 usdCollateralAmount, uint256 usdCollateralAmountNeeded, uint256 debtAmount, address underlyingAsset);
-    error ClosePercentageLargerThan100();
+    error ClosePercentageExceeding();
 
     // RoleModule errors
     error Unauthorized(address msgSender, string role);
