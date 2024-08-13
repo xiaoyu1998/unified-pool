@@ -33,6 +33,10 @@ interface IExchangeRouter {
         RepayUtils.RepayParams calldata params
     ) external payable;
 
+    function executeRepaySubstitute(
+        RepaySubstituteUtils.RepaySubstituteParams calldata params
+    ) external payable;
+
     function executeRedeem(
         RedeemUtils.RedeemParams calldata params
     ) external payable;

@@ -247,8 +247,8 @@ export async function getContract(name) {
 
     if (name == "RepayUtils") {
         const repayEventUtils = await getContract("RepayEventUtils");
-        const repayUtilsAddress = getDeployedContractAddress("RepayUtils");
-        return await contractAtOptions("RepayUtils", repayUtilsAddress, {
+        const address = getDeployedContractAddress("RepayUtils");
+        return await contractAtOptions("RepayUtils", address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -262,8 +262,8 @@ export async function getContract(name) {
     if (name == "SwapUtils") {
         const swapEventUtils = await getContract("SwapEventUtils");
         //const oracleUtils = await getContract("OracleUtils");
-        const swapUtilsAddress = getDeployedContractAddress("SwapUtils");
-        return await contractAtOptions("SwapUtils", swapUtilsAddress, {
+        const address = getDeployedContractAddress("SwapUtils");
+        return await contractAtOptions("SwapUtils", address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
@@ -273,6 +273,21 @@ export async function getContract(name) {
             },        
         });       
     }
+
+    if (name == "RepaySubstituteUtils") {
+        const swapUtils = await getContract("SwapUtils");
+        const repayUtils = await getContract("RepayUtils");
+        const address = getDeployedContractAddress("RepaySubstituteUtils");
+        return await contractAtOptions("RepaySubstituteUtils", address, {
+            libraries: {
+                PoolStoreUtils: poolStoreUtils,
+                SwapUtils: swapUtils,
+                RepayUtils: repayUtils,
+            },        
+        });       
+    }
+
+
 
     if (name == "SupplyHandler") {
         const supplyEventUtils = await getContract("SupplyEventUtils");
@@ -353,10 +368,12 @@ export async function getContract(name) {
     if (name == "RepayHandler") {
         const repayEventUtils = await getContract("RepayEventUtils");
         const repayUtils = await getContract("RepayUtils");
+        const repaySubstituteUtils = await getContract("RepaySubstituteUtils");
         const address = getDeployedContractAddress(name);
         return await contractAtOptions(name, address,  {
             libraries: {
                 RepayUtils: repayUtils,
+                RepaySubstituteUtils: repaySubstituteUtils,
             },        
         });       
     }

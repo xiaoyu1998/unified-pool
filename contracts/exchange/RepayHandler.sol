@@ -38,4 +38,22 @@ contract RepayHandler is IRepayHandler, GlobalReentrancyGuard, RoleModule {
         return RepayUtils.executeRepay(account, params);
     }
 
+    // @dev executes a repay
+    // @param repayParams RepayUtils.RepayParams
+    function executeRepaySubstitute(
+        address account,
+        RepaySubstituteUtils.RepaySubstituteParams calldata repayParams
+    ) external globalNonReentrant onlyController{
+
+        RepaySubstituteUtils.ExecuteRepaySubstituteParams memory params = RepaySubstituteUtils.ExecuteRepaySubstituteParams(
+            address(dataStore),
+            address(eventEmitter),
+            repayParams.underlyingAsset,   
+            repayParams.amount,
+            repayParams.substitute
+        );
+
+        return RepaySubstituteUtils.executeRepaySubstitute(account, params);
+    }
+
 }

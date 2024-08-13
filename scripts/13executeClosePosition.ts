@@ -59,13 +59,14 @@ async function main() {
     //close Position
     const params: CloseUtils.ClosePositionParamsStruct = {
         underlyingAsset: uniAddress,
-        underlyingAssetUsd: usdtAddress
+        underlyingAssetUsd: usdtAddress,
+        percentage: expandDecimals(5, 26)//50%
     };
     const multicallArgs = [
-        // exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
-        // exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
-        // exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),   
-        // exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
+        exchangeRouter.interface.encodeFunctionData("executeDeposit", [paramsUni]),
+        exchangeRouter.interface.encodeFunctionData("executeBorrow", [paramsBorrow]),   
+        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
         exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
     ];
     //const tx = await exchangeRouter.multicall(multicallArgs);

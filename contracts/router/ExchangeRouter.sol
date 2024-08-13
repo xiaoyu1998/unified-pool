@@ -146,6 +146,22 @@ contract ExchangeRouter is IExchangeRouter, BaseRouter {
         );
     }
 
+
+    /**
+     * @dev execute a new RepaySubstitute with the given Repay parameters. The Repay is
+     * execute by calling the `executeRepaySubstitute()` function on the Repay handler contract. 
+     */
+    function executeRepaySubstitute(
+        RepaySubstituteUtils.RepaySubstituteParams calldata params
+    ) external override payable nonReentrant {
+        address account = msg.sender;
+
+        return repayHandler.executeRepaySubstitute(
+            account,
+            params
+        );
+    }
+
     /**
      * @dev execute a new Redeem with the given Redeem parameters. The Redeem is
      * execute by calling the `executeRedeem()` function on the Redeem handler contract. 

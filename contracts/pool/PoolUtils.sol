@@ -12,15 +12,11 @@ import "./PoolStoreUtils.sol";
 import "./PoolEventUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
-
 import "../interest/InterestUtils.sol";
 import "../interest/IPoolInterestRateStrategy.sol";
-
 import "../chain/Chain.sol";
 import "../fee/FeeUtils.sol";
-
 import "../utils/WadRayMath.sol";
-
 import "../utils/Printer.sol";
 // @title PoolUtils
 // @dev Library for Pool functions

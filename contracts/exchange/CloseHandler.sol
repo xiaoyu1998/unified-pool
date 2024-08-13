@@ -48,7 +48,8 @@ contract CloseHandler is ICloseHandler, GlobalReentrancyGuard, RoleModule {
            address(dataStore),
            address(eventEmitter),
            closeParams.underlyingAsset,
-           closeParams.underlyingAssetUsd
+           closeParams.underlyingAssetUsd,
+           closeParams.percentage
         );
 
         return CloseUtils.executeClosePosition(account, params);
