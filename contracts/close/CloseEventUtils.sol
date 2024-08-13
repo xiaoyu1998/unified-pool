@@ -12,8 +12,9 @@ library CloseEventUtils {
         address underlyingAssetUsd,
         address account,
         uint256 collateralAmount,
-        uint256 debtAmount,
+        uint256 debtAmountToClose,
         uint256 remainAmountUsd,
+        uint256 remainAmount,
         uint256 collateralUsd,
         uint256 debtScaledUsd
     ) external {
@@ -22,8 +23,9 @@ library CloseEventUtils {
             underlyingAssetUsd,
             account,
             collateralAmount,
-            debtAmount,
+            debtAmountToClose,
             remainAmountUsd,
+            remainAmount,
             collateralUsd,
             debtScaledUsd
         );

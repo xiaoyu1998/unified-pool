@@ -54,7 +54,7 @@ library CloseUtils {
         IDebtToken debtTokenUsd;
         uint256 collateralAmount;
         uint256 debtAmount;
-        uint256 debtToCloseAmount;
+        uint256 debtAmountToClose;
         RepayUtils.ExecuteRepayParams repayParams;
         uint256 remainAmount;
         uint256 remainAmountUsd;
@@ -96,21 +96,21 @@ library CloseUtils {
             vars.debtAmount,
             params.percentage
         );
-        vars.debtToCloseAmount = vars.debtAmount.rayMul(params.percentage);
+        vars.debtAmountToClose = vars.debtAmount.rayMul(params.percentage);
 
         //repay
-        if (vars.debtToCloseAmount > 0) {
+        if (vars.debtAmountToClose > 0) {
             vars.repayParams = RepayUtils.ExecuteRepayParams(
                 params.dataStore,
                 params.eventEmitter,
                 params.underlyingAsset,
-                vars.debtToCloseAmount
+                vars.debtAmountToClose
             );
             RepayUtils.executeRepay(account, vars.repayParams);
         }
 
         //sell collateral
-        vars.remainAmount = vars.collateralAmount - vars.debtToCloseAmount;
+        vars.remainAmount = vars.collateralAmount - vars.debtAmountToClose;
         vars.remainAmountUsd = vars.remainAmount;
         if (vars.remainAmount > 0 && 
             params.underlyingAsset != params.underlyingAssetUsd
@@ -148,9 +148,9 @@ library CloseUtils {
             params.underlyingAssetUsd,
             account, 
             vars.collateralAmount, 
-            vars.debtToCloseAmount,
+            vars.debtAmountToClose,
             vars.remainAmountUsd,
-//            vars.remainAmount,
+            vars.remainAmount,
             vars.poolTokenUsd.balanceOfCollateral(account),
             vars.debtTokenUsd.scaledBalanceOf(account)  
         );

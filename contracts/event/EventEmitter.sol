@@ -94,8 +94,9 @@ contract EventEmitter is RoleModule {
         address indexed poolUsd,
         address indexed account,
         uint256 collateral,
-        uint256 debt,
+        uint256 debtToClose,
         uint256 remainUsd,
+        uint256 remainCollateral,
         uint256 collateralUsd,
         uint256 debtScaledUsd   
     );
@@ -295,8 +296,9 @@ contract EventEmitter is RoleModule {
         address underlyingAssetUsd,
         address account,
         uint256 collateralAmount,
-        uint256 debtAmount,
+        uint256 debtAmountToClose,
         uint256 remainAmountUsd,
+        uint256 remainAmount,
         uint256 collateralUsd,
         uint256 debtScaledUsd
     ) external onlyController {
@@ -305,8 +307,9 @@ contract EventEmitter is RoleModule {
             underlyingAssetUsd,
             account,
             collateralAmount,
-            debtAmount,
+            debtAmountToClose,
             remainAmountUsd,
+            remainAmount,
             collateralUsd,
             debtScaledUsd
         );

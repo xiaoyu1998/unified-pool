@@ -1,7 +1,7 @@
 import { contractAt, sendTxn, getTokens, getContract, getEventEmitter } from "../utils/deploy";
 import { expandDecimals, encodePriceSqrt } from "../utils/math";
 import { getPoolInfo, getAssets, getPositions, getPositionsInfo} from "../utils/helper";
-import { CloseUtils } from "../typechain-types/contracts/exchange/CloseHandler.sol/CloseHandler";
+import { ClosePositionEvent } from "../typechain-types/contracts/event/EventEmitter.ts";
 
 async function main() {
     const [owner] = await ethers.getSigners();
@@ -11,18 +11,19 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("ClosePosition", (underlyingAsset, underlyingAssetUsd, account, collateralAmount, debtAmount, remainAmountUsd, collateralUsd, debtScaledUsd) => {
+    eventEmitter.on("ClosePosition", (pool, poolUsd, account, collateral, debtToClose, remainUsd, remainCollateral, collateralUsd, debtScaledUsd) => {
         const event: ClosePositionEvent.OutputTuple = {
-            underlyingAsset: underlyingAsset,
-            underlyingAssetUsd: underlyingAssetUsd,
+            pool: pool,
+            poolUsd: poolUsd,
             account: account,
-            collateralAmount: collateralAmount,
-            debtAmount: debtAmount,
-            remainAmountUsd: remainAmountUsd,
+            collateral: collateral,
+            debtToClose: debtToClose,
+            remainUsd: remainUsd,
+            remainCollateral: remainCollateral,
             collateralUsd: collateralUsd,
             debtScaledUsd: debtScaledUsd
         };        
-        console.log("eventEmitter ClosePosition" ,event);
+        console.log("eventEmitter ClosePosition", event);
     });
 
     const uniDecimals = getTokens("UNI")["decimals"];

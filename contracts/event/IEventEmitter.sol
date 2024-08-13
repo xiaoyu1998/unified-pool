@@ -89,8 +89,9 @@ interface IEventEmitter {
         address underlyingAssetUsd,
         address account,
         uint256 collateralAmount,
-        uint256 debtAmount,
+        uint256 debtAmountToClose,
         uint256 remainAmountUsd,
+        uint256 remainAmount,
         uint256 collateralUsd,
         uint256 debtScaledUsd
     ) external;
