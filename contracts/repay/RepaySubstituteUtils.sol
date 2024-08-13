@@ -73,8 +73,7 @@ library RepaySubstituteUtils {
                 params.underlyingAsset,
                 0
             );
-            RepayUtils.executeRepay(account, vars.repayParams);
-            return;
+            return RepayUtils.executeRepay(account, vars.repayParams);
         }
 
         //handle collateralToRepay
@@ -91,8 +90,7 @@ library RepaySubstituteUtils {
                 params.underlyingAsset,
                 vars.repayAmount
             );
-            RepayUtils.executeRepay(account, vars.repayParams);
-            return;
+            return RepayUtils.executeRepay(account, vars.repayParams);
         }
 
 
