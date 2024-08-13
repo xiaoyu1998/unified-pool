@@ -180,7 +180,7 @@ library CloseUtils {
         }
 
         if (percentage > WadRayMath.RAY){
-            revert Errors.ClosePercentageLargerThan100();
+            revert Errors.ClosePercentageExceeding();
         }
 
     }
