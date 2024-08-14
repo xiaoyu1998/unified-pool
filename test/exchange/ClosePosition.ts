@@ -156,7 +156,7 @@ describe("Exchange ClosePosition", () => {
     });
 
     it("executeClosePosition EmptyPool", async () => {
-        //PoolIsNotUsd
+        //EmptyPool
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: ethers.ZeroAddress,
             underlyingAssetUsd: usdt.target,
@@ -169,7 +169,7 @@ describe("Exchange ClosePosition", () => {
             exchangeRouter.connect(user1).multicall(multicallArgs)
         ).to.be.revertedWithCustomError(errorsContract, "EmptyPool"); 
 
-        //PoolIsNotUsd
+        //EmptyPool
         const closePositionParams2: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: usdt.target,
             underlyingAssetUsd: ethers.ZeroAddress,
@@ -214,7 +214,6 @@ describe("Exchange ClosePosition", () => {
         ).to.be.revertedWithCustomError(errorsContract, "EmptyPosition"); 
     });
 
-
     it("executeClosePosition validateClosePosition CollateralCanNotCoverDebt and underlyingAsset testPoolConfiguration", async () => {
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
@@ -233,6 +232,45 @@ describe("Exchange ClosePosition", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
+        const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
+            underlyingAsset: uni.target,
+            underlyingAssetUsd: usdt.target,
+            percentage: expandDecimals(1, 27)//100%
+        };
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeClosePosition", [closePositionParams]),
+        ];
+        await expect(
+            exchangeRouter.connect(user1).multicall(multicallArgs2)
+        ).to.be.revertedWithCustomError(errorsContract, "CollateralCanNotCoverDebt"); //can not cover debt borrow index        
+
+        await testPoolConfiguration(config, exchangeRouter, user1, "executeClosePosition", uni, closePositionParams)
+    });
+
+    it("executeClosePosition validateClosePosition collateralAmount == 0", async () => {
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+        const uniBorrowAmmount = expandDecimals(100000, uniDecimals);
+        const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        };
+        const uniAmountRedeem = uniBorrowAmmount;
+        const uniParamsRedeem: RedeemUtils.RedeemParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniAmountRedeem,
+            to:user1.address
+        };
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
+            exchangeRouter.interface.encodeFunctionData("executeRedeem", [uniParamsRedeem]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
 
         const closePositionParams: CloseUtils.ClosePositionParamsStructOutput = {
             underlyingAsset: uni.target,
@@ -244,9 +282,7 @@ describe("Exchange ClosePosition", () => {
         ];
         await expect(
             exchangeRouter.connect(user1).multicall(multicallArgs2)
-        ).to.be.revertedWithCustomError(errorsContract, "CollateralCanNotCoverDebt");         
-
-        await testPoolConfiguration(config, exchangeRouter, user1, "executeClosePosition", uni, closePositionParams)
+        ).to.be.revertedWithCustomError(errorsContract, "EmptyCollateral");       
     });
 
     it("executeClosePosition validateClosePosition underlyingAssetUsd testPoolConfiguration", async () => {
