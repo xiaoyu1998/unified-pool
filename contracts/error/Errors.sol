@@ -44,6 +44,7 @@ library Errors {
     error PositionNotFound(bytes32 key);
 
     // PositionUtils errors
+    error EmptyCollateral();
     error EmptyPosition();
     error UsdNotHaveLongOperation();
     error UsdNotHaveShortOperation();
@@ -52,7 +53,6 @@ library Errors {
     error HealthFactorLowerThanCollateralRateThreshold(uint256 healthFactor, uint256 healthFactorCollateralRateThreshold);
 
     // BorrowUtils, WithdrawUtils errors
-    error CollateralBalanceIsZero();
     error EmptyBorrowAmounts();
     error BorrowCapacityExceeded(uint256 totalDebt, uint256 borrowCapacity);
     error InsufficientLiquidityForBorrow(uint256 amountToBorrow, uint256 availableLiquidity);

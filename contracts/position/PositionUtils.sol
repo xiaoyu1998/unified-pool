@@ -188,7 +188,7 @@ library PositionUtils {
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
 
         if (userTotalCollateralUsd == 0) { 
-            revert Errors.CollateralBalanceIsZero();
+            revert Errors.EmptyCollateral();
         }
         
         uint256 adjustAmount = Math.mulDiv(amount, WadRayMath.RAY, 10**decimals);//align to Ray

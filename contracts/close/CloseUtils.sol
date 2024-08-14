@@ -215,7 +215,7 @@ library CloseUtils {
         PositionUtils.validateEnabledPosition(position);
 
         if (collateralAmount == 0) {
-            revert Errors.CollateralBalanceIsZero();
+            revert Errors.EmptyCollateral();
         }
 
         if (collateralAmount <  debtAmount) {
