@@ -11,15 +11,15 @@ async function main() {
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
     const eventEmitter = await getEventEmitter();  
-    eventEmitter.on("ClosePosition", (pool, poolUsd, account, collateral, debtClosed, remainUsd, remainCollateral, collateralUsd, debtScaledUsd) => {
+    eventEmitter.on("ClosePosition", (pool, poolUsd, account, collateralSold, debtClosed, remainCollateral, remainUsd, collateralUsd, debtScaledUsd) => {
         const event: ClosePositionEvent.OutputTuple = {
             pool: pool,
             poolUsd: poolUsd,
             account: account,
-            collateral: collateral,
+            collateralSold: collateralSold,
             debtClosed: debtClosed,
-            remainUsd: remainUsd,
             remainCollateral: remainCollateral,
+            remainUsd: remainUsd,
             collateralUsd: collateralUsd,
             debtScaledUsd: debtScaledUsd
         };        
@@ -33,7 +33,6 @@ async function main() {
 
     // //deposit uni 200,000 
     const depositAmmountUni = expandDecimals(200000, uniDecimals);
-    //await uni.approve(router.target, depositAmmountUni);
     await sendTxn(
         uni.approve(router.target, depositAmmountUni),
         "uni.approve"
@@ -62,6 +61,7 @@ async function main() {
         underlyingAsset: uniAddress,
         underlyingAssetUsd: usdtAddress,
         percentage: expandDecimals(5, 26)//50%
+        //percentage: expandDecimals(1, 27)//100%
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),
@@ -70,17 +70,12 @@ async function main() {
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),       
         exchangeRouter.interface.encodeFunctionData("executeClosePosition", [params]),
     ];
-    //const tx = await exchangeRouter.multicall(multicallArgs);
     await sendTxn(
         exchangeRouter.multicall(multicallArgs),
         "exchangeRouter.multicall"
     );
 
     //print 
-    const poolUsdtAfterClosePosition = await getPoolInfo(usdtAddress); 
-    const poolUniAfterClosePosition = await getPoolInfo(uniAddress); 
-    console.log("poolUsdtAfterClosePosition", poolUsdtAfterClosePosition);
-    console.log("poolUniAfterClosePosition", poolUniAfterClosePosition);
     console.log("assets",await getAssets(dataStore, reader, owner.address));
     console.log("positions",await getPositions(dataStore, reader, owner.address)); 
 

@@ -11,10 +11,12 @@ library CloseEventUtils {
         address underlyingAsset,
         address underlyingAssetUsd,
         address account,
-        uint256 collateralAmount,
-        uint256 debtAmountToClose,
+        // uint256 collateralAmount,
+        uint256 collateralAmountToSell, 
+        // uint256 debtAmount,
+        uint256 debtAmountToClose,  
+        uint256 remainAmount,    
         uint256 remainAmountUsd,
-        uint256 remainAmount,
         uint256 collateralUsd,
         uint256 debtScaledUsd
     ) external {
@@ -22,12 +24,14 @@ library CloseEventUtils {
             underlyingAsset,
             underlyingAssetUsd,
             account,
-            collateralAmount,
+            // collateralAmount,
+            collateralAmountToSell,
+            // debtAmount,
             debtAmountToClose,
-            remainAmountUsd,
             remainAmount,
-            collateralUsd,
-            debtScaledUsd
+            remainAmountUsd,
+            debtScaledUsd,
+            collateralUsd
         );
     }
 

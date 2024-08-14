@@ -93,12 +93,14 @@ contract EventEmitter is RoleModule {
         address indexed pool,
         address indexed poolUsd,
         address indexed account,
-        uint256 collateral,
-        uint256 debtClosed,
-        uint256 remainUsd,
-        uint256 remainCollateral,
+        // uint256 collateral,
+        uint256 collateralSold, 
+        // uint256 debt,
+        uint256 debtClosed,   
+        uint256 remainCollateral,   
+        uint256 remainUsd,//the remain Usd or the remain collateral sold out to usd 
         uint256 collateralUsd,
-        uint256 debtScaledUsd   
+        uint256 debtScaledUsd
     );
 
     event Close(
@@ -295,10 +297,12 @@ contract EventEmitter is RoleModule {
         address underlyingAsset,
         address underlyingAssetUsd,
         address account,
-        uint256 collateralAmount,
+        // uint256 collateralAmount,
+        uint256 collateralAmountToSell,
+        // uint256 debtAmount,
         uint256 debtAmountClosed,
-        uint256 remainAmountUsd,
         uint256 remainAmount,
+        uint256 remainAmountUsd,
         uint256 collateralUsd,
         uint256 debtScaledUsd
     ) external onlyController {
@@ -306,10 +310,12 @@ contract EventEmitter is RoleModule {
             underlyingAsset,
             underlyingAssetUsd,
             account,
-            collateralAmount,
+            // collateralAmount,
+            collateralAmountToSell,
+            // debtAmount,
             debtAmountClosed,
-            remainAmountUsd,
             remainAmount,
+            remainAmountUsd,
             collateralUsd,
             debtScaledUsd
         );
