@@ -145,10 +145,7 @@ contract DexUniswapV3 is IUniswapV3SwapCallback, IDex, RoleModule {
         address sender = abi.decode(data, (address));
         emit SwapCallback(amount0Delta, amount1Delta);
 
-        // TODO:add factory for sender validate to uniswap
-        // address token0 = IUniswapV3Pool(msg.sender).token0();
-        // address token1 = IUniswapV3Pool(msg.sender).token1();
-        // CallbackValidation.verifyCallback(factory, token0, token1, feeAmount);       
+        require(msg.sender == address(_pool));    
 
         if (amount0Delta > 0) {
             IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, uint256(amount0Delta));
