@@ -3,25 +3,26 @@
 pragma solidity ^0.8.20;
 
 interface IDex2 {
-
-    struct SwapParams2 {
-        address tokenIn;
-        address tokenOut;
-        uint24 fee;
-        uint256 amount;
-        uint160 sqrtPriceLimitX96;
-    }
-
     function swapExactIn(
         address from,
-        SwapParams2 memory params, 
+        address tokenIn,
+        address tokenOut,
+        uint256 amount,
+        uint256 sqrtPriceLimitX96,
         address to
     ) external;
 
     function swapExactOut(
         address from,
-        SwapParams2 memory params,  
+        address tokenIn,
+        address tokenOut,
+        uint256 amount,
+        uint256 sqrtPriceLimitX96,
         address to
     ) external;
+
+    function getPool(address tokenA, address tokenB) external view returns(address);
+    function getFeeAmount() external view returns(uint24);
+    function getSwapFee(uint256) external view returns(uint256);
 
 }

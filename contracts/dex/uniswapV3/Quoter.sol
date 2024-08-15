@@ -118,25 +118,6 @@ contract Quoter is IQuoter, IUniswapV3SwapCallback, PeripheryImmutableState {
         }
     }
 
-    // /// @inheritdoc IQuoter
-    // function quoteExactInput(bytes memory path, uint256 amountIn) external override returns (uint256 amountOut) {
-    //     while (true) {
-    //         bool hasMultiplePools = path.hasMultiplePools();
-
-    //         (address tokenIn, address tokenOut, uint24 fee) = path.decodeFirstPool();
-
-    //         // the outputs of prior swaps become the inputs to subsequent ones
-    //         ( amountIn, ) = quoteExactInputSingle(tokenIn, tokenOut, fee, amountIn, 0);
-
-    //         // decide whether to continue or terminate
-    //         if (hasMultiplePools) {
-    //             path = path.skipToken();
-    //         } else {
-    //             return amountIn;
-    //         }
-    //     }
-    // }
-
     /// @inheritdoc IQuoter
     function quoteExactOutputSingle(
         address tokenIn,
@@ -169,22 +150,4 @@ contract Quoter is IQuoter, IUniswapV3SwapCallback, PeripheryImmutableState {
         }
     }
 
-    // /// @inheritdoc IQuoter
-    // function quoteExactOutput(bytes memory path, uint256 amountOut) external override returns (uint256 amountIn) {
-    //     while (true) {
-    //         bool hasMultiplePools = path.hasMultiplePools();
-
-    //         (address tokenOut, address tokenIn, uint24 fee) = path.decodeFirstPool();
-
-    //         // the inputs of prior swaps become the outputs of subsequent ones
-    //         amountOut = quoteExactOutputSingle(tokenIn, tokenOut, fee, amountOut, 0);
-
-    //         // decide whether to continue or terminate
-    //         if (hasMultiplePools) {
-    //             path = path.skipToken();
-    //         } else {
-    //             return amountOut;
-    //         }
-    //     }
-    // }
 }
