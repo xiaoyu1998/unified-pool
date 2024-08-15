@@ -41,6 +41,9 @@ library Keys {
     // @dev key for the dex
     bytes32 public constant DEX = keccak256(abi.encode("DEX"));
 
+    // @dev key for the dex list
+    bytes32 public constant DEX_LIST = keccak256(abi.encode("DEX_LIST"));
+
     // @dev key for the precision
     bytes32 public constant ORACLE_DECIMALS = keccak256(abi.encode("ORACLE_DECIMALS"));
 

@@ -123,6 +123,10 @@ contract Reader {
         return OracleUtils.getPrice(dataStore, underlyingAsset);
     }
 
+    // function getDex(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
+    //     return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
+    // }
+
     function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
         return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
     }
