@@ -19,6 +19,10 @@ contract Reader {
         return ReaderPositionUtils._getDebt(dataStore, account, underlyingAsset);
     }
 
+    function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
+        return ReaderPositionUtils._getPosition(dataStore, positionKey);
+    }
+
     function getPosition(address dataStore, address account, address poolKey) external view returns (Position.Props memory) {
         bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
         return ReaderPositionUtils._getPosition(dataStore, positionKey);

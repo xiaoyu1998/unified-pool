@@ -1,66 +1,60 @@
 import { expect } from "chai";
 import { deployContract, logGasUsage } from "../../utils/deploy";
-import { parsePool } from "../../utils/helper";
+import { parsePosition } from "../../utils/helper";
 import { deployFixtureStore } from "../../utils/fixture";
 import { errorsContract} from "../../utils/error";
-import { getPoolCount,getPoolKeys } from "../../utils/pool";
+import { getPositionCount, getPositionKeys } from "../../utils/position";
+import { hashString } from "../../utils/hash";
 import * as keys from "../../utils/keys";
 
-describe("PoolStoreUtils", () => {
+describe("PositionStoreUtils", () => {
     let fixture;
-    let roleStore, dataStore, poolStoreUtils, reader, poolStoreUtilsTest;
+    let roleStore, dataStore, positionStoreUtils, reader, positionStoreUtilsTest;
     let accountList;
 
     beforeEach(async () => {
         fixture = await deployFixtureStore();
         ({  roleStore, 
             dataStore,
-            poolStoreUtils,
+            positionStoreUtils,
             reader
          } = fixture.contracts); 
         ( accountList = fixture.accountList);
 
-        poolStoreUtilsTest = await deployContract("PoolStoreUtilsTest", [], {
+        positionStoreUtilsTest = await deployContract("PositionStoreUtilsTest", [], {
             libraries: {
-                PoolStoreUtils: poolStoreUtils,
+                PositionStoreUtils: positionStoreUtils,
             },
         });    
 
-        await roleStore.grantRole(poolStoreUtilsTest.target, keys.CONTROLLER);     
+        await roleStore.grantRole(positionStoreUtilsTest.target, keys.CONTROLLER);     
 
     });
     
     it("get, set, remove", async () => {
-        const itemKey = accountList[accountList.length - 1].address;
+        const itemKey = hashString("POSITION_KEY");
 
-        const getEmptyItem = poolStoreUtilsTest.getEmptyPool;
+        const getEmptyItem = positionStoreUtilsTest.getEmptyPosition;
         const getItem = async (dataStore, key) => {
-            return await reader.getPool(dataStore.target, key);
+            return await reader.getPosition(dataStore.target, key);
         }; 
 
-        const getItemCount = getPoolCount;
-        const getItemKeys = getPoolKeys;
+        const getItemCount = getPositionCount;
+        const getItemKeys = getPositionKeys;
         const setItem = async (dataStore, key, sampleItem) => {
-            return await poolStoreUtilsTest.setPool(dataStore.target, key, sampleItem);
+            return await positionStoreUtilsTest.setPosition(dataStore.target, key, sampleItem);
         };
-        const removeItem = async (dataStore, itemKey) => {
-            return await poolStoreUtilsTest.removePool(dataStore.target, itemKey);
+        const removeItem = async (dataStore, itemKey, account) => {
+            return await positionStoreUtilsTest.removePosition(dataStore.target, itemKey, account);
         };
 
         let emptyStoreItem = await getEmptyItem();
-        const expectedPropsLength = 13;
+        const expectedPropsLength = 9;
         expect(Object.keys(emptyStoreItem).length).eq(expectedPropsLength);   
-        let sampleItem = parsePool(emptyStoreItem);
-        emptyStoreItem = parsePool(emptyStoreItem);
-        // Object.keys(sampleItem).forEach((key, index) => {
-        //     if (typeof key !== 'bigint') {
-        //         sampleItem[key] = accountList[index].address;
-        //     }
-        // });
-        sampleItem.interestRateStrategy = accountList[0].address;
+        let sampleItem = parsePosition(emptyStoreItem);
+        emptyStoreItem = parsePosition(emptyStoreItem);
+        sampleItem.account = accountList[0].address;
         sampleItem.underlyingAsset = accountList[1].address;
-        sampleItem.poolToken = accountList[2].address;
-        sampleItem.debtToken = accountList[3].address;
         //console.log(sampleItem);
 
         const initialItemCount = await getItemCount(dataStore);
@@ -75,13 +69,14 @@ describe("PoolStoreUtils", () => {
         Object.keys(sampleItem).forEach((key) => {
             expect(fetchedItem[key]).deep.eq(sampleItem[key]);
         });
+
         expect(await getItemCount(dataStore)).eq(initialItemCount + BigInt(1));
         expect(await getItemKeys(dataStore, 0, 10)).deep.equal(initialItemKeys.concat(itemKey));
 
         //remove item
-        await removeItem(dataStore, itemKey);
+        await removeItem(dataStore, itemKey, accountList[0].address);
         fetchedItem = await getItem(dataStore, itemKey);
-        fetchedItem = parsePool(fetchedItem);
+        fetchedItem = parsePosition(fetchedItem);
         Object.keys(fetchedItem).forEach((key) => {
             expect(fetchedItem[key]).deep.eq(emptyStoreItem[key]);
         });
