@@ -131,6 +131,10 @@ contract Reader {
     //     return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
     // }
 
+    function getDexs(address dataStore) external view returns (DexStoreUtils.Dex[] memory) {
+        return ReaderDexUtils._getDexs(dataStore);
+    }
+
     function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
         return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
     }

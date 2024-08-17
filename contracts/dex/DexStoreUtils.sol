@@ -18,6 +18,14 @@ library DexStoreUtils {
         return IDataStore(dataStore).getAddress(key);
     }
 
+    function get(address dataStore, bytes32 key) public view returns (address) {
+
+        if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
+            return address(0);
+        }    
+        return IDataStore(dataStore).getAddress(key);
+    }
+
     function set(address dataStore, address underlyingAssetA, address underlyingAssetB, address dex) external {
         if (underlyingAssetA == address(0) || underlyingAssetB == address(0)) {
             revert Errors.EmptyUnderlyingAsset();
@@ -36,4 +44,23 @@ library DexStoreUtils {
 
         IDataStore(dataStore).setAddress(key, dex);
     }
+
+    struct Dex {
+        bytes32 key;
+        address dex;
+    }
+
+    function getDexs(address dataStore) internal view returns (Dex[] memory) {
+        uint256 dexCount = IDataStore(dataStore).getBytes32Count(Keys.DEX_LIST);
+        bytes32[] memory dexKeys = IDataStore(dataStore).getBytes32ValuesAt(Keys.DEX_LIST, 0, dexCount);
+        Dex[] memory dexs = new Dex[](dexKeys.length);
+        for (uint256 i; i < dexKeys.length; i++) {
+            dexs[i].key = dexKeys[i];
+            dexs[i].dex = get(dataStore, dexKeys[i]);
+        }
+
+        return dexs;
+    }
+
+
 }

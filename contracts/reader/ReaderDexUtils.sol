@@ -26,4 +26,9 @@ library ReaderDexUtils {
         address dex = DexStoreUtils.get(dataStore, underlyingAssetA, underlyingAssetB);
         return IDex2(dex).getSwapFee(amountIn);
     }
+
+    function _getDexs(address dataStore) external view returns (DexStoreUtils.Dex[] memory) {
+        return DexStoreUtils.getDexs(dataStore);
+    }
+
 }
