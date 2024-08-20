@@ -7,8 +7,8 @@ export const ROUTER_PLUGIN = hashString("ROUTER_PLUGIN");
 export const POOL_LIST = hashString("POOL_LIST");
 export const POSITION_LIST = hashString("POSITION_LIST");
 
-export function dexKey(address underlyingAssetA, address underlyingAssetB){
-	return return hashData(
+export function dexKey( underlyingAssetA, underlyingAssetB){
+	return hashData(
 		["bytes32", "address", "address"], 
 		[hashString("DEX"), underlyingAssetA, underlyingAssetB]
 	);
