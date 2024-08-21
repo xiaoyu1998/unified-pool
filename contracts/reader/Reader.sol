@@ -71,14 +71,14 @@ contract Reader {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         return ReaderUtils._getPoolsInfo(dataStore, 0, poolsCount);
     }
+    
+    function getPoolPrice(address dataStore, address poolKey) external view returns (ReaderUtils.GetPoolPrice memory) {
+        return ReaderUtils._getPoolPrice(dataStore, poolKey);
+    }
 
     function getPoolsPrice(address dataStore) external view returns (ReaderUtils.GetPoolPrice[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         return ReaderUtils._getPoolsPrice(dataStore, 0, poolsCount);
-    }
-
-    function getPoolPrice(address dataStore, address poolKey) external view returns (ReaderUtils.GetPoolPrice memory) {
-        return ReaderUtils._getPoolPrice(dataStore, poolKey);
     }
 
     function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {

@@ -4,25 +4,27 @@ import { getPool, parsePool, getPositions, getLiquidityAndDebts } from "../utils
 
 async function main() {
     const accounts = await ethers.getSigners();
-    const owner = accounts[0];
-    const users = accounts.slice(1);
+    // const owner = accounts[0];
+    // const users = accounts.slice(1);
 
-    // // //transfer usdt and eth
-    const usdtDecimals = getTokens("USDT")["decimals"];
-    const usdtAddress = getTokens("USDT")["address"];
-    const usdt = await contractAt("MintableToken", usdtAddress);
-    const amountUsdt = expandDecimals(200000, usdtDecimals);
+    // console.log("users", users); 
 
-    const uniDecimals = getTokens("UNI")["decimals"];
-    const uniAddress = getTokens("UNI")["address"];
-    const uni = await contractAt("MintableToken", uniAddress);
-    const amountUni = expandDecimals(10000, uniDecimals);
+    // // // //transfer usdt and eth
+    // const usdtDecimals = getTokens("USDT")["decimals"];
+    // const usdtAddress = getTokens("USDT")["address"];
+    // const usdt = await contractAt("MintableToken", usdtAddress);
+    // const amountUsdt = expandDecimals(10000, usdtDecimals);
+
+    // const uniDecimals = getTokens("UNI")["decimals"];
+    // const uniAddress = getTokens("UNI")["address"];
+    // const uni = await contractAt("MintableToken", uniAddress);
+    // const amountUni = expandDecimals(1000, uniDecimals);
  
     // //console.log("accounts", accounts); 
     // console.log("owner usdt", await usdt.balanceOf(owner)); 
     // console.log("owner uni", await uni.balanceOf(owner)); 
 
-    // //transfer usdt and eth
+    // // //transfer usdt and eth
     // for (const user of users) {
     //     const amountEth = expandDecimals(1, 18);
     //     await sendTxn(
@@ -92,27 +94,23 @@ async function main() {
     //     );
     // };
 
-    // console.log("owner usdt", await usdt.balanceOf(owner)); 
-    // console.log("owner uni", await uni.balanceOf(owner)); 
 
-    // const pools = await reader.getPools(dataStore.target);
-    // for (const pool of pools) {
-    //     console.log(parsePool(pool));
-    // }
+    const usdtDecimals = getTokens("USDT")["decimals"];
+    const usdtAddress = getTokens("USDT")["address"];
+    const usdt = await contractAt("MintableToken", usdtAddress);
+    const amount = expandDecimals(1000000, usdtDecimals);
 
-    const config = await getContract("Config");
+    const liquidator = "0xAA292E8611aDF267e563f334Ee42320aC96D0463";
     await sendTxn(
-        config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
-        "config.setHealthFactorLiquidationThreshold"
+        usdt.transfer(liquidator, amount), `usdt.transfer(${liquidator} ${amount})`
     );
-
-    const liquidator = "0x9fc131ccDeAa47F910d7C61569b63fE0C42979dc";
-    // await sendTxn(
-    //     usdt.transfer(liquidator, amountUsdt), `usdt.transfer(${liquidator} ${amountUsdt})`
-    // );
-
     console.log("owner usdt", await usdt.balanceOf(liquidator)); 
-    console.log("owner uni", await uni.balanceOf(liquidator)); 
+
+    // const config = await getContract("Config");
+    // await sendTxn(
+    //     config.setHealthFactorLiquidationThreshold(expandDecimals(400, 25)),//400%
+    //     "config.setHealthFactorLiquidationThreshold"
+    // );
 
 }
 

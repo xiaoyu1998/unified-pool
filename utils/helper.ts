@@ -116,7 +116,7 @@ export async function getPositions(dataStore, reader, address) {
 }
 
 export async function getPosition(dataStore, reader, address, underlyingAsset) {
-    return parsePosition(await reader.getPosition(dataStore.target, address, underlyingAsset));
+    return parsePosition(await reader.getPosition(dataStore.target, address, underlyingAsset, {}));
 
 }
 
