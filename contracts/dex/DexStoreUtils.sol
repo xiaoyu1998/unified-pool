@@ -9,7 +9,11 @@ import "../error/Errors.sol";
 // @title DexStoreUtils
 library DexStoreUtils {
 
-    function get(address dataStore, address underlyingAssetA, address underlyingAssetB) public view returns (address) {
+    function get(
+        address dataStore, 
+        address underlyingAssetA, 
+        address underlyingAssetB
+    ) public view returns (address) {
 
         bytes32 key = Keys.dexKey(underlyingAssetA, underlyingAssetB);
         if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
@@ -18,7 +22,10 @@ library DexStoreUtils {
         return IDataStore(dataStore).getAddress(key);
     }
 
-    function get(address dataStore, bytes32 key) public view returns (address) {
+    function get(
+        address dataStore, 
+        bytes32 key
+    ) public view returns (address) {
 
         if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
             return address(0);
@@ -26,7 +33,12 @@ library DexStoreUtils {
         return IDataStore(dataStore).getAddress(key);
     }
 
-    function set(address dataStore, address underlyingAssetA, address underlyingAssetB, address dex) external {
+    function set(
+        address dataStore, 
+        address underlyingAssetA, 
+        address underlyingAssetB, 
+        address dex
+    ) external {
         if (underlyingAssetA == address(0) || underlyingAssetB == address(0)) {
             revert Errors.EmptyUnderlyingAsset();
         }
@@ -36,13 +48,24 @@ library DexStoreUtils {
         }
 
         bytes32 key = Keys.dexKey(underlyingAssetA, underlyingAssetB);
-
-        IDataStore(dataStore).addBytes32(
-            Keys.DEX_LIST,
-            key
-        );
-
+        IDataStore(dataStore).addBytes32(Keys.DEX_LIST, key);
         IDataStore(dataStore).setAddress(key, dex);
+    }
+
+    function remove(
+        address dataStore, 
+        address underlyingAssetA, 
+        address underlyingAssetB
+    ) external {
+        if (underlyingAssetA == address(0) || underlyingAssetB == address(0)) {
+            revert Errors.EmptyUnderlyingAsset();
+        }
+        bytes32 key = Keys.dexKey(underlyingAssetA, underlyingAssetB);
+        if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
+            revert Errors.EmptyDex();
+        }
+        IDataStore(dataStore).removeBytes32(Keys.DEX_LIST, key);
+        IDataStore(dataStore).removeAddress(key);
     }
 
     struct Dex {
@@ -58,7 +81,6 @@ library DexStoreUtils {
             dexs[i].key = dexKeys[i];
             dexs[i].dex = get(dataStore, dexKeys[i]);
         }
-
         return dexs;
     }
 

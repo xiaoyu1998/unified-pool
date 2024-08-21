@@ -146,4 +146,8 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         DexStoreUtils.set(address(dataStore), underlyingAssetA, underlyingAssetB, dex);
     } 
 
+    function removeDex(address underlyingAssetA, address underlyingAssetB) external onlyConfigKeeper nonReentrant {
+        DexStoreUtils.remove(address(dataStore), underlyingAssetA, underlyingAssetB);
+    } 
+
 }
