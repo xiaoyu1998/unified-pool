@@ -15,7 +15,7 @@ import './uniswapV3/PoolAddress.sol';
 import './uniswapV3/CallbackValidation.sol';
 import "./IDex2.sol";
 
-contract DexUniswap is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, RoleModule {
+contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, RoleModule {
     using SafeCast for uint256;
 
     /// @dev The minimum value that can be returned from #getSqrtRatioAtTick. Equivalent to getSqrtRatioAtTick(MIN_TICK)

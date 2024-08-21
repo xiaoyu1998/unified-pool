@@ -100,7 +100,7 @@ async function main() {
 
     //dex havs add role controller
     //const dex = await deployContract("DexUniswapV3", [roleStore, usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    const dex = await deployContract("DexUniswap", [roleStore, factory.target, FeeAmount.MEDIUM]);
+    const dex = await deployContract("DexUniswap2", [roleStore, factory.target, FeeAmount.MEDIUM]);
     // await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
     // await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
     // console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
