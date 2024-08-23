@@ -19,6 +19,10 @@ contract Reader {
         return ReaderPositionUtils._getDebt(dataStore, account, underlyingAsset);
     }
 
+    function getPosition(address dataStore, bytes32 positionKey) external view returns (Position.Props memory) {
+        return ReaderPositionUtils._getPosition(dataStore, positionKey);
+    }
+
     function getPosition(address dataStore, address account, address poolKey) external view returns (Position.Props memory) {
         bytes32 positionKey = Keys.accountPositionKey(poolKey, account);
         return ReaderPositionUtils._getPosition(dataStore, positionKey);
@@ -67,14 +71,14 @@ contract Reader {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         return ReaderUtils._getPoolsInfo(dataStore, 0, poolsCount);
     }
+    
+    function getPoolPrice(address dataStore, address poolKey) external view returns (ReaderUtils.GetPoolPrice memory) {
+        return ReaderUtils._getPoolPrice(dataStore, poolKey);
+    }
 
     function getPoolsPrice(address dataStore) external view returns (ReaderUtils.GetPoolPrice[] memory) {
         uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
         return ReaderUtils._getPoolsPrice(dataStore, 0, poolsCount);
-    }
-
-    function getPoolPrice(address dataStore, address poolKey) external view returns (ReaderUtils.GetPoolPrice memory) {
-        return ReaderUtils._getPoolPrice(dataStore, poolKey);
     }
 
     function getLiquidityAndDebt(address dataStore, address poolKey, address account) external view returns (ReaderUtils.GetLiquidityAndDebt memory) {
@@ -121,6 +125,14 @@ contract Reader {
 
     function getPrice(address dataStore, address underlyingAsset) external view returns (uint256) {
         return OracleUtils.getPrice(dataStore, underlyingAsset);
+    }
+
+    // function getDex(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
+    //     return ReaderDexUtils._getDexPool(dataStore, underlyingAssetA, underlyingAssetB);
+    // }
+
+    function getDexs(address dataStore) external view returns (DexStoreUtils.Dex[] memory) {
+        return ReaderDexUtils._getDexs(dataStore);
     }
 
     function getDexPool(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {

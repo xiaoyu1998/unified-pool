@@ -2,6 +2,8 @@ import { deployContract, deployContractWithCode, contractAtWithCode, getContract
 import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcSqrtPriceLimitX96, calcFee } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
 import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals, ethDecimals, ethOracleDecimals} from "../utils/constants";
+import { getDexs} from "../utils/helper";
+import { dexKey} from "../utils/keys";
 
 import {
   abi as FACTORY_ABI,
@@ -99,7 +101,8 @@ async function main() {
     console.log("userUniAfterMint", await uni.balanceOf(owner.address)); 
 
     //dex havs add role controller
-    const dex = await deployContract("DexUniswapV3", [roleStore, usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
+    //const dex = await deployContract("DexUniswapV3", [roleStore, usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
+    const dex = await deployContract("DexUniswap2", [roleStore, factory.target, FeeAmount.MEDIUM]);
     // await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
     // await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
     // console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
@@ -131,8 +134,12 @@ async function main() {
     console.log("startSqrtPriceX96", startSqrtPriceX96, "sqrtPriceLimitX96", calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", uniIsZero).toString());
 
     //estimateGas
-    const estimatedGas = await uni.approve.estimateGas(dex.target, MaxUint256);
-    console.log("estimatedGas", estimatedGas);
+    // const estimatedGas = await uni.approve.estimateGas(dex.target, MaxUint256);
+    // console.log("estimatedGas", estimatedGas);
+
+    //getDexs
+    console.log("key", dexKey(usdtAddress, uniAddress));
+    console.log("dexs", await getDexs(dataStore, reader)); 
 
 }
 

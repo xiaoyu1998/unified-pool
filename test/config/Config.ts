@@ -125,7 +125,7 @@ describe("Config", () => {
 
         await config.connect(user0).setDex(usdt.target, uni.target, dex.target);     
         await expect(
-            await dexStoreUtils.get(dataStore.target, usdt.target, uni.target)
+            await dexStoreUtils.get(dataStore.target, usdt.target, uni.target, {})
         ).eq(dex.target);
 
 

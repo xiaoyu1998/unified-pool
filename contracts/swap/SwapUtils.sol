@@ -15,7 +15,8 @@ import "../position/PositionUtils.sol";
 import "../position/PositionStoreUtils.sol";
 import "../oracle/OracleUtils.sol";
 import "../dex/DexStoreUtils.sol";
-import "../dex/IDex.sol";
+// import "../dex/IDex.sol";
+import "../dex/IDex2.sol";
 import "./SwapEventUtils.sol";
 
 // @title SwapUtils
@@ -126,12 +127,13 @@ library SwapUtils {
 
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.amountIn);
-        IDex(vars.dex).swapExactIn(
+        IDex2(vars.dex).swapExactIn(
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
+            params.underlyingAssetOut, 
             vars.amountIn, 
-            address(vars.poolTokenOut),
-            params.sqrtPriceLimitX96
+            params.sqrtPriceLimitX96,
+            address(vars.poolTokenOut)
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
 
@@ -219,7 +221,7 @@ library SwapUtils {
             account, 
             vars.amountIn,
             vars.amountOut,
-            IDex(vars.dex).getSwapFee(vars.amountIn),
+            IDex2(vars.dex).getSwapFee(vars.amountIn),
             vars.collateralIn,
             vars.debtScaledIn,
             vars.collateralOut,
@@ -278,12 +280,13 @@ library SwapUtils {
 
         //swap
         vars.poolTokenIn.approveLiquidity(vars.dex, vars.collateralAmount);
-        IDex(vars.dex).swapExactOut(
+        IDex2(vars.dex).swapExactOut(
             address(vars.poolTokenIn), 
             params.underlyingAssetIn, 
+            params.underlyingAssetOut,
             vars.amountOut, 
-            address(vars.poolTokenOut),
-            params.sqrtPriceLimitX96
+            params.sqrtPriceLimitX96,
+            address(vars.poolTokenOut)
         );
         vars.poolTokenIn.approveLiquidity(vars.dex, 0);
 
@@ -374,7 +377,7 @@ library SwapUtils {
             account, 
             vars.amountIn,
             vars.amountOut,
-            IDex(vars.dex).getSwapFee(vars.amountIn),
+            IDex2(vars.dex).getSwapFee(vars.amountIn),
             vars.collateralIn,
             vars.debtScaledIn,
             vars.collateralOut,

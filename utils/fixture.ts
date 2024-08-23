@@ -346,14 +346,9 @@ export async function deployFixtureStore() {
 
     const {
         poolStoreUtils,
+        positionStoreUtils,
         reader
     } = await ignition.deploy(readerModule);
-
-    // const poolStoreUtilsTest = await deployContract("PoolStoreUtilsTest", [], {
-    //     libraries: {
-    //         PoolStoreUtils: poolStoreUtils,
-    //     },
-    // });
 
     //grant
     await roleStore.grantRole(user0.address, keys.CONTROLLER);
@@ -369,7 +364,8 @@ export async function deployFixtureStore() {
           roleStore,
           dataStore,
           reader,
-          poolStoreUtils
+          poolStoreUtils,
+          positionStoreUtils
       },
     };
 }

@@ -43,7 +43,8 @@ export async function createUniswapV3(roleStore, account, config, token0, token0
                          encodePriceSqrt(expandDecimals(1, token1Decimals), expandDecimals(price, token0Decimals));//1token1 = 10token0
     await pool.initialize(sqrtPriceX96);
 
-    const dex = await deployContract("DexUniswapV3", [roleStore, token0Address, token1Address, FeeAmount.MEDIUM, pool.target]);
+    //const dex = await deployContract("DexUniswapV3", [roleStore, token0Address, token1Address, FeeAmount.MEDIUM, pool.target]);
+    const dex = await deployContract("DexUniswap2", [roleStore, factory.target, FeeAmount.MEDIUM]);
 
     //set dex
     const multicallArgs2 = [

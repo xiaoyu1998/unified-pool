@@ -4,7 +4,8 @@ import {
     Pool, 
     Position, 
     ReaderUtils, 
-    ReaderPositionUtils 
+    ReaderPositionUtils,
+    DexStoreUtils
 } from "../typechain-types/contracts/reader/Reader";
 
 export function parsePool(pool) {
@@ -116,7 +117,7 @@ export async function getPositions(dataStore, reader, address) {
 }
 
 export async function getPosition(dataStore, reader, address, underlyingAsset) {
-    return parsePosition(await reader.getPosition(dataStore.target, address, underlyingAsset));
+    return parsePosition(await reader.getPosition(dataStore.target, address, underlyingAsset, {}));
 
 }
 
@@ -150,28 +151,6 @@ export async function getPositionInfo(dataStore, reader, address, underlyingAsse
 
 }
 
-// export function parseLiquidityAndDebt(liquidity) {
-//     const l: ReaderUtils.GetLiquidityAndDebtStructOutput = {
-//         underlyingAsset: liquidity[0],
-//         account: liquidity[1],
-//         balance: liquidity[2],
-//         scaled: liquidity[3],
-//         collateral: liquidity[4],
-//         scaledDebt: liquidity[5],
-//         debt: liquidity[6],
-//     };
-//     return l;
-// }
-
-// export async function getLiquidityAndDebts(dataStore, reader, address) {
-//     const liquidities = await reader.getLiquidityAndDebts(dataStore.target, address);
-//     const accountLiquidities = [];
-//     for (let i = 0; i < liquidities.length; i++) {
-//          accountLiquidities[i] = parseLiquidityAndDebt(liquidities[i]);
-//     }
-//     return accountLiquidities;    
-// }
-
 export function parseMarginAndSupply(s) {
     const m: ReaderUtils.GetMarginAndSupplyStructOutput = {
         underlyingAsset: s[0],
@@ -200,6 +179,23 @@ export async function getMarginAndSupply(dataStore, reader, address, underlyingA
 
 }
 
+export function parseDex(s) {
+    const d: DexStoreUtils.DexStructOutput = {
+        key: s[0],
+        dex: s[1],
+    };
+    return d;
+}
+
+export async function getDexs(dataStore, reader) {
+    const s = await reader.getDexs(dataStore.target);
+    const dexs = [];
+    for (let i = 0; i < s.length; i++) {
+         dexs[i] = parseDex(s[i]);
+    }
+    return dexs;    
+}
+
 export async function getMaxAmountToRedeem(dataStore, reader, address, underlyingAsset) {
     return reader.getMaxAmountToRedeem(dataStore, underlyingAsset, address);
 }
@@ -221,6 +217,7 @@ export async function getLiquidationHealthFactor(address) {
     const f = await reader.getLiquidationHealthFactor(dataStore.target, address);
     return parseLiquidationHealthFactor(f);
 }
+
 
 //Margin And Supply
 export async function getSupply(dataStore, reader, address, underlyingAsset) {

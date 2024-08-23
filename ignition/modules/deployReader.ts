@@ -22,7 +22,7 @@ export const readerModule = buildModule("Reader", (m) => {
         }, 
     });
 
-    return { reader, poolStoreUtils };
+    return { reader, poolStoreUtils, positionStoreUtils };
 });
 
 export default readerModule;

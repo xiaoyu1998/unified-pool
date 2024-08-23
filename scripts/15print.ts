@@ -5,43 +5,55 @@ import { getPoolsInfo, getPoolInfo, getPool, getAssets, getPositions, getPositio
 async function main() {
     const [owner] = await ethers.getSigners();
 
-    //console.log("owner", owner);
-    const address = getTokens("UNI")["address"];
-    const token = await contractAt("MintableToken", address);
-    //console.log("pools", await getPoolInfo(address));
-    const pool = await getPool(address);
-    console.log("pool", pool);
-
-    const dataStore = await getContract("DataStore");   
-    const reader = await getContract("Reader"); 
-    const poolStoreUtils = await getContract("PoolStoreUtils")
-    const poolToken = await contractAtOptions("PoolToken", "0x81bBEBE1a77574e456010539c0e7e94D24bEA9CD", {
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
-    const debtToken = await contractAtOptions("DebtToken", "0xDE5A5cc54267CeE1cAbaCA1c9a8064f0938b2d20",{
-            libraries: {
-                PoolStoreUtils: poolStoreUtils,
-            },         
-        });
+    const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+    const filter = {
+        address: '0x09635F643e140090A9A8Dcd712eD6285858ceBef', // Contract address
+        fromBlock: 0,                      // Start block number
+        toBlock: 'latest',                 // End block number
+        topics: []                         // Array of topics, can be empty
+    };  
     
-    console.log("balance", await token.balanceOf(poolToken.target));
-    console.log("scaledTotalSupply", await poolToken.scaledTotalSupply());
-    console.log("scaledTotalDebt", await debtToken.scaledTotalSupply());
-    console.log("totalCollateral", await poolToken.totalCollateral());
-    //console.log("availableLiquidity", await poolToken.availableLiquidity(0));
-    console.log("totalSupply", await poolToken.totalSupply());
-    console.log("totalSupply", rayMul(await poolToken.scaledTotalSupply(), pool.liquidityIndex));
-    console.log("totalDebt", await debtToken.totalSupply());
-    console.log("totalDebt", rayMul(await debtToken.scaledTotalSupply(), pool.borrowIndex));
+    const logs = await provider.getLogs(filter);
+
+    console.log(logs);  
+
+    //console.log("owner", owner);
+    // const address = getTokens("UNI")["address"];
+    // const token = await contractAt("MintableToken", address);
+    // //console.log("pools", await getPoolInfo(address));
+    // const pool = await getPool(address);
+    // console.log("pool", pool);
+
+    // const dataStore = await getContract("DataStore");   
+    // const reader = await getContract("Reader"); 
+    // const poolStoreUtils = await getContract("PoolStoreUtils")
+    // const poolToken = await contractAtOptions("PoolToken", "0x81bBEBE1a77574e456010539c0e7e94D24bEA9CD", {
+    //         libraries: {
+    //             PoolStoreUtils: poolStoreUtils,
+    //         },         
+    //     });
+    // const debtToken = await contractAtOptions("DebtToken", "0xDE5A5cc54267CeE1cAbaCA1c9a8064f0938b2d20",{
+    //         libraries: {
+    //             PoolStoreUtils: poolStoreUtils,
+    //         },         
+    //     });
+    
+    // console.log("balance", await token.balanceOf(poolToken.target));
+    // console.log("scaledTotalSupply", await poolToken.scaledTotalSupply());
+    // console.log("scaledTotalDebt", await debtToken.scaledTotalSupply());
+    // console.log("totalCollateral", await poolToken.totalCollateral());
+    // //console.log("availableLiquidity", await poolToken.availableLiquidity(0));
+    // console.log("totalSupply", await poolToken.totalSupply());
+    // console.log("totalSupply", rayMul(await poolToken.scaledTotalSupply(), pool.liquidityIndex));
+    // console.log("totalDebt", await debtToken.totalSupply());
+    // console.log("totalDebt", rayMul(await debtToken.scaledTotalSupply(), pool.borrowIndex));
 
 
-    const strategy = await getContract("PoolInterestRateStrategy")
-    console.log("ratebase", await strategy.getRatebase());
-    console.log("optimalUsageRatio", await strategy.getOptimalUsageRatio());
-    console.log("rateSlope1", await strategy.getRateSlope1());
-    console.log("rateSlope2", await strategy.getRateSlope2());
+    // const strategy = await getContract("PoolInterestRateStrategy")
+    // console.log("ratebase", await strategy.getRatebase());
+    // console.log("optimalUsageRatio", await strategy.getOptimalUsageRatio());
+    // console.log("rateSlope1", await strategy.getRateSlope1());
+    // console.log("rateSlope2", await strategy.getRateSlope2());
 
     // const usdtDecimals = getTokens("USDT")["decimals"];
     // const usdtAddress = getTokens("USDT")["address"];
