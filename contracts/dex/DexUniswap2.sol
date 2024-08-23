@@ -8,8 +8,6 @@ import '@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.so
 import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
 
 import "../role/RoleModule.sol";
-// import "../error/Errors.sol";
-// import "../utils/Printer.sol";
 import './uniswapV3/PeripheryImmutableState.sol';
 import './uniswapV3/PoolAddress.sol';
 import './uniswapV3/CallbackValidation.sol';
