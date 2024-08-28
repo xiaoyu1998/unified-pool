@@ -93,7 +93,6 @@ library RepaySubstituteUtils {
             return RepayUtils.executeRepay(account, vars.repayParams);
         }
 
-
         // RepayUtils.validateRepaySubstitute(
         //     account, 
         //     vars.pool,

@@ -1,62 +1,62 @@
 {
-  "USDT": {
-    "address": "0x7Ab9bCe8D0564E52A9F9Ce53623CbF3C92e9fE4f",
-    "decimals": 6,
-    "oracle": "0xd83884cF26b5dECdc7f90d28D136d296f4323f40",
-    "oracleDecimals": 8
-  },
-  "UNI": {
-    "address": "0xa1D2645C103B2a0e45b016b72d1ACBFE750Afd0e",
-    "decimals": 18,
-    "oracle": "0x8EFfb5144420156C6B5C5e9fCf740AbA6Be64Fda",
-    "oracleDecimals": 8
-  },
-  "WBTC": {
-    "address": "0xBECa2FB568F6E1259f6d772bfbEC79d84b94331C",
-    "decimals": 8,
-    "oracle": "0xce0c77460d9E68748A03a578dDA18705D7535c75",
-    "oracleDecimals": 8
-  },
-  "WETH": {
-    "address": "0x9FD20b3142E86e972DF2bEE25918C774Ebc6C567",
-    "decimals": 18,
-    "oracle": "0xAfc57A7323410B743c68c81eeF98BC29c31d3e6E",
-    "oracleDecimals": 8
-  },
-  "LINK": {
-    "address": "0xa099A0234952908883524849af359cFA857A8c35",
-    "decimals": 18,
-    "oracle": "0x71EF816fB5e5C0F08F9772455217EACF700C07B0",
-    "oracleDecimals": 8
-  },
-  "MATIC": {
-    "address": "0xBaA156345BFfA6C31EDC8938AA123780F5ca942A",
-    "decimals": 18,
-    "oracle": "0x1F20495A2Ae18907371f7E84d371E5aF2ed93859",
-    "oracleDecimals": 8
-  },
-  "MKR": {
-    "address": "0x5e12ae9C887f26c60c650f943077e71e3fbd48b1",
-    "decimals": 18,
-    "oracle": "0x45158525a524c2723d10a549D6E25a9432EF9992",
-    "oracleDecimals": 8
-  },
-  "SOL": {
-    "address": "0xcc44B4202D69D8B6a35E4ea408F31C8e52a3Cae0",
-    "decimals": 9,
-    "oracle": "0x1ff7102897345b652555efE4Cc8eD48dF3aF431B",
-    "oracleDecimals": 8
-  },
-  "ARB": {
-    "address": "0x8258C35Feaa2307e9F2176635E71A278882b56D5",
-    "decimals": 18,
-    "oracle": "0x18E7884DDB9c194c447576893d62A866245ecEf8",
-    "oracleDecimals": 8
-  },
-  "AAVE": {
-    "address": "0x835a99e573146191e4fcC28546b05bBb2F87e551",
-    "decimals": 18,
-    "oracle": "0x7E204fFde43F3B3e4A6c78A9aD219869245d83D2",
-    "oracleDecimals": 8
-  }
+    "USDT": {
+      "address": "0x4e3Fc223da77a5C3fE85b23269b5C1D518Aa830F",
+      "decimals": 6,
+      "oracle": "0xce6767C2b11b54Fa8ff4b64B74C2481ebB66DDD8",
+      "oracleDecimals": 8
+    },
+    "UNI": {
+      "address": "0x032c4F4617608EB3856500D1D56cc3Fad8b95448",
+      "decimals": 18,
+      "oracle": "0x023Ac5f482f06564eF3bA8c35C4E200dE95314dd",
+      "oracleDecimals": 8
+    },
+    "WBTC": {
+      "address": "0x1fF3025856a46697076e5CF7900137F34Dd46a0b",
+      "decimals": 8,
+      "oracle": "0x8d5b7F32dCE5a0C2e9A90870eDcbB4D2b01F0D0A",
+      "oracleDecimals": 8
+    },
+    "WETH": {
+      "address": "0xb3729b9bb7d6cFd7d2625285F4bd223E86cD274E",
+      "decimals": 18,
+      "oracle": "0x8E6224094D61ac9212B55F247ea9ADFBf0399928",
+      "oracleDecimals": 8
+    },
+    "LINK": {
+      "address": "0xFf0564b513c0072f3f8b23eAD62cd458aca0e752",
+      "decimals": 18,
+      "oracle": "0x277eFd1Ff96147b2BA2ca85D455AAbA8B4868399",
+      "oracleDecimals": 8
+    },
+    "MATIC": {
+      "address": "0x948240c7A16063D8936b652AD36559FCe3E4A68D",
+      "decimals": 18,
+      "oracle": "0x7Edb8FfB4417EDEba5A59D2E114c3bE4F5E026b4",
+      "oracleDecimals": 8
+    },
+    "MKR": {
+      "address": "0x317d5dbdAbC7a0a86a1600b23cD413A58cE9Cbdb",
+      "decimals": 18,
+      "oracle": "0xf8A51E9C433BeFD4A9E768dd3C28a991312bbF49",
+      "oracleDecimals": 8
+    },
+    "SOL": {
+      "address": "0xeDBab76813fBb1a146B868f66c1140265e0EF41d",
+      "decimals": 9,
+      "oracle": "0x9b8778EF4e73473B4A4B10ABDBb1a453c79598F6",
+      "oracleDecimals": 8
+    },
+    "ARB": {
+      "address": "0xccd1675ae8F5Ec5E926f931f544bC1bE17402c97",
+      "decimals": 18,
+      "oracle": "0x9CcdCd49c088A5Ea518e58219E797198C4286787",
+      "oracleDecimals": 8
+    },
+    "AAVE": {
+      "address": "0x9E0d309e7350A81331127797105035bF0EF8C45F",
+      "decimals": 18,
+      "oracle": "0xfB560314b8e41e5Cc54235f2703DfEd7B65B3a0c",
+      "oracleDecimals": 8
+    }
 }

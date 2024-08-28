@@ -55,7 +55,7 @@ async function main() {
 
     const assetsBeforeRepay = await getAssets(dataStore, reader, owner.address);
 
-    //execute sell uni to repay 50% usdt debt
+    // //execute sell uni to repay 50% usdt debt
     const repayHalfDebtAmount = borrowAmmount/bigNumberify(2);
     const params: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
