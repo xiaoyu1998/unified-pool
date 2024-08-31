@@ -8,14 +8,14 @@ library Keys {
     // @dev key for the address of the wrapped native token
     bytes32 public constant WNT = keccak256(abi.encode("WNT"));
 
-    // @dev for holding tokens that could not be sent out
-    bytes32 public constant HOLDING_ADDRESS = keccak256(abi.encode("HOLDING_ADDRESS"));
+    // // @dev for holding tokens that could not be sent out
+    // bytes32 public constant HOLDING_ADDRESS = keccak256(abi.encode("HOLDING_ADDRESS"));
 
     // @dev for a global pool list
     bytes32 public constant POOL_LIST = keccak256(abi.encode("POOL_LIST"));
 
-    // @dev for a global pool salt
-    bytes32 public constant POOL_SALT = keccak256(abi.encode("POOL_SALT"));
+    // // @dev for a global pool salt
+    // bytes32 public constant POOL_SALT = keccak256(abi.encode("POOL_SALT"));
 
     // @dev for a global position list
     bytes32 public constant POSITION_LIST = keccak256(abi.encode("POSITION_LIST"));
@@ -29,11 +29,11 @@ library Keys {
     // @dev for a global reentrancy guard
     bytes32 public constant REENTRANCY_GUARD_STATUS = keccak256(abi.encode("REENTRANCY_GUARD_STATUS"));
 
-    // @dev constant for user initiated cancel reason
-    string public constant USER_INITIATED_CANCEL = "USER_INITIATED_CANCEL";
+    // // @dev constant for user initiated cancel reason
+    // string public constant USER_INITIATED_CANCEL = "USER_INITIATED_CANCEL";
 
-    // @dev key for the claimable fee amount
-    bytes32 public constant CLAIMABLE_FEE_AMOUNT = keccak256(abi.encode("CLAIMABLE_FEE_AMOUNT"));
+    // // @dev key for the claimable fee amount
+    // bytes32 public constant CLAIMABLE_FEE_AMOUNT = keccak256(abi.encode("CLAIMABLE_FEE_AMOUNT"));
 
     // @dev key for the oracle
     bytes32 public constant ORACLE = keccak256(abi.encode("ORACLE"));
@@ -56,17 +56,17 @@ library Keys {
     // @dev key for the debt Multiplier Factor For Redeem
     bytes32 public constant DEBT_MULTIPLIER_FACTOR_FOR_REDEEM = keccak256(abi.encode("DEBT_MULTIPLIER_FACTOR_FOR_REDEEM"));
 
-    // @dev key for the amount of gas to forward for token transfers
-    bytes32 public constant TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("TOKEN_TRANSFER_GAS_LIMIT"));
+    // // @dev key for the amount of gas to forward for token transfers
+    // bytes32 public constant TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("TOKEN_TRANSFER_GAS_LIMIT"));
 
-    // @dev key for the amount of gas to forward for native token transfers
-    bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
+    // // @dev key for the amount of gas to forward for native token transfers
+    // bytes32 public constant NATIVE_TOKEN_TRANSFER_GAS_LIMIT = keccak256(abi.encode("NATIVE_TOKEN_TRANSFER_GAS_LIMIT"));
 
-    // @dev for a global TREASURY
+    // @dev for a global treasury
     bytes32 public constant TREASURY = keccak256(abi.encode("TREASURY"));
 
     // @dev key for the dex key
-    // @param underlyingAsset the underlyingAsset for the dex key
+    // @param underlyingAssetA and  underlyingAssetB the underlyingAsset pair for the dex key
     function dexKey(address underlyingAssetA, address underlyingAssetB) internal pure returns (bytes32) {
         (address token0, address token1) = underlyingAssetA < underlyingAssetB ? (underlyingAssetA, underlyingAssetB) : (underlyingAssetB, underlyingAssetA);
         return keccak256(abi.encode(DEX, token0, token1));
