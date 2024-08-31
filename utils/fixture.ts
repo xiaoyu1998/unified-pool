@@ -347,6 +347,7 @@ export async function deployFixtureStore() {
     const {
         poolStoreUtils,
         positionStoreUtils,
+        dexStoreUtils,
         reader
     } = await ignition.deploy(readerModule);
 
@@ -365,7 +366,8 @@ export async function deployFixtureStore() {
           dataStore,
           reader,
           poolStoreUtils,
-          positionStoreUtils
+          positionStoreUtils,
+          dexStoreUtils
       },
     };
 }

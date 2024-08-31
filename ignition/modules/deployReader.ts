@@ -4,10 +4,12 @@ import { positionStoreUtilsModule } from "./deployPositionStoreUtils"
 import { oracleUtilsModule } from "./deployOracleUtils"
 import { readerDexUtilsModule } from "./deployReaderDexUtils"
 import { readerPositionUtilsModule } from "./deployReaderPositionUtils"
+import { dexStoreUtilsModule } from "./deployDexStoreUtils"
 
 export const readerModule = buildModule("Reader", (m) => {
     const { poolStoreUtils } = m.useModule(poolStoreUtilsModule);
     const { positionStoreUtils } = m.useModule(positionStoreUtilsModule);
+    const { dexStoreUtils } = m.useModule(dexStoreUtilsModule);
     const { oracleUtils } = m.useModule(oracleUtilsModule);
     const { readerDexUtils } = m.useModule(readerDexUtilsModule);
     const { readerPositionUtils } = m.useModule(readerPositionUtilsModule);
@@ -22,7 +24,7 @@ export const readerModule = buildModule("Reader", (m) => {
         }, 
     });
 
-    return { reader, poolStoreUtils, positionStoreUtils };
+    return { reader, poolStoreUtils, positionStoreUtils, dexStoreUtils };
 });
 
 export default readerModule;

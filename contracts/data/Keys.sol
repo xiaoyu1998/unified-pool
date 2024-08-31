@@ -72,8 +72,8 @@ library Keys {
         return keccak256(abi.encode(DEX, token0, token1));
     }
 
-    // @dev key for the health Factor Collateral Rate Threshold
-    // @param underlyingAsset the underlyingAsset for the threshold
+    // @dev key for the oracle decimal key
+    // @param underlyingAsset the oracle decimal key
     function oracleDecimalsKey(address underlyingAsset) internal pure returns (bytes32) {
         return keccak256(abi.encode(ORACLE_DECIMALS, underlyingAsset));
     }

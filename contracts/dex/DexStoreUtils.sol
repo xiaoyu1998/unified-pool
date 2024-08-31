@@ -14,7 +14,6 @@ library DexStoreUtils {
         address underlyingAssetA, 
         address underlyingAssetB
     ) public view returns (address) {
-
         bytes32 key = Keys.dexKey(underlyingAssetA, underlyingAssetB);
         if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
             return address(0);
@@ -26,7 +25,6 @@ library DexStoreUtils {
         address dataStore, 
         bytes32 key
     ) public view returns (address) {
-
         if (!IDataStore(dataStore).containsBytes32(Keys.DEX_LIST, key)) {
             return address(0);
         }    

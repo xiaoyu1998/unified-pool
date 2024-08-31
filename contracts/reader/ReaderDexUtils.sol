@@ -31,4 +31,8 @@ library ReaderDexUtils {
         return DexStoreUtils.getDexs(dataStore);
     }
 
+    function _getDex(address dataStore, address underlyingAssetA, address underlyingAssetB) external view returns (address) {
+        return DexStoreUtils.get(dataStore, underlyingAssetA, underlyingAssetB);
+    }
+
 }

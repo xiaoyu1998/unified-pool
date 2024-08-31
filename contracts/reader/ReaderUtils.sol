@@ -20,36 +20,36 @@ import "../oracle/OracleUtils.sol";
 library ReaderUtils {
     using WadRayMath for uint256;
 
-    struct GetLiquidityAndDebt {
-        address underlyingAsset;
-        address account;
-        uint256 balance;
-        uint256 scaled;
+    // struct GetLiquidityAndDebt {
+    //     address underlyingAsset;
+    //     address account;
+    //     uint256 balance;
+    //     uint256 scaled;
 
-        uint256 collateral;
-        uint256 scaledDebt;
-        uint256 debt; 
-    }
+    //     uint256 collateral;
+    //     uint256 scaledDebt;
+    //     uint256 debt; 
+    // }
 
-    function _getLiquidityAndDebt(
-        address account,
-        address poolTokenAddress, 
-        address debtTokenAddress
-    ) internal view returns (GetLiquidityAndDebt memory) {
-        IPoolToken poolToken   = IPoolToken(poolTokenAddress);
-        IDebtToken debtToken   = IDebtToken(debtTokenAddress);
+    // function _getLiquidityAndDebt(
+    //     address account,
+    //     address poolTokenAddress, 
+    //     address debtTokenAddress
+    // ) internal view returns (GetLiquidityAndDebt memory) {
+    //     IPoolToken poolToken   = IPoolToken(poolTokenAddress);
+    //     IDebtToken debtToken   = IDebtToken(debtTokenAddress);
 
-        GetLiquidityAndDebt memory l = GetLiquidityAndDebt(
-            poolToken.underlyingAsset(),
-            account,
-            poolToken.balanceOf(account),
-            poolToken.scaledBalanceOf(account),
-            poolToken.balanceOfCollateral(account),
-            debtToken.scaledBalanceOf(account),
-            debtToken.balanceOf(account)
-        );
-        return l;
-    }
+    //     GetLiquidityAndDebt memory l = GetLiquidityAndDebt(
+    //         poolToken.underlyingAsset(),
+    //         account,
+    //         poolToken.balanceOf(account),
+    //         poolToken.scaledBalanceOf(account),
+    //         poolToken.balanceOfCollateral(account),
+    //         debtToken.scaledBalanceOf(account),
+    //         debtToken.balanceOf(account)
+    //     );
+    //     return l;
+    // }
 
     struct GetMarginAndSupply {
         address underlyingAsset;
