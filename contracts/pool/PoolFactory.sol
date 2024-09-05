@@ -26,33 +26,49 @@ contract PoolFactory is RoleModule {
     using PoolConfigurationUtils for uint256;
 
     DataStore public immutable dataStore;
-    address public immutable defaultInterestRateStrategy;
-    address public immutable defaultDex;
-    uint256 public immutable defaultConfiguration;
-    address public immutable defaultUnderlyingAssetUsd;
+
+    //pool settings for create pool by user
+    address public interestRateStrategy;
+    address public dex;
+    uint256 public configuration;
+    address public underlyingAssetUsd;
 
     constructor(
         RoleStore _roleStore,
-        DataStore _dataStore,
-        address _interestRateStrategy,
-        address _dex,
-        uint256 _configuration,
-        address _underlyingAssetUsd
+        DataStore _dataStore
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
+    }
 
-        defaultInterestRateStrategy = _interestRateStrategy;
-        defaultDex = _dex;
-        defaultConfiguration = _configuration;
-        defaultUnderlyingAssetUsd = _underlyingAssetUsd;
+    function setInterestRateStrategy(
+        address _interestRateStrategy
+    ) external onlyPoolKeeper {
+        interestRateStrategy = _interestRateStrategy;
+    }
 
+    function setDex(
+        address _dex
+    ) external onlyPoolKeeper {
+        dex = _dex;
+    }
+
+    function setConfiguration(
+        uint256 _configuration
+    ) external onlyPoolKeeper {
+        configuration = _configuration;
+    }
+
+    function setUnderlyingAssetUsd(
+        address _underlyingAssetUsd
+    ) external onlyPoolKeeper {
+        underlyingAssetUsd = _underlyingAssetUsd;
     }
 
     // @dev creates a pool
     function createPool(
         address underlyingAsset,
-        address interestRateStrategy,
-        uint256 configuration
+        address _interestRateStrategy,
+        uint256 _configuration
     ) external onlyPoolKeeper returns (Pool.Props memory) {
         address poolKey = Keys.poolKey(underlyingAsset);
 
@@ -70,11 +86,11 @@ contract PoolFactory is RoleModule {
             0,
             WadRayMath.RAY,
             0,
-            interestRateStrategy,
+            _interestRateStrategy,
             underlyingAsset,
             address(poolToken),
             address(debtToken),
-            configuration,
+            _configuration,
             0,
             0,
             Chain.currentTimestamp()
@@ -94,6 +110,23 @@ contract PoolFactory is RoleModule {
     function createPoolByUser(
         CreatePoolParams calldata params
     ) external returns (Pool.Props memory) {
+        //validate
+        if (interestRateStrategy == address(0)){
+            revert Errors.EmptyInterestRateStrategy();
+        }
+
+        if (dex == address(0)){
+            revert Errors.EmptyDex();
+        }
+
+        if (configuration == 0){
+            revert Errors.EmptyConfiguration();
+        }
+
+        if (underlyingAssetUsd == address(0)){
+            revert Errors.EmptyUnderlyingAssetUsd();
+        }
+
         address poolKey = Keys.poolKey(params.underlyingAsset);
 
         Pool.Props memory existingPool = PoolStoreUtils.get(address(dataStore), poolKey);
@@ -104,11 +137,11 @@ contract PoolFactory is RoleModule {
         PoolToken poolToken = new PoolToken(roleStore, dataStore, params.underlyingAsset);
         DebtToken debtToken = new DebtToken(roleStore, dataStore, params.underlyingAsset);
 
-        uint256 configuration = defaultConfiguration;
-        uint256 decimal = IERC20Metadata(params.underlyingAsset).decimals();
-        configuration = configuration.setDecimals(decimal);
-        configuration = configuration.setBorrowCapacity(params.borrowCapacity);
-        configuration = configuration.setBorrowCapacity(params.supplyCapacity);
+        uint256 config = configuration;
+        uint256 decimals = IERC20Metadata(params.underlyingAsset).decimals();
+        config = config.setDecimals(decimals);
+        config = config.setBorrowCapacity(params.borrowCapacity);
+        config = config.setBorrowCapacity(params.supplyCapacity);
 
         Pool.Props memory pool = Pool.Props(
             PoolStoreUtils.setKeyAsId(address(dataStore), poolKey),
@@ -116,11 +149,11 @@ contract PoolFactory is RoleModule {
             0,
             WadRayMath.RAY,
             0,
-            defaultInterestRateStrategy,
+            interestRateStrategy,
             params.underlyingAsset,
             address(poolToken),
             address(debtToken),
-            configuration,
+            config,
             0,
             0,
             Chain.currentTimestamp()
@@ -132,7 +165,7 @@ contract PoolFactory is RoleModule {
             pool
         );
 
-        OracleDex oracle = new OracleDex(defaultDex, params.underlyingAsset, defaultUnderlyingAssetUsd);
+        OracleDex oracle = new OracleDex(dex, params.underlyingAsset, underlyingAssetUsd);
         OracleStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
@@ -147,8 +180,8 @@ contract PoolFactory is RoleModule {
         DexStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
-            defaultUnderlyingAssetUsd, 
-            defaultDex
+            underlyingAssetUsd, 
+            dex
         );      
         return pool;
     }

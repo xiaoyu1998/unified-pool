@@ -14,6 +14,9 @@ library Errors {
 
     // PoolFactory errors
     error PoolAlreadyExists(address key, address poolToken);
+    error EmptyInterestRateStrategy();
+    error EmptyConfiguration();
+    error EmptyUnderlyingAssetUsd();
 
     // PoolStoreUtils errors
     error PoolIsInactive(address pool);

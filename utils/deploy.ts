@@ -212,6 +212,8 @@ export async function getContract(name) {
         return await contractAtOptions(name, address, {
             libraries: {
                 PoolStoreUtils: poolStoreUtils,
+                OracleStoreUtils: oracleStoreUtils,
+                DexStoreUtils: dexStoreUtils,
             },         
         });
     }
