@@ -164,6 +164,16 @@ contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, 
     }
 
     /// @inheritdoc IDex2
+    function getSqrtPriceX96(address tokenA, address tokenB) public view override returns(uint256) {
+        address pool = getPool(tokenA, tokenB, feeAmount);
+        ( uint160 sqrtPriceX96,
+          ,,,,,
+        ) = IUniswapV3Pool(pool).slot0();
+
+        return sqrtPriceX96;
+    }
+
+    /// @inheritdoc IDex2
     function getPool(address tokenA, address tokenB) public view override returns(address) {
         return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, feeAmount));
     }

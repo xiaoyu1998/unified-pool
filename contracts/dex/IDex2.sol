@@ -21,6 +21,7 @@ interface IDex2 {
         address to
     ) external;
 
+    function getSqrtPriceX96(address tokenA, address tokenB) external view returns(uint256);
     function getPool(address tokenA, address tokenB) external view returns(address);
     function getFeeAmount() external view returns(uint24);
     function getSwapFee(uint256) external view returns(uint256);

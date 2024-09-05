@@ -30,9 +30,9 @@ contract MockAggregator is IPriceFeed, Ownable {
         _setAnswer(_initialAnswer);
     }
 
-    function oracleDecimals() public view returns (uint8) {
-        return decimals;
-    };
+    // function oracleDecimals() public view returns (uint8) {
+    //     return decimals;
+    // };
 
     function _setAnswer(
        int256 _answer

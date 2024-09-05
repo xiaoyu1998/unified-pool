@@ -12,6 +12,4 @@ interface IPriceFeed {
         uint256 updatedAt,
         uint80 answeredInRound
     );
-
-    function oracleDecimals() external view returns;
 }

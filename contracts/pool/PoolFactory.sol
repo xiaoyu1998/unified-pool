@@ -15,43 +15,37 @@ import "../token/PoolToken.sol";
 import "../token/DebtToken.sol";
 import "../chain/Chain.sol";
 
-import "../oracel/IPriceFeed.sol";
-import "../oracel/OracleStoreUtils.sol";
+import "../oracle/OracleDex.sol";
+import "../oracle/OracleStoreUtils.sol";
 import "../dex/DexStoreUtils.sol";
 
 // @title PoolFactory
 // @dev Contract to create pools
 contract PoolFactory is RoleModule {
     using Pool for Pool.Props;
+    using PoolConfigurationUtils for uint256;
 
     DataStore public immutable dataStore;
     address public immutable defaultInterestRateStrategy;
     address public immutable defaultDex;
-    address public immutable defaultConfiguration;
-    //address public immutable defaultOracle;
+    uint256 public immutable defaultConfiguration;
     address public immutable defaultUnderlyingAssetUsd;
-    uint256 public immutable defaultUnderlyingAssetUsdDecimal;
-    //uint256 public immutable defaultFeeFactor;
 
     constructor(
         RoleStore _roleStore,
         DataStore _dataStore,
         address _interestRateStrategy,
         address _dex,
-        address _configuration,
-        address _oracle,
-        address _underlyingAssetUsd,
-
+        uint256 _configuration,
+        address _underlyingAssetUsd
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
 
         defaultInterestRateStrategy = _interestRateStrategy;
         defaultDex = _dex;
         defaultConfiguration = _configuration;
-        //defaultOracle = _oracle;
         defaultUnderlyingAssetUsd = _underlyingAssetUsd;
-        defaultUnderlyingAssetUsdDecimal = IERC20Metadata(_underlyingAssetUsd).decimals()
-        //defaultFeeFactor = _feeFactor;
+
     }
 
     // @dev creates a pool
@@ -138,16 +132,16 @@ contract PoolFactory is RoleModule {
             pool
         );
 
-        OracleV3 oracle = new OracleV3(defaultDex, params.underlyingAsset, defaultUnderlyingAssetUsd);
+        OracleDex oracle = new OracleDex(defaultDex, params.underlyingAsset, defaultUnderlyingAssetUsd);
         OracleStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
-            oracle
+            address(oracle)
         );
         OracleStoreUtils.setOracleDecimals(
             address(dataStore), 
             params.underlyingAsset, 
-            oracle.oracleDecimals()
+            oracle.decimals()
         );   
 
         DexStoreUtils.set(
