@@ -95,21 +95,20 @@ library RepayUtils {
         );
 
         //repay TODO:should test burn can clear all debt base on rayMul/rayDiv
-        // if (vars.repayAmount == vars.debtAmount){
-        //     vars.noDebtLeft = true;
-        // }
-        // if (noDebtLeft){
-        //     (   , 
-        //         vars.poolCache.nextTotalScaledDebt
-        //     ) = vars.debtToken.burnAll(account);
-        // } else {
-        //     (   vars.noDebtLeft, 
-        //         vars.poolCache.nextTotalScaledDebt
-        //     ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
-        // }
-        (   vars.noDebtLeft, 
+        if (vars.repayAmount == vars.debtAmount){
+            vars.noDebtLeft = true;
+        }
+        if (vars.noDebtLeft){
             vars.poolCache.nextTotalScaledDebt
-        ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
+              = vars.debtToken.burnAll(account);
+        } else {
+            (   vars.noDebtLeft, 
+                vars.poolCache.nextTotalScaledDebt
+            ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
+        }
+        // (   vars.noDebtLeft, 
+        //     vars.poolCache.nextTotalScaledDebt
+        // ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
 
         if (vars.noDebtLeft){
             vars.position.hasDebt = false; 

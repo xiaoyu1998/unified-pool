@@ -57,41 +57,48 @@ async function main() {
     const repayHalfDebtAmount = borrowAmmount/bigNumberify(2);
 
     //repay debt by all usdt collateral
-    const paramsSwap: SwapUtils.SwapParamsStruct = {
+    const paramsSwap2: SwapUtils.SwapParamsStruct = {
         underlyingAssetIn: uniAddress,
         underlyingAssetOut: usdtAddress,
         amount: expandDecimals(10000, uniDecimals),
         sqrtPriceLimitX96: 0
     };
-    const params: RepaytUtils.RepayParamsStruct = {
+    const paramsRepay: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: repayHalfDebtAmount,
         substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collteral
     };
-    const multicallArgs = [
-        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
-        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
+    const multicallArgs2 = [
+        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap2]),
+        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [paramsRepay]),
     ];
 
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs2),
+        "exchangeRouter.multicall"
+    );
 
+    const assetsAfterRepay1 = await getAssets(dataStore, reader, owner.address);
+    
     //repay all debt by uni, this action will fail, if there isn't engough uni
     const params: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: repayHalfDebtAmount,
         substitute: uniAddress
     };
-    const multicallArgs2 = [
+    const multicallArgs3 = [
         //add swaps for sell the entire amount of a type of collateral in user's selected order
         exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
     ];
     await sendTxn(
-        exchangeRouter.multicall(multicallArgs2),
+        exchangeRouter.multicall(multicallArgs3),
         "exchangeRouter.multicall"
     );
 
     //print 
     console.log("assetsBeforeRepay", assetsBeforeRepay);
-    console.log("assetsAfterRepay", await getAssets(dataStore, reader, owner.address));
+    console.log("assetsAfterRepay1", assetsAfterRepay1);
+    console.log("assetsAfterRepay2", await getAssets(dataStore, reader, owner.address));
     console.log("positions", await getPositions(dataStore, reader, owner.address)); 
 
 }
