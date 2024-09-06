@@ -25,7 +25,7 @@ contract MockAggregator is IPriceFeed, Ownable {
     constructor(
         uint8 _decimals,
         int256 _initialAnswer
-    ) public {
+    ) {
         decimals = _decimals;
         _setAnswer(_initialAnswer);
     }
@@ -122,7 +122,7 @@ contract MockAggregator is IPriceFeed, Ownable {
 
     function description()
         external
-        view
+        pure
         returns (string memory)
     {
         return "/mock/MockAggregator.sol";

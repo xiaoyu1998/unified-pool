@@ -93,12 +93,16 @@ library RepaySubstituteUtils {
             return RepayUtils.executeRepay(account, vars.repayParams);
         }
 
-        // RepayUtils.validateRepaySubstitute(
-        //     account, 
-        //     vars.pool,
-        //     vars.repayAmount, 
-        //     vars.debtAmount, 
-        // );
+        //all collateral to repay
+        if (params.substitute == address(0)) {
+            vars.repayParams = RepayUtils.ExecuteRepayParams(
+                params.dataStore,
+                params.eventEmitter,
+                params.underlyingAsset,
+                vars.collateralAmount
+            );
+            return RepayUtils.executeRepay(account, vars.repayParams);
+        }
 
         //sell substitute and buy underlyingAsset to repay
         vars.underCollateralAmount = vars.repayAmount - vars.collateralAmount;

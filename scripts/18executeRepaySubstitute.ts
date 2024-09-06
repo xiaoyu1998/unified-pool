@@ -54,9 +54,27 @@ async function main() {
     );
 
     const assetsBeforeRepay = await getAssets(dataStore, reader, owner.address);
-
-    // //execute sell uni to repay 50% usdt debt
     const repayHalfDebtAmount = borrowAmmount/bigNumberify(2);
+
+    //repay debt by all usdt collateral
+    const paramsSwap: SwapUtils.SwapParamsStruct = {
+        underlyingAssetIn: uniAddress,
+        underlyingAssetOut: usdtAddress,
+        amount: expandDecimals(10000, uniDecimals),
+        sqrtPriceLimitX96: 0
+    };
+    const params: RepaytUtils.RepayParamsStruct = {
+        underlyingAsset: usdtAddress,
+        amount: repayHalfDebtAmount,
+        substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collteral
+    };
+    const multicallArgs = [
+        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap]),
+        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
+    ];
+
+
+    //repay all debt by uni, this action will fail, if there isn't engough uni
     const params: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
         amount: repayHalfDebtAmount,
