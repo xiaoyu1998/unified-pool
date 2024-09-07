@@ -286,12 +286,11 @@ library PositionUtils {
       uint256 amount,
       bool isNewPriceAccToEntryPrice
     ) internal pure {
-        //1st deposit/repay/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
             position.positionType = Position.PositionTypeLong;
             position.accLongAmount = amount;
             position.entryLongPrice = price;
-        }else if (position.positionType == Position.PositionTypeLong) {
+        } else if (position.positionType == Position.PositionTypeLong) {
             uint256 preAccLongAmount = position.accLongAmount;
             position.accLongAmount += amount;
             if (isNewPriceAccToEntryPrice){
@@ -302,16 +301,16 @@ library PositionUtils {
         }else if(position.positionType == Position.PositionTypeShort) {
             if (position.accShortAmount > amount){
                 position.accShortAmount -= amount;
-            }else if(position.accShortAmount == amount){
+            } else if(position.accShortAmount == amount){
                 position.positionType = Position.PositionTypeNone;
                 position.accShortAmount = 0;
                 position.entryShortPrice = 0;
             } else {
                 position.positionType = Position.PositionTypeLong;
                 position.accLongAmount = amount - position.accShortAmount;
+                position.entryLongPrice = price;
                 position.accShortAmount = 0;
                 position.entryShortPrice = 0;
-                position.entryLongPrice = price;
             }
         }
     }
@@ -322,12 +321,11 @@ library PositionUtils {
       uint256 amount,
       bool isNewPriceAccToEntryPrice
     ) internal pure {
-        //1st redeem/swap after reset
         if (position.positionType == Position.PositionTypeNone) {
             position.positionType = Position.PositionTypeShort;
             position.accShortAmount = amount;
             position.entryShortPrice = price;
-        }else if (position.positionType == Position.PositionTypeShort) {
+        } else if (position.positionType == Position.PositionTypeShort) {
             uint256 preAccShortAmount = position.accShortAmount;
             position.accShortAmount += amount;
             if (isNewPriceAccToEntryPrice){//
@@ -339,16 +337,16 @@ library PositionUtils {
             //Printer.log("accLongAmount", position.accLongAmount);
             if (position.accLongAmount > amount){
                 position.accLongAmount -= amount;
-            }else if(position.accLongAmount == amount){
+            } else if(position.accLongAmount == amount){
                 position.positionType = Position.PositionTypeNone;
                 position.accLongAmount = 0;
                 position.entryLongPrice = 0;
             } else {
                 position.positionType = Position.PositionTypeShort;
                 position.accShortAmount = amount - position.accLongAmount;
+                position.entryShortPrice = price;
                 position.accLongAmount = 0;
                 position.entryLongPrice = 0;
-                position.entryShortPrice = price;
             }
         }
     }
