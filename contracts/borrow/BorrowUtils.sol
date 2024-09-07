@@ -64,7 +64,7 @@ library BorrowUtils {
             account,
             params.dataStore, 
             params.underlyingAsset, 
-            Position.PositionTypeShort,
+            Position.PositionTypeNone,
             vars.poolIsUsd
         );
 

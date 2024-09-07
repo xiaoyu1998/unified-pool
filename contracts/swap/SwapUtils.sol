@@ -165,6 +165,7 @@ library SwapUtils {
             }
 
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
+                //Printer.log("vars.amountIn", vars.amountIn);
                 PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
         } else {//swap without usd

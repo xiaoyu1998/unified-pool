@@ -121,7 +121,7 @@ library RepayUtils {
             vars.poolToken.syncUnderlyingAssetBalance();
         } 
 
-        if (!vars.poolIsUsd){
+        if (!vars.poolIsUsd && !vars.useCollateralToRepay){
             uint256 price = OracleUtils.getPrice(params.dataStore, params.underlyingAsset);
             PositionUtils.longPosition(vars.position, price, vars.repayAmount, false);
         }

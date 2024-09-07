@@ -15,7 +15,7 @@ library Position {
         uint256 accLongAmount;
         uint256 entryShortPrice;
         uint256 accShortAmount;
-        uint256 positionType;//None 0 Long 1 Short 2
+        uint256 positionType;//Short 0 Long 1 None 2
         bool hasCollateral;
         bool hasDebt;
     }

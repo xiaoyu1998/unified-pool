@@ -65,8 +65,8 @@ async function main() {
     };
     const paramsRepay: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
-        amount: repayHalfDebtAmount,
-        substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collteral
+        amount: repayHalfDebtAmount,//repay amount must larger than collateral
+        substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collateral
     };
     const multicallArgs2 = [
         exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap2]),

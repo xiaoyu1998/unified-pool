@@ -108,9 +108,9 @@ describe("Exchange Repay", () => {
         expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(uniBorrowAmmount - uniAmountRepay);
         expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
         expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(1);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(expandDecimals(8, 27));
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(uniAmountRepay);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
         expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
     });

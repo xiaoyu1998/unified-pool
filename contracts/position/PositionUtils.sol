@@ -332,6 +332,7 @@ library PositionUtils {
                 position.entryShortPrice = totalValue.rayDiv(position.accShortAmount);
             }
         }else if (position.positionType == Position.PositionTypeLong) {
+            //Printer.log("accLongAmount", position.accLongAmount);
             if (position.accLongAmount > amount){
                 position.accLongAmount -= amount;
             } else {
