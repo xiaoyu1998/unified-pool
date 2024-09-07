@@ -29,3 +29,7 @@ export const HALF_PERCENTAGE_FACTOR = (BigInt(5)*BigInt(10)**BigInt(3));
 export const SECONDS_PER_YEAR = BigInt(365 * 24 * 60 * 60);
 export const PRECISION = (BigInt(10)**BigInt(27));//27
 export const HALF_PRECISION = (BigInt(5)*BigInt(10)**BigInt(26));//27
+export const RAY = (BigInt(10)**BigInt(27));//27
+export const HALF_RAY = (BigInt(5)*BigInt(10)**BigInt(26));//27
+export const WAD = (BigInt(10)**BigInt(18));
+export const HALF_WAD = (BigInt(5)*BigInt(10)**BigInt(17));
