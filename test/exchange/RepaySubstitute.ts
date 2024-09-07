@@ -3,6 +3,8 @@ import { deployFixture } from "../../utils/fixture";
 import { usdtDecimals, uniDecimals, usdtOracleDecimal, uniOracleDecimal} from "../../utils/constants";
 import { errorsContract} from "../../utils/error";
 import { expandDecimals, bigNumberify } from "../../utils/math"
+import { time } from "@nomicfoundation/hardhat-network-helpers";
+
 import { 
     getCollateral, 
     getPositionType, 
@@ -66,7 +68,7 @@ describe("Exchange RepaySubstitute", () => {
 
     });
 
-    it("executeRepay useCollateralToRepay allCollateral", async () => {
+    it("executeRepay useCollateralToRepay repay by allCollateral", async () => {
 
         const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
         await usdt.connect(user1).approve(router.target, usdtDepositAmount);
@@ -92,11 +94,11 @@ describe("Exchange RepaySubstitute", () => {
             sqrtPriceLimitX96: 0
         };
 
-        const uniAmountRepay = uniDepositAmount + expandDecimals(1, uniDecimals);//repay amount larger than collateral
+        const uniAmountRepay = uniDepositAmount + expandDecimals(1, uniDecimals);//repay amount > collateral(collateral < debt)
         const uniParamsRepay: RepayUtils.RepayParamsStructOutput = {
             underlyingAsset: uni.target,
             amount: uniAmountRepay,
-            substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collteral
+            substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all uni collteral
         };
 
         const multicallArgs = [
@@ -115,6 +117,57 @@ describe("Exchange RepaySubstitute", () => {
         expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(true);
         expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
         expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(0);//short
+    });
+
+    it("executeRepay useCollateralToRepay repay allDebt", async () => {
+        
+        const usdtDepositAmount = expandDecimals(10000000, usdtDecimals);
+        await usdt.connect(user1).approve(router.target, usdtDepositAmount);
+        const usdtParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: usdt.target,
+        };
+
+        const uniDepositAmount = expandDecimals(100000, uniDecimals);
+        await uni.connect(user1).approve(router.target, uniDepositAmount);
+        const uniParamsDeposit: DepositUtils.DepositParamsStructOutput = {
+            underlyingAsset: uni.target,
+        };
+
+        const uniBorrowAmmount = expandDecimals(200000, uniDecimals);
+        const uniParamsBorrow: BorrowUtils.BorrowParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniBorrowAmmount,
+        };
+
+        const multicallArgs = [
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [usdt.target, usdtPool.poolToken, usdtDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [usdtParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("sendTokens", [uni.target, uniPool.poolToken, uniDepositAmount]),
+            exchangeRouter.interface.encodeFunctionData("executeDeposit", [uniParamsDeposit]),
+            exchangeRouter.interface.encodeFunctionData("executeBorrow", [uniParamsBorrow]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs);
+
+        //add interest
+        const interestPaymentPeriodInSeconds = BigInt(14 * 24 * 60 * 60);
+        await time.increase(interestPaymentPeriodInSeconds);
+
+        const uniAmountRepay = uniDepositAmount + uniBorrowAmmount;//repay amount > debt(collateral > debt)
+        const uniParamsRepay: RepayUtils.RepayParamsStructOutput = {
+            underlyingAsset: uni.target,
+            amount: uniAmountRepay,
+            substitute: ethers.ZeroAddress,
+        };
+        const multicallArgs2 = [
+            exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [uniParamsRepay]),
+        ];
+        await exchangeRouter.connect(user1).multicall(multicallArgs2);
+
+        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq("99041095097666159309995");
+        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(true);
+        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(1);//long
     });
 
 }); 

@@ -94,7 +94,7 @@ library RepayUtils {
             vars.useCollateralToRepay
         );
 
-        //repay TODO:should test burn can clear all debt base on rayMul/rayDiv
+        //burn debt
         if (vars.repayAmount == vars.debtAmount){
             vars.noDebtLeft = true;
             vars.poolCache.nextTotalScaledDebt
@@ -104,6 +104,7 @@ library RepayUtils {
                 vars.poolCache.nextTotalScaledDebt
             ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);
         }
+        //repay TODO:should test burn can clear all debt base on rayMul/rayDiv
         // (   vars.noDebtLeft, 
         //     vars.poolCache.nextTotalScaledDebt
         // ) = vars.debtToken.burn(account, vars.repayAmount, vars.poolCache.nextBorrowIndex);

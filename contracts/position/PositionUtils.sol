@@ -309,6 +309,7 @@ library PositionUtils {
                 position.entryShortPrice = 0;
                 position.entryLongPrice = price;
             }
+            //TODO:position.accShortAmount == amount should be change to PositionTypeNone
         }
     }
 
@@ -342,6 +343,7 @@ library PositionUtils {
                 position.entryLongPrice = 0;
                 position.entryShortPrice = price;
             }
+            //TODO:position.accLongAmount == amount should be change to PositionTypeNone
         }
     }
 
