@@ -302,6 +302,10 @@ library PositionUtils {
         }else if(position.positionType == Position.PositionTypeShort) {
             if (position.accShortAmount > amount){
                 position.accShortAmount -= amount;
+            }else if(position.accShortAmount == amount){
+                position.positionType = Position.PositionTypeNone;
+                position.accShortAmount = 0;
+                position.entryShortPrice = 0;
             } else {
                 position.positionType = Position.PositionTypeLong;
                 position.accLongAmount = amount - position.accShortAmount;
@@ -309,7 +313,6 @@ library PositionUtils {
                 position.entryShortPrice = 0;
                 position.entryLongPrice = price;
             }
-            //TODO:position.accShortAmount == amount should be change to PositionTypeNone
         }
     }
 
@@ -336,6 +339,10 @@ library PositionUtils {
             //Printer.log("accLongAmount", position.accLongAmount);
             if (position.accLongAmount > amount){
                 position.accLongAmount -= amount;
+            }else if(position.accLongAmount == amount){
+                position.positionType = Position.PositionTypeNone;
+                position.accLongAmount = 0;
+                position.entryLongPrice = 0;
             } else {
                 position.positionType = Position.PositionTypeShort;
                 position.accShortAmount = amount - position.accLongAmount;
@@ -343,7 +350,6 @@ library PositionUtils {
                 position.entryLongPrice = 0;
                 position.entryShortPrice = price;
             }
-            //TODO:position.accLongAmount == amount should be change to PositionTypeNone
         }
     }
 
