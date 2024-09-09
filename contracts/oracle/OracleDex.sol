@@ -6,15 +6,13 @@ import "@openzeppelin/contracts/utils/math/Math.sol";
 
 contract OracleDex {
 
-    uint8 internal constant DECIMALS = 18;
+    uint8 internal constant DECIMALS = 12;
     uint256 internal constant X192 = 0x1000000000000000000000000000000000000000000000000;
-    uint256 internal constant NUMERATOR2 = 0xde0b6b3a7640000;//10**18
+    //uint256 internal constant NUMERATOR2 = 0xE8D4A510;//10**12
 
     address public immutable dex;
     address public immutable underlyingAsset;
     address public immutable underlyingAssetUsd;
-    // address public immutable decimals;
-    // address public immutable decimalsUsd;
 
     constructor(
         address _dex,
@@ -24,9 +22,6 @@ contract OracleDex {
         dex = _dex;
         underlyingAsset = _underlyingAsset;
         underlyingAssetUsd = _underlyingAssetUsd;
-        // decimals = IERC20Metadata(underlyingAsset).decimals();
-        // decimalsUsd = IERC20Metadata(underlyingAssetUsd).decimals();
-
     }
 
     function latestRoundData() external view returns (
@@ -47,7 +42,7 @@ contract OracleDex {
         );
     }
     
-    function decimals() public view returns(uint8) {
+    function decimals() public pure returns(uint8) {
         return DECIMALS;
     }
 

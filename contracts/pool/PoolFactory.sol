@@ -19,6 +19,12 @@ import "../oracle/OracleDex.sol";
 import "../oracle/OracleStoreUtils.sol";
 import "../dex/DexStoreUtils.sol";
 
+struct CreatePoolParams {
+    address underlyingAsset;
+    uint256 borrowCapacity;
+    uint256 supplyCapacity;
+}
+
 // @title PoolFactory
 // @dev Contract to create pools
 contract PoolFactory is RoleModule {
@@ -27,41 +33,11 @@ contract PoolFactory is RoleModule {
 
     DataStore public immutable dataStore;
 
-    //pool settings for create pool by user
-    address public interestRateStrategy;
-    address public dex;
-    uint256 public configuration;
-    address public underlyingAssetUsd;
-
     constructor(
         RoleStore _roleStore,
         DataStore _dataStore
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
-    }
-
-    function setInterestRateStrategy(
-        address _interestRateStrategy
-    ) external onlyPoolKeeper {
-        interestRateStrategy = _interestRateStrategy;
-    }
-
-    function setDex(
-        address _dex
-    ) external onlyPoolKeeper {
-        dex = _dex;
-    }
-
-    function setConfiguration(
-        uint256 _configuration
-    ) external onlyPoolKeeper {
-        configuration = _configuration;
-    }
-
-    function setUnderlyingAssetUsd(
-        address _underlyingAssetUsd
-    ) external onlyPoolKeeper {
-        underlyingAssetUsd = _underlyingAssetUsd;
     }
 
     // @dev creates a pool
@@ -100,60 +76,80 @@ contract PoolFactory is RoleModule {
         return pool;
     }
 
-    struct CreatePoolParams {
-        address underlyingAsset;
-        uint256 borrowCapacity;
-        uint256 supplyCapacity;
+    struct CreatePoolByUserLocalVars {
+        bool createUserPoolOpened;
+        address interestRateStrategy;
+        address dex;
+        uint256 configuration;
+        address underlyingAssetUsd;
+        address poolKey;
+
+        Pool.Props existingPool;
+        PoolToken poolToken;
+        DebtToken debtToken;
+
+        uint256 config;
+        uint256 decimals;
+        Pool.Props pool;
+
+        OracleDex oracle;
     }
 
     // @dev creates a pool
     function createPoolByUser(
         CreatePoolParams calldata params
     ) external returns (Pool.Props memory) {
-        //validate
-        if (interestRateStrategy == address(0)){
-            revert Errors.EmptyInterestRateStrategy();
-        }
 
-        if (dex == address(0)){
+        CreatePoolByUserLocalVars memory vars;
+
+        //get settings
+        vars.createUserPoolOpened = PoolStoreUtils.getCreateUserPoolOpen(address(dataStore));
+        if (!vars.createUserPoolOpened){
+            revert Errors.CreateUserPoolClosed();
+        }
+        vars.interestRateStrategy = PoolStoreUtils.getUserPoolInterestRateStrategy(address(dataStore));
+        if (vars.interestRateStrategy == address(0)){
+                revert Errors.EmptyInterestRateStrategy();
+        }
+        vars.dex = PoolStoreUtils.getUserPoolDex(address(dataStore));
+        if (vars.dex == address(0)){
             revert Errors.EmptyDex();
         }
-
-        if (configuration == 0){
+        vars.configuration = PoolStoreUtils.getUserPoolConfiguration(address(dataStore));
+        if (vars.configuration == 0){
             revert Errors.EmptyConfiguration();
         }
-
-        if (underlyingAssetUsd == address(0)){
+        vars.underlyingAssetUsd = PoolStoreUtils.getUserPoolUnderlyingAssetUsd(address(dataStore));
+        if (vars.underlyingAssetUsd == address(0)){
             revert Errors.EmptyUnderlyingAssetUsd();
         }
 
-        address poolKey = Keys.poolKey(params.underlyingAsset);
-
-        Pool.Props memory existingPool = PoolStoreUtils.get(address(dataStore), poolKey);
-        if (existingPool.poolToken != address(0)) {
-            revert Errors.PoolAlreadyExists(poolKey, existingPool.poolToken);
+        //check pool
+        vars.poolKey = Keys.poolKey(params.underlyingAsset);
+        vars.existingPool = PoolStoreUtils.get(address(dataStore), vars.poolKey);
+        if (vars.existingPool.poolToken != address(0)) {
+            revert Errors.PoolAlreadyExists(vars.poolKey, vars.existingPool.poolToken);
         }
 
-        PoolToken poolToken = new PoolToken(roleStore, dataStore, params.underlyingAsset);
-        DebtToken debtToken = new DebtToken(roleStore, dataStore, params.underlyingAsset);
+        vars.poolToken = new PoolToken(roleStore, dataStore, params.underlyingAsset);
+        vars.debtToken = new DebtToken(roleStore, dataStore, params.underlyingAsset);
 
-        uint256 config = configuration;
-        uint256 decimals = IERC20Metadata(params.underlyingAsset).decimals();
-        config = config.setDecimals(decimals);
-        config = config.setBorrowCapacity(params.borrowCapacity);
-        config = config.setBorrowCapacity(params.supplyCapacity);
+        vars.decimals = IERC20Metadata(params.underlyingAsset).decimals();
+        vars.configuration = vars.configuration.setDecimals(vars.decimals);
+        vars.configuration = vars.configuration.setBorrowCapacity(params.borrowCapacity);
+        vars.configuration = vars.configuration.setBorrowCapacity(params.supplyCapacity);
 
-        Pool.Props memory pool = Pool.Props(
-            PoolStoreUtils.setKeyAsId(address(dataStore), poolKey),
+        vars.pool = Pool.Props(
+            PoolStoreUtils.setKeyAsId(address(dataStore), vars.poolKey),
             WadRayMath.RAY,
             0,
             WadRayMath.RAY,
             0,
-            interestRateStrategy,
+            vars.interestRateStrategy,
             params.underlyingAsset,
-            address(poolToken),
-            address(debtToken),
-            config,
+            address(vars.poolToken),
+            address(vars.debtToken),
+            vars.configuration,
             0,
             0,
             Chain.currentTimestamp()
@@ -161,29 +157,28 @@ contract PoolFactory is RoleModule {
 
         PoolStoreUtils.set(
             address(dataStore), 
-            poolKey, 
-            pool
+            vars.poolKey, 
+            vars.pool
         );
 
-        OracleDex oracle = new OracleDex(dex, params.underlyingAsset, underlyingAssetUsd);
+        vars.oracle = new OracleDex(vars.dex, params.underlyingAsset, vars.underlyingAssetUsd);
         OracleStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
-            address(oracle)
+            address(vars.oracle)
         );
         OracleStoreUtils.setOracleDecimals(
             address(dataStore), 
             params.underlyingAsset, 
-            oracle.decimals()
+            vars.oracle.decimals()
         );   
-
         DexStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
-            underlyingAssetUsd, 
-            dex
+            vars.underlyingAssetUsd, 
+            vars.dex
         );      
-        return pool;
+        return vars.pool;
     }
 
 }

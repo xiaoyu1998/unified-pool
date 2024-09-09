@@ -28,6 +28,24 @@ library PoolStoreUtils {
     bytes32 public constant POOL_UNCLAIMED_FEE = keccak256(abi.encode("POOL_UNCLAIMED_FEE"));
     bytes32 public constant POOL_LAST_UPDATE_TIME_STAMP = keccak256(abi.encode("POOL_LAST_UPDATE_TIME_STAMP"));
 
+    // @dev for a interest rate strategy for user pool
+    bytes32 public constant USER_POOL_INTEREST_RATE_STRATEGY = keccak256(abi.encode("USER_POOL_INTEREST_RATE_STRATEGY"));
+
+    // @dev for a underlying asset for user pool
+    bytes32 public constant USER_POOL_UNDERLYING_ASSET_USD = keccak256(abi.encode("USER_POOL_UNDERLYING_ASSET_USD"));
+
+    // @dev for a dex for user pool
+    bytes32 public constant USER_POOL_DEX = keccak256(abi.encode("USER_POOL_DEX"));
+
+    // @dev for a configuration for user pool
+    bytes32 public constant USER_POOL_CONFIGURATION = keccak256(abi.encode("USER_POOL_CONFIGURATION"));
+
+    // @dev for a oracle decimals for user pool
+    bytes32 public constant USER_POOL_ORACLE_DECIMALS = keccak256(abi.encode("USER_POOL_ORACLE_DECIMALS"));
+
+    // @dev for a open and close for user pool creation
+    bytes32 public constant CREATE_USER_POOL_OPENED = keccak256(abi.encode("CREATE_USER_POOL_OPENED"));
+
     function get(address dataStoreAddress, address key) public view returns (Pool.Props memory) {
         IDataStore dataStore = IDataStore(dataStoreAddress);
 
@@ -385,6 +403,57 @@ library PoolStoreUtils {
     function getPoolKeys(address dataStore, uint256 start, uint256 end) internal view returns (address[] memory) {
         return IDataStore(dataStore).getAddressValuesAt(Keys.POOL_LIST, start, end);
     }
+
+    //settings for create pool by user
+    function setUserPoolInterestRateStrategy(address dataStore, address interestRateStrategy) external  {
+        IDataStore(dataStore).setAddress(USER_POOL_INTEREST_RATE_STRATEGY, interestRateStrategy);
+    }
+
+    function getUserPoolInterestRateStrategy(address dataStore) public view returns (address) {
+        return IDataStore(dataStore).getAddress(USER_POOL_INTEREST_RATE_STRATEGY);
+    }  
+
+    function setUserPoolUnderlyingAssetUsd(address dataStore, address underlyingAssetUsd) external  {
+        IDataStore(dataStore).setAddress(USER_POOL_UNDERLYING_ASSET_USD, underlyingAssetUsd);
+    }
+
+    function getUserPoolUnderlyingAssetUsd(address dataStore) public view returns (address) {
+        return IDataStore(dataStore).getAddress(USER_POOL_UNDERLYING_ASSET_USD);
+    } 
+
+    function setUserPoolDex(address dataStore, address dex) external  {
+        IDataStore(dataStore).setAddress(USER_POOL_DEX, dex);
+    }
+
+    function getUserPoolDex(address dataStore) public view returns (address) {
+        return IDataStore(dataStore).getAddress(USER_POOL_DEX);
+    }  
+
+    function setUserPoolConfiguration(address dataStore, uint256 configuration) external  {
+        IDataStore(dataStore).setUint(USER_POOL_CONFIGURATION, configuration);
+    }
+
+    function getUserPoolConfiguration(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(USER_POOL_CONFIGURATION);
+    } 
+
+    function setCreateUserPoolOpen(address dataStore, bool opened) external  {
+        IDataStore(dataStore).setBool(CREATE_USER_POOL_OPENED, opened);
+    }
+
+    function getCreateUserPoolOpen(address dataStore) public view returns (bool) {
+        return IDataStore(dataStore).getBool(CREATE_USER_POOL_OPENED);
+    } 
+
+    function setUserPoolOracleDecimals(address dataStore, uint256 oracleDecimals) external  {
+        IDataStore(dataStore).setUint(USER_POOL_ORACLE_DECIMALS, oracleDecimals);
+    }
+
+    function getUserPoolOracleDecimals(address dataStore) public view returns (uint256) {
+        return IDataStore(dataStore).getUint(USER_POOL_ORACLE_DECIMALS);
+    } 
+
+
 
 
 }

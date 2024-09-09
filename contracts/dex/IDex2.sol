@@ -27,3 +27,8 @@ interface IDex2 {
     function getSwapFee(uint256) external view returns(uint256);
 
 }
+
+
+interface IUniswapV3Factory {
+    function getPool(address tokenA, address tokenB, uint24 fee) external view returns (address pool);
+}

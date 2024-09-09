@@ -20,6 +20,8 @@ export const uniDecimals = 18;
 export const uniOracleDecimals = 12;
 export const ethDecimals = 18;
 export const ethOracleDecimals = 12;
+export const tokenDecimals = 18;
+export const tokenOracleDecimals = 12;
 
 export const MIN_SQRT_RATIO = BigInt('4295128739')
 export const MAX_SQRT_RATIO = BigInt('1461446703485210103287273052203988822378723970342')

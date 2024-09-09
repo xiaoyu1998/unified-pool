@@ -14,6 +14,7 @@ library Errors {
 
     // PoolFactory errors
     error PoolAlreadyExists(address key, address poolToken);
+    error CreateUserPoolClosed();
     error EmptyInterestRateStrategy();
     error EmptyConfiguration();
     error EmptyUnderlyingAssetUsd();
@@ -82,6 +83,7 @@ library Errors {
     // DexUniswapV3 errors
     error TokenCanNotSwapWithSelf(address token);
     error TokenNotMatch(address pool, address token0, address token1, address token);
+    error EmptyUniswapPool();
 
     // SwapUtils errors
     error SwapPoolsNotMatch(address pool0, address pool1);

@@ -9,9 +9,10 @@ import '@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol';
 
 import "../role/RoleModule.sol";
 import './uniswapV3/PeripheryImmutableState.sol';
-import './uniswapV3/PoolAddress.sol';
+// import './uniswapV3/PoolAddress.sol';
 import './uniswapV3/CallbackValidation.sol';
 import "./IDex2.sol";
+import "../error/Errors.sol";
 
 contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, RoleModule {
     using SafeCast for uint256;
@@ -36,7 +37,8 @@ contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, 
         address tokenB,
         uint24 fee
     ) private view returns (address) {
-        return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, fee));
+        //return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, fee));
+        return IUniswapV3Factory(factory).getPool(tokenA, tokenB, fee);
     } 
 
     /// @inheritdoc IDex2
@@ -50,6 +52,7 @@ contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, 
     ) external override onlyController {
         bool zeroForOne = tokenIn < tokenOut;
         address pool = getPool(tokenIn, tokenOut, feeAmount);
+        validatePool(pool);
         uint160 priceLimit = sqrtPriceLimitX96 == 0
                                 ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
                                 : uint160(sqrtPriceLimitX96);
@@ -71,6 +74,7 @@ contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, 
     ) external override onlyController {
         bool zeroForOne = tokenIn < tokenOut;
         address pool = getPool(tokenIn, tokenOut, feeAmount);
+        validatePool(pool);
         uint160 priceLimit = sqrtPriceLimitX96 == 0
                                 ? (zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1)
                                 : uint160(sqrtPriceLimitX96);
@@ -166,16 +170,25 @@ contract DexUniswap2 is IUniswapV3SwapCallback, PeripheryImmutableState, IDex2, 
     /// @inheritdoc IDex2
     function getSqrtPriceX96(address tokenA, address tokenB) public view override returns(uint256) {
         address pool = getPool(tokenA, tokenB, feeAmount);
+        validatePool(pool);
         ( uint160 sqrtPriceX96,
           ,,,,,
         ) = IUniswapV3Pool(pool).slot0();
 
         return sqrtPriceX96;
     }
+    
+    function validatePool(address pool) internal pure {
+        if (pool == address(0)) {
+            revert Errors.EmptyUniswapPool();
+        }
+
+    }
 
     /// @inheritdoc IDex2
     function getPool(address tokenA, address tokenB) public view override returns(address) {
-        return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, feeAmount));
+        //return PoolAddress.computeAddress(factory, PoolAddress.getPoolKey(tokenA, tokenB, feeAmount));
+        return getPool(tokenA, tokenB, feeAmount);
     }
     
     /// @inheritdoc IDex2

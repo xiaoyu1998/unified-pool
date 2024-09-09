@@ -151,5 +151,9 @@ contract Reader {
         return PoolStoreUtils.getPoolToken(dataStore, poolKey);
     }
 
+    function getUserPoolOracleDecimals(address dataStore) external view returns (uint256) {
+        return PoolStoreUtils.getUserPoolOracleDecimals(dataStore);
+    }
+
 
 }

@@ -40,12 +40,15 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
 
         _;
     }
+
+    //fee
     function setTreasury(
         address treasury
     ) external onlyConfigKeeper nonReentrant {
         FeeStoreUtils.setTreasury(address(dataStore), treasury);
     } 
 
+    //oracle
     function setOracle(
         address underlyingAsset,
         address oracle
@@ -60,6 +63,7 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         OracleStoreUtils.setOracleDecimals(address(dataStore), underlyingAsset, precision);
     } 
 
+    //position
     function setHealthFactorLiquidationThreshold(
         uint256 threshold
     ) external onlyConfigKeeper nonReentrant {
@@ -79,6 +83,7 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         PositionStoreUtils.setHealthFactorCollateralRateThreshold(address(dataStore), underlyingAsset, threshold);
     } 
     
+    //pool
     function setPoolActive(address underlyingAsset, bool active) external onlyConfigKeeper nonReentrant {
         address poolKey = Keys.poolKey(underlyingAsset);
         uint256 configuration = PoolStoreUtils.getConfiguration(address(dataStore), poolKey);
@@ -141,7 +146,8 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
         configuration = configuration.setSupplyCapacity(supplyCapacity);
         PoolStoreUtils.setConfiguration(address(dataStore), poolKey, configuration);
     } 
-
+    
+    //dex
     function setDex(address underlyingAssetA, address underlyingAssetB, address dex) external onlyConfigKeeper nonReentrant {
         DexStoreUtils.set(address(dataStore), underlyingAssetA, underlyingAssetB, dex);
     } 
@@ -149,5 +155,31 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
     function removeDex(address underlyingAssetA, address underlyingAssetB) external onlyConfigKeeper nonReentrant {
         DexStoreUtils.remove(address(dataStore), underlyingAssetA, underlyingAssetB);
     } 
+
+
+    //create pool by user
+    function setUserPoolInterestRateStrategy(address interestRateStrategy) external  {
+        PoolStoreUtils.setUserPoolInterestRateStrategy(address(dataStore), interestRateStrategy);
+    }
+
+    function setUserPoolUnderlyingAssetUsd(address underlyingAssetUsd) external  {
+        PoolStoreUtils.setUserPoolUnderlyingAssetUsd(address(dataStore), underlyingAssetUsd);
+    }
+
+    function setUserPoolDex(address dex) external  {
+        PoolStoreUtils.setUserPoolDex(address(dataStore), dex);
+    }
+
+    function setUserPoolConfiguration(uint256 configuration) external  {
+        PoolStoreUtils.setUserPoolConfiguration(address(dataStore), configuration);
+    }
+
+    function setCreateUserPoolOpen(bool opened) external  {
+        PoolStoreUtils.setCreateUserPoolOpen(address(dataStore), opened);
+    }
+
+    function setUserPoolOracleDecimals(uint256 oracleDecimals) external  {
+        PoolStoreUtils.setUserPoolOracleDecimals(address(dataStore), oracleDecimals);
+    }
 
 }
