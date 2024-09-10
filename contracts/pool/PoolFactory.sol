@@ -82,6 +82,7 @@ contract PoolFactory is RoleModule {
         address dex;
         uint256 configuration;
         address underlyingAssetUsd;
+        uint256 oracleDecimals;
         address poolKey;
 
         Pool.Props existingPool;
@@ -123,6 +124,10 @@ contract PoolFactory is RoleModule {
         if (vars.underlyingAssetUsd == address(0)){
             revert Errors.EmptyUnderlyingAssetUsd();
         }
+        vars.oracleDecimals = PoolStoreUtils.getUserPoolOracleDecimals(address(dataStore));
+        if (vars.oracleDecimals == 0){
+            revert Errors.EmptyUnderlyingAssetUsd();
+        }
 
         //check pool
         vars.poolKey = Keys.poolKey(params.underlyingAsset);
@@ -161,7 +166,12 @@ contract PoolFactory is RoleModule {
             vars.pool
         );
 
-        vars.oracle = new OracleDex(vars.dex, params.underlyingAsset, vars.underlyingAssetUsd);
+        vars.oracle = new OracleDex(
+            vars.dex, 
+            params.underlyingAsset, 
+            vars.underlyingAssetUsd, 
+            uint8(vars.oracleDecimals)
+        );
         OracleStoreUtils.set(
             address(dataStore), 
             params.underlyingAsset, 
