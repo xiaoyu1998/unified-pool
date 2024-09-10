@@ -32,6 +32,11 @@ contract PoolFactory is RoleModule {
     using PoolConfigurationUtils for uint256;
 
     DataStore public immutable dataStore;
+    address public interestRateStrategy;
+    address public dex;
+    address public underlyingAssetUsd;
+    uint256 public configuration;
+    uint256 public oracleDecimals;
 
     constructor(
         RoleStore _roleStore,
@@ -39,6 +44,28 @@ contract PoolFactory is RoleModule {
     ) RoleModule(_roleStore) {
         dataStore = _dataStore;
     }
+
+    //settings
+    function setUserPoolInterestRateStrategy(address _interestRateStrategy) external onlyPoolKeeper {
+        interestRateStrategy = _interestRateStrategy;
+    }
+
+    function setUserPoolDex(address _dex) external onlyPoolKeeper {
+        dex = _dex;
+    }
+
+    function getUserPoolUnderlyingAssetUsd(address _underlyingAssetUsd) external onlyPoolKeeper {
+        underlyingAssetUsd = _underlyingAssetUsd;
+    }
+
+    function setUserPoolConfiguration(uint256 _configuration) external onlyPoolKeeper {
+        configuration = _configuration;
+    }
+
+    function getUserPoolOracleDecimals(uint256 _oracleDecimals) external onlyPoolKeeper {
+        oracleDecimals = _oracleDecimals;
+    }
+
 
     // @dev creates a pool
     function createPool(
@@ -108,26 +135,33 @@ contract PoolFactory is RoleModule {
         if (!vars.createUserPoolOpened){
             revert Errors.CreateUserPoolClosed();
         }
-        vars.interestRateStrategy = PoolStoreUtils.getUserPoolInterestRateStrategy(address(dataStore));
+
+        vars.interestRateStrategy = interestRateStrategy;
+        // vars.interestRateStrategy = PoolStoreUtils.getUserPoolInterestRateStrategy(address(dataStore));
         if (vars.interestRateStrategy == address(0)){
                 revert Errors.EmptyInterestRateStrategy();
         }
-        vars.dex = PoolStoreUtils.getUserPoolDex(address(dataStore));
+
+        vars.dex = dex;
+        //vars.dex = PoolStoreUtils.getUserPoolDex(address(dataStore));
         if (vars.dex == address(0)){
             revert Errors.EmptyDex();
         }
-        vars.configuration = PoolStoreUtils.getUserPoolConfiguration(address(dataStore));
+        //vars.configuration = PoolStoreUtils.getUserPoolConfiguration(address(dataStore));
+        vars.configuration = configuration;
         if (vars.configuration == 0){
             revert Errors.EmptyConfiguration();
         }
-        vars.underlyingAssetUsd = PoolStoreUtils.getUserPoolUnderlyingAssetUsd(address(dataStore));
-        // if (vars.underlyingAssetUsd == address(0)){
-        //     revert Errors.EmptyUnderlyingAssetUsd();
-        // }
-        vars.oracleDecimals = PoolStoreUtils.getUserPoolOracleDecimals(address(dataStore));
-        // if (vars.oracleDecimals == 0){
-        //     revert Errors.EmptyUnderlyingAssetUsd();
-        // }
+        //vars.underlyingAssetUsd = PoolStoreUtils.getUserPoolUnderlyingAssetUsd(address(dataStore));
+        vars.underlyingAssetUsd = underlyingAssetUsd ;
+        if (vars.underlyingAssetUsd == address(0)){
+            revert Errors.EmptyUsd();
+        }
+        //vars.oracleDecimals = PoolStoreUtils.getUserPoolOracleDecimals(address(dataStore));
+        vars.oracleDecimals = oracleDecimals;
+        if (vars.oracleDecimals == 0){
+            revert Errors.EmptyOracleDecimals();
+        }
 
         //check pool
         vars.poolKey = Keys.poolKey(params.underlyingAsset);

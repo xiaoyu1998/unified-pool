@@ -169,15 +169,6 @@ contract PoolToken is RoleModule, ScaledToken, StrictBank {
 		}
 	}
 
-	// function availableLiquidity(uint256 unclaimedFee) public view returns (uint256) {
-	// 	if(IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() > unclaimedFee){
-	// 		return IERC20(_underlyingAsset).balanceOf(address(this)) - totalCollateral() - unclaimedFee;
-	// 	}
-	// 	else {
-	// 		return 0;
-	// 	}
-	// }
-
     function approveLiquidity(address spender, uint256 value) public onlyController returns (bool) {
     	return IERC20(_underlyingAsset).approve(spender, value);
     }

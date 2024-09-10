@@ -17,7 +17,8 @@ library Errors {
     error CreateUserPoolClosed();
     error EmptyInterestRateStrategy();
     error EmptyConfiguration();
-    error EmptyUnderlyingAssetUsd();
+    error EmptyUsd();
+    error EmptyOracleDecimals();
 
     // PoolStoreUtils errors
     error PoolIsInactive(address pool);
