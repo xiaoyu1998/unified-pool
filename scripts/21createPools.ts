@@ -11,27 +11,27 @@ async function main() {
 
     //create pools
     const usdt = getTokens("USDT")["address"];
-    const uni  = getTokens("UNI")["address"];
+    const eth  = getTokens("ETH")["address"];
     const usdtDecimals = getTokens("USDT")["decimals"];
-    const uniDecimals = getTokens("UNI")["decimals"];
+    const ethDecimals = getTokens("ETH")["decimals"];
     const poolFactory = await getContract("PoolFactory");
     const configuration = 0;
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
 
-    //create usdt and uni pool
+    //create usdt and eth pool
     await sendTxn(
         poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(usdt)"
     );
 
     await sendTxn(
-        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
-        "poolFactory.createPool(uni)"
+        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration),
+        "poolFactory.createPool(eth)"
     );
 
     //set pools configuration
     const config = await getContract("Config");
-    const dex = await reader.getDex(dataStore.target, usdt, uni);
+    const dex = await reader.getDex(dataStore.target, usdt, eth);
 
     const multicallArgs = [
         config.interface.encodeFunctionData("setTreasury", [owner.address]),
@@ -50,7 +50,7 @@ async function main() {
         "config.multicall"
     );
 
-    // usdt and uni pool settings
+    // usdt and eth pool settings
     const multicallArgs2 = [
         //usdt
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
@@ -62,16 +62,16 @@ async function main() {
         config.interface.encodeFunctionData("setPoolBorrowCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolSupplyCapacity", [usdt, expandDecimals(1, 8)]),//100,000,000
         config.interface.encodeFunctionData("setPoolUsd", [usdt, true]),
-        //uni
-        config.interface.encodeFunctionData("setPoolActive", [uni, true]),
-        config.interface.encodeFunctionData("setPoolFrozen", [uni, false]),
-        config.interface.encodeFunctionData("setPoolPaused", [uni, false]),
-        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [uni, true]),
-        config.interface.encodeFunctionData("setPoolDecimals", [uni, uniDecimals]),
-        config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 10]), //1/1000
-        config.interface.encodeFunctionData("setPoolBorrowCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
-        config.interface.encodeFunctionData("setPoolSupplyCapacity", [uni, expandDecimals(1, 8)]),//100,000,000
-        config.interface.encodeFunctionData("setPoolUsd", [uni, false]),
+        //eth
+        config.interface.encodeFunctionData("setPoolActive", [eth, true]),
+        config.interface.encodeFunctionData("setPoolFrozen", [eth, false]),
+        config.interface.encodeFunctionData("setPoolPaused", [eth, false]),
+        config.interface.encodeFunctionData("setPoolBorrowingEnabled", [eth, true]),
+        config.interface.encodeFunctionData("setPoolDecimals", [eth, ethDecimals]),
+        config.interface.encodeFunctionData("setPoolFeeFactor", [eth, 10]), //1/1000
+        config.interface.encodeFunctionData("setPoolBorrowCapacity", [eth, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolSupplyCapacity", [eth, expandDecimals(1, 8)]),//100,000,000
+        config.interface.encodeFunctionData("setPoolUsd", [eth, false]),
     ];
     await sendTxn(
         config.multicall(multicallArgs2),

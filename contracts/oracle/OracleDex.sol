@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "../dex/IDex2.sol";
 import "../utils/Printer.sol";
+import "../error/Errors.sol";
 
 contract OracleDex {
 
@@ -13,18 +14,21 @@ contract OracleDex {
     address public immutable dex;
     address public immutable underlyingAsset;
     address public immutable underlyingAssetUsd;
-    uint8 public immutable decimals_;
+    uint8 public immutable decimalsDelta;
+    uint8 public immutable decimalsOracle_;
 
     constructor(
         address _dex,
         address _underlyingAsset,
         address _underlyingAssetUsd,
-        uint8 _decimals
+        uint8 _decimalsDelta,
+        uint8 _decimalsOracle
     ) {
         dex = _dex;
         underlyingAsset = _underlyingAsset;
         underlyingAssetUsd = _underlyingAssetUsd;
-        decimals_ = _decimals;
+        decimalsDelta = _decimalsDelta;
+        decimalsOracle_ = _decimalsOracle;
     }
 
     function latestRoundData() external view returns (
@@ -50,19 +54,18 @@ contract OracleDex {
     }
     
     function decimals() public view returns(uint8) {
-        return decimals_;
+        return decimalsOracle_;
     }
 
     function calcPrice(uint256 sqrtPriceX96) public view returns(uint256) {
-        uint256 dec = decimals();
-        uint256 numerator1 =uint256(sqrtPriceX96) *uint256(sqrtPriceX96);  
-        uint256 numerator2 =10**dec; 
+        uint256 numerator1 = 10**decimalsDelta; 
+        uint256 numerator2 = uint256(sqrtPriceX96) *uint256(sqrtPriceX96);  
 
         uint256 price;
         if (underlyingAsset < underlyingAssetUsd) {
             price = Math.mulDiv(numerator1, numerator2, X192);
         } else {
-            price = Math.mulDiv(numerator2, X192, numerator1);
+            price = Math.mulDiv(numerator1, X192, numerator2);
         }
         return price;
     }

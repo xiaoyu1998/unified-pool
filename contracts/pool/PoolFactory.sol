@@ -89,8 +89,8 @@ contract PoolFactory is RoleModule {
         PoolToken poolToken;
         DebtToken debtToken;
 
-        uint256 config;
         uint256 decimals;
+        uint256 decimalsUsd;
         Pool.Props pool;
 
         OracleDex oracle;
@@ -121,13 +121,13 @@ contract PoolFactory is RoleModule {
             revert Errors.EmptyConfiguration();
         }
         vars.underlyingAssetUsd = PoolStoreUtils.getUserPoolUnderlyingAssetUsd(address(dataStore));
-        if (vars.underlyingAssetUsd == address(0)){
-            revert Errors.EmptyUnderlyingAssetUsd();
-        }
+        // if (vars.underlyingAssetUsd == address(0)){
+        //     revert Errors.EmptyUnderlyingAssetUsd();
+        // }
         vars.oracleDecimals = PoolStoreUtils.getUserPoolOracleDecimals(address(dataStore));
-        if (vars.oracleDecimals == 0){
-            revert Errors.EmptyUnderlyingAssetUsd();
-        }
+        // if (vars.oracleDecimals == 0){
+        //     revert Errors.EmptyUnderlyingAssetUsd();
+        // }
 
         //check pool
         vars.poolKey = Keys.poolKey(params.underlyingAsset);
@@ -140,9 +140,10 @@ contract PoolFactory is RoleModule {
         vars.debtToken = new DebtToken(roleStore, dataStore, params.underlyingAsset);
 
         vars.decimals = IERC20Metadata(params.underlyingAsset).decimals();
+        vars.decimalsUsd = IERC20Metadata(vars.underlyingAssetUsd).decimals();
         vars.configuration = vars.configuration.setDecimals(vars.decimals);
         vars.configuration = vars.configuration.setBorrowCapacity(params.borrowCapacity);
-        vars.configuration = vars.configuration.setBorrowCapacity(params.supplyCapacity);
+        vars.configuration = vars.configuration.setSupplyCapacity(params.supplyCapacity);
 
         vars.pool = Pool.Props(
             PoolStoreUtils.setKeyAsId(address(dataStore), vars.poolKey),
@@ -170,6 +171,7 @@ contract PoolFactory is RoleModule {
             vars.dex, 
             params.underlyingAsset, 
             vars.underlyingAssetUsd, 
+            uint8(vars.oracleDecimals) + uint8(vars.decimals) - uint8(vars.decimalsUsd),
             uint8(vars.oracleDecimals)
         );
         OracleStoreUtils.set(

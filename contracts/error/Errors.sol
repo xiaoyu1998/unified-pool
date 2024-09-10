@@ -136,9 +136,12 @@ library Errors {
     );
 
     // FeeUtils
-    error EmptyUnclaimedFee(address poool);
+    error EmptyUnclaimedFee(address pool);
 
     // FeeStoreUtils
     error EmptyTreasury();
+
+    // OracleDex
+    error OracleDecimalsAddDecimalsBelowUsdDecimals(uint8 oracleDecimals, uint8 decimals, uint8 usdDecimals);
 
 }
