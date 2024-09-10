@@ -30,28 +30,58 @@ async function main() {
     );
 
     //set pools configuration
-    const config = await getContract("Config");
     const dex = await reader.getDex(dataStore.target, usdt, eth);
 
+    await sendTxn(
+        poolFactory.setUserPoolInterestRateStrategy(poolInterestRateStrategy.target),
+        "poolFactory.setUserPoolInterestRateStrategy(poolInterestRateStrategy)"
+    );
+
+    await sendTxn(
+        poolFactory.setUserPoolUnderlyingAssetUsd(usdt),
+        "poolFactory.setUserPoolUnderlyingAssetUsd(usdt)"
+    );
+
+    await sendTxn(
+        poolFactory.setUserPoolConfiguration(bigNumberify(0x3e80500000000000000)),
+        "poolFactory.setUserPoolConfiguration(0x3e80500000000000000)"
+    );
+
+    await sendTxn(
+        poolFactory.setUserPoolDex(dex),
+        `poolFactory.setUserPoolDex(${dex})`
+    );
+
+    await sendTxn(
+        poolFactory.setUserPoolOracleDecimals(12),
+        "poolFactory.setUserPoolOracleDecimals(12)"
+    );
+
+    // const multicallArgs = [
+    //     config.interface.encodeFunctionData("setTreasury", [owner.address]),
+    //     config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
+    //     config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
+    //     //User Pool Settings
+    //     config.interface.encodeFunctionData("setUserPoolInterestRateStrategy", [poolInterestRateStrategy.target]),
+    //     config.interface.encodeFunctionData("setUserPoolUnderlyingAssetUsd", [usdt]),
+    //     config.interface.encodeFunctionData("setUserPoolConfiguration", [bigNumberify(0x3e80500000000000000)]),//feeFactor 10%
+    //     config.interface.encodeFunctionData("setUserPoolDex", [dex]),
+    //     config.interface.encodeFunctionData("setUserPoolOracleDecimals", [12]),
+    //     config.interface.encodeFunctionData("setCreateUserPoolOpen", [true]),
+    // ];
+    // await sendTxn(
+    //     config.multicall(multicallArgs),
+    //     "config.multicall"
+    // );
+
+    const config = await getContract("Config");
+    // usdt and eth pool settings
     const multicallArgs = [
+        //settings
         config.interface.encodeFunctionData("setTreasury", [owner.address]),
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
-        //User Pool Settings
-        config.interface.encodeFunctionData("setUserPoolInterestRateStrategy", [poolInterestRateStrategy.target]),
-        config.interface.encodeFunctionData("setUserPoolUnderlyingAssetUsd", [usdt]),
-        config.interface.encodeFunctionData("setUserPoolConfiguration", [bigNumberify(0x3e80500000000000000)]),//feeFactor 10%
-        config.interface.encodeFunctionData("setUserPoolDex", [dex]),
-        config.interface.encodeFunctionData("setUserPoolOracleDecimals", [12]),
         config.interface.encodeFunctionData("setCreateUserPoolOpen", [true]),
-    ];
-    await sendTxn(
-        config.multicall(multicallArgs),
-        "config.multicall"
-    );
-
-    // usdt and eth pool settings
-    const multicallArgs2 = [
         //usdt
         config.interface.encodeFunctionData("setPoolActive", [usdt, true]),
         config.interface.encodeFunctionData("setPoolFrozen", [usdt, false]),
@@ -74,7 +104,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolUsd", [eth, false]),
     ];
     await sendTxn(
-        config.multicall(multicallArgs2),
+        config.multicall(multicallArgs),
         "config.multicall"
     );
 

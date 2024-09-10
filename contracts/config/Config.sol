@@ -158,28 +158,28 @@ contract Config is ReentrancyGuard, RoleModule, BasicMulticall {
 
 
     //create pool by user
-    function setUserPoolInterestRateStrategy(address interestRateStrategy) external  {
-        PoolStoreUtils.setUserPoolInterestRateStrategy(address(dataStore), interestRateStrategy);
-    }
+    // function setUserPoolInterestRateStrategy(address interestRateStrategy) external  {
+    //     PoolStoreUtils.setUserPoolInterestRateStrategy(address(dataStore), interestRateStrategy);
+    // }
 
-    function setUserPoolUnderlyingAssetUsd(address underlyingAssetUsd) external  {
-        PoolStoreUtils.setUserPoolUnderlyingAssetUsd(address(dataStore), underlyingAssetUsd);
-    }
+    // function setUserPoolUnderlyingAssetUsd(address underlyingAssetUsd) external  {
+    //     PoolStoreUtils.setUserPoolUnderlyingAssetUsd(address(dataStore), underlyingAssetUsd);
+    // }
 
-    function setUserPoolDex(address dex) external  {
-        PoolStoreUtils.setUserPoolDex(address(dataStore), dex);
-    }
+    // function setUserPoolDex(address dex) external  {
+    //     PoolStoreUtils.setUserPoolDex(address(dataStore), dex);
+    // }
 
-    function setUserPoolConfiguration(uint256 configuration) external  {
-        PoolStoreUtils.setUserPoolConfiguration(address(dataStore), configuration);
-    }
+    // function setUserPoolConfiguration(uint256 configuration) external  {
+    //     PoolStoreUtils.setUserPoolConfiguration(address(dataStore), configuration);
+    // }
+
+    // function setUserPoolOracleDecimals(uint256 oracleDecimals) external  {
+    //     PoolStoreUtils.setUserPoolOracleDecimals(address(dataStore), oracleDecimals);
+    // }
 
     function setCreateUserPoolOpen(bool opened) external  {
         PoolStoreUtils.setCreateUserPoolOpen(address(dataStore), opened);
-    }
-
-    function setUserPoolOracleDecimals(uint256 oracleDecimals) external  {
-        PoolStoreUtils.setUserPoolOracleDecimals(address(dataStore), oracleDecimals);
     }
 
 }

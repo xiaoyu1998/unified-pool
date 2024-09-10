@@ -405,37 +405,45 @@ library PoolStoreUtils {
     }
 
     //settings for create pool by user
-    function setUserPoolInterestRateStrategy(address dataStore, address interestRateStrategy) external  {
-        IDataStore(dataStore).setAddress(USER_POOL_INTEREST_RATE_STRATEGY, interestRateStrategy);
-    }
+    // function setUserPoolInterestRateStrategy(address dataStore, address interestRateStrategy) external  {
+    //     IDataStore(dataStore).setAddress(USER_POOL_INTEREST_RATE_STRATEGY, interestRateStrategy);
+    // }
 
-    function getUserPoolInterestRateStrategy(address dataStore) public view returns (address) {
-        return IDataStore(dataStore).getAddress(USER_POOL_INTEREST_RATE_STRATEGY);
-    }  
+    // function getUserPoolInterestRateStrategy(address dataStore) public view returns (address) {
+    //     return IDataStore(dataStore).getAddress(USER_POOL_INTEREST_RATE_STRATEGY);
+    // }  
 
-    function setUserPoolUnderlyingAssetUsd(address dataStore, address underlyingAssetUsd) external  {
-        IDataStore(dataStore).setAddress(USER_POOL_UNDERLYING_ASSET_USD, underlyingAssetUsd);
-    }
+    // function setUserPoolUnderlyingAssetUsd(address dataStore, address underlyingAssetUsd) external  {
+    //     IDataStore(dataStore).setAddress(USER_POOL_UNDERLYING_ASSET_USD, underlyingAssetUsd);
+    // }
 
-    function getUserPoolUnderlyingAssetUsd(address dataStore) public view returns (address) {
-        return IDataStore(dataStore).getAddress(USER_POOL_UNDERLYING_ASSET_USD);
-    } 
+    // function getUserPoolUnderlyingAssetUsd(address dataStore) public view returns (address) {
+    //     return IDataStore(dataStore).getAddress(USER_POOL_UNDERLYING_ASSET_USD);
+    // } 
 
-    function setUserPoolDex(address dataStore, address dex) external  {
-        IDataStore(dataStore).setAddress(USER_POOL_DEX, dex);
-    }
+    // function setUserPoolDex(address dataStore, address dex) external  {
+    //     IDataStore(dataStore).setAddress(USER_POOL_DEX, dex);
+    // }
 
-    function getUserPoolDex(address dataStore) public view returns (address) {
-        return IDataStore(dataStore).getAddress(USER_POOL_DEX);
-    }  
+    // function getUserPoolDex(address dataStore) public view returns (address) {
+    //     return IDataStore(dataStore).getAddress(USER_POOL_DEX);
+    // }  
 
-    function setUserPoolConfiguration(address dataStore, uint256 configuration) external  {
-        IDataStore(dataStore).setUint(USER_POOL_CONFIGURATION, configuration);
-    }
+    // function setUserPoolConfiguration(address dataStore, uint256 configuration) external  {
+    //     IDataStore(dataStore).setUint(USER_POOL_CONFIGURATION, configuration);
+    // }
 
-    function getUserPoolConfiguration(address dataStore) public view returns (uint256) {
-        return IDataStore(dataStore).getUint(USER_POOL_CONFIGURATION);
-    } 
+    // function getUserPoolConfiguration(address dataStore) public view returns (uint256) {
+    //     return IDataStore(dataStore).getUint(USER_POOL_CONFIGURATION);
+    // } 
+
+    // function setUserPoolOracleDecimals(address dataStore, uint256 oracleDecimals) external  {
+    //     IDataStore(dataStore).setUint(USER_POOL_ORACLE_DECIMALS, oracleDecimals);
+    // }
+
+    // function getUserPoolOracleDecimals(address dataStore) public view returns (uint256) {
+    //     return IDataStore(dataStore).getUint(USER_POOL_ORACLE_DECIMALS);
+    // }
 
     function setCreateUserPoolOpen(address dataStore, bool opened) external  {
         IDataStore(dataStore).setBool(CREATE_USER_POOL_OPENED, opened);
@@ -443,17 +451,7 @@ library PoolStoreUtils {
 
     function getCreateUserPoolOpen(address dataStore) public view returns (bool) {
         return IDataStore(dataStore).getBool(CREATE_USER_POOL_OPENED);
-    } 
-
-    function setUserPoolOracleDecimals(address dataStore, uint256 oracleDecimals) external  {
-        IDataStore(dataStore).setUint(USER_POOL_ORACLE_DECIMALS, oracleDecimals);
-    }
-
-    function getUserPoolOracleDecimals(address dataStore) public view returns (uint256) {
-        return IDataStore(dataStore).getUint(USER_POOL_ORACLE_DECIMALS);
-    } 
-
-
+    }  
 
 
 }
