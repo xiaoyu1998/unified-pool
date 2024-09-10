@@ -11,7 +11,7 @@ import "hardhat/console.sol";
  */
 library Printer {
     using SafeCast for int256;
-    bool internal constant disablePrinter = true;
+    bool internal constant disablePrinter = false;
 
     function toString(bytes memory data) public pure returns(string memory) {
         bytes memory alphabet = "0123456789abcdef";

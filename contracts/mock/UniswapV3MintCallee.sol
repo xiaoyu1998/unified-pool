@@ -30,6 +30,10 @@ contract UniswapV3MintCallee is IUniswapV3MintCallback {
     ) external override {
         address sender = abi.decode(data, (address));
         emit MintCallback(amount0Owed, amount1Owed);
+
+        Printer.log("amount0Owed", amount0Owed);
+        Printer.log("amount1Owed", amount1Owed);       
+         
         if (amount0Owed > 0)
             IERC20(IUniswapV3Pool(msg.sender).token0()).transferFrom(sender, msg.sender, amount0Owed);
         if (amount1Owed > 0)

@@ -22,7 +22,7 @@ async function main() {
         config.interface.encodeFunctionData("setPoolFrozen", [uni, false]),
         config.interface.encodeFunctionData("setPoolPaused", [uni, false]),
         config.interface.encodeFunctionData("setPoolBorrowingEnabled", [uni, true]),
-        config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 1000]), //10%
+        config.interface.encodeFunctionData("setPoolFeeFactor", [uni, 10]), //1/1000
         config.interface.encodeFunctionData("setPoolUsd", [uni, false]),
     ];
     await sendTxn(

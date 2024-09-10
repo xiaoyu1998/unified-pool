@@ -1,9 +1,8 @@
-import { deployContract, deployContractWithCode, contractAtWithCode, getContract, sendTxn, writeTokenAddresses, readTokenAddresses, setDeployedContractAddress } from "../utils/deploy"
-import { bigNumberify, expandDecimals, encodePriceSqrt, calcSilppage, calcPriceImpact, calcSqrtPriceLimitX96, calcFee } from "../utils/math"
-import { MaxUint256, FeeAmount, TICK_SPACINGS, FeePercentageFactor} from "../utils/constants";
-import { usdtDecimals, usdtOracleDecimals, uniDecimals, uniOracleDecimals, tokenDecimals} from "../utils/constants";
-import { getDexs} from "../utils/helper";
-import { dexKey} from "../utils/keys";
+import { deployContract,  contractAtWithCode, contractAt, getDeployedContractAddress, getContract, sendTxn, getTokens, writeTokenAddresses } from "../utils/deploy"
+import { bigNumberify, expandDecimals,encodePriceSqrt } from "../utils/math"
+import { MaxUint256, FeeAmount, TICK_SPACINGS } from "../utils/constants";
+import { tokenDecimals} from "../utils/constants";
+import { parsePool} from "../utils/helper";
 
 import {
   abi as FACTORY_ABI,
@@ -18,21 +17,24 @@ import {
 async function main() {
     const [owner, user0] = await ethers.getSigners();
 
-    const roleStore = await getContract("RoleStore"); 
+    //const roleStore = await getContract("RoleStore"); 
     const dataStore = await getContract("DataStore"); 
     const reader = await getContract("Reader");  
+    const poolFactory = await getContract("PoolFactory");  
 
     //create Eth token
     const eth = await deployContract("MintableToken", ["ETH", "ETH", tokenDecimals], user0)
-    await sendTxn(eth.connect(user0).mint(owner.address, expandDecimals(1000000, tokenDecimals)), "eth.mint");
+    await sendTxn(eth.connect(user0).mint(user0.address, expandDecimals(1000000, tokenDecimals)), "eth.mint");
 
     let tokenOracleDecimals = await reader.getUserPoolOracleDecimals(dataStore.target);
     writeTokenAddresses({"ETH": {
-        "address":eth.target, 
-        "decimals":tokenDecimals, 
-        "oracle":ethOracle.target,
-        "oracleDecimals":tokenOracleDecimals,
+        "address": eth.target, 
+        "decimals": tokenDecimals, 
+        "oracle": ethers.ZeroAddress,//user created pool
+        "oracleDecimals": tokenOracleDecimals.toString(),
     }});
+
+    console.log("ethOracleDecimals", tokenOracleDecimals.toString())
 
     //create swap pool
     const usdtDecimals = getTokens("USDT")["decimals"];
@@ -41,11 +43,17 @@ async function main() {
     const ethAddress = eth.target;
     const ethIsZero =  (ethAddress.toLowerCase() < usdtAddress.toLowerCase()) ? true:false;
     const factoryAddress = getDeployedContractAddress("UniswapV3Factory"); 
-    const factory = contractAtWithCode(FACTORY_ABI, FACTORY_BYTECODE, factoryAddress)
+    const factory = await contractAtWithCode(FACTORY_ABI, FACTORY_BYTECODE, factoryAddress, user0)
+    //console.log(factoryAddress, factory);
     await sendTxn(await factory.connect(user0).createPool(usdtAddress, ethAddress, FeeAmount.MEDIUM), "factory.createPool");
 
+    const userUsdtBeforeMint = await usdt.balanceOf(user0.address);
+    const userEthBeforeMint = await eth.balanceOf(user0.address);
+    console.log("userUsdtBeforeMint", userUsdtBeforeMint); 
+    console.log("userEthBeforeMint", userEthBeforeMint); 
+
     //initialize pool and mint
-    const uniswapPoolAddress = await factory.getPool(ethAddress, usdtAddress, FeeAmount.MEDIUM);
+    const uniswapPoolAddress = await factory.getPool(usdtAddress, ethAddress,  FeeAmount.MEDIUM);
     const uniswapPool = await contractAtWithCode(POOL_ABI, POOL_BYTECODE, uniswapPoolAddress, user0);
     const sqrtPriceX96 = ethIsZero?
                          encodePriceSqrt(expandDecimals(3000, usdtDecimals), expandDecimals(1, tokenDecimals)):
@@ -61,9 +69,9 @@ async function main() {
     const tickTrim = (currentTick / tickSpacing) * tickSpacing;
     const tickLower  = tickTrim - tickSpacing*bigNumberify(10);
     const tickUpper  = tickTrim + tickSpacing*bigNumberify(10);
-    await sendTxn(uniswapV3MintCallee.connect(user0).mint(uniswapPool.target, user0.address, tickLower, tickUpper, expandDecimals(10, 10)), "uniswapV3MintCallee.mint");
+    await sendTxn(uniswapV3MintCallee.connect(user0).mint(uniswapPool.target, user0.address, tickLower, tickUpper, expandDecimals(1, 20)), "uniswapV3MintCallee.mint");
     console.log("userUsdtAfterMint", await usdt.balanceOf(user0.address)); 
-    console.log("userUniAfterMint", await eth.balanceOf(user0.address)); 
+    console.log("userEthAfterMint", await eth.balanceOf(user0.address)); 
 
     // create eth pool
     const paramsEth: CreatePoolParamsStructOutput = {
@@ -76,9 +84,11 @@ async function main() {
         "poolFactory.createPoolByUser(Eth)"
     );
 
-    //getDexs
-    console.log("key", dexKey(usdtAddress, ethAddress));
-    console.log("dexs", await getDexs(dataStore, reader)); 
+    //print pools
+    const pools = await reader.getPools(dataStore.target);
+    for (const pool of pools) {
+        console.log(parsePool(pool));
+    }
 
 }
 

@@ -64,7 +64,11 @@ async function main() {
         const multicallArgs = [];
         const artifact = await hre.artifacts.readArtifact("MockAggregator");
         const oracle = new hre.ethers.Interface(artifact.abi);
-        for (const {symbol, address, price} of prices){     
+        for (const {symbol, address, price} of prices){    
+            if (address == 0) {//remove user created pool
+                continue;
+            }
+
             multicallArgs.push({
                 target: address,
                 allowFailure: false,

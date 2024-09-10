@@ -15,34 +15,35 @@ async function main() {
     const usdtDecimals = getTokens("USDT")["decimals"];
     const uniDecimals = getTokens("UNI")["decimals"];
     const poolFactory = await getContract("PoolFactory");
+    const configuration = 0;
     const poolInterestRateStrategy = await getContract("PoolInterestRateStrategy");
 
-    //create usdt and eth pool
+    //create usdt and uni pool
     await sendTxn(
         poolFactory.createPool(usdt, poolInterestRateStrategy.target, configuration),
         "poolFactory.createPool(usdt)"
     );
 
     await sendTxn(
-        poolFactory.createPool(eth, poolInterestRateStrategy.target, configuration),
-        "poolFactory.createPool(eth)"
+        poolFactory.createPool(uni, poolInterestRateStrategy.target, configuration),
+        "poolFactory.createPool(uni)"
     );
 
     //set pools configuration
     const config = await getContract("Config");
-    const dex = await reader.getDex(dataStore.target, usdt.target, uni.target);
+    const dex = await reader.getDex(dataStore.target, usdt, uni);
 
     const multicallArgs = [
         config.interface.encodeFunctionData("setTreasury", [owner.address]),
         config.interface.encodeFunctionData("setHealthFactorLiquidationThreshold", [expandDecimals(110, 25)]),//110%
         config.interface.encodeFunctionData("setDebtMultiplierFactorForRedeem", [expandDecimals(2, 27)]),//2x
         //User Pool Settings
-        config.interface.encodeFunctionData("setUserPoolInterestRateStrategy", poolInterestRateStrategy.target),
-        config.interface.encodeFunctionData("setUserPoolUnderlyingAssetUsd", usdt),
-        config.interface.encodeFunctionData("setUserPoolConfiguration", bigNumberify(0x3e80500000000000000)),//feeFactor 10%
-        config.interface.encodeFunctionData("setUserPoolDex", dex),
-        config.interface.encodeFunctionData("setUserPoolOracleDecimals", 12),
-        config.interface.encodeFunctionData("setCreateUserPoolOpen", true),
+        config.interface.encodeFunctionData("setUserPoolInterestRateStrategy", [poolInterestRateStrategy.target]),
+        config.interface.encodeFunctionData("setUserPoolUnderlyingAssetUsd", [usdt]),
+        config.interface.encodeFunctionData("setUserPoolConfiguration", [bigNumberify(0x3e80500000000000000)]),//feeFactor 10%
+        config.interface.encodeFunctionData("setUserPoolDex", [dex]),
+        config.interface.encodeFunctionData("setUserPoolOracleDecimals", [12]),
+        config.interface.encodeFunctionData("setCreateUserPoolOpen", [true]),
     ];
     await sendTxn(
         config.multicall(multicallArgs),
@@ -76,7 +77,6 @@ async function main() {
         config.multicall(multicallArgs2),
         "config.multicall"
     );
-
 
     //print pools
     const pools = await reader.getPools(dataStore.target);
