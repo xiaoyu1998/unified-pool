@@ -65,7 +65,7 @@ async function main() {
         const artifact = await hre.artifacts.readArtifact("MockAggregator");
         const oracle = new hre.ethers.Interface(artifact.abi);
         for (const {symbol, address, price} of prices){    
-            if (address == 0) {//remove user created pool
+            if (address == ethers.ZeroAddress) {//remove user created pool
                 continue;
             }
 

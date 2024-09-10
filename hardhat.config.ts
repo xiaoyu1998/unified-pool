@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ignition-ethers";
 import "@nomicfoundation/hardhat-foundry";
+import "hardhat-contract-sizer";
 import { ethers, ignition } from "hardhat";
 import { defaultRpcs } from "./utils/network";
 
@@ -33,7 +34,11 @@ const config: HardhatUserConfig = {
                  enabled: true,
                  runs: 200
              }
-         }
+         },
+        contractSizer: {
+            runOnCompile: true,      // Runs the sizer after each compilation
+            disambiguatePaths: false, // Optional: Disambiguates contracts with the same name
+        },
     },
     networks:{
         localnet: {

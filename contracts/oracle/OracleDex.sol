@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "../dex/IDex2.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "../dex/IDex2.sol";
+import "../utils/Printer.sol";
 
 contract OracleDex {
 
@@ -35,6 +36,10 @@ contract OracleDex {
     ){
         uint256 sqrtPriceX96 = IDex2(dex).getSqrtPriceX96(underlyingAsset, underlyingAssetUsd);
         int256 answer = int256(calcPrice(sqrtPriceX96));
+
+        // Printer.log("sqrtPriceX96", sqrtPriceX96);
+        // Printer.log("answer", answer); 
+
         return (
             uint80(0), // roundId
             answer, // answer
