@@ -2,7 +2,7 @@ import { deployContract,  contractAtWithCode, contractAt, getDeployedContractAdd
 import { bigNumberify, expandDecimals,encodePriceSqrt } from "../utils/math"
 import { MaxUint256, FeeAmount, TICK_SPACINGS } from "../utils/constants";
 import { tokenDecimals} from "../utils/constants";
-import { parsePool} from "../utils/helper";
+import { parsePool, parseToken} from "../utils/helper";
 
 import {
   abi as FACTORY_ABI,
@@ -91,6 +91,11 @@ async function main() {
     for (const pool of pools) {
         console.log(parsePool(pool));
     }
+
+    const tokens = await reader.getTokens(dataStore.target);
+    for (const token of tokens) {
+        console.log(parseToken(token));
+    }    
 
 }
 

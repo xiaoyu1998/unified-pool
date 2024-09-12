@@ -240,6 +240,7 @@ export async function getContract(name) {
                 PoolStoreUtils: poolStoreUtils,
                 PositionStoreUtils: positionStoreUtils,
                 OracleUtils: oracleUtils,
+                OracleStoreUtils: oracleStoreUtils,
                 ReaderPositionUtils: readerPositionUtils,
                 ReaderDexUtils: readerDexUtils,
                 PositionStoreUtils: positionStoreUtils,

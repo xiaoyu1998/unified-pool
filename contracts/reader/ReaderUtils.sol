@@ -15,6 +15,7 @@ import "../position/PositionUtils.sol";
 import "../token/IPoolToken.sol";
 import "../token/IDebtToken.sol";
 import "../oracle/OracleUtils.sol";
+import "../oracle/OracleStoreUtils.sol";
 
 // @title ReaderUtils
 library ReaderUtils {
@@ -276,6 +277,38 @@ library ReaderUtils {
         }
 
         return poolsPrice;
+    }
+
+    struct GetToken {
+        address underlyingAsset;
+        string symbol;
+        uint256 decimals;
+        address oracle;
+        uint256 oracleDecimals;
+    }
+
+    function _getToken(address dataStore, address poolKey) internal view returns (GetToken memory) {
+        Pool.Props memory pool =  PoolStoreUtils.get(dataStore, poolKey);
+        GetToken memory token = GetToken(
+            pool.underlyingAsset,
+            IERC20Metadata(pool.underlyingAsset).symbol(),
+            PoolConfigurationUtils.getDecimals(pool.configuration),
+            OracleStoreUtils.get(dataStore, pool.underlyingAsset),
+            OracleStoreUtils.getOracleDecimals(dataStore, pool.underlyingAsset)
+        );
+
+        return token;
+    }
+
+    function _getTokens(address dataStore, uint256 start, uint256 end) internal view returns (GetToken[] memory) {
+        address[] memory poolKeys = PoolStoreUtils.getPoolKeys(dataStore, start, end);
+        GetToken[] memory tokens = new GetToken[](poolKeys.length);
+        for (uint256 i; i < poolKeys.length; i++) {
+            address poolKey = poolKeys[i];
+            tokens[i] = _getToken(dataStore, poolKey);
+        }
+
+        return tokens;
     }
     
 }

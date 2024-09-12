@@ -155,5 +155,10 @@ contract Reader {
     //     return PoolStoreUtils.getUserPoolOracleDecimals(dataStore);
     // }
 
+    function getTokens(address dataStore) external view returns (ReaderUtils.GetToken[] memory) {
+        uint256 poolsCount = PoolStoreUtils.getPoolCount(dataStore);
+        return ReaderUtils._getTokens(dataStore, 0, poolsCount);
+    }
+
 
 }

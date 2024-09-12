@@ -8,6 +8,17 @@ import {
     DexStoreUtils
 } from "../typechain-types/contracts/reader/Reader";
 
+export function parseToken(token) {
+    const t: ReaderUtils.GetTokenStructOutput = {
+        underlyingAsset: token[0],
+        symbol: token[1],
+        decimals: Number(token[2]),
+        oracle: token[3],
+        oracleDecimals: Number(token[4]),
+    };
+    return t;
+}
+
 export function parsePool(pool) {
     const p: Pool.PropsStructOutput = {
         keyId: pool[0],
