@@ -33,7 +33,7 @@ async function main() {
         "address": uni.target, 
         "decimals": tokenDecimals, 
         "oracle": ethers.ZeroAddress,//user created pool
-        "oracleDecimals": tokenOracleDecimals.toString(),
+        "oracleDecimals": Number(tokenOracleDecimals),
     }});
 
     console.log("uniOracleDecimals", tokenOracleDecimals.toString())
