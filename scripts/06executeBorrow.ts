@@ -65,7 +65,7 @@ async function main() {
     console.log("poolUsdt", poolUsdt);
     console.log("poolUni", poolUni);
     console.log("assets",await getAssets(dataStore, reader, owner.address));
-    console.log("positions",await getPositions(dataStore, reader, owner.address)); 
+    // console.log("positions",await getPositions(dataStore, reader, owner.address)); 
     console.log("positionsInfo",await getPositionsInfo(dataStore, reader, owner.address)); 
     console.log("poolUsdt",await usdt.balanceOf(poolUsdt.poolToken)); 
     console.log("poolUni",await uni.balanceOf(poolUni.poolToken)); 
