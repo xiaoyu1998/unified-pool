@@ -29,7 +29,7 @@ async function main() {
         "poolFactory.createPool(eth)"
     );
 
-    //set pools configuration
+    //set user create pool configuration
     const dex = await reader.getDex(dataStore.target, usdt, eth);
 
     await sendTxn(
@@ -74,8 +74,8 @@ async function main() {
     //     "config.multicall"
     // );
 
-    const config = await getContract("Config");
     // usdt and eth pool settings
+    const config = await getContract("Config");
     const multicallArgs = [
         //settings
         config.interface.encodeFunctionData("setTreasury", [owner.address]),

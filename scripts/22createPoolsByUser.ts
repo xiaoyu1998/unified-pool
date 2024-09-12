@@ -27,7 +27,8 @@ async function main() {
     await sendTxn(uni.connect(user0).mint(user0.address, expandDecimals(2000000, tokenDecimals)), "uni.mint");
     await sendTxn(uni.connect(user0).mint(owner.address, expandDecimals(2000000, tokenDecimals)), "uni.mint");
 
-    let tokenOracleDecimals = await reader.getUserPoolOracleDecimals(dataStore.target);
+    //let tokenOracleDecimals = await reader.getUserPoolOracleDecimals(dataStore.target);
+    let tokenOracleDecimals = await poolFactory.oracleDecimals();
     writeTokenAddresses({"UNI": {
         "address": uni.target, 
         "decimals": tokenDecimals, 
