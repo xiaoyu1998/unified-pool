@@ -22,25 +22,20 @@ async function main() {
     const dataStore = await getContract("DataStore"); 
     const reader = await getContract("Reader");  
 
-    //create underlyingAssets
+    //create usdt and eth
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
-    //const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
     const eth = await deployContract("MintableToken", ["ETH", "ETH", ethDecimals])
     await sendTxn(usdt.mint(owner.address, expandDecimals(200000000, usdtDecimals)), "usdt.mint");
-    //await sendTxn(uni.mint(owner.address, expandDecimals(20000000, uniDecimals)), "uni.mint");
     await sendTxn(usdt.mint(user0.address, expandDecimals(200000000, usdtDecimals)), "usdt.mint");
     await sendTxn(eth.mint(owner.address, expandDecimals(2000000, ethDecimals)), "eth.mint");
 
     //set oracle
     const usdtOracle = await deployContract("MockAggregator", [usdtOracleDecimals, expandDecimals(1, usdtOracleDecimals)]);
-    //const uniOracle = await deployContract("MockAggregator", [uniOracleDecimals, expandDecimals(8, uniOracleDecimals)]);
     const ethOracle = await deployContract("MockAggregator", [ethOracleDecimals, expandDecimals(3539, ethOracleDecimals)]);
     const config = await getContract("Config");
     const multicallArgs = [
         config.interface.encodeFunctionData("setOracle", [usdt.target, usdtOracle.target]),
         config.interface.encodeFunctionData("setOracleDecimals", [usdt.target, usdtOracleDecimals]),
-        // config.interface.encodeFunctionData("setOracle", [uni.target, uniOracle.target]),
-        // config.interface.encodeFunctionData("setOracleDecimals", [uni.target, uniOracleDecimals]),
         config.interface.encodeFunctionData("setOracle", [eth.target, ethOracle.target]),
         config.interface.encodeFunctionData("setOracleDecimals", [eth.target, ethOracleDecimals]),
     ];
@@ -53,13 +48,6 @@ async function main() {
         "oracle":usdtOracle.target,
         "oracleDecimals":usdtOracleDecimals,
     }});
-
-    // writeTokenAddresses({"UNI": {
-    //     "address":uni.target, 
-    //     "decimals":uniDecimals, 
-    //     "oracle":uniOracle.target,
-    //     "oracleDecimals":uniOracleDecimals,
-    // }});
 
     writeTokenAddresses({"ETH": {
         "address":eth.target, 
@@ -80,7 +68,7 @@ async function main() {
     setDeployedContractAddress("UniswapV3Factory", factory.target);
     await sendTxn(await factory.createPool(usdtAddress, ethAddress, FeeAmount.MEDIUM), "factory.createPool");
 
-    //initialize pool and mint
+    //initialize swap pool and mint
     const uniswapPoolAddress = await factory.getPool(ethAddress, usdtAddress,  FeeAmount.MEDIUM);
     const uniswapPool = await contractAtWithCode(POOL_ABI, POOL_BYTECODE, uniswapPoolAddress, owner);
     const sqrtPriceX96 = ethIsZero?
@@ -101,42 +89,12 @@ async function main() {
     console.log("userUsdtAfterMint", await usdt.balanceOf(owner.address)); 
     console.log("userEthAfterMint", await eth.balanceOf(owner.address)); 
 
-    //dex havs add role controller
-    //const dex = await deployContract("DexUniswapV3", [roleStore, usdtAddress, uniAddress, FeeAmount.MEDIUM, uniswapPool.target]);
-    const dex = await deployContract("DexUniswap2", [roleStore, factory.target, FeeAmount.MEDIUM]);
-    // await sendTxn(uni.approve(dex.target, MaxUint256), "uni.approve");
-    // await sendTxn(dex.swapExactIn(owner.address, uniAddress, expandDecimals(1, uniDecimals), owner.address, 0), "dex.swapExactIn");
-    // console.log("userUsdtAfterSwap",await usdt.balanceOf(owner.address)); 
-    // console.log("userUniAfterSwap",await uni.balanceOf(owner.address)); 
-
     //set dex
+    const dex = await deployContract("DexUniswap2", [roleStore, factory.target, FeeAmount.MEDIUM]);
     const multicallArgs2 = [
         config.interface.encodeFunctionData("setDex", [usdt.target, eth.target, dex.target]),
     ];
     await sendTxn(config.multicall(multicallArgs2), "config.multicall");
-
-    //quoter 
-    //const feeAmount = await dex.getFeeAmount();
-    const feeAmount = await reader.getDexPoolFeeAmount(dataStore, ethAddress, usdtAddress);
-    const quoter = await deployContract("Quoter", [factory.target]);
-    const ethAmountIn = expandDecimals(10000, ethDecimals);
-    const [usdtAmountOut, startSqrtPriceX96] = await quoter.quoteExactInputSingle.staticCall(
-        ethAddress, 
-        usdtAddress,
-        feeAmount,
-        ethAmountIn,
-        0 //the max sqrtPriceLimitX96 
-    );
-    console.log("quoter", quoter.target);
-    //console.log("fee", calcFee(ethAmountIn, feeAmount, FeePercentageFactor).toString()); //should get the eth price to calc values in usd
-    console.log("fee", await reader.getDexPoolSwapConstantFee(dataStore, ethAddress, usdtAddress, ethAmountIn)); 
-    console.log("priceImpact", calcPriceImpact(usdtAmountOut, ethAmountIn, startSqrtPriceX96, ethIsZero).toString()); 
-    console.log("silppage", calcSilppage(usdtAmountOut, ethAmountIn, startSqrtPriceX96, ethIsZero).toString()); //delete feeAmount in amountIn to get the silppage without fee
-    console.log("startSqrtPriceX96", startSqrtPriceX96, "sqrtPriceLimitX96", calcSqrtPriceLimitX96(startSqrtPriceX96, "0.05", ethIsZero).toString());
-
-    //estimateGas
-    // const estimatedGas = await eth.approve.estimateGas(dex.target, MaxUint256);
-    // console.log("estimatedGas", estimatedGas);
 
     //getDexs
     console.log("key", dexKey(usdtAddress, ethAddress));

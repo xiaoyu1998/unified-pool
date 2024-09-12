@@ -54,7 +54,7 @@ contract PoolFactory is RoleModule {
         dex = _dex;
     }
 
-    function getUserPoolUnderlyingAssetUsd(address _underlyingAssetUsd) external onlyPoolKeeper {
+    function setUserPoolUnderlyingAssetUsd(address _underlyingAssetUsd) external onlyPoolKeeper {
         underlyingAssetUsd = _underlyingAssetUsd;
     }
 
@@ -62,7 +62,7 @@ contract PoolFactory is RoleModule {
         configuration = _configuration;
     }
 
-    function getUserPoolOracleDecimals(uint256 _oracleDecimals) external onlyPoolKeeper {
+    function setUserPoolOracleDecimals(uint256 _oracleDecimals) external onlyPoolKeeper {
         oracleDecimals = _oracleDecimals;
     }
 
