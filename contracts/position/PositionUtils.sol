@@ -80,8 +80,8 @@ library PositionUtils {
             }
 
             (   uint256 userCollateralUsd, 
-                uint256 userDebtUsd) = 
-                calculateUserCollateralAndDebtInPosition(dataStore, position);
+                uint256 userDebtUsd
+            ) = calculateUserCollateralAndDebtInPosition(dataStore, position);
 
             userTotalCollateralUsd += userCollateralUsd;
             userTotalDebtUsd += userDebtUsd;            
@@ -156,13 +156,7 @@ library PositionUtils {
             uint256 userTotalDebtUsd
         ) = PositionUtils.calculateUserTotalCollateralAndDebt(account, dataStore, address(0));
 
-        //uint256 healthFactor;
-        // if (userTotalDebtUsd > 0 )
-        //     healthFactor = userTotalCollateralUsd.rayDiv(userTotalDebtUsd);
-        // else
-        //     healthFactor = type(uint256).max;
-
-        uint256 healthFactor = (userTotalDebtUsd > 0 ) 
+        uint256 healthFactor = (userTotalDebtUsd > 0) 
             ? userTotalCollateralUsd.rayDiv(userTotalDebtUsd)
             : type(uint256).max;
 
