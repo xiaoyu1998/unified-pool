@@ -54,26 +54,51 @@ async function main() {
     );
 
     const assetsBeforeRepay = await getAssets(dataStore, reader, owner.address);
-
-    // //execute sell uni to repay 50% usdt debt
     const repayHalfDebtAmount = borrowAmmount/bigNumberify(2);
-    const params: RepaytUtils.RepayParamsStruct = {
+
+    //repay debt by all usdt collateral
+    const paramsSwap2: SwapUtils.SwapParamsStruct = {
+        underlyingAssetIn: uniAddress,
+        underlyingAssetOut: usdtAddress,
+        amount: expandDecimals(10000, uniDecimals),
+        sqrtPriceLimitX96: 0
+    };
+    const paramsRepay: RepaytUtils.RepayParamsStruct = {
         underlyingAsset: usdtAddress,
-        amount: repayHalfDebtAmount,
-        substitute: uniAddress
+        amount: repayHalfDebtAmount,//repay amount must larger than collateral
+        substitute: ethers.ZeroAddress,//set ZeroAddress, replay by all usdt collateral
     };
     const multicallArgs2 = [
-        //add swaps for sell the entire amount of a type of collateral in user's selected order
-        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
+        exchangeRouter.interface.encodeFunctionData("executeSwap", [paramsSwap2]),
+        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [paramsRepay]),
     ];
+
     await sendTxn(
         exchangeRouter.multicall(multicallArgs2),
         "exchangeRouter.multicall"
     );
 
+    const assetsAfterRepay1 = await getAssets(dataStore, reader, owner.address);
+    
+    //repay all debt by uni, this action will fail, if there isn't engough uni
+    const params: RepaytUtils.RepayParamsStruct = {
+        underlyingAsset: usdtAddress,
+        amount: repayHalfDebtAmount,
+        substitute: uniAddress
+    };
+    const multicallArgs3 = [
+        //add swaps for sell the entire amount of a type of collateral in user's selected order
+        exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
+    ];
+    await sendTxn(
+        exchangeRouter.multicall(multicallArgs3),
+        "exchangeRouter.multicall"
+    );
+
     //print 
     console.log("assetsBeforeRepay", assetsBeforeRepay);
-    console.log("assetsAfterRepay", await getAssets(dataStore, reader, owner.address));
+    console.log("assetsAfterRepay1", assetsAfterRepay1);
+    console.log("assetsAfterRepay2", await getAssets(dataStore, reader, owner.address));
     console.log("positions", await getPositions(dataStore, reader, owner.address)); 
 
 }

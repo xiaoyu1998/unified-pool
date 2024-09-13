@@ -123,5 +123,29 @@ describe("Position LongPosition", () => {
         expect(positionOutput.accShortAmount).eq(0);
     });
 
+    it("longPosition short to long, accShortAmount = amount", async () => {
+        let price = expandDecimals(8, usdtOracleDecimals);
+        let amount = expandDecimals(1, usdtDecimals);
+        const position: Position.PropsStructOutput = {
+            account: ethers.ZeroAddress,
+            underlyingAsset: ethers.ZeroAddress,
+            entryLongPrice: 0,
+            accLongAmount: 0,
+            entryShortPrice: price,
+            accShortAmount: amount,
+            positionType: 0,
+            hasCollateral: true,
+            hasDebt: true,
+        };
+
+        let newAmount = amount;
+        let positionOutput = await positionTest.longPosition(position, price, newAmount, false);
+        expect(positionOutput.positionType).eq(2);
+        expect(positionOutput.entryLongPrice).eq(0);
+        expect(positionOutput.accLongAmount).eq(0);
+        expect(positionOutput.entryShortPrice).eq(0);
+        expect(positionOutput.accShortAmount).eq(0);
+    });
+
 
 }); 

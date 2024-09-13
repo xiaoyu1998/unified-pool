@@ -106,7 +106,7 @@ library WithdrawUtils {
     function validateWithdraw(
         Pool.Props memory pool,
         uint256 amount
-    ) internal view{
+    ) internal pure{
         PoolUtils.validateConfigurationPool(pool, false);    
 
         if (amount == 0) { 

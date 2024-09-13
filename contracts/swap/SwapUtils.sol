@@ -165,6 +165,7 @@ library SwapUtils {
             }
 
             if (!vars.poolInIsUsd && vars.poolOutIsUsd) { //Short in
+                //Printer.log("vars.amountIn", vars.amountIn);
                 PositionUtils.shortPosition(vars.positionIn,  vars.price, vars.amountIn, true);
             } 
         } else {//swap without usd
@@ -404,7 +405,7 @@ library SwapUtils {
         Pool.Props memory poolOut,
         uint256 amount,
         address dex
-    ) internal {
+    ) internal view {
         if (dex == address(0)){
              revert Errors.SwapPoolsNotMatch(poolIn.underlyingAsset, poolOut.underlyingAsset);
         }

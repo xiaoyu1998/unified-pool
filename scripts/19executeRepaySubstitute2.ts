@@ -18,17 +18,15 @@ async function main() {
     const usdt = await contractAt("MintableToken", usdtAddress);
     const uni = await contractAt("MintableToken", uniAddress);
 
-
-    //const assetsBeforeRepay = await getAssets(dataStore, reader, owner.address);
+    const assetsBeforeRepay = await getAssets(dataStore, reader, owner.address);
     const uniBeforeRepay = await getMarginAndSupply(dataStore, reader, owner.address, uniAddress);
-    console.log(owner.address);
-    console.log(uniBeforeRepay);
+    const balanceUniBeforeRepay = await uni.balanceOf(owner.address);
     const poolUni = await getPoolInfo(uniAddress); 
 
-    // //execute sell uni to repay 50% usdt debt
-    const repayHalfDebtAmount = uniBeforeRepay.debt/bigNumberify(2);
+    // transfer total uni debt+1 to repay all debt
+    const repayAllDebtAmount = uniBeforeRepay.debt + expandDecimals(1, uniDecimals);
     await sendTxn(
-        uni.approve(router.target, repayHalfDebtAmount),
+        uni.approve(router.target, repayAllDebtAmount),
         "uni.approve"
     );
     const params: RepaytUtils.RepayParamsStruct = {
@@ -37,8 +35,7 @@ async function main() {
         substitute: uniAddress
     }; 
     const multicallArgs2 = [
-        //add swaps for sell the entire amount of a type of collateral in user's selected order
-        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, repayHalfDebtAmount]),
+        exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, repayAllDebtAmount]),
         exchangeRouter.interface.encodeFunctionData("executeRepaySubstitute", [params]),
     ];
 
@@ -50,11 +47,14 @@ async function main() {
         "exchangeRouter.multicall"
     );
 
-
     //print 
-    // console.log("assetsBeforeRepay", assetsBeforeRepay);
-    // console.log("assetsAfterRepay", await getAssets(dataStore, reader, owner.address));
-    // console.log("positions", await getPositions(dataStore, reader, owner.address)); 
+    console.log("assetsBeforeRepay", assetsBeforeRepay);
+    console.log("assetsAfterRepay", await getAssets(dataStore, reader, owner.address));
+    //console.log("positions", await getPositions(dataStore, reader, owner.address)); 
+    console.log("balanceUniBeforeRepay", balanceUniBeforeRepay);
+    console.log("uniBeforeRepay.debt", uniBeforeRepay.debt );
+    console.log("repayAllDebtAmount", repayAllDebtAmount );
+    console.log("balanceUniAfterRepay", await uni.balanceOf(owner.address));
 
 }
 
