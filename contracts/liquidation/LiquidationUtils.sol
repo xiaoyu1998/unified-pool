@@ -48,6 +48,9 @@ library LiquidationUtils {
         IDebtToken debtToken;
         uint256 collateralAmount;
         uint256 debtAmount;
+        uint256 collateralAmountUsd;
+        uint256 debtAmountUsd;
+        uint256 priceUsd;
         uint256 i;
     }
 
@@ -119,8 +122,10 @@ library LiquidationUtils {
                 vars.poolToken.syncUnderlyingAssetBalance();             
             }
 
-            PositionUtils.reset(vars.position);
-            PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);
+            // PositionUtils.reset(vars.position);
+            // PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position);
+            //TODO: should be remove position
+            PositionStoreUtils.remove(params.dataStore, vars.positionKey, params.account);
 
             PoolUtils.updateInterestRates(
                 params.eventEmitter,
@@ -134,14 +139,38 @@ library LiquidationUtils {
                 vars.pool
             );
 
-            LiquidationEventUtils.emitPositionLiquidation(
+            // LiquidationEventUtils.emitPositionLiquidation(
+            //     params.eventEmitter, 
+            //     liquidator,
+            //     vars.position.underlyingAsset, 
+            //     params.account, 
+            //     vars.collateralAmount,
+            //     vars.debtAmount,
+            //     OracleUtils.getPrice(params.dataStore, vars.position.underlyingAsset)
+            // );
+            if (vars.collateralAmount == 0 && vars.debtAmount == 0) continue;
+
+            vars.priceUsd = OracleUtils.getPrice(params.dataStore, vars.position.underlyingAsset);
+            vars.collateralAmountUsd = PositionUtils.getValueUsd(
+                params.dataStore, 
+                vars.pool.configuration,
+                vars.priceUsd,
+                vars.collateralAmount
+            );
+            vars.debtAmountUsd = PositionUtils.getValueUsd(
+                params.dataStore, 
+                vars.pool.configuration,
+                vars.priceUsd,
+                vars.debtAmount
+            );
+
+            LiquidationEventUtils.emitLiquidationPosition(
                 params.eventEmitter, 
                 liquidator,
                 vars.position.underlyingAsset, 
                 params.account, 
-                vars.collateralAmount,
-                vars.debtAmount,
-                OracleUtils.getPrice(params.dataStore, vars.position.underlyingAsset)
+                vars.collateralAmountUsd,
+                vars.debtAmountUsd
             );
         }
     }

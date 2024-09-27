@@ -71,13 +71,21 @@ contract EventEmitter is RoleModule {
         uint256 debtScaledOut
     );
 
-    event PositionLiquidation(
+    // event PositionLiquidation(
+    //     address indexed liquidator,
+    //     address indexed pool,
+    //     address indexed account,
+    //     uint256 collateral,
+    //     uint256 debt,
+    //     uint256 price
+    // );
+
+    event LiquidationPosition(
         address indexed liquidator,
         address indexed pool,
         address indexed account,
-        uint256 collateral,
-        uint256 debt,
-        uint256 price
+        uint256 collateralUsd,
+        uint256 debtUsd
     );
 
     event Liquidation(
@@ -257,21 +265,37 @@ contract EventEmitter is RoleModule {
         );
     }
 
-    function emitPositionLiquidation(
+    // function emitPositionLiquidation(
+    //     address liquidator,
+    //     address underlyingAsset,
+    //     address account,
+    //     uint256 collateral,
+    //     uint256 debt,
+    //     uint256 price
+    // ) external onlyController {
+    //     emit PositionLiquidation(
+    //         liquidator,
+    //         underlyingAsset,
+    //         account,
+    //         collateral,
+    //         debt,
+    //         price
+    //     );
+    // }
+
+    function emitLiquidationPosition(
         address liquidator,
         address underlyingAsset,
         address account,
-        uint256 collateral,
-        uint256 debt,
-        uint256 price
+        uint256 collateralUsd,
+        uint256 debtUsd
     ) external onlyController {
-        emit PositionLiquidation(
+        emit LiquidationPosition(
             liquidator,
             underlyingAsset,
             account,
-            collateral,
-            debt,
-            price
+            collateralUsd,
+            debtUsd
         );
     }
 

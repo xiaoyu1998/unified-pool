@@ -119,6 +119,21 @@ library PositionUtils {
 
         return (userCollateralUsd, userDebtUsd);
     }
+
+    function getValueUsd(
+        address dataStore,
+        uint256 configuration,
+        uint256 priceUsd,
+        uint256 amount
+    ) internal view returns (uint256) {
+
+        if (amount == 0) return 0;
+
+        uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
+        uint256 adjustAmount = Math.mulDiv(amount, WadRayMath.RAY, 10**decimals);//amount align to Ray
+        return  adjustAmount.rayMul(priceUsd);
+    }
+
     // T = (C + C1*P)/(D + D1*P)
     // P = (T*D - C)/(C1 - T*D1)
     function getLiquidationPrice(
