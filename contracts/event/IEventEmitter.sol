@@ -66,13 +66,21 @@ interface IEventEmitter {
         uint256 debtScaledOut
     ) external;
 
-    function emitPositionLiquidation(
+    // function emitPositionLiquidation(
+    //     address liquidator,
+    //     address underlyingAsset,
+    //     address account,
+    //     uint256 collateral,
+    //     uint256 debt,
+    //     uint256 price
+    // ) external;
+
+    function emitLiquidationPosition(
         address liquidator,
         address underlyingAsset,
         address account,
-        uint256 collateral,
-        uint256 debt,
-        uint256 price
+        uint256 collateralUsd,
+        uint256 debtUsd
     ) external;
 
     function emitLiquidation(

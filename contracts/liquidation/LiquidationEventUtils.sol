@@ -6,22 +6,38 @@ import "../event/IEventEmitter.sol";
 
 library LiquidationEventUtils {
 
-    function emitPositionLiquidation(
+    // function emitPositionLiquidation(
+    //     address eventEmitter,
+    //     address liquidator,
+    //     address underlyingAsset,
+    //     address account,
+    //     uint256 collateral,
+    //     uint256 debt,
+    //     uint256 price
+    // ) external {
+    //     IEventEmitter(eventEmitter).emitPositionLiquidation(
+    //         liquidator,
+    //         underlyingAsset,
+    //         account,
+    //         collateral,
+    //         debt,
+    //         price
+    //     );
+    // }
+    function emitLiquidationPosition(
         address eventEmitter,
         address liquidator,
         address underlyingAsset,
         address account,
-        uint256 collateral,
-        uint256 debt,
-        uint256 price
+        uint256 collateralUsd,
+        uint256 debtUsd
     ) external {
-        IEventEmitter(eventEmitter).emitPositionLiquidation(
+        IEventEmitter(eventEmitter).emitLiquidationPosition(
             liquidator,
             underlyingAsset,
             account,
-            collateral,
-            debt,
-            price
+            collateralUsd,
+            debtUsd
         );
     }
 

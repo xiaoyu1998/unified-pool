@@ -26,7 +26,7 @@ async function main() {
     const usdt = await deployContract("MintableToken", ["Tether", "USDT", usdtDecimals])
     const uni = await deployContract("MintableToken", ["UNI", "UNI", uniDecimals])
     const eth = await deployContract("MintableToken", ["ETH", "ETH", ethDecimals])
-    await sendTxn(usdt.mint(owner.address, expandDecimals(100000000, usdtDecimals)), "usdt.mint");
+    await sendTxn(usdt.mint(owner.address, expandDecimals(200000000, usdtDecimals)), "usdt.mint");
     await sendTxn(uni.mint(owner.address, expandDecimals(20000000, uniDecimals)), "uni.mint");
     await sendTxn(eth.mint(owner.address, expandDecimals(10000, ethDecimals)), "eth.mint");
 

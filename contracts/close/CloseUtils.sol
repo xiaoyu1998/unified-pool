@@ -57,9 +57,12 @@ library CloseUtils {
         uint256 collateralAmount;
         uint256 collateralAmountToSell;
         RepayUtils.ExecuteRepayParams repayParams;
-        uint256 remainAmount;
-        uint256 remainAmountUsd;
+        uint256 remainCollateral;
+        uint256 remainCollateralUsd;
         SwapUtils.ExecuteSwapParams swapParams;
+
+        bool isSellPercentageCollateralOnly;
+        bool isRepayAllDebt;
     }
 
     // @dev executes a position close
@@ -98,13 +101,14 @@ library CloseUtils {
             params.percentage
         );
 
+        vars.isSellPercentageCollateralOnly = (vars.debtAmount == 0 && params.percentage != WadRayMath.RAY);
+
         //sell percentage collateral only
-        if (vars.debtAmount == 0 &&
-            vars.position.underlyingAsset != params.underlyingAssetUsd &&
-            params.percentage != WadRayMath.RAY
+        if (vars.position.underlyingAsset != params.underlyingAssetUsd &&
+            vars.isSellPercentageCollateralOnly
         ) {
             vars.collateralAmountToSell = vars.collateralAmount.rayMul(params.percentage);
-            vars.remainAmount = vars.collateralAmount - vars.collateralAmountToSell;
+            vars.remainCollateral = vars.collateralAmount - vars.collateralAmountToSell;
             vars.swapParams = SwapUtils.ExecuteSwapParams(
                 params.dataStore,
                 params.eventEmitter,
@@ -126,7 +130,7 @@ library CloseUtils {
                 //0,//debtAmount
                 0,//debtAmountToClose
                 0,//remainUsd
-                vars.remainAmount,
+                vars.remainCollateral,
                 vars.poolTokenUsd.balanceOfCollateral(account),
                 vars.debtTokenUsd.scaledBalanceOf(account)  
             );
@@ -134,7 +138,10 @@ library CloseUtils {
         }
 
         //repay debt
-        vars.debtAmountToClose = vars.debtAmount.rayMul(params.percentage);
+        vars.isRepayAllDebt = (params.percentage == WadRayMath.RAY);
+        vars.debtAmountToClose = vars.isRepayAllDebt
+                                    ?vars.debtAmount
+                                    :vars.debtAmount.rayMul(params.percentage);
         if (vars.debtAmountToClose > 0) {
             vars.repayParams = RepayUtils.ExecuteRepayParams(
                 params.dataStore,
@@ -145,19 +152,19 @@ library CloseUtils {
             RepayUtils.executeRepay(account, vars.repayParams);
         }
 
-        //sell the left collateral for 100% close
-        vars.remainAmount = vars.collateralAmount - vars.debtAmountToClose;
-        vars.remainAmountUsd = vars.remainAmount;
+        //sell the left collateral after 100% debt close
+        vars.remainCollateral = vars.collateralAmount - vars.debtAmountToClose;
+        vars.remainCollateralUsd = vars.remainCollateral;
         vars.collateralAmountToSell = 0;
-        if (vars.remainAmount > 0 && 
+        if (vars.remainCollateral > 0 && 
             params.underlyingAsset != params.underlyingAssetUsd
         ) {
-            //dont sell collateral if the close pecentage is below 100%
-            vars.remainAmountUsd = 0;
-
-            // 100% debt close and sell out entire remain collateral to usd
-            if (params.percentage == WadRayMath.RAY ) {
-                vars.collateralAmountToSell = vars.remainAmount;
+            //dont sell collateral if the close pecentage is < 100%
+            vars.remainCollateralUsd = 0;
+   
+            // sell out entire remain collateral to usd if the close pecentage is 100%
+            if (vars.isRepayAllDebt ) {
+                vars.collateralAmountToSell = vars.remainCollateral;
                 vars.swapParams = SwapUtils.ExecuteSwapParams(
                     params.dataStore,
                     params.eventEmitter,
@@ -166,17 +173,20 @@ library CloseUtils {
                     vars.collateralAmountToSell,
                     0
                 );
-                vars.remainAmountUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
-                vars.remainAmount = 0;
+                vars.remainCollateralUsd = SwapUtils.executeSwapExactIn(account, vars.swapParams);
+                vars.remainCollateral = 0;
             } 
         }
 
-        //reset position
+        //reset position after repay 100% debt close and remainCollateral == 0
         if (vars.position.underlyingAsset != params.underlyingAssetUsd &&
-            vars.remainAmount == 0
+            vars.remainCollateral == 0 &&  //collateral == 0
+            vars.isRepayAllDebt //debt == 0
         ) {
-            PositionUtils.reset(vars.position);
-            PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position); 
+            // PositionUtils.reset(vars.position);
+            // PositionStoreUtils.set(params.dataStore, vars.positionKey, vars.position); 
+            //TODO: should be remove position
+            PositionStoreUtils.remove(params.dataStore, vars.positionKey, account);
         }  
 
         //TODO:stack too deep
@@ -189,8 +199,8 @@ library CloseUtils {
             vars.collateralAmountToSell,
             // vars.debtAmount, 
             vars.debtAmountToClose,
-            vars.remainAmount,
-            vars.remainAmountUsd,
+            vars.remainCollateral,
+            vars.remainCollateralUsd,
             vars.poolTokenUsd.balanceOfCollateral(account),
             vars.debtTokenUsd.scaledBalanceOf(account)  
         );
@@ -376,8 +386,10 @@ library CloseUtils {
             }
             //reset position for other asset, and retain the usd
             if (vars.position.underlyingAsset != params.underlyingAssetUsd) {
-                PositionUtils.reset(vars.position);
-                PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position); 
+                // PositionUtils.reset(vars.position);
+                // PositionStoreUtils.set(params.dataStore, vars.positionKeys[vars.i], vars.position); 
+                //TODO: should be remove position
+                PositionStoreUtils.remove(params.dataStore, vars.positionKeys[vars.i], account);
             }         
         }  
         vars.amountUsdAfterBuyCollateralAndRepay = vars.poolTokenUsd.balanceOfCollateral(account); 

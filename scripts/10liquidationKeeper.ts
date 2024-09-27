@@ -1,4 +1,4 @@
-import { contractAt, sendTxn, getContract, getEventEmitter, getDeployedContractAddresses } from "../utils/deploy";
+import { contractAt, sendTxn, getContract, getEventEmitter, getDeployedContractAddress } from "../utils/deploy";
 import { getLiquidationHealthFactor, getLiquidityAndDebts } from "../utils/helper";
 import { MaxUint256 } from "../utils/constants";
 import { expandDecimals } from "../utils/math";
@@ -18,7 +18,7 @@ async function liquidation(account){
     const exchangeRouter = await getContract("ExchangeRouter"); 
     const dataStore = await getContract("DataStore");   
     const reader = await getContract("Reader"); 
-    const liquidationHandler = await getDeployedContractAddresses("LiquidationHandler");
+    const liquidationHandler = await getDeployedContractAddress("LiquidationHandler");
     const liquidityAndDebts = await getLiquidityAndDebts(dataStore, reader, account);
     for(const l of liquidityAndDebts) {
         if (l.debt > 0) {
