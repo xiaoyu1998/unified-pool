@@ -156,8 +156,8 @@ library CloseUtils {
         vars.remainCollateral = vars.collateralAmount - vars.debtAmountToClose;
         vars.remainCollateralUsd = vars.remainCollateral;
         vars.collateralAmountToSell = 0;
-        if (vars.remainCollateral > 0 && 
-            params.underlyingAsset != params.underlyingAssetUsd
+        if (params.underlyingAsset != params.underlyingAssetUsd && 
+            vars.remainCollateral > 0
         ) {
             //dont sell collateral if the close pecentage is < 100%
             vars.remainCollateralUsd = 0;
@@ -265,7 +265,7 @@ library CloseUtils {
         RepayUtils.ExecuteRepayParams repayParams;
         SwapUtils.ExecuteSwapParams swapParams;
         uint256 collateralAmountUsd;
-        uint256 CollateralAmountNeededUsd;
+        uint256 collateralAmountNeededUsd;
         uint256 i;
 
         uint256 amountUsdStartClose;
@@ -364,11 +364,11 @@ library CloseUtils {
                         vars.debtAmount,
                         0//should be have a sqrtPriceLimitX96
                     );
-                    vars.CollateralAmountNeededUsd = SwapUtils.executeSwapExactOut(account, vars.swapParams);
-                    if (vars.CollateralAmountNeededUsd > vars.collateralAmountUsd) {
+                    vars.collateralAmountNeededUsd = SwapUtils.executeSwapExactOut(account, vars.swapParams);
+                    if (vars.collateralAmountNeededUsd > vars.collateralAmountUsd) {
                         revert Errors.UsdCollateralCanNotCoverDebt(
-                            vars.collateralAmount, 
-                            vars.CollateralAmountNeededUsd, 
+                            vars.collateralAmountUsd, 
+                            vars.collateralAmountNeededUsd, 
                             vars.debtAmount, 
                             vars.position.underlyingAsset
                         );
