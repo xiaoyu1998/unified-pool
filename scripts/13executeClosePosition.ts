@@ -60,8 +60,8 @@ async function main() {
     const params: CloseUtils.ClosePositionParamsStruct = {
         underlyingAsset: uniAddress,
         underlyingAssetUsd: usdtAddress,
-        percentage: expandDecimals(5, 26)//50%
-        //percentage: expandDecimals(1, 27)//100%
+        //percentage: expandDecimals(5, 26)//50%
+        percentage: expandDecimals(1, 27)//100%
     };
     const multicallArgs = [
         exchangeRouter.interface.encodeFunctionData("sendTokens", [uniAddress, poolUni.poolToken, depositAmmountUni]),

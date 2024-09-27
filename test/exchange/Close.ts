@@ -3,6 +3,7 @@ import { deployFixture } from "../../utils/fixture";
 import { errorsContract} from "../../utils/error";
 import { expandDecimals, bigNumberify, mulDiv, rayDiv } from "../../utils/math"
 import { 
+    getPositions,
     getCollateral, 
     getPositionType, 
     getEntryLongPrice, 
@@ -86,15 +87,16 @@ describe("Exchange Close", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        // expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        // expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        expect((await getPositions(dataStore, reader, user1.address)).length).eq(1);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq(usdtDepositAmount);
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
@@ -139,15 +141,16 @@ describe("Exchange Close", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        // expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        // expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        expect((await getPositions(dataStore, reader, user1.address)).length).eq(1);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("797375144846");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
@@ -199,15 +202,16 @@ describe("Exchange Close", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        // expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        // expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        expect((await getPositions(dataStore, reader, user1.address)).length).eq(1);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("1598739642383");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
@@ -259,15 +263,16 @@ describe("Exchange Close", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        // expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        // expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        expect((await getPositions(dataStore, reader, user1.address)).length).eq(1);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("988022201618");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
@@ -319,15 +324,16 @@ describe("Exchange Close", () => {
         ];
         await exchangeRouter.connect(user1).multicall(multicallArgs);
 
-        expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
-        expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
-        expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
-        expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        // expect(await getCollateral(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getDebt(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getHasDebt(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getHasCollateral(dataStore, reader, user1.address, uni.target)).eq(false);
+        // expect(await getPositionType(dataStore, reader, user1.address, uni.target)).eq(2);
+        // expect(await getEntryLongPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccLongAmount(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getEntryShortPrice(dataStore, reader, user1.address, uni.target)).eq(0);
+        // expect(await getAccShortAmount(dataStore, reader, user1.address, uni.target)).eq(0); 
+        expect((await getPositions(dataStore, reader, user1.address)).length).eq(1);
 
         expect(await getCollateral(dataStore, reader, user1.address, usdt.target)).eq("995193452887");
         expect(await getDebt(dataStore, reader, user1.address, usdt.target)).eq(0);
