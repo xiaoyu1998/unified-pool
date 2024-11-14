@@ -140,13 +140,13 @@ library RedeemUtils {
         uint256 configuration = PoolStoreUtils.getConfiguration(dataStore, pool.underlyingAsset);
         uint256 decimals = PoolConfigurationUtils.getDecimals(configuration);
 
-        PositionUtils.validateLiquidationHealthFactor(
-            account, 
-            dataStore, 
-            pool.underlyingAsset, 
-            amountToRedeem,
-            decimals
-        );
+        // PositionUtils.validateLiquidationHealthFactor(
+        //     account, 
+        //     dataStore, 
+        //     pool.underlyingAsset, 
+        //     amountToRedeem,
+        //     decimals
+        // );
 
     }
 }
