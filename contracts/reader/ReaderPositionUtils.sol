@@ -111,7 +111,7 @@ library ReaderPositionUtils {
             //short, the collateral should lower than debt
             //long, the collateral should higher than debt
             //the collateralHigherThanDebt is same as the isLong
-            vars.positionInfo.pnlUsd = (vars.isPriceIncrease&&vars.collateralHigherThanDebt) ? int256(vars.pnlUsdAbs) : -int256(vars.pnlUsdAbs);
+            vars.positionInfo.pnlUsd = (vars.isPriceIncrease == vars.collateralHigherThanDebt) ? int256(vars.pnlUsdAbs) : -int256(vars.pnlUsdAbs);
             
             (   vars.userTotalCollateralExceptThisPositionUsd,
                 vars.userTotalDebExceptThisPositiontUsd
