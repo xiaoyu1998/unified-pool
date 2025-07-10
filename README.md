@@ -1,4 +1,5 @@
-## Unified Pool Contracts
+## Unified Pool
+Users can deposit funds into the Unified Pool to earn funding fees from perpetual contracts, leverage fees from margin trading, and cross-chain transaction fees.
 
 #### Foundry Support
 
